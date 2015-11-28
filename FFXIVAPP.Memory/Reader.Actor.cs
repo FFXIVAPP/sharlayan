@@ -52,15 +52,11 @@ namespace FFXIVAPP.Memory
         }
 
         public ConcurrentDictionary<uint, ActorEntity> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
-
         public ConcurrentDictionary<uint, ActorEntity> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
-
         public ConcurrentDictionary<uint, ActorEntity> PCEntities => PCWorkerDelegate.EntitiesDictionary;
-
         public Dictionary<uint, uint> PreviousMonster { get; set; }
         public Dictionary<uint, uint> PreviousNPC { get; set; }
         public Dictionary<uint, uint> PreviousPC { get; set; }
-
         public List<UInt32> NewMonster { get; set; }
         public List<UInt32> NewNPC { get; set; }
         public List<UInt32> NewPC { get; set; }

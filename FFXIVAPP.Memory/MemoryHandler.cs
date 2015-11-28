@@ -39,9 +39,6 @@ namespace FFXIVAPP.Memory
 {
     public class MemoryHandler : INotifyPropertyChanged
     {
-        public string GameLanguage { get; set; }
-        public static int ScanCount { get; set; }
-
         /// <summary>
         /// </summary>
         /// <param name="processModel"> </param>
@@ -54,6 +51,9 @@ namespace FFXIVAPP.Memory
                 SetProcess(processModel, gameLanguage);
             }
         }
+
+        public string GameLanguage { get; set; }
+        public static int ScanCount { get; set; }
 
         ~MemoryHandler()
         {
@@ -208,7 +208,7 @@ namespace FFXIVAPP.Memory
             {
                 var win64 = new byte[8];
                 Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return IntPtr.Add(IntPtr.Zero, (int)BitConverter.ToInt64(win64, 0));
+                return IntPtr.Add(IntPtr.Zero, (int) BitConverter.ToInt64(win64, 0));
             }
             var win32 = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), win32);
@@ -299,7 +299,7 @@ namespace FFXIVAPP.Memory
             {
                 var win64 = new byte[8];
                 Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return (long)BitConverter.ToUInt64(win64, 0);
+                return (long) BitConverter.ToUInt64(win64, 0);
             }
             var win32 = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), win32);
@@ -315,9 +315,9 @@ namespace FFXIVAPP.Memory
         public T GetStructure<T>(IntPtr address, int offset = 0)
         {
             IntPtr lpNumberOfBytesRead;
-            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out lpNumberOfBytesRead);
-            var retValue = (T)Marshal.PtrToStructure(buffer, typeof(T));
+            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof (T)));
+            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof (T))), out lpNumberOfBytesRead);
+            var retValue = (T) Marshal.PtrToStructure(buffer, typeof (T));
             Marshal.FreeCoTaskMem(buffer);
             return retValue;
         }

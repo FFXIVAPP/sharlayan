@@ -108,7 +108,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Signature.cs" />
     <Compile Include="Reader.Actor.cs" />
+    <Compile Include="Reader.ChatLog.cs" />
     <Compile Include="Reader.cs" />
+    <Compile Include="Reader.Inventory.cs" />
+    <Compile Include="Reader.PlayerInfo.cs" />
+    <Compile Include="Reader.Target.cs" />
     <Compile Include="SigScanner.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="UnsafeNativeMethods.cs" />

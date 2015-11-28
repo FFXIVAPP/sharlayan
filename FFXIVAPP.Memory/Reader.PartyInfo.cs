@@ -30,7 +30,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
@@ -47,14 +46,15 @@ namespace FFXIVAPP.Memory
         }
 
         public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
-
         public Dictionary<uint, uint> PreviousParty { get; set; }
-
         public List<UInt32> NewParty { get; set; }
     }
 
     public static partial class Reader
     {
+        public static IntPtr PartyInfoMap { get; set; }
+        public static IntPtr PartyCountMap { get; set; }
+
         public static PartyInfoReadResult GetPartyMembers()
         {
             var result = new PartyInfoReadResult();
@@ -65,11 +65,11 @@ namespace FFXIVAPP.Memory
                 {
                     if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("PARTYCOUNT"))
                     {
-                        var partyInfoMap = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["PARTYMAP"];
-                        var partyCountMap = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["PARTYCOUNT"];
+                        PartyInfoMap = MemoryHandler.Instance.SigScanner.Locations["PARTYMAP"];
+                        PartyCountMap = MemoryHandler.Instance.SigScanner.Locations["PARTYCOUNT"];
                         try
                         {
-                            var partyCount = MemoryHandler.Instance.GetByte(partyCountMap);
+                            var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);
 
                             if (partyCount > 1 && partyCount < 9)
                             {
@@ -86,8 +86,8 @@ namespace FFXIVAPP.Memory
                                             size = 544;
                                             break;
                                     }
-                                    var address = partyInfoMap.ToInt64() + (i * size);
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int)size);
+                                    var address = PartyInfoMap.ToInt64() + (i * size);
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
                                         case "Chinese":

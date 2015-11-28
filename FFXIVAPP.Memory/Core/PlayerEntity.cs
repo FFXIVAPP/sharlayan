@@ -28,6 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE. 
 
 using System.Collections.Generic;
+using System.Reflection;
 using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
 using FFXIVAPP.Memory.Helpers;
