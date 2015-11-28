@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9510D5EF-208A-4897-A582-8EAE5C6E9406}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FFXIVAPP.Memory</RootNamespace>
+    <AssemblyName>FFXIVAPP.Memory</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\distribution\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\ChatCleaner.cs" />
+    <Compile Include="Core\ChatEntry.cs" />
+    <Compile Include="Delegates\ChatLogWorkerDelegate.cs" />
+    <Compile Include="Delegates\MonsterWorkerDelegate.cs" />
+    <Compile Include="Delegates\NPCWorkerDelegate.cs" />
+    <Compile Include="Delegates\PartyInfoWorkerDelegate.cs" />
+    <Compile Include="Delegates\PCWorkerDelegate.cs" />
+    <Compile Include="Helpers\ActorEntityHelper.cs" />
+    <Compile Include="Helpers\PartyEntityHelper.cs" />
+    <Compile Include="Helpers\PlayerEntityHelper.cs" />
+    <Compile Include="Helpers\StatusEffectHelper.cs" />
+    <Compile Include="Models\StatusItem.cs" />
+    <Compile Include="Models\StatusLocalization.cs" />
+    <Compile Include="Helpers\ZoneHelper.cs" />
+    <Compile Include="Models\ChatLogPointers.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Core\ActorEntity.cs" />
+    <Compile Include="Core\ChatLogEntry.cs" />
+    <Compile Include="Core\Coordinate.cs" />
+    <Compile Include="Core\EnmityEntry.cs" />
+    <Compile Include="Core\Enums\Actor.cs" />
+    <Compile Include="Core\Enums\Inventory.cs" />
+    <Compile Include="Core\Interfaces\IActorEntity.cs" />
+    <Compile Include="Core\Interfaces\IChatLogEntry.cs" />
+    <Compile Include="Core\Interfaces\ICoordinate.cs" />
+    <Compile Include="Core\Interfaces\IEnmityEntry.cs" />
+    <Compile Include="Core\Interfaces\IInventoryEntity.cs" />
+    <Compile Include="Core\Interfaces\IItemDesc.cs" />
+    <Compile Include="Core\Interfaces\IItemInfo.cs" />
+    <Compile Include="Core\Interfaces\IPartyEntity.cs" />
+    <Compile Include="Core\Interfaces\IPlayerEntity.cs" />
+    <Compile Include="Core\Interfaces\IStatusEntry.cs" />
+    <Compile Include="Core\Interfaces\ITargetEntity.cs" />
+    <Compile Include="Core\InventoryEntity.cs" />
+    <Compile Include="Core\ItemDesc.cs" />
+    <Compile Include="Core\ItemInfo.cs" />
+    <Compile Include="Core\PartyEntity.cs" />
+    <Compile Include="Core\PlayerEntity.cs" />
+    <Compile Include="Core\StatusEntry.cs" />
+    <Compile Include="Core\TargetEntity.cs" />
+    <Compile Include="MemoryHandler.cs" />
+    <Compile Include="Models\ProcessModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\Signature.cs" />
+    <Compile Include="Reader.Actor.cs" />
+    <Compile Include="Reader.cs" />
+    <Compile Include="SigScanner.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="UnsafeNativeMethods.cs" />
+    <Compile Include="Helpers\XmlHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Reader.PartyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
