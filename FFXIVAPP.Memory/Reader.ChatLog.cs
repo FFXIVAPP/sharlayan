@@ -90,9 +90,9 @@ namespace FFXIVAPP.Memory
             PreviousArrayIndex = previousArrayIndex;
             PreviousOffset = previousOffset;
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHATLOG"))
+            if (Scanner.Instance.Locations.ContainsKey("CHATLOG"))
             {
-                var chatPointerMap = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["CHATLOG"];
+                var chatPointerMap = (IntPtr) Scanner.Instance.Locations["CHATLOG"];
 
                 if (chatPointerMap.ToInt64() <= 20)
                 {

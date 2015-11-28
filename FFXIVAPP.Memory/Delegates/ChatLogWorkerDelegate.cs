@@ -29,7 +29,7 @@
 
 namespace FFXIVAPP.Memory.Delegates
 {
-    public static class ChatLogWorkerDelegate
+    internal static class ChatLogWorkerDelegate
     {
         public static bool IsPaused { get; set; }
     }

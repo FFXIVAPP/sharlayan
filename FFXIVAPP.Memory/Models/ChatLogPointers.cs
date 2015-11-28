@@ -29,7 +29,7 @@
 
 namespace FFXIVAPP.Memory.Models
 {
-    public class ChatLogPointers
+    internal class ChatLogPointers
     {
         public uint LineCount { get; set; }
         public uint OffsetArrayStart { get; set; }

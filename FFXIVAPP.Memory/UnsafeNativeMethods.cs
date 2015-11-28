@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace FFXIVAPP.Memory
 {
-    public static class UnsafeNativeMethods
+    internal static class UnsafeNativeMethods
     {
         public enum ProcessAccessFlags
         {

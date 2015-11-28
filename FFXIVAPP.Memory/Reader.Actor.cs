@@ -68,7 +68,7 @@ namespace FFXIVAPP.Memory
         {
             var result = new ActorReadResult();
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHARMAP"))
+            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
                 try
                 {
@@ -76,21 +76,21 @@ namespace FFXIVAPP.Memory
 
                     var targetAddress = IntPtr.Zero;
                     uint mapIndex = 0;
-                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("TARGET"))
+                    if (Scanner.Instance.Locations.ContainsKey("TARGET"))
                     {
                         try
                         {
-                            targetAddress = MemoryHandler.Instance.SigScanner.Locations["TARGET"];
+                            targetAddress = Scanner.Instance.Locations["TARGET"];
                         }
                         catch (Exception ex)
                         {
                         }
                     }
-                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("MAP"))
+                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
                     {
                         try
                         {
-                            mapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["MAP"]);
+                            mapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
                         }
                         catch (Exception ex)
                         {
@@ -103,7 +103,7 @@ namespace FFXIVAPP.Memory
 
                     const int limit = 1372;
 
-                    var characterAddressMap = MemoryHandler.Instance.GetByteArray(MemoryHandler.Instance.SigScanner.Locations["CHARMAP"], endianSize * limit);
+                    var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
                     var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
                     var firstAddress = IntPtr.Zero;
 
@@ -281,7 +281,7 @@ namespace FFXIVAPP.Memory
                         }
                     }
 
-                    MemoryHandler._scanCount++;
+                    MemoryHandler.Instance.ScanCount++;
 
                     #endregion
                 }

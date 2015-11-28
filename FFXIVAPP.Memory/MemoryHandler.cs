@@ -29,15 +29,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class MemoryHandler : INotifyPropertyChanged
+    public class MemoryHandler
     {
         /// <summary>
         /// </summary>
@@ -53,7 +51,7 @@ namespace FFXIVAPP.Memory
         }
 
         public string GameLanguage { get; set; }
-        public static int ScanCount { get; set; }
+        public int ScanCount { get; set; }
 
         ~MemoryHandler()
         {
@@ -79,10 +77,11 @@ namespace FFXIVAPP.Memory
                 ProcessHandle = processModel.Process.Handle;
             }
             Constants.ProcessHandle = ProcessHandle;
-            SigScanner.Locations.Clear();
+            Scanner.Instance.Locations.Clear();
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, GameLanguage));
         }
 
-        public static IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)
+        public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)
         {
             var nextAddress = baseAddress;
             foreach (var offset in path)
@@ -113,7 +112,7 @@ namespace FFXIVAPP.Memory
             return baseAddress;
         }
 
-        public static IntPtr GetStaticAddress(long offset)
+        public IntPtr GetStaticAddress(long offset)
         {
             return new IntPtr(Instance.ProcessModel.Process.MainModule.BaseAddress.ToInt64() + offset);
         }
@@ -123,7 +122,7 @@ namespace FFXIVAPP.Memory
         /// <param name="address"> </param>
         /// <param name="buffer"> </param>
         /// <returns> </returns>
-        private static bool Peek(IntPtr address, byte[] buffer)
+        private bool Peek(IntPtr address, byte[] buffer)
         {
             IntPtr lpNumberOfBytesRead;
             return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
@@ -324,7 +323,7 @@ namespace FFXIVAPP.Memory
 
         #region Private Structs
 
-        public struct MemoryBlock
+        internal struct MemoryBlock
         {
             public long Length;
             public long Start;
@@ -335,69 +334,15 @@ namespace FFXIVAPP.Memory
         #region Property Bindings
 
         private static MemoryHandler _instance;
-        //private Dictionary<string, List<long>> _pointerPaths;
-        private IntPtr _processHandle;
-        private ProcessModel _processModel;
-        private SigScanner _sigScanner;
-        internal static int _scanCount = 0;
 
-        public static int scanCount
-        {
-            get { return _scanCount; }
-        }
+        public ProcessModel ProcessModel { get; set; }
 
-        public ProcessModel ProcessModel
-        {
-            get { return _processModel; }
-            set
-            {
-                _processModel = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public IntPtr ProcessHandle
-        {
-            get { return _processHandle; }
-            set
-            {
-                _processHandle = value;
-                RaisePropertyChanged();
-            }
-        }
+        public IntPtr ProcessHandle { get; set; }
 
         public static MemoryHandler Instance
         {
             get { return _instance ?? (_instance = new MemoryHandler(null)); }
             set { _instance = value; }
-        }
-
-        public SigScanner SigScanner
-        {
-            get { return _sigScanner ?? (_sigScanner = new SigScanner()); }
-            set
-            {
-                if (_sigScanner == null)
-                {
-                    _sigScanner = new SigScanner();
-                }
-                _sigScanner = value;
-            }
-        }
-
-        #endregion
-
-        #region Declarations
-
-        #endregion
-
-        #region Implementation of INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-        private void RaisePropertyChanged([CallerMemberName] string caller = "")
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(caller));
         }
 
         #endregion

@@ -59,14 +59,14 @@ namespace FFXIVAPP.Memory
         {
             var result = new PartyInfoReadResult();
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHARMAP"))
+            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("PARTYMAP"))
+                if (Scanner.Instance.Locations.ContainsKey("PARTYMAP"))
                 {
-                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("PARTYCOUNT"))
+                    if (Scanner.Instance.Locations.ContainsKey("PARTYCOUNT"))
                     {
-                        PartyInfoMap = MemoryHandler.Instance.SigScanner.Locations["PARTYMAP"];
-                        PartyCountMap = MemoryHandler.Instance.SigScanner.Locations["PARTYCOUNT"];
+                        PartyInfoMap = Scanner.Instance.Locations["PARTYMAP"];
+                        PartyCountMap = Scanner.Instance.Locations["PARTYCOUNT"];
                         try
                         {
                             var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);

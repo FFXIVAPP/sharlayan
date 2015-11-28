@@ -52,11 +52,11 @@ namespace FFXIVAPP.Memory
         {
             var result = new InventoryReadResult();
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("INVENTORY"))
+            if (Scanner.Instance.Locations.ContainsKey("INVENTORY"))
             {
                 try
                 {
-                    InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["INVENTORY"]));
+                    InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["INVENTORY"]));
 
                     result.InventoryEntities = new List<InventoryEntity>
                     {

@@ -33,7 +33,7 @@ using FFXIVAPP.Memory.Core.Enums;
 
 namespace FFXIVAPP.Memory.Helpers
 {
-    public static class PlayerEntityHelper
+    internal static class PlayerEntityHelper
     {
         public static PlayerEntity ResolvePlayerFromBytes(byte[] source)
         {

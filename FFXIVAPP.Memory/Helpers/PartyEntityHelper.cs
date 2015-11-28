@@ -35,7 +35,7 @@ using FFXIVAPP.Memory.Delegates;
 
 namespace FFXIVAPP.Memory.Helpers
 {
-    public static class PartyEntityHelper
+    internal static class PartyEntityHelper
     {
         public static PartyEntity ResolvePartyMemberFromBytes(byte[] source, ActorEntity actorEntity = null)
         {

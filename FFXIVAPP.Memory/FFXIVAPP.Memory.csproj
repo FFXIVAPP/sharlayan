@@ -113,7 +113,8 @@
     <Compile Include="Reader.Inventory.cs" />
     <Compile Include="Reader.PlayerInfo.cs" />
     <Compile Include="Reader.Target.cs" />
-    <Compile Include="SigScanner.cs" />
+    <Compile Include="Signatures.cs" />
+    <Compile Include="Scanner.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="UnsafeNativeMethods.cs" />
     <Compile Include="Helpers\XmlHelper.cs" />

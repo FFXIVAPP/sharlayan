@@ -78,7 +78,7 @@ namespace FFXIVAPP.Memory.Models
             var FirstIsOffsetAddress = false;
             if (SigScanAddress != IntPtr.Zero)
             {
-                baseAddress = SigScanAddress; // SigScanner should have already applied the base offset
+                baseAddress = SigScanAddress; // Scanner should have already applied the base offset
                 if (MemoryHandler.Instance.ProcessModel.IsWin64 && ASMSignature)
                 {
                     FirstIsOffsetAddress = true;
@@ -90,13 +90,13 @@ namespace FFXIVAPP.Memory.Models
                 {
                     return IntPtr.Zero;
                 }
-                baseAddress = MemoryHandler.GetStaticAddress(0);
+                baseAddress = MemoryHandler.Instance.GetStaticAddress(0);
             }
             if (PointerPath == null || PointerPath.Count == 0)
             {
                 return baseAddress;
             }
-            return MemoryHandler.ResolvePointerPath(PointerPath, baseAddress, FirstIsOffsetAddress);
+            return MemoryHandler.Instance.ResolvePointerPath(PointerPath, baseAddress, FirstIsOffsetAddress);
         }
 
         // convenience conversion for less code breakage. 

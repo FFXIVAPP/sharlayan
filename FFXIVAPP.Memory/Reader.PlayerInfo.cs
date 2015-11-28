@@ -53,11 +53,11 @@ namespace FFXIVAPP.Memory
         {
             var result = new PlayerInfoReadResult();
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHARMAP"))
+            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("PLAYERINFO"))
+                if (Scanner.Instance.Locations.ContainsKey("PLAYERINFO"))
                 {
-                    PlayerInfoMap = MemoryHandler.Instance.SigScanner.Locations["PLAYERINFO"];
+                    PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
                     if (PlayerInfoMap.ToInt64() <= 6496)
                     {
                         return result;
@@ -69,12 +69,12 @@ namespace FFXIVAPP.Memory
                         switch (MemoryHandler.Instance.GameLanguage)
                         {
                             case "Chinese":
-                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) MemoryHandler.Instance.SigScanner.Locations["CHARMAP"] + 5688);
-                                enmityStructure = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["CHARMAP"] + 3384;
+                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) Scanner.Instance.Locations["CHARMAP"] + 5688);
+                                enmityStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 3384;
                                 break;
                             default:
-                                enmityCount = MemoryHandler.Instance.GetInt16(MemoryHandler.Instance.SigScanner.Locations["AGRO_COUNT"]);
-                                enmityStructure = MemoryHandler.Instance.SigScanner.Locations["AGRO"];
+                                enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
+                                enmityStructure = Scanner.Instance.Locations["AGRO"];
                                 break;
                         }
                         var enmityEntries = new List<EnmityEntry>();

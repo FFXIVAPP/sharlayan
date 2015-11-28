@@ -41,7 +41,7 @@ namespace FFXIVAPP.Memory
         {
             var result = new TargetReadResult();
 
-            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHARMAP"))
+            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
                 try
                 {
@@ -49,20 +49,20 @@ namespace FFXIVAPP.Memory
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
                         case "Chinese":
-                            targetHateStructure = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["CHARMAP"] + 1136;
+                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
                             break;
                         default:
-                            if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("ENMITYMAP"))
+                            if (Scanner.Instance.Locations.ContainsKey("ENMITYMAP"))
                             {
-                                targetHateStructure = MemoryHandler.Instance.SigScanner.Locations["ENMITYMAP"];
+                                targetHateStructure = Scanner.Instance.Locations["ENMITYMAP"];
                             }
                             break;
                     }
                     var enmityEntries = new List<EnmityEntry>();
 
-                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("TARGET"))
+                    if (Scanner.Instance.Locations.ContainsKey("TARGET"))
                     {
-                        var targetAddress = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["TARGET"];
+                        var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
                         var somethingFound = false;
                         if (targetAddress.ToInt64() > 0)
                         {
@@ -107,11 +107,11 @@ namespace FFXIVAPP.Memory
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), 0x23F0); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     currentTargetID = entry.ID;
-                                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["MAP"]);
+                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
                                         }
                                         catch (Exception ex)
                                         {
@@ -133,11 +133,11 @@ namespace FFXIVAPP.Memory
                                 {
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(mouseOverTarget), 0x23F0); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["MAP"]);
+                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
                                         }
                                         catch (Exception ex)
                                         {
@@ -157,11 +157,11 @@ namespace FFXIVAPP.Memory
                             {
                                 var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), 0x23F0); // old size: 0x3F40
                                 var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("MAP"))
+                                if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                 {
                                     try
                                     {
-                                        entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["MAP"]);
+                                        entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
                                     }
                                     catch (Exception ex)
                                     {
@@ -179,11 +179,11 @@ namespace FFXIVAPP.Memory
                                 {
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), 0x23F0); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(MemoryHandler.Instance.SigScanner.Locations["MAP"]);
+                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
                                         }
                                         catch (Exception ex)
                                         {

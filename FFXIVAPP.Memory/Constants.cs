@@ -33,7 +33,7 @@ using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public static class Constants
+    internal static class Constants
     {
         #region Auto-Properties
 
