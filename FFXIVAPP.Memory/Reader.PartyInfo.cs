@@ -28,21 +28,36 @@
 // POSSIBILITY OF SUCH DAMAGE. 
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
 
 namespace FFXIVAPP.Memory
 {
+    public class PartyInfoReadResult
+    {
+        public PartyInfoReadResult()
+        {
+            PreviousParty = new Dictionary<uint, uint>();
+
+            NewParty = new List<uint>();
+        }
+
+        public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
+
+        public Dictionary<uint, uint> PreviousParty { get; set; }
+
+        public List<UInt32> NewParty { get; set; }
+    }
+
     public static partial class Reader
     {
-        private static IntPtr PartyInfoMap { get; set; }
-        private static IntPtr PartyCountMap { get; set; }
-
-        public static List<PartyEntity> GetPartyMembers()
+        public static PartyInfoReadResult GetPartyMembers()
         {
-            var entities = new List<PartyEntity>();
+            var result = new PartyInfoReadResult();
 
             if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("CHARMAP"))
             {
@@ -50,16 +65,17 @@ namespace FFXIVAPP.Memory
                 {
                     if (MemoryHandler.Instance.SigScanner.Locations.ContainsKey("PARTYCOUNT"))
                     {
-                        PartyInfoMap = MemoryHandler.Instance.SigScanner.Locations["PARTYMAP"];
-                        PartyCountMap = MemoryHandler.Instance.SigScanner.Locations["PARTYCOUNT"];
+                        var partyInfoMap = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["PARTYMAP"];
+                        var partyCountMap = (IntPtr) MemoryHandler.Instance.SigScanner.Locations["PARTYCOUNT"];
                         try
                         {
-                            var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);
+                            var partyCount = MemoryHandler.Instance.GetByte(partyCountMap);
 
                             if (partyCount > 1 && partyCount < 9)
                             {
                                 for (uint i = 0; i < partyCount; i++)
                                 {
+                                    UInt32 ID;
                                     uint size;
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
@@ -70,13 +86,44 @@ namespace FFXIVAPP.Memory
                                             size = 544;
                                             break;
                                     }
-                                    var address = new IntPtr(PartyInfoMap.ToInt64() + (i * size));
-                                    var source = MemoryHandler.Instance.GetByteArray(address, (int) size);
-                                    var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(source);
-                                    if (entry.IsValid)
+                                    var address = partyInfoMap.ToInt64() + (i * size);
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int)size);
+                                    switch (MemoryHandler.Instance.GameLanguage)
                                     {
-                                        PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                        case "Chinese":
+                                            ID = BitConverter.ToUInt32(source, 0x10);
+                                            break;
+                                        default:
+                                            ID = BitConverter.ToUInt32(source, 0x10);
+                                            break;
                                     }
+                                    ActorEntity existing = null;
+                                    if (result.PreviousParty.ContainsKey(ID))
+                                    {
+                                        result.PreviousParty.Remove(ID);
+                                        if (MonsterWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
+                                        {
+                                            existing = MonsterWorkerDelegate.GetEntity(ID);
+                                        }
+                                        if (PCWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
+                                        {
+                                            existing = PCWorkerDelegate.GetEntity(ID);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        result.NewParty.Add(ID);
+                                    }
+                                    var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(source, existing);
+                                    if (!entry.IsValid)
+                                    {
+                                        continue;
+                                    }
+                                    if (existing != null)
+                                    {
+                                        continue;
+                                    }
+                                    PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
                                 }
                             }
                             else if (partyCount == 0 || partyCount == 1)
@@ -84,7 +131,20 @@ namespace FFXIVAPP.Memory
                                 var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(new byte[0], PCWorkerDelegate.CurrentUser);
                                 if (entry.IsValid)
                                 {
-                                    PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                    var exists = false;
+                                    if (result.PreviousParty.ContainsKey(entry.ID))
+                                    {
+                                        result.PreviousParty.Remove(entry.ID);
+                                        exists = true;
+                                    }
+                                    else
+                                    {
+                                        result.NewParty.Add(entry.ID);
+                                    }
+                                    if (!exists)
+                                    {
+                                        PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                    }
                                 }
                             }
                         }
@@ -95,7 +155,7 @@ namespace FFXIVAPP.Memory
                 }
             }
 
-            return entities;
+            return result;
         }
     }
 }
