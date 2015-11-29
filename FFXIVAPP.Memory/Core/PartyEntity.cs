@@ -42,7 +42,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double HPPercent
         {
-            get { return HPMax == 0 ? 0 : HPCurrent / HPMax; }
+            get { return (double) (HPMax == 0 ? 0 : Decimal.Divide(HPCurrent, HPMax)); }
         }
 
         public string HPString
@@ -52,7 +52,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double MPPercent
         {
-            get { return MPMax == 0 ? 0 : MPCurrent / MPMax; }
+            get { return (double) (MPMax == 0 ? 0 : Decimal.Divide(MPCurrent, MPMax)); }
         }
 
         public string MPString

@@ -27,6 +27,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 // POSSIBILITY OF SUCH DAMAGE. 
 
+using System;
 using FFXIVAPP.Memory.Core.Interfaces;
 
 namespace FFXIVAPP.Memory.Core
@@ -42,14 +43,14 @@ namespace FFXIVAPP.Memory.Core
 
         public double SBPercent
         {
-            get { return SB / 10000; }
+            get { return (double) Decimal.Divide(SB, 10000); }
         }
 
         public uint Durability { get; set; }
 
         public double DurabilityPercent
         {
-            get { return Durability / 30000; }
+            get { return (double) Decimal.Divide(Durability, 30000); }
         }
     }
 }

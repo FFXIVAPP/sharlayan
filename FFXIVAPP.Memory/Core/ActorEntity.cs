@@ -42,7 +42,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double HPPercent
         {
-            get { return HPMax == 0 ? 0 : HPCurrent / HPMax; }
+            get { return (double) (HPMax == 0 ? 0 : Decimal.Divide(HPCurrent, HPMax)); }
         }
 
         public string HPString
@@ -52,7 +52,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double MPPercent
         {
-            get { return MPMax == 0 ? 0 : MPCurrent / MPMax; }
+            get { return (double) (MPMax == 0 ? 0 : Decimal.Divide(MPCurrent, MPMax)); }
         }
 
         public string MPString
@@ -64,7 +64,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double TPPercent
         {
-            get { return TPMax == 0 ? 0 : TPCurrent / TPMax; }
+            get { return (double) (TPMax == 0 ? 0 : Decimal.Divide(TPCurrent, TPMax)); }
         }
 
         public string TPString
@@ -74,7 +74,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double GPPercent
         {
-            get { return GPMax == 0 ? 0 : GPCurrent / GPMax; }
+            get { return (double) (GPMax == 0 ? 0 : Decimal.Divide(GPCurrent, GPMax)); }
         }
 
         public string GPString
@@ -84,7 +84,7 @@ namespace FFXIVAPP.Memory.Core
 
         public double CPPercent
         {
-            get { return CPMax == 0 ? 0 : CPCurrent / CPMax; }
+            get { return (double) (CPMax == 0 ? 0 : Decimal.Divide(CPCurrent, CPMax)); }
         }
 
         public string CPString
