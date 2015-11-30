@@ -67,6 +67,7 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
+                        case "Korean":
                         case "Chinese":
                         default:
                             entry.X = BitConverter.ToSingle(source, 0x0);
@@ -89,6 +90,7 @@ namespace FFXIVAPP.Memory.Helpers
                     var statusesSource = new byte[limit * statusSize];
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
+                        case "Korean":
                         case "Chinese":
                         default:
                             var defaultStatusEffectOffset = MemoryHandler.Instance.ProcessModel.IsWin64 ? 0x88 : 0x80;
@@ -138,6 +140,8 @@ namespace FFXIVAPP.Memory.Helpers
                                     case "Chinese":
                                         statusKey = statusInfo.Name.Chinese;
                                         break;
+                                    case "Korean":
+                                        statusKey = statusInfo.Name.Korean;
                                 }
                                 statusEntry.StatusName = statusKey;
                             }

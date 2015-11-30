@@ -152,6 +152,11 @@ namespace FFXIVAPP.Memory
 
                             switch (MemoryHandler.Instance.GameLanguage)
                             {
+                                case "Korean":
+                                    ID = BitConverter.ToUInt32(source, 0x74);
+                                    NPCID2 = BitConverter.ToUInt32(source, 0x80);
+                                    Type = (Actor.Type)source[0x8A];
+                                    break;
                                 case "Chinese":
                                     ID = BitConverter.ToUInt32(source, 0x74);
                                     NPCID2 = BitConverter.ToUInt32(source, 0x80);
@@ -232,6 +237,9 @@ namespace FFXIVAPP.Memory
                                     var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
+                                        case "Korean":
+                                            currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x5C);
+                                            break;
                                         case "Chinese":
                                             currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x68);
                                             break;
