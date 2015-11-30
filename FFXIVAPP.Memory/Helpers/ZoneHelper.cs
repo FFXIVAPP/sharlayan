@@ -699,6 +699,7 @@ namespace FFXIVAPP.Memory.Helpers
 
         public class MapInfo
         {
+            private string _korean;
             private string _chinese;
             private string _english;
             private string _french;
@@ -714,7 +715,7 @@ namespace FFXIVAPP.Memory.Helpers
             /// <param name="japanese"></param>
             /// <param name="german"></param>
             /// <param name="chinese"></param>
-            public MapInfo(bool isDunegonInstance, uint index = 0, string english = null, string french = null, string german = null, string japanese = null, string chinese = null)
+            public MapInfo(bool isDunegonInstance, uint index = 0, string english = null, string french = null, string german = null, string japanese = null, string chinese = null, string korean = null)
             {
                 Index = index;
                 IsDungeonInstance = isDunegonInstance;
@@ -723,6 +724,7 @@ namespace FFXIVAPP.Memory.Helpers
                 Japanese = japanese;
                 German = german;
                 Chinese = chinese;
+                Korean = korean;
             }
 
             public uint Index { get; set; }
@@ -756,6 +758,12 @@ namespace FFXIVAPP.Memory.Helpers
             {
                 get { return _chinese ?? String.Format("Unknown_{0}", Index); }
                 set { _chinese = value; }
+            }
+
+            public string Korean
+            {
+                get { return _korean ?? String.Format("Unknown_{0}", Index); }
+                set { _korean = value; }
             }
         }
     }
