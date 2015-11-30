@@ -142,6 +142,7 @@ namespace FFXIVAPP.Memory.Helpers
                                         break;
                                     case "Korean":
                                         statusKey = statusInfo.Name.Korean;
+                                        break;
                                 }
                                 statusEntry.StatusName = statusKey;
                             }

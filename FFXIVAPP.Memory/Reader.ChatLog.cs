@@ -117,6 +117,7 @@ namespace FFXIVAPP.Memory
                                 LogNext = (uint)MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x34),
                                 LogEnd = (uint)MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x38)
                             };
+                            break;
                         default:
                             if (MemoryHandler.Instance.ProcessModel.IsWin64)
                             {

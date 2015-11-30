@@ -89,7 +89,6 @@ namespace FFXIVAPP.Memory
                                 var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
 
                                 EnmityEntry enmityEntry = null;
-                                // TODO: I have to test this things out
                                 switch (MemoryHandler.Instance.GameLanguage)
                                 {
                                     case "Korean":
