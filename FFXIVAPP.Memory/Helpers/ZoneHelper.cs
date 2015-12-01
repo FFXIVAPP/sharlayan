@@ -687,12 +687,12 @@ namespace FFXIVAPP.Memory.Helpers
 
         public class MapInfo
         {
-            private string _korean;
             private string _chinese;
             private string _english;
             private string _french;
             private string _german;
             private string _japanese;
+            private string _korean;
 
             /// <summary>
             /// </summary>

@@ -57,8 +57,8 @@ namespace FFXIVAPP.Memory
                         switch (MemoryHandler.Instance.GameLanguage)
                         {
                             case "Korean":
-                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr)Scanner.Instance.Locations["CHARMAP"] + 5688);
-                                enmityStructure = (IntPtr)Scanner.Instance.Locations["CHARMAP"] + 3380;
+                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) Scanner.Instance.Locations["CHARMAP"] + 5688);
+                                enmityStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 3380;
                                 break;
                             case "Chinese":
                                 enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) Scanner.Instance.Locations["CHARMAP"] + 5688);
@@ -82,21 +82,21 @@ namespace FFXIVAPP.Memory
                                     case "Korean":
                                         enmityEntry = new EnmityEntry
                                         {
-                                            ID = (uint)MemoryHandler.Instance.GetPlatformInt(address),
+                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address),
                                             Name = MemoryHandler.Instance.GetString(address + 4),
-                                            Enmity = (uint)MemoryHandler.Instance.GetInt16(address + 68)
+                                            Enmity = (uint) MemoryHandler.Instance.GetInt16(address + 68)
                                         };
                                         break;
                                     default:
                                         enmityEntry = new EnmityEntry
                                         {
                                             Name = MemoryHandler.Instance.GetString(address),
-                                            ID = (uint)MemoryHandler.Instance.GetPlatformInt(address + 64),
-                                            Enmity = (uint)MemoryHandler.Instance.GetInt16(address + 68)
+                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address + 64),
+                                            Enmity = (uint) MemoryHandler.Instance.GetInt16(address + 68)
                                         };
                                         break;
                                 }
-                                
+
                                 if (enmityEntry.ID > 0)
                                 {
                                     enmityEntries.Add(enmityEntry);

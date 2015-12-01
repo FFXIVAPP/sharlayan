@@ -34,7 +34,7 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                     case "Korean":
                         entry.JobID = source[0x64];
-                        entry.Job = (Actor.Job)entry.JobID;
+                        entry.Job = (Actor.Job) entry.JobID;
 
                         #region Job Levels
 

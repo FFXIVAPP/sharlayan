@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
@@ -38,7 +37,7 @@ namespace FFXIVAPP.Memory
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
                         case "Korean":
-                            targetHateStructure = (IntPtr)Scanner.Instance.Locations["CHARMAP"] + 1136;
+                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
                             break;
                         case "Chinese":
                             targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
@@ -114,7 +113,6 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     currentTargetID = entry.ID;
@@ -228,14 +226,14 @@ namespace FFXIVAPP.Memory
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
                                         case "Korean":
-                                            enmityEntry.ID = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
-                                            enmityEntry.Enmity = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
+                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
+                                            enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
                                             break;
                                         default:
                                             enmityEntry.Name = MemoryHandler.Instance.GetString(new IntPtr(address));
-                                            enmityEntry.ID = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 64);
-                                            enmityEntry.Enmity = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 68);
-                                        break;
+                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 64);
+                                            enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 68);
+                                            break;
                                     }
 
                                     if (enmityEntry.ID <= 0)

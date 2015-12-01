@@ -143,7 +143,7 @@ namespace FFXIVAPP.Memory
                                 case "Korean":
                                     ID = BitConverter.ToUInt32(source, 0x74);
                                     NPCID2 = BitConverter.ToUInt32(source, 0x80);
-                                    Type = (Actor.Type)source[0x8A];
+                                    Type = (Actor.Type) source[0x8A];
                                     break;
                                 case "Chinese":
                                     ID = BitConverter.ToUInt32(source, 0x74);
