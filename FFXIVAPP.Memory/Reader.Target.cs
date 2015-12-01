@@ -99,15 +99,23 @@ namespace FFXIVAPP.Memory
                                     }
                                     break;
                             }
+
+                            int targetSize;
+                            switch (MemoryHandler.Instance.GameLanguage)
+                            {
+                                case "Korean":
+                                    targetSize = 0x3F40;
+                                    break;
+                                default:
+                                    targetSize = 0x23F0;
+                                    break;
+                            }
                             if (currentTarget > 0)
                             {
                                 try
                                 {
-                                    //switch (MemoryHandler.Instance.GameLanguage)
-                                    //{
-
-                                    //}
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), 0x23F0); // old size: 0x3F40
+                                    
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     currentTargetID = entry.ID;
                                     if (Scanner.Instance.Locations.ContainsKey("MAP"))
@@ -134,7 +142,7 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(mouseOverTarget), 0x23F0); // old size: 0x3F40
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(mouseOverTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
@@ -158,7 +166,7 @@ namespace FFXIVAPP.Memory
                             }
                             if (focusTarget > 0)
                             {
-                                var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), 0x23F0); // old size: 0x3F40
+                                var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), targetSize); // old size: 0x3F40
                                 var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                 if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                 {
@@ -180,17 +188,7 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    int size = 0;
-                                    switch (MemoryHandler.Instance.GameLanguage)
-                                    {
-                                        case "Korean":
-                                            size = 0x3F40;
-                                            break;
-                                        default:
-                                            size = 0x23F0;
-                                            break;
-                                    }
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), size); // old size: 0x3F40
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
