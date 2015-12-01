@@ -24,7 +24,7 @@ using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    internal class Scanner
+    public class Scanner
     {
         /// <summary>
         /// </summary>

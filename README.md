@@ -203,3 +203,46 @@ public class TargetReadResult
     public bool TargetsFound { get; set; }
 }
 ```
+
+# Want to scan for something yourself?
+
+First instantiate the MemoryHandler class then proceed to create a new Scanner.
+
+```csharp
+var signatures = new List<Signature>();
+// typical signature
+signatures.Add(new Signature
+{
+	Key = "SOMETHING",
+	Value = "0123456789ABCDEF",
+	Offset = 0
+});
+// pointer path based (no signature)
+signatures.Add(new Signature
+{
+	Key = "SOMETHING2",
+	PointerPath = new List<long>
+	{
+		0x0123456789
+	}
+});
+// Aseembly Signature Based
+signatures.Add(new Signature
+{
+	Key = "SOMETING3",
+	Value = "0123456789ABCDEF0123456789ABCDEF",
+	ASMSignature = true,
+	PointerPath = new List<long>
+	{
+		0L, // ASM assumes first pointer is always 0
+		144L
+	}
+}); 
+Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, GameLanguage));
+```
+
+Once this is complete you can reference this when reading like so:
+
+```csharp
+var somethingMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["SOMETHING"], 8);
+```
