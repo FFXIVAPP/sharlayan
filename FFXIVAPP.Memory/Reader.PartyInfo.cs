@@ -79,6 +79,9 @@ namespace FFXIVAPP.Memory
                                     uint size;
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
+                                        case "Korean":
+                                            size = 594;
+                                            break;
                                         case "Chinese":
                                             size = 594;
                                             break;
@@ -90,6 +93,9 @@ namespace FFXIVAPP.Memory
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
+                                        case "Korean":
+                                            ID = BitConverter.ToUInt32(source, 0x10);
+                                            break;
                                         case "Chinese":
                                             ID = BitConverter.ToUInt32(source, 0x10);
                                             break;

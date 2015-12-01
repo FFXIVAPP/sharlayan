@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
@@ -48,6 +49,9 @@ namespace FFXIVAPP.Memory
                     var targetHateStructure = IntPtr.Zero;
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
+                        case "Korean":
+                            targetHateStructure = (IntPtr)Scanner.Instance.Locations["CHARMAP"] + 1136;
+                            break;
                         case "Chinese":
                             targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
                             break;
@@ -75,6 +79,13 @@ namespace FFXIVAPP.Memory
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 192);
                             switch (MemoryHandler.Instance.GameLanguage)
                             {
+                                case "Korean":
+                                    currentTarget = BitConverter.ToUInt32(targetInfoSource, 0x0);
+                                    mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0xC);
+                                    focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x3C);
+                                    previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x48);
+                                    currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x5C);
+                                    break;
                                 case "Chinese":
                                     currentTarget = BitConverter.ToUInt32(targetInfoSource, 0x0);
                                     mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0xC);
@@ -104,6 +115,10 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
+                                    //switch (MemoryHandler.Instance.GameLanguage)
+                                    //{
+
+                                    //}
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), 0x23F0); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     currentTargetID = entry.ID;
@@ -177,7 +192,17 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), 0x23F0); // old size: 0x3F40
+                                    int size = 0;
+                                    switch (MemoryHandler.Instance.GameLanguage)
+                                    {
+                                        case "Korean":
+                                            size = 0x3F40;
+                                            break;
+                                        default:
+                                            size = 0x23F0;
+                                            break;
+                                    }
+                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), size); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                     {
@@ -212,12 +237,21 @@ namespace FFXIVAPP.Memory
                                 try
                                 {
                                     var address = targetHateStructure.ToInt64() + (i * 72);
-                                    var enmityEntry = new EnmityEntry
+
+                                    var enmityEntry = new EnmityEntry();
+                                    switch (MemoryHandler.Instance.GameLanguage)
                                     {
-                                        Name = MemoryHandler.Instance.GetString(new IntPtr(address)),
-                                        ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 64),
-                                        Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 68)
-                                    };
+                                        case "Korean":
+                                            enmityEntry.ID = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
+                                            enmityEntry.Enmity = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
+                                            break;
+                                        default:
+                                            enmityEntry.Name = MemoryHandler.Instance.GetString(new IntPtr(address));
+                                            enmityEntry.ID = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 64);
+                                            enmityEntry.Enmity = (uint)MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 68);
+                                        break;
+                                    }
+
                                     if (enmityEntry.ID <= 0)
                                     {
                                         continue;

@@ -36,5 +36,6 @@ namespace FFXIVAPP.Memory.Models
         public string Japanese { get; set; }
         public string German { get; set; }
         public string Chinese { get; set; }
+        public string Korean { get; set; }
     }
 }
