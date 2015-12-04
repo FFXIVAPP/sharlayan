@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ChatLogWorkerDelegate.cs
+// 
 // Copyright © 2007 - 2015 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify

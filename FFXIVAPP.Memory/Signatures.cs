@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Signatures.cs
+// 
 // Copyright © 2007 - 2015 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -256,7 +256,7 @@ namespace FFXIVAPP.Memory
                                     // values above are "Target" from ACT. Adjust to what ffxivapp expects:
                                 + 32L
                             }
-                        }); 
+                        });
                         signatures.Add(new Signature
                         {
                             Key = "CHATLOG",
