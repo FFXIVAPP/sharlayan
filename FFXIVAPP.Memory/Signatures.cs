@@ -481,13 +481,16 @@ namespace FFXIVAPP.Memory
                                 0L
                             }
                         });
+
+                        //910000
                         // or just pure offsets from base address
                         signatures.Add(new Signature
                         {
                             Key = "PLAYERINFO",
                             PointerPath = new List<long>
                             {
-                                0x103F518
+                                0x1042580
+                                //0x103F518
                             }
                         });
                         signatures.Add(new Signature
@@ -495,7 +498,8 @@ namespace FFXIVAPP.Memory
                             Key = "AGRO",
                             PointerPath = new List<long>
                             {
-                                0x103EBF4
+                                0x1041BF0
+                                //0x103EBF4
                             }
                         });
                         signatures.Add(new Signature
@@ -503,7 +507,7 @@ namespace FFXIVAPP.Memory
                             Key = "AGRO_COUNT",
                             PointerPath = new List<long>
                             {
-                                0x103EBF4 + 0x900
+                                0x1041BF0 + 0x904
                             }
                         });
                         signatures.Add(new Signature
@@ -511,7 +515,8 @@ namespace FFXIVAPP.Memory
                             Key = "ENMITYMAP",
                             PointerPath = new List<long>
                             {
-                                0x103E2EC
+                                0x10412EC
+                                //0x103E2EC
                             }
                         });
                         signatures.Add(new Signature
@@ -519,7 +524,7 @@ namespace FFXIVAPP.Memory
                             Key = "PARTYCOUNT",
                             PointerPath = new List<long>
                             {
-                                0x10A5E6C
+                                0x10A8EBC
                             }
                         });
                         // TODO: Update the following for patch 3.1
@@ -529,69 +534,6 @@ namespace FFXIVAPP.Memory
                         //    Value = "0000??00000000000000DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833AFFFFFFFF00000000??00??00??00??00??????00??00????0000????????????",
                         //    Offset = 106
                         //});
-                        //
-                        // These have already been implemented in the new style. Old info here for reference only.
-                        //
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "GAMEMAIN",
-                        //    Value = "47616D654D61696E000000",
-                        //    Offset = 1344 // pre 3.0 = 1260
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "CHARMAP",
-                        //    Value = "DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833A????0000????0000FFFFFFFF",
-                        //    Offset = 40
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "ENMITYMAP",
-                        //    Value = "FFFFFFFF0000????????????????????????????????????????????DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833AFFFFFFFF",
-                        //    Offset = 14964 // pre 3.0 2.4
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "PARTYMAP",
-                        //    Value = "00000000DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833AFFFFFFFFDB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833A00000000",
-                        //    Offset = 80
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "PARTYCOUNT",
-                        //    Value = "5F50617274794C69737400",
-                        //    Offset = 1340
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "MAP",
-                        //    Value = "F783843E????????????????FFFFFFFFDB0FC940AAAA26416D30763FDB0FC93F",
-                        //    Offset = 2052
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "TARGET",
-                        //    Value = "DB0F49416F12833AFFFFFFFF00000000000000000000000000000000????????DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833A",
-                        //    Offset = 372
-                        //});
-                        //signatures.Add(new Signature
-                        //{
-                        //    Key = "INVENTORY",
-                        //    Value = "0000??00000000000000DB0FC940AAAA26416D30763FDB0FC93FDB0F49416F12833AFFFFFFFF00000000??00??00??00??00??????00??00????0000????????????",
-                        //    Offset = 106
-                        //});
-                        //MemoryHandler.Instance.PointerPaths["PLAYERINFO"] = new List<long>()
-                        //{
-                        //    0x01D77D60
-                        //};
-                        //MemoryHandler.Instance.PointerPaths["AGRO"] = new List<long>()
-                        //{
-                        //    0x1038D3C - 0x900
-                        //};
-                        //MemoryHandler.Instance.PointerPaths["AGRO_COUNT"] = new List<long>()
-                        //{
-                        //    0x1038D3C
-                        //};
                     }
                     break;
             }
