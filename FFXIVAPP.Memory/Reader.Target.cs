@@ -91,10 +91,10 @@ namespace FFXIVAPP.Memory
                                     }
                                     else
                                     {
-                                        mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0xC);
-                                        focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x38);
-                                        previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x44);
-                                        currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x58);
+                                        mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0x10);
+                                        focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x30);
+                                        previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x3C);
+                                        currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x64);
                                     }
                                     break;
                             }

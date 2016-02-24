@@ -408,7 +408,7 @@ namespace FFXIVAPP.Memory
                         //    0x1679010
                         //};
                     }
-                    else
+                    else // 32 bit
                     {
                         // can still use old style entry of signatures
                         signatures.Add(new Signature
@@ -426,7 +426,7 @@ namespace FFXIVAPP.Memory
                             {
                                 0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT offsets
-                                88L
+                                92L
                                     // values above are "Target" from ACT. Adjust to what ffxivapp expects:
                                 + 16L
                             }
@@ -482,24 +482,25 @@ namespace FFXIVAPP.Memory
                             }
                         });
 
-                        //910000
+                        // 02292318
                         // or just pure offsets from base address
                         signatures.Add(new Signature
                         {
                             Key = "PLAYERINFO",
                             PointerPath = new List<long>
                             {
-                                0x1042580
-                                //0x103F518
+                                0x1092318
+                                //0x1042580
                             }
                         });
+                        
                         signatures.Add(new Signature
                         {
                             Key = "AGRO",
                             PointerPath = new List<long>
                             {
-                                0x1041BF0
-                                //0x103EBF4
+                                0x10919F4
+                                //0x1041BF0
                             }
                         });
                         signatures.Add(new Signature
@@ -507,7 +508,7 @@ namespace FFXIVAPP.Memory
                             Key = "AGRO_COUNT",
                             PointerPath = new List<long>
                             {
-                                0x1041BF0 + 0x904
+                                0x10919F4 + 0x900
                             }
                         });
                         signatures.Add(new Signature
