@@ -68,7 +68,7 @@ namespace FFXIVAPP.Memory
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
                                         case "Korean":
-                                            size = 594;
+                                            size = 544;
                                             break;
                                         case "Chinese":
                                             size = 594;
