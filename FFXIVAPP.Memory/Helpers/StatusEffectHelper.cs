@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ StatusEffectHelper.cs
+// FFXIVAPP.Memory ~ StatusEffectHelper.cs
 // 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
@@ -58,7 +58,8 @@ namespace FFXIVAPP.Memory.Helpers
                         English = "???",
                         French = "???",
                         German = "???",
-                        Japanese = "???"
+                        Japanese = "???",
+                        Korean = "???"
                     },
                     CompanyAction = false
                 };
@@ -75,7 +76,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Petrification",
                     French = "Pétrification",
                     German = "Stein",
-                    Japanese = "石化"
+                    Japanese = "石化",
+                    Korean = "석화"
                 },
                 CompanyAction = false
             });
@@ -87,7 +89,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stun",
                     French = "Étourdissement",
                     German = "Betäubung",
-                    Japanese = "スタン"
+                    Japanese = "スタン",
+                    Korean = "기절"
                 },
                 CompanyAction = false
             });
@@ -99,7 +102,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sleep",
                     French = "Sommeil",
                     German = "Schlaf",
-                    Japanese = "睡眠"
+                    Japanese = "睡眠",
+                    Korean = "수면"
                 },
                 CompanyAction = true
             });
@@ -111,7 +115,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Daze",
                     French = "Évanouissement",
                     German = "Benommenheit",
-                    Japanese = "気絶"
+                    Japanese = "気絶",
+                    Korean = "혼절"
                 },
                 CompanyAction = false
             });
@@ -123,7 +128,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Amnesia",
                     French = "Amnésie",
                     German = "Amnesie",
-                    Japanese = "アビリティ不可"
+                    Japanese = "アビリティ不可",
+                    Korean = "능력 사용불가"
                 },
                 CompanyAction = false
             });
@@ -135,7 +141,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Pacification",
                     French = "Pacification",
                     German = "Pacem",
-                    Japanese = "ＷＳ不可"
+                    Japanese = "ＷＳ不可",
+                    Korean = "무기 기술 사용불가"
                 },
                 CompanyAction = false
             });
@@ -147,7 +154,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Silence",
                     French = "Silence",
                     German = "Stumm",
-                    Japanese = "沈黙"
+                    Japanese = "沈黙",
+                    Korean = "침묵"
                 },
                 CompanyAction = false
             });
@@ -159,7 +167,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Haste",
                     French = "Hâte",
                     German = "Hast",
-                    Japanese = "ヘイスト"
+                    Japanese = "ヘイスト",
+                    Korean = "헤이스트"
                 },
                 CompanyAction = false
             });
@@ -171,7 +180,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow",
                     French = "Lenteur",
                     German = "Gemach",
-                    Japanese = "スロウ"
+                    Japanese = "スロウ",
+                    Korean = "둔화"
                 },
                 CompanyAction = false
             });
@@ -183,7 +193,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow",
                     French = "Lenteur",
                     German = "Gemach",
-                    Japanese = "拘束装置：スロウ"
+                    Japanese = "拘束装置：スロウ",
+                    Korean = "구속 장치: 둔화"
                 },
                 CompanyAction = false
             });
@@ -195,7 +206,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Confused",
                     French = "Confusion",
                     German = "Konfus",
-                    Japanese = "混乱"
+                    Japanese = "混乱",
+                    Korean = "혼란"
                 },
                 CompanyAction = false
             });
@@ -207,7 +219,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Levitation",
                     French = "Lévitation",
                     German = "Levitation",
-                    Japanese = "レビテト"
+                    Japanese = "レビテト",
+                    Korean = "레비테트"
                 },
                 CompanyAction = false
             });
@@ -219,7 +232,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bind",
                     French = "Entrave",
                     German = "Fessel",
-                    Japanese = "バインド"
+                    Japanese = "バインド",
+                    Korean = "속박"
                 },
                 CompanyAction = false
             });
@@ -231,7 +245,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Heavy",
                     French = "Pesanteur",
                     German = "Gewicht",
-                    Japanese = "ヘヴィ"
+                    Japanese = "ヘヴィ",
+                    Korean = "과중력"
                 },
                 CompanyAction = false
             });
@@ -243,7 +258,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blind",
                     French = "Cécité",
                     German = "Blind",
-                    Japanese = "暗闇"
+                    Japanese = "暗闇",
+                    Korean = "암흑"
                 },
                 CompanyAction = false
             });
@@ -255,7 +271,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Paralysis",
                     French = "Paralysie",
                     German = "Paralyse",
-                    Japanese = "麻痺"
+                    Japanese = "麻痺",
+                    Korean = "마비"
                 },
                 CompanyAction = false
             });
@@ -267,7 +284,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Poison",
                     French = "Poison",
                     German = "Gift",
-                    Japanese = "毒"
+                    Japanese = "毒",
+                    Korean = "독"
                 },
                 CompanyAction = false
             });
@@ -279,7 +297,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Pollen",
                     French = "Poison violent",
                     German = "Giftpollen",
-                    Japanese = "猛毒"
+                    Japanese = "猛毒",
+                    Korean = "맹독"
                 },
                 CompanyAction = false
             });
@@ -291,7 +310,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "TP Bleed",
                     French = "Saignée de PT",
                     German = "TP-Verlust",
-                    Japanese = "ＴＰ継続ダメージ"
+                    Japanese = "ＴＰ継続ダメージ",
+                    Korean = "TP 지속 피해"
                 },
                 CompanyAction = false
             });
@@ -303,7 +323,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "HP Boost",
                     French = "Bonus de PV",
                     German = "LP-Bonus",
-                    Japanese = "最大ＨＰアップ"
+                    Japanese = "最大ＨＰアップ",
+                    Korean = "최대 HP 증가"
                 },
                 CompanyAction = false
             });
@@ -315,7 +336,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "HP Penalty",
                     French = "Malus de PV",
                     German = "LP-Malus",
-                    Japanese = "最大ＨＰダウン"
+                    Japanese = "最大ＨＰダウン",
+                    Korean = "최대 HP 감소"
                 },
                 CompanyAction = false
             });
@@ -327,7 +349,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "MP Boost",
                     French = "Bonus de PM",
                     German = "MP-Bonus",
-                    Japanese = "最大ＭＰアップ"
+                    Japanese = "最大ＭＰアップ",
+                    Korean = "최대 MP 증가"
                 },
                 CompanyAction = false
             });
@@ -339,7 +362,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "MP Penalty",
                     French = "Malus de PM",
                     German = "MP-Malus",
-                    Japanese = "最大ＭＰダウン"
+                    Japanese = "最大ＭＰダウン",
+                    Korean = "최대 MP 감소"
                 },
                 CompanyAction = false
             });
@@ -351,7 +375,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Attack Up",
                     French = "Bonus d'attaque",
                     German = "Attacke-Bonus",
-                    Japanese = "物理攻撃力アップ"
+                    Japanese = "物理攻撃力アップ",
+                    Korean = "물리 공격력 상승"
                 },
                 CompanyAction = false
             });
@@ -363,7 +388,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Attack Down",
                     French = "Malus d'attaque",
                     German = "Attacke-Malus",
-                    Japanese = "物理攻撃力ダウン"
+                    Japanese = "物理攻撃力ダウン",
+                    Korean = "물리 공격력 감소"
                 },
                 CompanyAction = false
             });
@@ -375,7 +401,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Accuracy Up",
                     French = "Bonus de précision",
                     German = "Präzisions-Bonus",
-                    Japanese = "命中率アップ"
+                    Japanese = "命中率アップ",
+                    Korean = "명중률 상승"
                 },
                 CompanyAction = false
             });
@@ -387,7 +414,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Accuracy Down",
                     French = "Malus de précision",
                     German = "Präzisions-Malus",
-                    Japanese = "命中率ダウン"
+                    Japanese = "命中率ダウン",
+                    Korean = "명중률 감소"
                 },
                 CompanyAction = false
             });
@@ -399,7 +427,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Defense Up",
                     French = "Bonus de défense",
                     German = "Verteidigungs-Bonus",
-                    Japanese = "物理防御力アップ"
+                    Japanese = "物理防御力アップ",
+                    Korean = "물리 방어력 상승"
                 },
                 CompanyAction = false
             });
@@ -411,7 +440,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Defense Down",
                     French = "Malus de défense",
                     German = "Verteidigungs-Malus",
-                    Japanese = "物理防御力ダウン"
+                    Japanese = "物理防御力ダウン",
+                    Korean = "물리 방어력 감소"
                 },
                 CompanyAction = false
             });
@@ -423,7 +453,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Evasion Up",
                     French = "Bonus d'esquive",
                     German = "Ausweich-Bonus",
-                    Japanese = "回避力アップ"
+                    Japanese = "回避力アップ",
+                    Korean = "회피력 상승"
                 },
                 CompanyAction = false
             });
@@ -435,7 +466,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Evasion Down",
                     French = "Malus d'esquive",
                     German = "Ausweich-Malus",
-                    Japanese = "回避力ダウン"
+                    Japanese = "回避力ダウン",
+                    Korean = "회피력 감소"
                 },
                 CompanyAction = false
             });
@@ -447,7 +479,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Attack Magic Potency Up",
                     French = "Bonus de puissance magique",
                     German = "Offensivmagie-Bonus",
-                    Japanese = "魔法攻撃力アップ"
+                    Japanese = "魔法攻撃力アップ",
+                    Korean = "마법 공격력 상승"
                 },
                 CompanyAction = false
             });
@@ -459,7 +492,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Attack Magic Potency Down",
                     French = "Malus de puissance magique",
                     German = "Offensivmagie-Malus",
-                    Japanese = "魔法攻撃力ダウン"
+                    Japanese = "魔法攻撃力ダウン",
+                    Korean = "마법 공격력 감소"
                 },
                 CompanyAction = false
             });
@@ -471,7 +505,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Healing Potency Up",
                     French = "Bonus de magie curative",
                     German = "Heilmagie-Bonus",
-                    Japanese = "魔法回復力アップ"
+                    Japanese = "魔法回復力アップ",
+                    Korean = "마법 회복력 상승"
                 },
                 CompanyAction = false
             });
@@ -483,7 +518,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Healing Potency Down",
                     French = "Malus de magie curative",
                     German = "Heilmagie-Malus",
-                    Japanese = "魔法回復力ダウン"
+                    Japanese = "魔法回復力ダウン",
+                    Korean = "마법 회복력 감소"
                 },
                 CompanyAction = false
             });
@@ -495,7 +531,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Defense Up",
                     French = "Bonus de défense magique",
                     German = "Magieabwehr-Bonus",
-                    Japanese = "魔法防御力アップ"
+                    Japanese = "魔法防御力アップ",
+                    Korean = "마법 방어력 상승"
                 },
                 CompanyAction = false
             });
@@ -507,7 +544,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Defense Down",
                     French = "Malus de défense magique",
                     German = "Magieabwehr-Malus",
-                    Japanese = "魔法防御力ダウン"
+                    Japanese = "魔法防御力ダウン",
+                    Korean = "마법 방어력 감소"
                 },
                 CompanyAction = false
             });
@@ -519,7 +557,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stun Resistance",
                     French = "Résistance à Étourdissement",
                     German = "Betäubungsresistenz",
-                    Japanese = "スタン無効"
+                    Japanese = "スタン無効",
+                    Korean = "기절 무효"
                 },
                 CompanyAction = false
             });
@@ -531,7 +570,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Silence Resistance",
                     French = "Résistance à Silence",
                     German = "Stumm-Resistenz",
-                    Japanese = "沈黙無効"
+                    Japanese = "沈黙無効",
+                    Korean = "침묵 무효"
                 },
                 CompanyAction = false
             });
@@ -543,7 +583,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Crafting Facility",
                     French = "Installation d'artisanat",
                     German = "Werkstattstimmung",
-                    Japanese = "製作設備"
+                    Japanese = "製作設備",
+                    Korean = "제작설비"
                 },
                 CompanyAction = false
             });
@@ -555,7 +596,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "The Echo",
                     French = "L'Écho",
                     German = "Kraft des Transzendierens",
-                    Japanese = "超える力"
+                    Japanese = "超える力",
+                    Korean = "초월하는 힘"
                 },
                 CompanyAction = false
             });
@@ -567,7 +609,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Weakness",
                     French = "Affaiblissement",
                     German = "Schwäche",
-                    Japanese = "衰弱"
+                    Japanese = "衰弱",
+                    Korean = "쇠약"
                 },
                 CompanyAction = false
             });
@@ -579,7 +622,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Brink of Death",
                     French = "Mourant",
                     German = "Sterbenselend",
-                    Japanese = "衰弱［強］"
+                    Japanese = "衰弱［強］",
+                    Korean = "쇠약[강]"
                 },
                 CompanyAction = false
             });
@@ -591,7 +635,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Crafter's Grace",
                     French = "Grâce de l'artisan",
                     German = "Sternstunde der Handwerker",
-                    Japanese = "経験値アップ（クラフター専用）"
+                    Japanese = "経験値アップ（クラフター専用）",
+                    Korean = "경험치 증가(제작자 전용)"
                 },
                 CompanyAction = false
             });
@@ -603,7 +648,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gatherer's Grace",
                     French = "Grâce du récolteur",
                     German = "Sternstunde der Sammler",
-                    Japanese = "経験値アップ（ギャザラー専用）"
+                    Japanese = "経験値アップ（ギャザラー専用）",
+                    Korean = "경험치 증가(채집가 전용)"
                 },
                 CompanyAction = false
             });
@@ -615,7 +661,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stealth",
                     French = "Furtivité",
                     German = "Coeurl-Pfoten",
-                    Japanese = "ステルス"
+                    Japanese = "ステルス",
+                    Korean = "은신"
                 },
                 CompanyAction = false
             });
@@ -627,7 +674,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Well Fed",
                     French = "Repu",
                     German = "Gut gesättigt",
-                    Japanese = "食事"
+                    Japanese = "食事",
+                    Korean = "식사"
                 },
                 CompanyAction = false
             });
@@ -639,7 +687,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Medicated",
                     French = "Médicamenté",
                     German = "Stärkung",
-                    Japanese = "強化薬"
+                    Japanese = "強化薬",
+                    Korean = "강화약"
                 },
                 CompanyAction = false
             });
@@ -651,7 +700,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sprint",
                     French = "Sprint",
                     German = "Sprint",
-                    Japanese = "スプリント"
+                    Japanese = "スプリント",
+                    Korean = "전력 질주"
                 },
                 CompanyAction = false
             });
@@ -663,7 +713,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Strength Down",
                     French = "Malus de force",
                     German = "Stärke-Malus",
-                    Japanese = "ＳＴＲダウン"
+                    Japanese = "ＳＴＲダウン",
+                    Korean = "힘 감소"
                 },
                 CompanyAction = false
             });
@@ -675,7 +726,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vitality Down",
                     French = "Malus de vitalité",
                     German = "Konstitutions-Malus",
-                    Japanese = "ＶＩＴダウン"
+                    Japanese = "ＶＩＴダウン",
+                    Korean = "활력 감소"
                 },
                 CompanyAction = false
             });
@@ -687,7 +739,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Damage Up",
                     French = "Bonus de dégâts physiques",
                     German = "Schadenswert +",
-                    Japanese = "物理ダメージ上昇"
+                    Japanese = "物理ダメージ上昇",
+                    Korean = "물리 공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -699,7 +752,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Damage Down",
                     French = "Malus de dégâts physiques",
                     German = "Schadenswert -",
-                    Japanese = "物理ダメージ低下"
+                    Japanese = "物理ダメージ低下",
+                    Korean = "물리 공격 피해량 감소"
                 },
                 CompanyAction = false
             });
@@ -711,7 +765,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Down",
                     French = "Vulnérabilité physique diminuée",
                     German = "Verringerte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ軽減"
+                    Japanese = "被物理ダメージ軽減",
+                    Korean = "물리 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -723,7 +778,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Up",
                     French = "Vulnérabilité physique augmentée",
                     German = "Erhöhte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ増加"
+                    Japanese = "被物理ダメージ増加",
+                    Korean = "물리 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -735,7 +791,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Damage Up",
                     French = "Bonus de dégâts magiques",
                     German = "Magieschaden +",
-                    Japanese = "魔法ダメージ上昇"
+                    Japanese = "魔法ダメージ上昇",
+                    Korean = "마법 공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -747,7 +804,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Damage Down",
                     French = "Malus de dégâts magiques",
                     German = "Magieschaden -",
-                    Japanese = "魔法ダメージ低下"
+                    Japanese = "魔法ダメージ低下",
+                    Korean = "마법 공격 피해량 감소"
                 },
                 CompanyAction = false
             });
@@ -759,7 +817,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Vulnerability Down",
                     French = "Vulnérabilité magique diminuée",
                     German = "Verringerte Magie-Verwundbarkeit",
-                    Japanese = "被魔法ダメージ軽減"
+                    Japanese = "被魔法ダメージ軽減",
+                    Korean = "마법 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -771,7 +830,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Vulnerability Up",
                     French = "Vulnérabilité magique augmentée",
                     German = "Erhöhte Magie-Verwundbarkeit",
-                    Japanese = "被魔法ダメージ増加"
+                    Japanese = "被魔法ダメージ増加",
+                    Korean = "마법 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -783,7 +843,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -795,7 +856,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Down",
                     French = "Malus de dégâts",
                     German = "Schaden -",
-                    Japanese = "ダメージ低下"
+                    Japanese = "ダメージ低下",
+                    Korean = "공격 피해량 감소"
                 },
                 CompanyAction = false
             });
@@ -807,7 +869,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Down",
                     French = "Vulnérabilité diminuée",
                     German = "Verringerte Verwundbarkeit",
-                    Japanese = "被ダメージ低下"
+                    Japanese = "被ダメージ低下",
+                    Korean = "받는 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -819,7 +882,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Up",
                     French = "Vulnérabilité augmentée",
                     German = "Erhöhte Verwundbarkeit",
-                    Japanese = "被ダメージ上昇"
+                    Japanese = "被ダメージ上昇",
+                    Korean = "받는 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -831,7 +895,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Critical Skill",
                     French = "Maîtrise critique",
                     German = "Kritisches Potenzial",
-                    Japanese = "ウェポンスキル強化：クリティカル"
+                    Japanese = "ウェポンスキル強化：クリティカル",
+                    Korean = "무기 기술 강화: 극대화"
                 },
                 CompanyAction = false
             });
@@ -843,7 +908,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Terror",
                     French = "Terreur",
                     German = "Terror",
-                    Japanese = "恐怖"
+                    Japanese = "恐怖",
+                    Korean = "공포"
                 },
                 CompanyAction = false
             });
@@ -855,7 +921,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Leaden",
                     French = "Plombé",
                     German = "Bleischwere",
-                    Japanese = "ヘヴィ[強]"
+                    Japanese = "ヘヴィ[強]",
+                    Korean = "과중력[강]"
                 },
                 CompanyAction = false
             });
@@ -867,7 +934,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Drainstrikes",
                     French = "Coups drainants",
                     German = "Auszehren",
-                    Japanese = "オートアタック強化：ＨＰ吸収"
+                    Japanese = "オートアタック強化：ＨＰ吸収",
+                    Korean = "자동 공격 강화: HP 흡수"
                 },
                 CompanyAction = false
             });
@@ -879,7 +947,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aspirstrikes",
                     French = "Coups aspirants",
                     German = "Auslaugen",
-                    Japanese = "オートアタック強化：ＴＰ吸収"
+                    Japanese = "オートアタック強化：ＴＰ吸収",
+                    Korean = "자동 공격 강화: TP 흡수"
                 },
                 CompanyAction = false
             });
@@ -891,7 +960,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stunstrikes",
                     French = "Coups étourdissants",
                     German = "Ausschalten",
-                    Japanese = "オートアタック強化：スタン"
+                    Japanese = "オートアタック強化：スタン",
+                    Korean = "자동 공격 강화: 기절"
                 },
                 CompanyAction = false
             });
@@ -903,7 +973,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rampart",
                     French = "Rempart",
                     German = "Schutzwall",
-                    Japanese = "ランパート"
+                    Japanese = "ランパート",
+                    Korean = "철벽 방어"
                 },
                 CompanyAction = false
             });
@@ -915,7 +986,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Convalescence",
                     French = "Convalescence",
                     German = "Konvaleszenz",
-                    Japanese = "コンバレセンス"
+                    Japanese = "コンバレセンス",
+                    Korean = "재활"
                 },
                 CompanyAction = false
             });
@@ -927,7 +999,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Awareness",
                     French = "Diligence",
                     German = "Achtsamkeit",
-                    Japanese = "アウェアネス"
+                    Japanese = "アウェアネス",
+                    Korean = "경각심"
                 },
                 CompanyAction = false
             });
@@ -939,7 +1012,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sentinel",
                     French = "Sentinelle",
                     German = "Sentinel",
-                    Japanese = "センチネル"
+                    Japanese = "センチネル",
+                    Korean = "경계"
                 },
                 CompanyAction = false
             });
@@ -951,7 +1025,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Tempered Will",
                     French = "Volonté d'acier",
                     German = "Eherner Wille",
-                    Japanese = "鋼の意志"
+                    Japanese = "鋼の意志",
+                    Korean = "강철의 의지"
                 },
                 CompanyAction = false
             });
@@ -963,7 +1038,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fight or Flight",
                     French = "Combat acharné",
                     German = "Verwegenheit",
-                    Japanese = "ファイト・オア・フライト"
+                    Japanese = "ファイト・オア・フライト",
+                    Korean = "임전무퇴"
                 },
                 CompanyAction = false
             });
@@ -975,7 +1051,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bulwark",
                     French = "Forteresse",
                     German = "Bollwerk",
-                    Japanese = "ブルワーク"
+                    Japanese = "ブルワーク",
+                    Korean = "방패 각성"
                 },
                 CompanyAction = false
             });
@@ -987,7 +1064,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sword Oath",
                     French = "Serment de l'épée",
                     German = "Schwert-Eid",
-                    Japanese = "忠義の剣"
+                    Japanese = "忠義の剣",
+                    Korean = "충의의 검"
                 },
                 CompanyAction = false
             });
@@ -999,7 +1077,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shield Oath",
                     French = "Serment du bouclier",
                     German = "Schild-Eid",
-                    Japanese = "忠義の盾"
+                    Japanese = "忠義の盾",
+                    Korean = "충의의 방패"
                 },
                 CompanyAction = false
             });
@@ -1011,7 +1090,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Cover",
                     French = "Couverture",
                     German = "Deckung",
-                    Japanese = "かばう"
+                    Japanese = "かばう",
+                    Korean = "감싸기"
                 },
                 CompanyAction = false
             });
@@ -1023,7 +1103,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Covered",
                     French = "Couvert",
                     German = "Gedeckt",
-                    Japanese = "かばう［被］"
+                    Japanese = "かばう［被］",
+                    Korean = "감싸기 대상"
                 },
                 CompanyAction = false
             });
@@ -1035,7 +1116,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hallowed Ground",
                     French = "Invincible",
                     German = "Heiliger Boden",
-                    Japanese = "インビンシブル"
+                    Japanese = "インビンシブル",
+                    Korean = "천하무적"
                 },
                 CompanyAction = true
             });
@@ -1047,7 +1129,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Foresight",
                     French = "Aguet",
                     German = "Vorahnung",
-                    Japanese = "フォーサイト"
+                    Japanese = "フォーサイト",
+                    Korean = "예지력"
                 },
                 CompanyAction = false
             });
@@ -1059,7 +1142,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bloodbath",
                     French = "Bain de sang",
                     German = "Blutbad",
-                    Japanese = "ブラッドバス"
+                    Japanese = "ブラッドバス",
+                    Korean = "피의 갈증"
                 },
                 CompanyAction = false
             });
@@ -1071,7 +1155,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Maim",
                     French = "Mutilation",
                     German = "Verstümmelung",
-                    Japanese = "メイム"
+                    Japanese = "メイム",
+                    Korean = "관절 파괴"
                 },
                 CompanyAction = false
             });
@@ -1083,7 +1168,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Berserk",
                     French = "Berserk",
                     German = "Tollwut",
-                    Japanese = "バーサク"
+                    Japanese = "バーサク",
+                    Korean = "광폭화"
                 },
                 CompanyAction = false
             });
@@ -1095,7 +1181,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thrill of Battle",
                     French = "Frisson de la bataille",
                     German = "Kampfrausch",
-                    Japanese = "スリル・オブ・バトル"
+                    Japanese = "スリル・オブ・バトル",
+                    Korean = "전투의 짜릿함"
                 },
                 CompanyAction = false
             });
@@ -1107,7 +1194,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Holmgang",
                     French = "Holmgang",
                     German = "Holmgang",
-                    Japanese = "ホルムギャング"
+                    Japanese = "ホルムギャング",
+                    Korean = "일대일 결투"
                 },
                 CompanyAction = false
             });
@@ -1119,7 +1207,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vengeance",
                     French = "Représailles",
                     German = "Rache",
-                    Japanese = "ヴェンジェンス"
+                    Japanese = "ヴェンジェンス",
+                    Korean = "보복"
                 },
                 CompanyAction = false
             });
@@ -1131,7 +1220,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Storm's Eye",
                     French = "Œil de la tempête",
                     German = "Sturmbrecher",
-                    Japanese = "シュトルムブレハ"
+                    Japanese = "シュトルムブレハ",
+                    Korean = "태풍의 눈"
                 },
                 CompanyAction = false
             });
@@ -1143,7 +1233,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Defiance",
                     French = "Défi",
                     German = "Verteidiger",
-                    Japanese = "ディフェンダー"
+                    Japanese = "ディフェンダー",
+                    Korean = "수비 태세"
                 },
                 CompanyAction = false
             });
@@ -1155,7 +1246,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Unchained",
                     French = "Affranchissement",
                     German = "Entfesselt",
-                    Japanese = "アンチェインド"
+                    Japanese = "アンチェインド",
+                    Korean = "힘의 해방"
                 },
                 CompanyAction = false
             });
@@ -1167,7 +1259,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wrath",
                     French = "Rage",
                     German = "Zorn",
-                    Japanese = "ラース"
+                    Japanese = "ラース",
+                    Korean = "격노"
                 },
                 CompanyAction = false
             });
@@ -1179,7 +1272,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wrath II",
                     French = "Rage II",
                     German = "Zorn II",
-                    Japanese = "ラースII"
+                    Japanese = "ラースII",
+                    Korean = "격노 2"
                 },
                 CompanyAction = false
             });
@@ -1191,7 +1285,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wrath III",
                     French = "Rage III",
                     German = "Zorn III",
-                    Japanese = "ラースIII"
+                    Japanese = "ラースIII",
+                    Korean = "격노 3"
                 },
                 CompanyAction = false
             });
@@ -1203,7 +1298,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wrath IV",
                     French = "Rage IV",
                     German = "Zorn IV",
-                    Japanese = "ラースIV"
+                    Japanese = "ラースIV",
+                    Korean = "격노 4"
                 },
                 CompanyAction = false
             });
@@ -1215,7 +1311,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Infuriated",
                     French = "Rage V",
                     German = "Zorn V",
-                    Japanese = "ラースV"
+                    Japanese = "ラースV",
+                    Korean = "격노 5"
                 },
                 CompanyAction = false
             });
@@ -1227,7 +1324,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dragon Kick",
                     French = "Tacle du dragon",
                     German = "Drachentritt",
-                    Japanese = "双竜脚"
+                    Japanese = "双竜脚",
+                    Korean = "쌍룡각"
                 },
                 CompanyAction = false
             });
@@ -1239,7 +1337,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Featherfoot",
                     French = "Pieds légers",
                     German = "Leichtfuß",
-                    Japanese = "フェザーステップ"
+                    Japanese = "フェザーステップ",
+                    Korean = "새털 걸음"
                 },
                 CompanyAction = false
             });
@@ -1251,7 +1350,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Internal Release",
                     French = "Relâchement intérieur",
                     German = "Innere Gelöstheit",
-                    Japanese = "発勁"
+                    Japanese = "発勁",
+                    Korean = "발경"
                 },
                 CompanyAction = false
             });
@@ -1263,7 +1363,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Twin Snakes",
                     French = "Serpents jumeaux",
                     German = "Doppelviper",
-                    Japanese = "双掌打"
+                    Japanese = "双掌打",
+                    Korean = "쌍장타"
                 },
                 CompanyAction = false
             });
@@ -1275,7 +1376,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mantra",
                     French = "Mantra",
                     German = "Mantra",
-                    Japanese = "マントラ"
+                    Japanese = "マントラ",
+                    Korean = "만트라"
                 },
                 CompanyAction = false
             });
@@ -1287,7 +1389,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fists of Fire",
                     French = "Poings de feu",
                     German = "Sengende Aura",
-                    Japanese = "紅蓮の構え"
+                    Japanese = "紅蓮の構え",
+                    Korean = "홍련 태세"
                 },
                 CompanyAction = false
             });
@@ -1299,7 +1402,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fists of Earth",
                     French = "Poings de terre",
                     German = "Steinerne Aura",
-                    Japanese = "金剛の構え"
+                    Japanese = "金剛の構え",
+                    Korean = "금강 태세"
                 },
                 CompanyAction = false
             });
@@ -1311,7 +1415,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fists of Wind",
                     French = "Poings de vent",
                     German = "Beflügelnde Aura",
-                    Japanese = "疾風の構え"
+                    Japanese = "疾風の構え",
+                    Korean = "질풍 태세"
                 },
                 CompanyAction = false
             });
@@ -1323,7 +1428,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Touch of Death",
                     French = "Toucher mortel",
                     German = "Hauch des Todes",
-                    Japanese = "秘孔拳"
+                    Japanese = "秘孔拳",
+                    Korean = "혈도 찌르기"
                 },
                 CompanyAction = false
             });
@@ -1335,7 +1441,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Opo-opo Form",
                     French = "Posture de l'opo-opo",
                     German = "Opo-Opo-Form",
-                    Japanese = "壱の型：魔猿"
+                    Japanese = "壱の型：魔猿",
+                    Korean = "원숭이 품새"
                 },
                 CompanyAction = false
             });
@@ -1347,7 +1454,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Raptor Form",
                     French = "Posture du raptor",
                     German = "Raptor-Form",
-                    Japanese = "弐の型：走竜"
+                    Japanese = "弐の型：走竜",
+                    Korean = "용 품새"
                 },
                 CompanyAction = false
             });
@@ -1359,7 +1467,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Coeurl Form",
                     French = "Posture du coeurl",
                     German = "Coeurl-Form",
-                    Japanese = "参の型：猛虎"
+                    Japanese = "参の型：猛虎",
+                    Korean = "호랑이 품새"
                 },
                 CompanyAction = false
             });
@@ -1371,7 +1480,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Perfect Balance",
                     French = "Équilibre parfait",
                     German = "Improvisation",
-                    Japanese = "踏鳴"
+                    Japanese = "踏鳴",
+                    Korean = "진각"
                 },
                 CompanyAction = false
             });
@@ -1383,7 +1493,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Greased Lightning",
                     French = "Vitesse de l'éclair",
                     German = "Geölter Blitz",
-                    Japanese = "疾風迅雷"
+                    Japanese = "疾風迅雷",
+                    Korean = "질풍번개"
                 },
                 CompanyAction = false
             });
@@ -1395,7 +1506,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Greased Lightning II",
                     French = "Vitesse de l'éclair II",
                     German = "Geölter Blitz II",
-                    Japanese = "疾風迅雷II"
+                    Japanese = "疾風迅雷II",
+                    Korean = "질풍번개 2"
                 },
                 CompanyAction = false
             });
@@ -1407,7 +1519,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Greased Lightning III",
                     French = "Vitesse de l'éclair III",
                     German = "Geölter Blitz III",
-                    Japanese = "疾風迅雷III"
+                    Japanese = "疾風迅雷III",
+                    Korean = "질풍번개 3"
                 },
                 CompanyAction = false
             });
@@ -1419,7 +1532,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Keen Flurry",
                     French = "Volée défensive",
                     German = "Auge des Sturms",
-                    Japanese = "キーンフラーリ"
+                    Japanese = "キーンフラーリ",
+                    Korean = "날카로운 돌풍"
                 },
                 CompanyAction = false
             });
@@ -1431,7 +1545,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Heavy Thrust",
                     French = "Percée puissante",
                     German = "Gewaltiger Stoß",
-                    Japanese = "ヘヴィスラスト"
+                    Japanese = "ヘヴィスラスト",
+                    Korean = "겹찌르기"
                 },
                 CompanyAction = false
             });
@@ -1443,7 +1558,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Life Surge",
                     French = "Souffle de vie",
                     German = "Vitalwallung",
-                    Japanese = "ライフサージ"
+                    Japanese = "ライフサージ",
+                    Korean = "생명력 쇄도"
                 },
                 CompanyAction = false
             });
@@ -1455,7 +1571,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blood for Blood",
                     French = "Du sang pour du sang",
                     German = "Zahn um Zahn",
-                    Japanese = "捨身"
+                    Japanese = "捨身",
+                    Korean = "필사의 각오"
                 },
                 CompanyAction = false
             });
@@ -1467,7 +1584,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Chaos Thrust",
                     French = "Percée chaotique",
                     German = "Chaotischer Tjost",
-                    Japanese = "桜華狂咲"
+                    Japanese = "桜華狂咲",
+                    Korean = "꽃잎 폭풍"
                 },
                 CompanyAction = false
             });
@@ -1479,7 +1597,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Phlebotomize",
                     French = "Double percée",
                     German = "Phlebotomie",
-                    Japanese = "二段突き"
+                    Japanese = "二段突き",
+                    Korean = "이단 찌르기"
                 },
                 CompanyAction = false
             });
@@ -1491,7 +1610,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Power Surge",
                     French = "Souffle de puissance",
                     German = "Drachenklaue",
-                    Japanese = "竜槍"
+                    Japanese = "竜槍",
+                    Korean = "용의 창"
                 },
                 CompanyAction = false
             });
@@ -1503,7 +1623,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Disembowel",
                     French = "Éventration",
                     German = "Drachengriff",
-                    Japanese = "ディセムボウル"
+                    Japanese = "ディセムボウル",
+                    Korean = "몸통 가르기"
                 },
                 CompanyAction = false
             });
@@ -1515,7 +1636,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Straighter Shot",
                     French = "Tir à l'arc surpuissant",
                     German = "Direkter Schuss +",
-                    Japanese = "ストレートショット効果アップ"
+                    Japanese = "ストレートショット効果アップ",
+                    Korean = "직선 사격 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -1527,7 +1649,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hawk's Eye",
                     French = "Œil de faucon",
                     German = "Falkenauge",
-                    Japanese = "ホークアイ"
+                    Japanese = "ホークアイ",
+                    Korean = "매의 눈"
                 },
                 CompanyAction = false
             });
@@ -1539,7 +1662,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Venomous Bite",
                     French = "Morsure venimeuse",
                     German = "Infizierte Wunde",
-                    Japanese = "ベノムバイト"
+                    Japanese = "ベノムバイト",
+                    Korean = "독화살"
                 },
                 CompanyAction = false
             });
@@ -1551,7 +1675,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Raging Strikes",
                     French = "Tir furieux",
                     German = "Wütende Attacke",
-                    Japanese = "猛者の撃"
+                    Japanese = "猛者の撃",
+                    Korean = "용맹한 사격"
                 },
                 CompanyAction = false
             });
@@ -1563,7 +1688,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Up",
                     French = "Vulnérabilité physique augmentée",
                     German = "Erhöhte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ増加"
+                    Japanese = "被物理ダメージ増加",
+                    Korean = "물리 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -1575,7 +1701,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Quelling Strikes",
                     French = "Frappe silencieuse",
                     German = "Heimliche Attacke",
-                    Japanese = "静者の撃"
+                    Japanese = "静者の撃",
+                    Korean = "고요한 사격"
                 },
                 CompanyAction = false
             });
@@ -1587,7 +1714,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Barrage",
                     French = "Rafale de coups",
                     German = "Sperrfeuer",
-                    Japanese = "乱れ撃ち"
+                    Japanese = "乱れ撃ち",
+                    Korean = "다중 사격"
                 },
                 CompanyAction = false
             });
@@ -1599,7 +1727,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Windbite",
                     French = "Morsure du vent",
                     German = "Beißender Wind",
-                    Japanese = "ウィンドバイト"
+                    Japanese = "ウィンドバイト",
+                    Korean = "바람 화살"
                 },
                 CompanyAction = false
             });
@@ -1611,7 +1740,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Straight Shot",
                     French = "Tir droit",
                     German = "Direkter Schuss",
-                    Japanese = "ストレートショット"
+                    Japanese = "ストレートショット",
+                    Korean = "직선 사격"
                 },
                 CompanyAction = false
             });
@@ -1623,7 +1753,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Downpour of Death",
                     French = "Déluge mortel",
                     German = "Tödlicher Regen +",
-                    Japanese = "レイン・オブ・デス効果アップ"
+                    Japanese = "レイン・オブ・デス効果アップ",
+                    Korean = "죽음의 화살비 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -1635,7 +1766,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Quicker Nock",
                     French = "Salve fulgurante améliorée",
                     German = "Pfeilsalve +",
-                    Japanese = "クイックノック効果アップ"
+                    Japanese = "クイックノック効果アップ",
+                    Korean = "재빠른 활시위 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -1647,7 +1779,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Swiftsong",
                     French = "Chant rapide",
                     German = "Schmissiger Song",
-                    Japanese = "スウィフトソング"
+                    Japanese = "スウィフトソング",
+                    Korean = "질주의 노래"
                 },
                 CompanyAction = false
             });
@@ -1659,7 +1792,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Swiftsong",
                     French = "Chant rapide",
                     German = "Schmissiger Song",
-                    Japanese = "スウィフトソング：効果"
+                    Japanese = "スウィフトソング：効果",
+                    Korean = "질주의 노래"
                 },
                 CompanyAction = false
             });
@@ -1671,7 +1805,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mage's Ballad",
                     French = "Ballade du mage",
                     German = "Ballade des Weisen",
-                    Japanese = "賢人のバラード"
+                    Japanese = "賢人のバラード",
+                    Korean = "현자의 담시곡"
                 },
                 CompanyAction = false
             });
@@ -1683,7 +1818,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mage's Ballad",
                     French = "Ballade du mage",
                     German = "Ballade des Weisen",
-                    Japanese = "賢人のバラード：効果"
+                    Japanese = "賢人のバラード：効果",
+                    Korean = "현자의 담시곡"
                 },
                 CompanyAction = false
             });
@@ -1695,7 +1831,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Army's Paeon",
                     French = "Péan martial",
                     German = "Hymne der Krieger",
-                    Japanese = "軍神のパイオン"
+                    Japanese = "軍神のパイオン",
+                    Korean = "군신의 찬가"
                 },
                 CompanyAction = false
             });
@@ -1707,7 +1844,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Army's Paeon",
                     French = "Péan martial",
                     German = "Hymne der Krieger",
-                    Japanese = "軍神のパイオン：効果"
+                    Japanese = "軍神のパイオン：効果",
+                    Korean = "군신의 찬가"
                 },
                 CompanyAction = false
             });
@@ -1719,7 +1857,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Foe Requiem",
                     French = "Requiem ennemi",
                     German = "Requiem der Feinde",
-                    Japanese = "魔人のレクイエム"
+                    Japanese = "魔人のレクイエム",
+                    Korean = "마인의 진혼곡"
                 },
                 CompanyAction = false
             });
@@ -1731,7 +1870,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Foe Requiem",
                     French = "Requiem ennemi",
                     German = "Requiem der Feinde",
-                    Japanese = "魔人のレクイエム：効果"
+                    Japanese = "魔人のレクイエム：効果",
+                    Korean = "마인의 진혼곡"
                 },
                 CompanyAction = false
             });
@@ -1743,7 +1883,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Battle Voice",
                     French = "Voix de combat",
                     German = "Ode an die Seele",
-                    Japanese = "バトルボイス"
+                    Japanese = "バトルボイス",
+                    Korean = "전장의 노래"
                 },
                 CompanyAction = false
             });
@@ -1755,7 +1896,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Chameleon",
                     French = "Caméléon",
                     German = "Chamäleon",
-                    Japanese = "カメレオン"
+                    Japanese = "カメレオン",
+                    Korean = "카멜레온"
                 },
                 CompanyAction = false
             });
@@ -1767,7 +1909,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aero",
                     French = "Vent",
                     German = "Wind",
-                    Japanese = "エアロ"
+                    Japanese = "エアロ",
+                    Korean = "에어로"
                 },
                 CompanyAction = false
             });
@@ -1779,7 +1922,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aero II",
                     French = "Extra Vent",
                     German = "Windra",
-                    Japanese = "エアロラ"
+                    Japanese = "エアロラ",
+                    Korean = "에어로라"
                 },
                 CompanyAction = false
             });
@@ -1791,7 +1935,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Cleric Stance",
                     French = "Prestance du prêtre",
                     German = "Bußprediger",
-                    Japanese = "クルセードスタンス"
+                    Japanese = "クルセードスタンス",
+                    Korean = "성전 태세"
                 },
                 CompanyAction = false
             });
@@ -1803,7 +1948,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Protect",
                     French = "Bouclier",
                     German = "Protes",
-                    Japanese = "プロテス"
+                    Japanese = "プロテス",
+                    Korean = "프로테스"
                 },
                 CompanyAction = false
             });
@@ -1815,7 +1961,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Protect",
                     French = "Bouclier",
                     German = "Protes",
-                    Japanese = "プロテス"
+                    Japanese = "プロテス",
+                    Korean = "프로테스"
                 },
                 CompanyAction = false
             });
@@ -1827,7 +1974,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Raise",
                     French = "Vie",
                     German = "Wiederbeleben",
-                    Japanese = "蘇生"
+                    Japanese = "蘇生",
+                    Korean = "부활"
                 },
                 CompanyAction = false
             });
@@ -1839,7 +1987,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stun",
                     French = "Étourdissement",
                     German = "Betäubung",
-                    Japanese = "スタン"
+                    Japanese = "スタン",
+                    Korean = "기절"
                 },
                 CompanyAction = false
             });
@@ -1851,7 +2000,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Medica II",
                     French = "Extra Médica",
                     German = "Resedra",
-                    Japanese = "メディカラ"
+                    Japanese = "メディカラ",
+                    Korean = "메디카라"
                 },
                 CompanyAction = false
             });
@@ -1863,7 +2013,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stoneskin",
                     French = "Cuirasse",
                     German = "Steinhaut",
-                    Japanese = "ストンスキン"
+                    Japanese = "ストンスキン",
+                    Korean = "스톤스킨"
                 },
                 CompanyAction = false
             });
@@ -1875,7 +2026,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stoneskin (Physical)",
                     French = "Cuirasse (physique)",
                     German = "Steinhaut (physisch)",
-                    Japanese = "ストンスキン（物理攻撃）"
+                    Japanese = "ストンスキン（物理攻撃）",
+                    Korean = "스톤스킨(물리 공격)"
                 },
                 CompanyAction = false
             });
@@ -1887,7 +2039,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stoneskin (Magical)",
                     French = "Cuirasse (magique)",
                     German = "Steinhaut (magisch)",
-                    Japanese = "ストンスキン（魔法攻撃）"
+                    Japanese = "ストンスキン（魔法攻撃）",
+                    Korean = "스톤스킨(마법 공격)"
                 },
                 CompanyAction = false
             });
@@ -1899,7 +2052,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shroud of Saints",
                     French = "Voile des saints",
                     German = "Fispelstimme",
-                    Japanese = "女神の加護"
+                    Japanese = "女神の加護",
+                    Korean = "여신의 가호"
                 },
                 CompanyAction = false
             });
@@ -1911,7 +2065,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Freecure",
                     French = "Extra Soin amélioré",
                     German = "Vitra +",
-                    Japanese = "ケアルラ効果アップ"
+                    Japanese = "ケアルラ効果アップ",
+                    Korean = "케알라 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -1923,7 +2078,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Overcure",
                     French = "Méga Soin amélioré",
                     German = "Vitaga +",
-                    Japanese = "ケアルガ効果アップ"
+                    Japanese = "ケアルガ効果アップ",
+                    Korean = "케알가 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -1935,7 +2091,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Presence of Mind",
                     French = "Présence d'esprit",
                     German = "Geistesgegenwart",
-                    Japanese = "神速魔"
+                    Japanese = "神速魔",
+                    Korean = "쾌속의 마법"
                 },
                 CompanyAction = false
             });
@@ -1947,7 +2104,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Regen",
                     French = "Récup",
                     German = "Regena",
-                    Japanese = "リジェネ"
+                    Japanese = "リジェネ",
+                    Korean = "리제네"
                 },
                 CompanyAction = false
             });
@@ -1959,7 +2117,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Divine Seal",
                     French = "Sceau divin",
                     German = "Göttliches Siegel",
-                    Japanese = "ディヴァインシール"
+                    Japanese = "ディヴァインシール",
+                    Korean = "신성한 문장"
                 },
                 CompanyAction = false
             });
@@ -1971,7 +2130,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Surecast",
                     French = "Stoïcisme",
                     German = "Unbeirrbarkeit",
-                    Japanese = "堅実魔"
+                    Japanese = "堅実魔",
+                    Korean = "견고한 마법"
                 },
                 CompanyAction = false
             });
@@ -1983,7 +2143,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thunder",
                     French = "Foudre",
                     German = "Blitz",
-                    Japanese = "サンダー"
+                    Japanese = "サンダー",
+                    Korean = "선더"
                 },
                 CompanyAction = false
             });
@@ -1995,7 +2156,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thunder II",
                     French = "Extra Foudre",
                     German = "Blitzra",
-                    Japanese = "サンダラ"
+                    Japanese = "サンダラ",
+                    Korean = "선더라"
                 },
                 CompanyAction = false
             });
@@ -2007,7 +2169,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thunder III",
                     French = "Méga Foudre",
                     German = "Blitzga",
-                    Japanese = "サンダガ"
+                    Japanese = "サンダガ",
+                    Korean = "선더가"
                 },
                 CompanyAction = false
             });
@@ -2019,7 +2182,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thundercloud",
                     French = "Nuage d'orage",
                     German = "Blitz +",
-                    Japanese = "サンダー系魔法効果アップ"
+                    Japanese = "サンダー系魔法効果アップ",
+                    Korean = "선더 계열 마법 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -2031,7 +2195,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Firestarter",
                     French = "Pyromane",
                     German = "Feuga +",
-                    Japanese = "ファイガ効果アップ"
+                    Japanese = "ファイガ効果アップ",
+                    Korean = "파이가 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -2043,7 +2208,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Succor",
                     French = "Dogme de survie",
                     German = "Kurieren +",
-                    Japanese = "士気高揚の策効果アップ"
+                    Japanese = "士気高揚の策効果アップ",
+                    Korean = "사기고양책 효과 상승"
                 },
                 CompanyAction = false
             });
@@ -2055,7 +2221,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Swiftcast",
                     French = "Magie prompte",
                     German = "Spontaneität",
-                    Japanese = "迅速魔"
+                    Japanese = "迅速魔",
+                    Korean = "신속한 마법"
                 },
                 CompanyAction = false
             });
@@ -2067,7 +2234,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Manaward",
                     French = "Barrière de mana",
                     German = "Mana-Schild",
-                    Japanese = "マバリア"
+                    Japanese = "マバリア",
+                    Korean = "마배리어"
                 },
                 CompanyAction = false
             });
@@ -2079,7 +2247,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Manawall",
                     French = "Mur de mana",
                     German = "Mana-Wand",
-                    Japanese = "ウォール"
+                    Japanese = "ウォール",
+                    Korean = "마법 장벽"
                 },
                 CompanyAction = false
             });
@@ -2091,7 +2260,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Apocatastasis",
                     French = "Apocatastase",
                     German = "Apokatastasis",
-                    Japanese = "アポカタスタシス"
+                    Japanese = "アポカタスタシス",
+                    Korean = "구원"
                 },
                 CompanyAction = false
             });
@@ -2103,7 +2273,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ekpyrosis",
                     French = "Ekpyrosis",
                     German = "Ekpyrosis",
-                    Japanese = "アポカタスタシス不可"
+                    Japanese = "アポカタスタシス不可",
+                    Korean = "구원 불가"
                 },
                 CompanyAction = false
             });
@@ -2115,7 +2286,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Infirmity",
                     French = "Infirmité",
                     German = "Gebrechlichkeit",
-                    Japanese = "虚弱"
+                    Japanese = "虚弱",
+                    Korean = "허약"
                 },
                 CompanyAction = false
             });
@@ -2127,7 +2299,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Astral Fire",
                     French = "Feu astral",
                     German = "Lichtfeuer",
-                    Japanese = "アストラルファイア"
+                    Japanese = "アストラルファイア",
+                    Korean = "천상의 화염"
                 },
                 CompanyAction = false
             });
@@ -2139,7 +2312,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Astral Fire II",
                     French = "Feu astral II",
                     German = "Lichtfeuer II",
-                    Japanese = "アストラルファイアII"
+                    Japanese = "アストラルファイアII",
+                    Korean = "천상의 화염 2"
                 },
                 CompanyAction = false
             });
@@ -2151,7 +2325,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Astral Fire III",
                     French = "Feu astral III",
                     German = "Lichtfeuer III",
-                    Japanese = "アストラルファイアIII"
+                    Japanese = "アストラルファイアIII",
+                    Korean = "천상의 화염 3"
                 },
                 CompanyAction = false
             });
@@ -2163,7 +2338,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Umbral Ice",
                     French = "Glace ombrale",
                     German = "Schatteneis",
-                    Japanese = "アンブラルブリザード"
+                    Japanese = "アンブラルブリザード",
+                    Korean = "저승의 냉기"
                 },
                 CompanyAction = false
             });
@@ -2175,7 +2351,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Umbral Ice II",
                     French = "Glace ombrale II",
                     German = "Schatteneis II",
-                    Japanese = "アンブラルブリザードII"
+                    Japanese = "アンブラルブリザードII",
+                    Korean = "저승의 냉기 2"
                 },
                 CompanyAction = false
             });
@@ -2187,7 +2364,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Umbral Ice III",
                     French = "Glace ombrale III",
                     German = "Schatteneis III",
-                    Japanese = "アンブラルブリザードIII"
+                    Japanese = "アンブラルブリザードIII",
+                    Korean = "저승의 냉기 3"
                 },
                 CompanyAction = false
             });
@@ -2199,7 +2377,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bio",
                     French = "Bactérie",
                     German = "Bio",
-                    Japanese = "バイオ"
+                    Japanese = "バイオ",
+                    Korean = "바이오"
                 },
                 CompanyAction = false
             });
@@ -2211,7 +2390,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Miasma",
                     French = "Miasmes",
                     German = "Miasma",
-                    Japanese = "ミアズマ"
+                    Japanese = "ミアズマ",
+                    Korean = "미아즈마"
                 },
                 CompanyAction = false
             });
@@ -2223,7 +2403,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Disease",
                     French = "Maladie",
                     German = "Krankheit",
-                    Japanese = "病気"
+                    Japanese = "病気",
+                    Korean = "질병"
                 },
                 CompanyAction = true
             });
@@ -2235,7 +2416,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Virus",
                     French = "Virus",
                     German = "Virus",
-                    Japanese = "ウイルス"
+                    Japanese = "ウイルス",
+                    Korean = "바이러스"
                 },
                 CompanyAction = false
             });
@@ -2247,7 +2429,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fever",
                     French = "Virus de l'esprit",
                     German = "Geistesvirus",
-                    Japanese = "マインドウイルス"
+                    Japanese = "マインドウイルス",
+                    Korean = "정신 바이러스"
                 },
                 CompanyAction = false
             });
@@ -2259,7 +2442,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sustain",
                     French = "Transfusion",
                     German = "Erhaltung",
-                    Japanese = "サステイン"
+                    Japanese = "サステイン",
+                    Korean = "독려"
                 },
                 CompanyAction = false
             });
@@ -2271,7 +2455,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Eye for an Eye",
                     French = "Œil pour œil",
                     German = "Auge um Auge",
-                    Japanese = "アイ・フォー・アイ"
+                    Japanese = "アイ・フォー・アイ",
+                    Korean = "눈에는 눈"
                 },
                 CompanyAction = false
             });
@@ -2283,7 +2468,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Eye for an Eye",
                     French = "Garde-corps",
                     German = "Auge um Auge",
-                    Japanese = "アイ・フォー・アイ：効果"
+                    Japanese = "アイ・フォー・アイ：効果",
+                    Korean = "눈에는 눈"
                 },
                 CompanyAction = false
             });
@@ -2295,7 +2481,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rouse",
                     French = "Stimulation",
                     German = "Aufmuntern",
-                    Japanese = "ラウズ"
+                    Japanese = "ラウズ",
+                    Korean = "각성"
                 },
                 CompanyAction = false
             });
@@ -2307,7 +2494,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Miasma II",
                     French = "Extra Miasmes",
                     German = "Miasra",
-                    Japanese = "ミアズラ"
+                    Japanese = "ミアズラ",
+                    Korean = "미아즈라"
                 },
                 CompanyAction = false
             });
@@ -2319,7 +2507,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bio II",
                     French = "Extra Bactérie",
                     German = "Biora",
-                    Japanese = "バイオラ"
+                    Japanese = "バイオラ",
+                    Korean = "바이오라"
                 },
                 CompanyAction = false
             });
@@ -2331,7 +2520,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shadow Flare",
                     French = "Éruption ténébreuse",
                     German = "Schattenflamme",
-                    Japanese = "シャドウフレア"
+                    Japanese = "シャドウフレア",
+                    Korean = "섀도우 플레어"
                 },
                 CompanyAction = false
             });
@@ -2354,7 +2544,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Spur",
                     French = "Encouragement",
                     German = "Ansporn",
-                    Japanese = "スパー"
+                    Japanese = "スパー",
+                    Korean = "자극"
                 },
                 CompanyAction = false
             });
@@ -2366,7 +2557,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow",
                     French = "Lenteur",
                     German = "Gemach",
-                    Japanese = "スロウ"
+                    Japanese = "スロウ",
+                    Korean = "둔화"
                 },
                 CompanyAction = false
             });
@@ -2378,7 +2570,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shield Wall",
                     French = "Mur protecteur",
                     German = "Schutzschild",
-                    Japanese = "シールドウォール"
+                    Japanese = "シールドウォール",
+                    Korean = "방패의 벽"
                 },
                 CompanyAction = false
             });
@@ -2390,7 +2583,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mighty Guard",
                     French = "Garde puissante",
                     German = "Totalabwehr",
-                    Japanese = "マイティガード"
+                    Japanese = "マイティガード",
+                    Korean = "강력 방어"
                 },
                 CompanyAction = false
             });
@@ -2402,7 +2596,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Last Bastion",
                     French = "Dernier bastion",
                     German = "Letzte Bastion",
-                    Japanese = "ラストバスティオン"
+                    Japanese = "ラストバスティオン",
+                    Korean = "철벽 요새"
                 },
                 CompanyAction = false
             });
@@ -2414,7 +2609,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blaze Spikes",
                     French = "Pointes de feu",
                     German = "Feuerstachel",
-                    Japanese = "ブレイズスパイク"
+                    Japanese = "ブレイズスパイク",
+                    Korean = "화염 보호막"
                 },
                 CompanyAction = false
             });
@@ -2426,7 +2622,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ice Spikes",
                     French = "Pointes de glace",
                     German = "Eisstachel",
-                    Japanese = "アイススパイク"
+                    Japanese = "アイススパイク",
+                    Korean = "얼음 보호막"
                 },
                 CompanyAction = false
             });
@@ -2438,7 +2635,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shock Spikes",
                     French = "Pointes de foudre",
                     German = "Schockstachel",
-                    Japanese = "ショックスパイク"
+                    Japanese = "ショックスパイク",
+                    Korean = "번개 보호막"
                 },
                 CompanyAction = false
             });
@@ -2450,7 +2648,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Up",
                     French = "Vulnérabilité physique augmentée",
                     German = "Erhöhte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ増加"
+                    Japanese = "被物理ダメージ増加",
+                    Korean = "물리 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -2462,7 +2661,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stun",
                     French = "Étourdissement",
                     German = "Betäubung",
-                    Japanese = "スタン"
+                    Japanese = "スタン",
+                    Korean = "기절"
                 },
                 CompanyAction = false
             });
@@ -2474,7 +2674,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Up",
                     French = "Vulnérabilité augmentée",
                     German = "Erhöhte Verwundbarkeit",
-                    Japanese = "被ダメージ上昇"
+                    Japanese = "被ダメージ上昇",
+                    Korean = "받는 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -2486,7 +2687,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Boost",
                     French = "Accumulation",
                     German = "Akkumulation",
-                    Japanese = "力溜め"
+                    Japanese = "力溜め",
+                    Korean = "힘 모으기"
                 },
                 CompanyAction = false
             });
@@ -2498,7 +2700,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enfire",
                     French = "EndoFeu",
                     German = "Runenwaffe: Feuer",
-                    Japanese = "魔法剣・火"
+                    Japanese = "魔法剣・火",
+                    Korean = "마법검: 불"
                 },
                 CompanyAction = false
             });
@@ -2510,7 +2713,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enblizzard",
                     French = "EndoGlace",
                     German = "Runenwaffe: Eis",
-                    Japanese = "魔法剣・氷"
+                    Japanese = "魔法剣・氷",
+                    Korean = "마법검: 얼음"
                 },
                 CompanyAction = false
             });
@@ -2522,7 +2726,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enaero",
                     French = "EndoVent",
                     German = "Runenwaffe: Wind",
-                    Japanese = "魔法剣・風"
+                    Japanese = "魔法剣・風",
+                    Korean = "마법검: 바람"
                 },
                 CompanyAction = false
             });
@@ -2534,7 +2739,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enstone",
                     French = "EndoPierre",
                     German = "Runenwaffe: Erde",
-                    Japanese = "魔法剣・土"
+                    Japanese = "魔法剣・土",
+                    Korean = "마법검: 땅"
                 },
                 CompanyAction = false
             });
@@ -2546,7 +2752,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enthunder",
                     French = "EndoFoudre",
                     German = "Runenwaffe: Blitz",
-                    Japanese = "魔法剣・雷"
+                    Japanese = "魔法剣・雷",
+                    Korean = "마법검: 번개"
                 },
                 CompanyAction = false
             });
@@ -2558,7 +2765,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enwater",
                     French = "EndoEau",
                     German = "Runenwaffe: Wasser",
-                    Japanese = "魔法剣・水"
+                    Japanese = "魔法剣・水",
+                    Korean = "마법검: 물"
                 },
                 CompanyAction = false
             });
@@ -2570,7 +2778,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Doom",
                     French = "Glas",
                     German = "Todesurteil",
-                    Japanese = "死の宣告"
+                    Japanese = "死の宣告",
+                    Korean = "죽음의 선고"
                 },
                 CompanyAction = false
             });
@@ -2582,7 +2791,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sharpened Knife",
                     French = "Couteau aiguisé",
                     German = "Gewetztes Messer",
-                    Japanese = "研がれた包丁"
+                    Japanese = "研がれた包丁",
+                    Korean = "잘 갈린 식칼"
                 },
                 CompanyAction = false
             });
@@ -2594,7 +2804,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "True Sight",
                     French = "Vision véritable",
                     German = "Wahre Gestalt",
-                    Japanese = "見破り"
+                    Japanese = "見破り",
+                    Korean = "간파"
                 },
                 CompanyAction = false
             });
@@ -2606,7 +2817,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Pacification",
                     French = "Tranquillisation",
                     German = "Besänftigung",
-                    Japanese = "懐柔状態"
+                    Japanese = "懐柔状態",
+                    Korean = "회유 상태"
                 },
                 CompanyAction = false
             });
@@ -2618,7 +2830,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Agitation",
                     French = "Énervement",
                     German = "Aufstachelung",
-                    Japanese = "懐柔失敗"
+                    Japanese = "懐柔失敗",
+                    Korean = "회유 실패"
                 },
                 CompanyAction = false
             });
@@ -2630,7 +2843,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Down",
                     French = "Malus de dégâts",
                     German = "Schaden -",
-                    Japanese = "ダメージ低下"
+                    Japanese = "ダメージ低下",
+                    Korean = "공격 피해량 감소"
                 },
                 CompanyAction = false
             });
@@ -2642,7 +2856,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Paralysis",
                     French = "Paralysie",
                     German = "Paralyse",
-                    Japanese = "麻痺"
+                    Japanese = "麻痺",
+                    Korean = "마비"
                 },
                 CompanyAction = false
             });
@@ -2654,7 +2869,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Triangulate",
                     French = "Forestier",
                     German = "Geodäsie",
-                    Japanese = "トライアングレート"
+                    Japanese = "トライアングレート",
+                    Korean = "원예가의 눈"
                 },
                 CompanyAction = false
             });
@@ -2666,7 +2882,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gathering Rate Up",
                     French = "Récolte améliorée",
                     German = "Sammelrate erhöht",
-                    Japanese = "採集獲得率アップ"
+                    Japanese = "採集獲得率アップ",
+                    Korean = "채집 획득률 상승"
                 },
                 CompanyAction = false
             });
@@ -2678,7 +2895,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gathering Yield Up",
                     French = "Récolte abondante",
                     German = "Sammelgewinn erhöht",
-                    Japanese = "採集獲得数アップ"
+                    Japanese = "採集獲得数アップ",
+                    Korean = "채집 획득 수 증가"
                 },
                 CompanyAction = false
             });
@@ -2690,7 +2908,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gathering Fortune Up",
                     French = "Récolte de qualité",
                     German = "Sammelglück erhöht",
-                    Japanese = "採集HQ獲得率アップ"
+                    Japanese = "採集HQ獲得率アップ",
+                    Korean = "채집 HQ 획득률 상승"
                 },
                 CompanyAction = false
             });
@@ -2702,7 +2921,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Truth of Forests",
                     French = "Science des végétaux",
                     German = "Flurenthüllung",
-                    Japanese = "トゥルー・オブ・フォレスト"
+                    Japanese = "トゥルー・オブ・フォレスト",
+                    Korean = "숲의 탐구자"
                 },
                 CompanyAction = false
             });
@@ -2714,7 +2934,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Truth of Mountains",
                     French = "Science des minéraux",
                     German = "Tellurische Enthüllung",
-                    Japanese = "トゥルー・オブ・ミネラル"
+                    Japanese = "トゥルー・オブ・ミネラル",
+                    Korean = "광산의 탐구자"
                 },
                 CompanyAction = false
             });
@@ -2726,7 +2947,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Byregot's Ward",
                     French = "Grâce de Byregot",
                     German = "Byregots Segen",
-                    Japanese = "ビエルゴの加護"
+                    Japanese = "ビエルゴの加護",
+                    Korean = "비레고의 가호"
                 },
                 CompanyAction = false
             });
@@ -2738,7 +2960,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Nophica's Ward",
                     French = "Grâce de Nophica",
                     German = "Nophicas Segen",
-                    Japanese = "ノフィカの加護"
+                    Japanese = "ノフィカの加護",
+                    Korean = "노피카의 가호"
                 },
                 CompanyAction = false
             });
@@ -2750,7 +2973,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Prospect",
                     French = "Prospecteur",
                     German = "Prospektion",
-                    Japanese = "プロスペクト"
+                    Japanese = "プロスペクト",
+                    Korean = "광부의 눈"
                 },
                 CompanyAction = false
             });
@@ -2762,7 +2986,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Haste",
                     French = "Hâte",
                     German = "Hast",
-                    Japanese = "ヘイスト"
+                    Japanese = "ヘイスト",
+                    Korean = "헤이스트"
                 },
                 CompanyAction = false
             });
@@ -2774,7 +2999,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Seduced",
                     French = "Séduction",
                     German = "Versuchung",
-                    Japanese = "誘惑"
+                    Japanese = "誘惑",
+                    Korean = "유혹"
                 },
                 CompanyAction = false
             });
@@ -2786,7 +3012,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Menphina's Ward",
                     French = "Grâce de Menphina",
                     German = "Menphinas Segen",
-                    Japanese = "メネフィナの加護"
+                    Japanese = "メネフィナの加護",
+                    Korean = "메느피나의 가호"
                 },
                 CompanyAction = false
             });
@@ -2798,7 +3025,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Nald'thal's Ward",
                     French = "Grâce de Nald'thal",
                     German = "Nald'thals Segen",
-                    Japanese = "ナルザルの加護"
+                    Japanese = "ナルザルの加護",
+                    Korean = "날달의 가호"
                 },
                 CompanyAction = false
             });
@@ -2810,7 +3038,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Llymlaen's Ward",
                     French = "Grâce de Llymlaen",
                     German = "Llymlaens Segen",
-                    Japanese = "リムレーンの加護"
+                    Japanese = "リムレーンの加護",
+                    Korean = "리믈렌의 가호"
                 },
                 CompanyAction = false
             });
@@ -2822,7 +3051,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thaliak's Ward",
                     French = "Grâce de Thaliak",
                     German = "Thaliaks Segen",
-                    Japanese = "サリャクの加護"
+                    Japanese = "サリャクの加護",
+                    Korean = "살리아크의 가호"
                 },
                 CompanyAction = false
             });
@@ -2834,7 +3064,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Preparation",
                     French = "Préparation",
                     German = "Vorausplanung",
-                    Japanese = "プレパレーション"
+                    Japanese = "プレパレーション",
+                    Korean = "통찰"
                 },
                 CompanyAction = false
             });
@@ -2846,7 +3077,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Arbor Call",
                     French = "Dendrologie",
                     German = "Ruf des Waldes",
-                    Japanese = "アーバーコール"
+                    Japanese = "アーバーコール",
+                    Korean = "숲의 부름"
                 },
                 CompanyAction = false
             });
@@ -2858,7 +3090,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Lay of the Land",
                     French = "Géologie",
                     German = "Bodenbefund",
-                    Japanese = "ランドサーベイ"
+                    Japanese = "ランドサーベイ",
+                    Korean = "바위의 부름"
                 },
                 CompanyAction = false
             });
@@ -2870,7 +3103,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Windburn",
                     French = "Brûlure du vent",
                     German = "Beißender Wind",
-                    Japanese = "裂傷"
+                    Japanese = "裂傷",
+                    Korean = "열상"
                 },
                 CompanyAction = false
             });
@@ -2882,7 +3116,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Choco Beak",
                     French = "Choco-bec",
                     German = "Chocobo-Schnabel",
-                    Japanese = "チョコビーク"
+                    Japanese = "チョコビーク",
+                    Korean = "초코 쪼기"
                 },
                 CompanyAction = false
             });
@@ -2894,7 +3129,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Choco Regen",
                     French = "Choco-récup",
                     German = "Chocobo-Regena",
-                    Japanese = "チョコリジェネ"
+                    Japanese = "チョコリジェネ",
+                    Korean = "초코 리제네"
                 },
                 CompanyAction = false
             });
@@ -2906,7 +3142,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Choco Surge",
                     French = "Choco-ardeur",
                     German = "Chocobo-Quelle",
-                    Japanese = "チョコサージ"
+                    Japanese = "チョコサージ",
+                    Korean = "초코 쇄도"
                 },
                 CompanyAction = false
             });
@@ -2918,7 +3155,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "The Echo",
                     French = "L'Écho",
                     German = "Kraft des Transzendierens",
-                    Japanese = "超える力"
+                    Japanese = "超える力",
+                    Korean = "초월하는 힘"
                 },
                 CompanyAction = false
             });
@@ -2930,7 +3168,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Heavy",
                     French = "Pesanteur",
                     German = "Gewicht",
-                    Japanese = "ヘヴィ"
+                    Japanese = "ヘヴィ",
+                    Korean = "과중력"
                 },
                 CompanyAction = false
             });
@@ -2942,7 +3181,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blessing of Light",
                     French = "Bénédiction de la Lumière",
                     German = "Gnade des Lichts",
-                    Japanese = "光の加護"
+                    Japanese = "光の加護",
+                    Korean = "빛의 가호"
                 },
                 CompanyAction = false
             });
@@ -2954,7 +3194,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Arbor Call II",
                     French = "Dendrologie II",
                     German = "Ruf des Waldes II",
-                    Japanese = "アーバーコールII"
+                    Japanese = "アーバーコールII",
+                    Korean = "숲의 부름 2"
                 },
                 CompanyAction = false
             });
@@ -2966,7 +3207,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Lay of the Land II",
                     French = "Géologie II",
                     German = "Bodenbefund II",
-                    Japanese = "ランドサーベイII"
+                    Japanese = "ランドサーベイII",
+                    Korean = "바위의 부름 2"
                 },
                 CompanyAction = false
             });
@@ -2978,7 +3220,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fracture",
                     French = "Fracture",
                     German = "Knochenbrecher",
-                    Japanese = "フラクチャー"
+                    Japanese = "フラクチャー",
+                    Korean = "골절"
                 },
                 CompanyAction = false
             });
@@ -2990,7 +3233,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sanction",
                     French = "Sanction",
                     German = "Ermächtigung",
-                    Japanese = "サンクション"
+                    Japanese = "サンクション",
+                    Korean = "강화 승인"
                 },
                 CompanyAction = false
             });
@@ -3002,7 +3246,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Demolish",
                     French = "Démolition",
                     German = "Demolieren",
-                    Japanese = "破砕拳"
+                    Japanese = "破砕拳",
+                    Korean = "파쇄권"
                 },
                 CompanyAction = false
             });
@@ -3014,7 +3259,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rain of Death",
                     French = "Pluie mortelle",
                     German = "Tödlicher Regen",
-                    Japanese = "レイン・オブ・デス"
+                    Japanese = "レイン・オブ・デス",
+                    Korean = "죽음의 화살비"
                 },
                 CompanyAction = false
             });
@@ -3026,7 +3272,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Circle of Scorn",
                     French = "Cercle du destin",
                     German = "Kreis der Verachtung",
-                    Japanese = "サークル・オブ・ドゥーム"
+                    Japanese = "サークル・オブ・ドゥーム",
+                    Korean = "파멸의 진"
                 },
                 CompanyAction = false
             });
@@ -3038,7 +3285,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Flaming Arrow",
                     French = "Flèche enflammée",
                     German = "Flammenpfeil",
-                    Japanese = "フレイミングアロー"
+                    Japanese = "フレイミングアロー",
+                    Korean = "불타는 화살"
                 },
                 CompanyAction = false
             });
@@ -3050,7 +3298,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Burns",
                     French = "Brûlure",
                     German = "Brandwunde",
-                    Japanese = "火傷"
+                    Japanese = "火傷",
+                    Korean = "화상"
                 },
                 CompanyAction = false
             });
@@ -3062,7 +3311,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Inner Quiet",
                     French = "Calme intérieur",
                     German = "Innere Ruhe",
-                    Japanese = "インナークワイエット"
+                    Japanese = "インナークワイエット",
+                    Korean = "정신 집중"
                 },
                 CompanyAction = false
             });
@@ -3074,7 +3324,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Waste Not",
                     French = "Parcimonie",
                     German = "Nachhaltigkeit",
-                    Japanese = "倹約"
+                    Japanese = "倹約",
+                    Korean = "근검절약"
                 },
                 CompanyAction = false
             });
@@ -3086,7 +3337,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Steady Hand",
                     French = "Main sûre",
                     German = "Ruhige Hand",
-                    Japanese = "ステディハンド"
+                    Japanese = "ステディハンド",
+                    Korean = "안정된 솜씨"
                 },
                 CompanyAction = false
             });
@@ -3098,7 +3350,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Great Strides",
                     French = "Grands progrès",
                     German = "Große Schritte",
-                    Japanese = "グレートストライド"
+                    Japanese = "グレートストライド",
+                    Korean = "장족의 발전"
                 },
                 CompanyAction = false
             });
@@ -3110,7 +3363,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ingenuity",
                     French = "Ingéniosité",
                     German = "Einfallsreichtum",
-                    Japanese = "工面算段"
+                    Japanese = "工面算段",
+                    Korean = "독창적 발상"
                 },
                 CompanyAction = false
             });
@@ -3122,7 +3376,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ingenuity II",
                     French = "Ingéniosité II",
                     German = "Einfallsreichtum II",
-                    Japanese = "工面算段II"
+                    Japanese = "工面算段II",
+                    Korean = "독창적 발상 2"
                 },
                 CompanyAction = false
             });
@@ -3134,7 +3389,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Waste Not II",
                     French = "Parcimonie II",
                     German = "Nachhaltigkeit II",
-                    Japanese = "倹約II"
+                    Japanese = "倹約II",
+                    Korean = "근검절약 2"
                 },
                 CompanyAction = false
             });
@@ -3146,7 +3402,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Manipulation",
                     French = "Manipulation",
                     German = "Manipulation",
-                    Japanese = "マニピュレーション"
+                    Japanese = "マニピュレーション",
+                    Korean = "교묘한 손놀림"
                 },
                 CompanyAction = false
             });
@@ -3158,7 +3415,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Innovation",
                     French = "Innovation",
                     German = "Innovation",
-                    Japanese = "イノベーション"
+                    Japanese = "イノベーション",
+                    Korean = "혁신"
                 },
                 CompanyAction = false
             });
@@ -3170,7 +3428,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Reclaim",
                     French = "Récupération",
                     German = "Reklamation",
-                    Japanese = "リクレイム"
+                    Japanese = "リクレイム",
+                    Korean = "재료 환원"
                 },
                 CompanyAction = false
             });
@@ -3182,7 +3441,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Comfort Zone",
                     French = "Zone de confort",
                     German = "Komfortzone",
-                    Japanese = "コンファートゾーン"
+                    Japanese = "コンファートゾーン",
+                    Korean = "작업 요령"
                 },
                 CompanyAction = false
             });
@@ -3194,7 +3454,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Steady Hand II",
                     French = "Main sûre II",
                     German = "Ruhige Hand II",
-                    Japanese = "ステディハンドII"
+                    Japanese = "ステディハンドII",
+                    Korean = "안정된 솜씨 2"
                 },
                 CompanyAction = false
             });
@@ -3206,7 +3467,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -3218,7 +3480,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Flesh Wound",
                     French = "Blessure physique",
                     German = "Fleischwunde",
-                    Japanese = "切傷"
+                    Japanese = "切傷",
+                    Korean = "절상"
                 },
                 CompanyAction = false
             });
@@ -3230,7 +3493,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stab Wound",
                     French = "Perforation",
                     German = "Stichwunde",
-                    Japanese = "刺傷"
+                    Japanese = "刺傷",
+                    Korean = "자상"
                 },
                 CompanyAction = false
             });
@@ -3242,7 +3506,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Concussion",
                     French = "Concussion",
                     German = "Prellung",
-                    Japanese = "打撲傷"
+                    Japanese = "打撲傷",
+                    Korean = "타박상"
                 },
                 CompanyAction = false
             });
@@ -3254,7 +3519,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Burns",
                     French = "Brûlure",
                     German = "Brandwunde",
-                    Japanese = "火傷"
+                    Japanese = "火傷",
+                    Korean = "화상"
                 },
                 CompanyAction = false
             });
@@ -3266,7 +3532,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frostbite",
                     French = "Gelure",
                     German = "Erfrierung",
-                    Japanese = "凍傷"
+                    Japanese = "凍傷",
+                    Korean = "동상"
                 },
                 CompanyAction = false
             });
@@ -3278,7 +3545,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Windburn",
                     French = "Brûlure du vent",
                     German = "Beißender Wind",
-                    Japanese = "裂傷"
+                    Japanese = "裂傷",
+                    Korean = "열상"
                 },
                 CompanyAction = false
             });
@@ -3290,7 +3558,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sludge",
                     French = "Emboué",
                     German = "Schlamm",
-                    Japanese = "汚泥"
+                    Japanese = "汚泥",
+                    Korean = "진흙탕"
                 },
                 CompanyAction = false
             });
@@ -3302,7 +3571,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Electrocution",
                     French = "Électrocution",
                     German = "Stromschlag",
-                    Japanese = "感電"
+                    Japanese = "感電",
+                    Korean = "감전"
                 },
                 CompanyAction = false
             });
@@ -3314,7 +3584,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dropsy",
                     French = "Œdème",
                     German = "Wassersucht",
-                    Japanese = "水毒"
+                    Japanese = "水毒",
+                    Korean = "물독"
                 },
                 CompanyAction = false
             });
@@ -3326,7 +3597,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bleeding",
                     French = "Saignant",
                     German = "Blutung",
-                    Japanese = "ペイン"
+                    Japanese = "ペイン",
+                    Korean = "고통"
                 },
                 CompanyAction = false
             });
@@ -3338,7 +3610,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Recuperation",
                     French = "Rétablissement",
                     German = "Segnung",
-                    Japanese = "治癒"
+                    Japanese = "治癒",
+                    Korean = "치유"
                 },
                 CompanyAction = false
             });
@@ -3350,7 +3623,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Poison +1",
                     French = "Poison",
                     German = "Gift +1",
-                    Japanese = "毒"
+                    Japanese = "毒",
+                    Korean = "독"
                 },
                 CompanyAction = false
             });
@@ -3362,7 +3636,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Voice of Valor",
                     French = "Voix de la valeur",
                     German = "Lob des Kämpen",
-                    Japanese = "勇戦の誉れ：効果"
+                    Japanese = "勇戦の誉れ：効果",
+                    Korean = "용기의 영예"
                 },
                 CompanyAction = false
             });
@@ -3374,7 +3649,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Voice of Fortitude",
                     French = "Voix de la ténacité",
                     German = "Stimme der Stärke",
-                    Japanese = "堅忍の誉れ：効果"
+                    Japanese = "堅忍の誉れ：効果",
+                    Korean = "인내의 영예"
                 },
                 CompanyAction = false
             });
@@ -3386,7 +3662,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Relentless March",
                     French = "Marche implacable",
                     German = "無敵の進撃マーチ：効果",
-                    Japanese = "無敵の進撃マーチ：効果"
+                    Japanese = "無敵の進撃マーチ：効果",
+                    Korean = "무적의 진격 행진곡"
                 },
                 CompanyAction = false
             });
@@ -3398,7 +3675,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rehabilitation",
                     French = "Recouvrement",
                     German = "Rehabilitation",
-                    Japanese = "徐々にＨＰ回復"
+                    Japanese = "徐々にＨＰ回復",
+                    Korean = "서서히 HP 회복"
                 },
                 CompanyAction = false
             });
@@ -3410,7 +3688,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bind",
                     French = "Entrave",
                     German = "Fessel",
-                    Japanese = "バインド"
+                    Japanese = "バインド",
+                    Korean = "속박"
                 },
                 CompanyAction = false
             });
@@ -3422,7 +3701,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Damage Down",
                     French = "Malus de dégâts physiques",
                     German = "Schadenswert -",
-                    Japanese = "物理ダメージ低下"
+                    Japanese = "物理ダメージ低下",
+                    Korean = "물리 공격 피해량 감소"
                 },
                 CompanyAction = false
             });
@@ -3434,7 +3714,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mana Modulation",
                     French = "Anormalité magique",
                     German = "Magieschaden -",
-                    Japanese = "魔力変調"
+                    Japanese = "魔力変調",
+                    Korean = "마력 변조"
                 },
                 CompanyAction = false
             });
@@ -3446,7 +3727,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dropsy",
                     French = "Œdème",
                     German = "Wassersucht",
-                    Japanese = "水毒"
+                    Japanese = "水毒",
+                    Korean = "물독"
                 },
                 CompanyAction = false
             });
@@ -3458,7 +3740,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Burns",
                     French = "Brûlure",
                     German = "Brandwunde",
-                    Japanese = "火傷"
+                    Japanese = "火傷",
+                    Korean = "화상"
                 },
                 CompanyAction = false
             });
@@ -3470,7 +3753,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frostbite",
                     French = "Gelure",
                     German = "Erfrierung",
-                    Japanese = "凍傷"
+                    Japanese = "凍傷",
+                    Korean = "동상"
                 },
                 CompanyAction = false
             });
@@ -3482,7 +3766,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Windburn",
                     French = "Brûlure du vent",
                     German = "Beißender Wind",
-                    Japanese = "裂傷"
+                    Japanese = "裂傷",
+                    Korean = "열상"
                 },
                 CompanyAction = false
             });
@@ -3494,7 +3779,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sludge",
                     French = "Emboué",
                     German = "Schlamm",
-                    Japanese = "汚泥"
+                    Japanese = "汚泥",
+                    Korean = "진흙탕"
                 },
                 CompanyAction = false
             });
@@ -3506,7 +3792,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Electrocution",
                     French = "Électrocution",
                     German = "Stromschlag",
-                    Japanese = "感電"
+                    Japanese = "感電",
+                    Korean = "감전"
                 },
                 CompanyAction = false
             });
@@ -3518,7 +3805,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dropsy",
                     French = "Œdème",
                     German = "Wassersucht",
-                    Japanese = "水毒"
+                    Japanese = "水毒",
+                    Korean = "물독"
                 },
                 CompanyAction = false
             });
@@ -3530,7 +3818,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -3542,7 +3831,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hundred Fists",
                     French = "Cent poings",
                     German = "100 Fäuste",
-                    Japanese = "百烈拳"
+                    Japanese = "百烈拳",
+                    Korean = "백렬권"
                 },
                 CompanyAction = false
             });
@@ -3554,7 +3844,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fetters",
                     French = "Attache",
                     German = "Granitgefängnis",
-                    Japanese = "拘束"
+                    Japanese = "拘束",
+                    Korean = "구속"
                 },
                 CompanyAction = false
             });
@@ -3566,7 +3857,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Skill Speed Up",
                     French = "Bonus de vivacité",
                     German = "Schnelligkeit +",
-                    Japanese = "スキルスピード上昇"
+                    Japanese = "スキルスピード上昇",
+                    Korean = "기술 시전 속도 상승"
                 },
                 CompanyAction = false
             });
@@ -3578,7 +3870,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Spell Speed Up",
                     French = "Bonus de célérité",
                     German = "Zaubertempo +",
-                    Japanese = "スペルスピード上昇"
+                    Japanese = "スペルスピード上昇",
+                    Korean = "마법 시전 속도 상승"
                 },
                 CompanyAction = false
             });
@@ -3590,7 +3883,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Goldbile",
                     French = "Eau bilieuse",
                     German = "Goldlunge",
-                    Japanese = "黄毒沼"
+                    Japanese = "黄毒沼",
+                    Korean = "금빛 독늪"
                 },
                 CompanyAction = false
             });
@@ -3602,7 +3896,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hysteria",
                     French = "Hystérie",
                     German = "Panik",
-                    Japanese = "恐慌"
+                    Japanese = "恐慌",
+                    Korean = "공황"
                 },
                 CompanyAction = false
             });
@@ -3614,7 +3909,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Galvanize",
                     French = "Traité du réconfort",
                     German = "Adloquium",
-                    Japanese = "鼓舞"
+                    Japanese = "鼓舞",
+                    Korean = "격려"
                 },
                 CompanyAction = false
             });
@@ -3626,7 +3922,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sacred Soil",
                     French = "Dogme de survie",
                     German = "Geweihte Erde",
-                    Japanese = "野戦治療の陣"
+                    Japanese = "野戦治療の陣",
+                    Korean = "야전치유진"
                 },
                 CompanyAction = false
             });
@@ -3638,7 +3935,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sacred Soil",
                     French = "Dogme de survie",
                     German = "Geweihte Erde",
-                    Japanese = "野戦治療の陣：効果"
+                    Japanese = "野戦治療の陣：効果",
+                    Korean = "야전치유진"
                 },
                 CompanyAction = false
             });
@@ -3650,7 +3948,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -3662,7 +3961,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Critical Strikes",
                     French = "Coups critiques",
                     German = "Kritische Attacke",
-                    Japanese = "クリティカル攻撃"
+                    Japanese = "クリティカル攻撃",
+                    Korean = "극대화 공격"
                 },
                 CompanyAction = false
             });
@@ -3674,7 +3974,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gold Lung",
                     French = "Poumons bilieux",
                     German = "Galle",
-                    Japanese = "黄毒"
+                    Japanese = "黄毒",
+                    Korean = "금빛 독"
                 },
                 CompanyAction = false
             });
@@ -3686,7 +3987,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Burrs",
                     French = "Bardanes",
                     German = "Klettenpilz",
-                    Japanese = "粘菌"
+                    Japanese = "粘菌",
+                    Korean = "점균"
                 },
                 CompanyAction = false
             });
@@ -3698,7 +4000,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetherflow",
                     French = "Flux d'éther",
                     German = "Ätherfluss",
-                    Japanese = "エーテルフロー"
+                    Japanese = "エーテルフロー",
+                    Korean = "에테르 순환"
                 },
                 CompanyAction = false
             });
@@ -3710,7 +4013,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "The Dragon's Curse",
                     French = "Malédiction du dragon",
                     German = "Bann des Drachen",
-                    Japanese = "竜の呪縛"
+                    Japanese = "竜の呪縛",
+                    Korean = "용의 저주"
                 },
                 CompanyAction = false
             });
@@ -3722,7 +4026,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Inner Dragon",
                     French = "Dragon intérieur",
                     German = "Kraft des Drachen",
-                    Japanese = "竜の力"
+                    Japanese = "竜の力",
+                    Korean = "용의 힘"
                 },
                 CompanyAction = false
             });
@@ -3734,7 +4039,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Voice of Valor",
                     French = "Voix de la valeur",
                     German = "Lob des Kämpen",
-                    Japanese = "勇戦の誉れ"
+                    Japanese = "勇戦の誉れ",
+                    Korean = "용기의 영예"
                 },
                 CompanyAction = false
             });
@@ -3746,7 +4052,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Voice of Fortitude",
                     French = "Voix de la ténacité",
                     German = "Stimme der Stärke",
-                    Japanese = "堅忍の誉れ"
+                    Japanese = "堅忍の誉れ",
+                    Korean = "인내의 영예"
                 },
                 CompanyAction = false
             });
@@ -3758,7 +4065,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Relentless March",
                     French = "Marche implacable",
                     German = "Marsch ohne Rücksicht",
-                    Japanese = "無敵の進撃マーチ（仮）"
+                    Japanese = "無敵の進撃マーチ（仮）",
+                    Korean = "무적의 진격 행진곡(가칭)"
                 },
                 CompanyAction = false
             });
@@ -3770,7 +4078,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Curl",
                     French = "Pelotonnement",
                     German = "Einrollen",
-                    Japanese = "かたまり"
+                    Japanese = "かたまり",
+                    Korean = "웅크리기"
                 },
                 CompanyAction = false
             });
@@ -3782,7 +4091,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Earthen Ward",
                     French = "Barrière terrestre",
                     German = "Erdengewahrsam",
-                    Japanese = "大地の守り"
+                    Japanese = "大地の守り",
+                    Korean = "대지의 수호"
                 },
                 CompanyAction = false
             });
@@ -3794,7 +4104,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Razed Earth",
                     French = "Fureur tellurique",
                     German = "Gaias Zorn",
-                    Japanese = "大地の怒り"
+                    Japanese = "大地の怒り",
+                    Korean = "대지의 분노"
                 },
                 CompanyAction = false
             });
@@ -3806,7 +4117,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Radiant Shield",
                     French = "Bouclier radiant",
                     German = "Glühender Schild",
-                    Japanese = "光輝の盾"
+                    Japanese = "光輝の盾",
+                    Korean = "광휘의 방패"
                 },
                 CompanyAction = false
             });
@@ -3818,7 +4130,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Inferno",
                     French = "Flammes de l'enfer",
                     German = "Inferno",
-                    Japanese = "地獄の火炎"
+                    Japanese = "地獄の火炎",
+                    Korean = "지옥의 화염"
                 },
                 CompanyAction = false
             });
@@ -3830,7 +4143,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Whispering Dawn",
                     French = "Murmure de l'aurore",
                     German = "Erhebendes Flüstern",
-                    Japanese = "光の囁き"
+                    Japanese = "光の囁き",
+                    Korean = "빛의 속삭임"
                 },
                 CompanyAction = false
             });
@@ -3842,7 +4156,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fey Covenant",
                     French = "Alliance féerique",
                     German = "Feenverheißung",
-                    Japanese = "フェイコヴナント"
+                    Japanese = "フェイコヴナント",
+                    Korean = "요정의 서약"
                 },
                 CompanyAction = false
             });
@@ -3854,7 +4169,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fey Illumination",
                     French = "Illumination féerique",
                     German = "Illumination",
-                    Japanese = "フェイイルミネーション"
+                    Japanese = "フェイイルミネーション",
+                    Korean = "요정의 광휘"
                 },
                 CompanyAction = false
             });
@@ -3866,7 +4182,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fey Glow",
                     French = "Lueur féerique",
                     German = "Sprühender Glanz",
-                    Japanese = "フェイグロウ"
+                    Japanese = "フェイグロウ",
+                    Korean = "요정의 달빛"
                 },
                 CompanyAction = false
             });
@@ -3878,7 +4195,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fey Light",
                     French = "Lumière féerique",
                     German = "Feenlicht",
-                    Japanese = "フェイライト"
+                    Japanese = "フェイライト",
+                    Korean = "요정의 햇빛"
                 },
                 CompanyAction = false
             });
@@ -3890,7 +4208,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bleeding",
                     French = "Saignant",
                     German = "Blutung",
-                    Japanese = "ペイン"
+                    Japanese = "ペイン",
+                    Korean = "고통"
                 },
                 CompanyAction = false
             });
@@ -3902,7 +4221,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gungnir",
                     French = "Gungnir",
                     German = "Gugnir",
-                    Japanese = "グングニルの槍"
+                    Japanese = "グングニルの槍",
+                    Korean = "투창 궁니르"
                 },
                 CompanyAction = false
             });
@@ -3914,7 +4234,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Crystal Veil",
                     French = "Voile cristallin",
                     German = "Kristallschleier",
-                    Japanese = "クリスタルヴェール"
+                    Japanese = "クリスタルヴェール",
+                    Korean = "크리스탈 장막"
                 },
                 CompanyAction = false
             });
@@ -3926,7 +4247,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Reduced Immunity",
                     French = "Immunité réduite",
                     German = "Schwache Immunabwehr",
-                    Japanese = "免疫低下"
+                    Japanese = "免疫低下",
+                    Korean = "면역력 감소"
                 },
                 CompanyAction = false
             });
@@ -3938,7 +4260,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Greenwrath",
                     French = "Ire de la forêt",
                     German = "Sintmal",
-                    Japanese = "森の悲憤"
+                    Japanese = "森の悲憤",
+                    Korean = "숲의 분노"
                 },
                 CompanyAction = false
             });
@@ -3950,7 +4273,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Invincibility",
                     French = "Invulnérable",
                     German = "Unverwundbar",
-                    Japanese = "無敵"
+                    Japanese = "無敵",
+                    Korean = "무적"
                 },
                 CompanyAction = false
             });
@@ -3962,7 +4286,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Lightning Charge",
                     French = "Charge électrique",
                     German = "Statische Ladung",
-                    Japanese = "帯電"
+                    Japanese = "帯電",
+                    Korean = "전류 충전"
                 },
                 CompanyAction = false
             });
@@ -3974,7 +4299,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ice Charge",
                     French = "Charge glacée",
                     German = "Eisige Ladung",
-                    Japanese = "帯氷"
+                    Japanese = "帯氷",
+                    Korean = "얼음 충전"
                 },
                 CompanyAction = false
             });
@@ -3986,7 +4312,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Heart of the Mountain",
                     French = "Cœur de la montagne",
                     German = "Herz des Felsgotts",
-                    Japanese = "岩神の心石"
+                    Japanese = "岩神の心石",
+                    Korean = "바위신의 심장석"
                 },
                 CompanyAction = false
             });
@@ -3998,7 +4325,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Modification",
                     French = "Récupération robotique",
                     German = "Fortifikationsprogramm 1",
-                    Japanese = "自己強化プログラム"
+                    Japanese = "自己強化プログラム",
+                    Korean = "자기 강화 프로그램"
                 },
                 CompanyAction = false
             });
@@ -4010,7 +4338,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Haste",
                     French = "Hâte",
                     German = "Hast",
-                    Japanese = "ヘイスト"
+                    Japanese = "ヘイスト",
+                    Korean = "헤이스트"
                 },
                 CompanyAction = false
             });
@@ -4022,7 +4351,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Vulnerability Down",
                     French = "Vulnérabilité magique diminuée",
                     German = "Verringerte Magie-Verwundbarkeit",
-                    Japanese = "被魔法ダメージ軽減"
+                    Japanese = "被魔法ダメージ軽減",
+                    Korean = "마법 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -4034,7 +4364,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -4046,7 +4377,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Allagan Rot",
                     French = "Pourriture allagoise",
                     German = "Allagische Fäulnis",
-                    Japanese = "アラガンロット"
+                    Japanese = "アラガンロット",
+                    Korean = "알라그 부패"
                 },
                 CompanyAction = false
             });
@@ -4058,7 +4390,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Allagan Immunity",
                     French = "Anticorps allagois",
                     German = "Allagische Immunität",
-                    Japanese = "アラガンロット抗体"
+                    Japanese = "アラガンロット抗体",
+                    Korean = "알라그 부패 항체"
                 },
                 CompanyAction = false
             });
@@ -4070,7 +4403,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Firestream",
                     French = "Courants de feu",
                     German = "Feuerstrahlen",
-                    Japanese = "ファイアストリーム"
+                    Japanese = "ファイアストリーム",
+                    Korean = "화염 기류"
                 },
                 CompanyAction = false
             });
@@ -4082,7 +4416,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sequence AB1",
                     French = "Séquence AB1",
                     German = "Sequenz AB1",
-                    Japanese = "対打撃プログラム"
+                    Japanese = "対打撃プログラム",
+                    Korean = "타격 대비 프로그램"
                 },
                 CompanyAction = false
             });
@@ -4094,7 +4429,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sequence AP1",
                     French = "Séquence AP1",
                     German = "Sequenz AP1",
-                    Japanese = "対突撃プログラム"
+                    Japanese = "対突撃プログラム",
+                    Korean = "찌르기 대비 프로그램"
                 },
                 CompanyAction = false
             });
@@ -4106,7 +4442,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sequence AS1",
                     French = "Séquence AS1",
                     German = "Sequenz AS1",
-                    Japanese = "対斬撃プログラム"
+                    Japanese = "対斬撃プログラム",
+                    Korean = "베기 대비 프로그램"
                 },
                 CompanyAction = false
             });
@@ -4118,7 +4455,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bleeding",
                     French = "Saignant",
                     German = "Blutung",
-                    Japanese = "ペイン"
+                    Japanese = "ペイン",
+                    Korean = "고통"
                 },
                 CompanyAction = false
             });
@@ -4130,7 +4468,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Field",
                     French = "Champ physique",
                     German = "Physisches Feld",
-                    Japanese = "対物理障壁"
+                    Japanese = "対物理障壁",
+                    Korean = "물리 공격 장벽"
                 },
                 CompanyAction = false
             });
@@ -4142,7 +4481,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetherial Field",
                     French = "Champ éthéré",
                     German = "Magisches Feld",
-                    Japanese = "対魔法障壁"
+                    Japanese = "対魔法障壁",
+                    Korean = "마법 공격 장벽"
                 },
                 CompanyAction = false
             });
@@ -4154,7 +4494,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Repelling Spray",
                     French = "Réplique",
                     German = "Reflektorschild",
-                    Japanese = "応射"
+                    Japanese = "応射",
+                    Korean = "대응"
                 },
                 CompanyAction = false
             });
@@ -4166,7 +4507,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bleeding",
                     French = "Saignant",
                     German = "Blutung",
-                    Japanese = "ペイン"
+                    Japanese = "ペイン",
+                    Korean = "고통"
                 },
                 CompanyAction = false
             });
@@ -4178,7 +4520,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Neurolink",
                     French = "Neurolien",
                     German = "Neurolink",
-                    Japanese = "拘束装置"
+                    Japanese = "拘束装置",
+                    Korean = "구속 장치"
                 },
                 CompanyAction = false
             });
@@ -4190,7 +4533,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Recharge",
                     French = "Recharge",
                     German = "Aufladung",
-                    Japanese = "魔力供給"
+                    Japanese = "魔力供給",
+                    Korean = "마력 공급"
                 },
                 CompanyAction = false
             });
@@ -4202,7 +4546,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Waxen Flesh",
                     French = "Chair fondue",
                     German = "Wächserne Haut",
-                    Japanese = "帯炎"
+                    Japanese = "帯炎",
+                    Korean = "불보라"
                 },
                 CompanyAction = false
             });
@@ -4214,7 +4559,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Pox",
                     French = "Vérole",
                     German = "Pocken",
-                    Japanese = "ポックス"
+                    Japanese = "ポックス",
+                    Korean = "두창"
                 },
                 CompanyAction = false
             });
@@ -4226,7 +4572,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Disseminate",
                     French = "Dissémination",
                     German = "Aussäen",
-                    Japanese = "ディスセミネイト"
+                    Japanese = "ディスセミネイト",
+                    Korean = "유포"
                 },
                 CompanyAction = false
             });
@@ -4238,7 +4585,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Steel Scales",
                     French = "Écailles d'acier",
                     German = "Stahlschuppen",
-                    Japanese = "スチールスケール"
+                    Japanese = "スチールスケール",
+                    Korean = "강철 비늘"
                 },
                 CompanyAction = false
             });
@@ -4250,7 +4598,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Down",
                     French = "Vulnérabilité diminuée",
                     German = "Verringerte Verwundbarkeit",
-                    Japanese = "被ダメージ低下"
+                    Japanese = "被ダメージ低下",
+                    Korean = "받는 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -4262,7 +4611,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rancor",
                     French = "Rancune",
                     German = "Groll",
-                    Japanese = "怨み"
+                    Japanese = "怨み",
+                    Korean = "원한"
                 },
                 CompanyAction = false
             });
@@ -4274,7 +4624,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Spjot",
                     French = "Spjot",
                     German = "Gugnirs Zauber",
-                    Japanese = "グングニルの魔力"
+                    Japanese = "グングニルの魔力",
+                    Korean = "투창 궁니르의 마력"
                 },
                 CompanyAction = false
             });
@@ -4286,7 +4637,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Brave New World",
                     French = "Un nouveau monde",
                     German = "Startbonus",
-                    Japanese = "カンパニーアクション：ビギナーボーナス"
+                    Japanese = "カンパニーアクション：ビギナーボーナス",
+                    Korean = "부대 혜택: 초보자 지원"
                 },
                 CompanyAction = false
             });
@@ -4298,7 +4650,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Live off the Land",
                     French = "Vivre de la terre",
                     German = "Sammelgeschick-Bonus",
-                    Japanese = "カンパニーアクション：獲得力アップ"
+                    Japanese = "カンパニーアクション：獲得力アップ",
+                    Korean = "부대 혜택: 획득력 상승"
                 },
                 CompanyAction = false
             });
@@ -4310,7 +4663,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "What You See",
                     French = "Avoir le coup d'œil",
                     German = "Wahrnehmungsbonus",
-                    Japanese = "カンパニーアクション：識質力アップ"
+                    Japanese = "カンパニーアクション：識質力アップ",
+                    Korean = "부대 혜택: 감별력 상승"
                 },
                 CompanyAction = false
             });
@@ -4322,7 +4676,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Eat from the Hand",
                     French = "La main qui nourrit",
                     German = "Kunstfertigkeits-Bonus",
-                    Japanese = "カンパニーアクション：作業精度アップ"
+                    Japanese = "カンパニーアクション：作業精度アップ",
+                    Korean = "부대 혜택: 작업 숙련도 상승"
                 },
                 CompanyAction = false
             });
@@ -4334,7 +4689,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "In Control",
                     French = "Passer maître",
                     German = "Kontrolle-Bonus",
-                    Japanese = "カンパニーアクション：加工精度アップ"
+                    Japanese = "カンパニーアクション：加工精度アップ",
+                    Korean = "부대 혜택: 가공 숙련도 상승"
                 },
                 CompanyAction = false
             });
@@ -4346,7 +4702,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Snowman",
                     French = "Bonhomme de neige",
                     German = "Schneemann",
-                    Japanese = "雪だるま"
+                    Japanese = "雪だるま",
+                    Korean = "눈사람"
                 },
                 CompanyAction = false
             });
@@ -4358,7 +4715,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fey Fire",
                     French = "Feu follet",
                     German = "Feenfeuer",
-                    Japanese = "妖炎"
+                    Japanese = "妖炎",
+                    Korean = "요괴의 화염"
                 },
                 CompanyAction = false
             });
@@ -4370,7 +4728,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Meat and Mead",
                     French = "À boire et à manger",
                     German = "Längere Nahrungseffekte",
-                    Japanese = "カンパニーアクション：食事効果時間延長"
+                    Japanese = "カンパニーアクション：食事効果時間延長",
+                    Korean = "부대 혜택: 식사 지속시간 연장"
                 },
                 CompanyAction = false
             });
@@ -4382,7 +4741,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "That Which Binds Us",
                     French = "Union parfaite",
                     German = "Bindungsbonus",
-                    Japanese = "カンパニーアクション：錬精度上昇量アップ"
+                    Japanese = "カンパニーアクション：錬精度上昇量アップ",
+                    Korean = "부대 혜택: 결속도 상승치 증가"
                 },
                 CompanyAction = false
             });
@@ -4394,7 +4754,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Proper Care",
                     French = "Protections protégées",
                     German = "Verminderter Verschleiß",
-                    Japanese = "カンパニーアクション：装備品劣化低減"
+                    Japanese = "カンパニーアクション：装備品劣化低減",
+                    Korean = "부대 혜택: 장비 소모 절감"
                 },
                 CompanyAction = false
             });
@@ -4406,7 +4767,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Back on Your Feet",
                     French = "Prompt rétablissement",
                     German = "Verkürzte Schwäche",
-                    Japanese = "カンパニーアクション：衰弱時間短縮"
+                    Japanese = "カンパニーアクション：衰弱時間短縮",
+                    Korean = "부대 혜택: 쇠약 시간 단축"
                 },
                 CompanyAction = false
             });
@@ -4418,7 +4780,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Reduced Rates",
                     French = "Prix d'ami",
                     German = "Vergünstigter Teleport",
-                    Japanese = "カンパニーアクション：テレポ割引"
+                    Japanese = "カンパニーアクション：テレポ割引",
+                    Korean = "부대 혜택: 텔레포 할인"
                 },
                 CompanyAction = false
             });
@@ -4430,7 +4793,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "The Heat of Battle",
                     French = "Feu du combat",
                     German = "Kampfroutine-Bonus",
-                    Japanese = "カンパニーアクション：討伐経験値アップ"
+                    Japanese = "カンパニーアクション：討伐経験値アップ",
+                    Korean = "부대 혜택: 전투 경험치 상승"
                 },
                 CompanyAction = false
             });
@@ -4442,7 +4806,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "A Man's Best Friend",
                     French = "Meilleur ami de l'homme",
                     German = "Mitstreiterroutine-Bonus",
-                    Japanese = "カンパニーアクション：バディ経験値アップ"
+                    Japanese = "カンパニーアクション：バディ経験値アップ",
+                    Korean = "부대 혜택: 버디 경험치 상승"
                 },
                 CompanyAction = false
             });
@@ -4454,7 +4819,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Earth and Water",
                     French = "Terre et eau",
                     German = "Sammelroutine-Bonus",
-                    Japanese = "カンパニーアクション：採集経験値アップ"
+                    Japanese = "カンパニーアクション：採集経験値アップ",
+                    Korean = "부대 혜택: 채집 경험치 상승"
                 },
                 CompanyAction = false
             });
@@ -4466,7 +4832,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Helping Hand",
                     French = "Être en bonnes mains",
                     German = "Syntheseroutine-Bonus",
-                    Japanese = "カンパニーアクション：製作経験値アップ"
+                    Japanese = "カンパニーアクション：製作経験値アップ",
+                    Korean = "부대 혜택: 제작 경험치 상승"
                 },
                 CompanyAction = false
             });
@@ -4478,7 +4845,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Viscous Aetheroplasm",
                     French = "Éthéroplasma",
                     German = "Ätheroplasma",
-                    Japanese = "吸着爆雷"
+                    Japanese = "吸着爆雷",
+                    Korean = "흡착 폭뢰"
                 },
                 CompanyAction = false
             });
@@ -4490,7 +4858,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Siren Song",
                     French = "Chant de la sirène",
                     German = "Sirenengesang",
-                    Japanese = "セイレーンの歌声"
+                    Japanese = "セイレーンの歌声",
+                    Korean = "세이렌의 노랫소리"
                 },
                 CompanyAction = false
             });
@@ -4502,7 +4871,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Zombification",
                     French = "Zombi",
                     German = "Zombie",
-                    Japanese = "ゾンビー"
+                    Japanese = "ゾンビー",
+                    Korean = "좀비"
                 },
                 CompanyAction = false
             });
@@ -4514,7 +4884,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Brood Rage",
                     French = "Colère maternelle",
                     German = "Brutrage",
-                    Japanese = "母鳥の怒り"
+                    Japanese = "母鳥の怒り",
+                    Korean = "어미새의 분노"
                 },
                 CompanyAction = false
             });
@@ -4526,7 +4897,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blight",
                     French = "Insoignabilité",
                     German = "Unheilbar",
-                    Japanese = "被回復無効"
+                    Japanese = "被回復無効",
+                    Korean = "회복 무효"
                 },
                 CompanyAction = false
             });
@@ -4538,7 +4910,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Corrupted Crystal",
                     French = "Cristaux corrompus",
                     German = "Denaturierter Kristall",
-                    Japanese = "偏属性クリスタル"
+                    Japanese = "偏属性クリスタル",
+                    Korean = "편속성 크리스탈"
                 },
                 CompanyAction = false
             });
@@ -4550,7 +4923,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Suppuration",
                     French = "Morsure du feu",
                     German = "Verbrennung",
-                    Japanese = "熱傷"
+                    Japanese = "熱傷",
+                    Korean = "열화상"
                 },
                 CompanyAction = false
             });
@@ -4562,7 +4936,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Searing Wind",
                     French = "Fournaise",
                     German = "Gluthitze",
-                    Japanese = "灼熱"
+                    Japanese = "灼熱",
+                    Korean = "작열"
                 },
                 CompanyAction = false
             });
@@ -4574,7 +4949,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Infernal Fetters",
                     French = "Chaînes infernales",
                     German = "Infernofesseln",
-                    Japanese = "炎獄の鎖"
+                    Japanese = "炎獄の鎖",
+                    Korean = "염옥의 사슬"
                 },
                 CompanyAction = false
             });
@@ -4586,7 +4962,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Death Throes",
                     French = "Affres de la mort",
                     German = "Agonales Klammern",
-                    Japanese = "道連れ"
+                    Japanese = "道連れ",
+                    Korean = "물귀신 작전"
                 },
                 CompanyAction = false
             });
@@ -4598,7 +4975,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thermal Low",
                     French = "Basse pression",
                     German = "Tiefdruck",
-                    Japanese = "低気圧"
+                    Japanese = "低気圧",
+                    Korean = "저기압"
                 },
                 CompanyAction = false
             });
@@ -4610,7 +4988,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thermal High",
                     French = "Haute pression",
                     German = "Hochdruck",
-                    Japanese = "高気圧"
+                    Japanese = "高気圧",
+                    Korean = "고기압"
                 },
                 CompanyAction = false
             });
@@ -4622,7 +5001,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Testudo",
                     French = "Testudo",
                     German = "Testudo",
-                    Japanese = "テストゥド"
+                    Japanese = "テストゥド",
+                    Korean = "귀갑 방패"
                 },
                 CompanyAction = false
             });
@@ -4634,7 +5014,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thrill of War",
                     French = "Frisson de la guerre",
                     German = "Schlachtrausch",
-                    Japanese = "スリル・オブ・ウォー"
+                    Japanese = "スリル・オブ・ウォー",
+                    Korean = "전쟁의 짜릿함"
                 },
                 CompanyAction = false
             });
@@ -4646,7 +5027,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Full Swing",
                     French = "Plein élan",
                     German = "Voller Schwinger",
-                    Japanese = "フルスイング"
+                    Japanese = "フルスイング",
+                    Korean = "전력 강타"
                 },
                 CompanyAction = false
             });
@@ -4658,7 +5040,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Somersault",
                     French = "Saut périlleux",
                     German = "Salto",
-                    Japanese = "サマーソルト"
+                    Japanese = "サマーソルト",
+                    Korean = "공중제비"
                 },
                 CompanyAction = false
             });
@@ -4670,7 +5053,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fetter Ward",
                     French = "Émancipation",
                     German = "Obhut",
-                    Japanese = "フェターウォード"
+                    Japanese = "フェターウォード",
+                    Korean = "구속 방지"
                 },
                 CompanyAction = false
             });
@@ -4682,7 +5066,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Impulse Rush",
                     French = "Impulsion subite",
                     German = "Impuls-Ansturm",
-                    Japanese = "インパルスラッシュ"
+                    Japanese = "インパルスラッシュ",
+                    Korean = "연쇄 돌격"
                 },
                 CompanyAction = true
             });
@@ -4694,7 +5079,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Skewer",
                     French = "Embrochement",
                     German = "Spieß",
-                    Japanese = "スキュアー"
+                    Japanese = "スキュアー",
+                    Korean = "꼬챙이 꿰기"
                 },
                 CompanyAction = false
             });
@@ -4706,7 +5092,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sacred Prism",
                     French = "Prisme sacré",
                     German = "Barmherzigkeit",
-                    Japanese = "女神の慈悲"
+                    Japanese = "女神の慈悲",
+                    Korean = "여신의 자비"
                 },
                 CompanyAction = false
             });
@@ -4718,7 +5105,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Phantom Dart",
                     French = "Projectile fantôme",
                     German = "Phantompfeil",
-                    Japanese = "ファントムダート"
+                    Japanese = "ファントムダート",
+                    Korean = "유령 쐐기"
                 },
                 CompanyAction = false
             });
@@ -4730,7 +5118,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Misty Veil",
                     French = "Voile de brume",
                     German = "Nebelschleier",
-                    Japanese = "ミスティヴェール"
+                    Japanese = "ミスティヴェール",
+                    Korean = "안개의 장막"
                 },
                 CompanyAction = true
             });
@@ -4742,7 +5131,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wither",
                     French = "Flétrissure",
                     German = "Entkräften",
-                    Japanese = "ウィザー"
+                    Japanese = "ウィザー",
+                    Korean = "쇠퇴"
                 },
                 CompanyAction = false
             });
@@ -4754,7 +5144,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Focalization",
                     French = "Traité de la focalisation",
                     German = "Lege Artis",
-                    Japanese = "精神統一の策"
+                    Japanese = "精神統一の策",
+                    Korean = "정신통일책"
                 },
                 CompanyAction = false
             });
@@ -4766,7 +5157,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetheric Burst",
                     French = "Explosion éthérée",
                     German = "Ätherschub",
-                    Japanese = "エーテルバースト"
+                    Japanese = "エーテルバースト",
+                    Korean = "에테르 분출"
                 },
                 CompanyAction = false
             });
@@ -4778,7 +5170,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Equanimity",
                     French = "Équanimité",
                     German = "Gleichmut",
-                    Japanese = "専心"
+                    Japanese = "専心",
+                    Korean = "전념"
                 },
                 CompanyAction = false
             });
@@ -4790,7 +5183,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Attunement",
                     French = "Harmonie",
                     German = "Einstimmung",
-                    Japanese = "調和"
+                    Japanese = "調和",
+                    Korean = "조화"
                 },
                 CompanyAction = false
             });
@@ -4802,7 +5196,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Astral Realignment",
                     French = "Alignement astral",
                     German = "Astralkörper",
-                    Japanese = "アストラル体"
+                    Japanese = "アストラル体",
+                    Korean = "영체화"
                 },
                 CompanyAction = false
             });
@@ -4814,7 +5209,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Corporeal Return",
                     French = "Retour corporel",
                     German = "Wiederkunft",
-                    Japanese = "生還"
+                    Japanese = "生還",
+                    Korean = "생환"
                 },
                 CompanyAction = false
             });
@@ -4826,7 +5222,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Charge",
                     French = "Charge électrique",
                     German = "Laden",
-                    Japanese = "蓄電"
+                    Japanese = "蓄電",
+                    Korean = "축전"
                 },
                 CompanyAction = false
             });
@@ -4838,7 +5235,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Seized",
                     French = "Étreinte mortelle",
                     German = "Umklammert",
-                    Japanese = "捕獲"
+                    Japanese = "捕獲",
+                    Korean = "포획"
                 },
                 CompanyAction = false
             });
@@ -4850,7 +5248,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thrown for a Loop",
                     French = "Acharnement aveugle",
                     German = "Blinde Wut",
-                    Japanese = "有頂天"
+                    Japanese = "有頂天",
+                    Korean = "노기 충천"
                 },
                 CompanyAction = false
             });
@@ -4862,7 +5261,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -4874,7 +5274,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Transporting",
                     French = "Chargé",
                     German = "Transport",
-                    Japanese = "運搬"
+                    Japanese = "運搬",
+                    Korean = "운반"
                 },
                 CompanyAction = false
             });
@@ -4886,7 +5287,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bewildered",
                     French = "Égarement",
                     German = "Bezaubert",
-                    Japanese = "幻惑"
+                    Japanese = "幻惑",
+                    Korean = "현혹"
                 },
                 CompanyAction = false
             });
@@ -4898,7 +5300,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Down",
                     French = "Vulnérabilité diminuée",
                     German = "Verringerte Verwundbarkeit",
-                    Japanese = "被ダメージ低下"
+                    Japanese = "被ダメージ低下",
+                    Korean = "받는 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -4910,7 +5313,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dust Poisoning",
                     French = "Empoisonnement cristallin",
                     German = "Staubvergiftung",
-                    Japanese = "粉塵中毒"
+                    Japanese = "粉塵中毒",
+                    Korean = "분진 중독"
                 },
                 CompanyAction = false
             });
@@ -4922,7 +5326,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Storm's Path",
                     French = "Couperet de justice",
                     German = "Sturmkeil",
-                    Japanese = "シュトルムヴィント"
+                    Japanese = "シュトルムヴィント",
+                    Korean = "폭풍 쐐기"
                 },
                 CompanyAction = false
             });
@@ -4934,7 +5339,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Holmgang",
                     French = "Holmgang",
                     German = "Holmgang",
-                    Japanese = "ホルムギャング"
+                    Japanese = "ホルムギャング",
+                    Korean = "일대일 결투"
                 },
                 CompanyAction = false
             });
@@ -4946,7 +5352,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Antibody",
                     French = "Réaction antivirale",
                     German = "Antikörper",
-                    Japanese = "ウイルス抗体"
+                    Japanese = "ウイルス抗体",
+                    Korean = "바이러스 항체"
                 },
                 CompanyAction = false
             });
@@ -4958,7 +5365,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Inner Beast",
                     French = "Bête intérieure",
                     German = "Tier in dir",
-                    Japanese = "原初の魂"
+                    Japanese = "原初の魂",
+                    Korean = "원초의 혼"
                 },
                 CompanyAction = false
             });
@@ -4970,7 +5378,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hover",
                     French = "Élévation",
                     German = "Schweben",
-                    Japanese = "滞空"
+                    Japanese = "滞空",
+                    Korean = "체공"
                 },
                 CompanyAction = false
             });
@@ -4982,7 +5391,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mark Up",
                     French = "Marque des vainqueurs",
                     German = "Wolfsmarken-Bonus",
-                    Japanese = "カンパニーアクション：対人戦績アップ"
+                    Japanese = "カンパニーアクション：対人戦績アップ",
+                    Korean = "부대 혜택: 명예 점수"
                 },
                 CompanyAction = false
             });
@@ -4994,7 +5404,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Seal Sweetener",
                     French = "Solde accrue",
                     German = "Staatstaler-Bonus",
-                    Japanese = "カンパニーアクション：軍票アップ"
+                    Japanese = "カンパニーアクション：軍票アップ",
+                    Korean = "부대 혜택: 군표 증가"
                 },
                 CompanyAction = false
             });
@@ -5006,7 +5417,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Regain",
                     French = "Regain",
                     German = "Erholen",
-                    Japanese = "ＴＰ継続回復"
+                    Japanese = "ＴＰ継続回復",
+                    Korean = "TP 지속 회복"
                 },
                 CompanyAction = false
             });
@@ -5018,7 +5430,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Transparent",
                     French = "Transparence",
                     German = "Transparenz",
-                    Japanese = "透明"
+                    Japanese = "透明",
+                    Korean = "투명"
                 },
                 CompanyAction = false
             });
@@ -5030,7 +5443,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Protect",
                     French = "Bouclier",
                     German = "Protes",
-                    Japanese = "プロテス"
+                    Japanese = "プロテス",
+                    Korean = "프로테스"
                 },
                 CompanyAction = false
             });
@@ -5042,7 +5456,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Down",
                     French = "Vulnérabilité physique diminuée",
                     German = "Verringerte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ軽減"
+                    Japanese = "被物理ダメージ軽減",
+                    Korean = "물리 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -5054,7 +5469,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Misty Veil",
                     French = "Voile de brume",
                     German = "Nebelschleier",
-                    Japanese = "ミスティヴェール"
+                    Japanese = "ミスティヴェール",
+                    Korean = "안개의 장막"
                 },
                 CompanyAction = true
             });
@@ -5066,7 +5482,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Prey",
                     French = "Marquage",
                     German = "Markiert",
-                    Japanese = "マーキング"
+                    Japanese = "マーキング",
+                    Korean = "표식"
                 },
                 CompanyAction = false
             });
@@ -5078,7 +5495,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Devoured",
                     French = "Dévorement",
                     German = "Halbverschlungen",
-                    Japanese = "捕食"
+                    Japanese = "捕食",
+                    Korean = "포식"
                 },
                 CompanyAction = false
             });
@@ -5090,7 +5508,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Healing Magic Down",
                     French = "Malus de soin",
                     German = "Heilmagie -",
-                    Japanese = "回復魔法効果低下"
+                    Japanese = "回復魔法効果低下",
+                    Korean = "회복마법 효과 감소"
                 },
                 CompanyAction = false
             });
@@ -5102,7 +5521,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Nightmare",
                     French = "Cauchemar",
                     German = "Albtraum",
-                    Japanese = "悪夢"
+                    Japanese = "悪夢",
+                    Korean = "악몽"
                 },
                 CompanyAction = true
             });
@@ -5114,7 +5534,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Diabolic Curse",
                     French = "Maléfice du néant",
                     German = "Diabolischer Fluch",
-                    Japanese = "ヴォイドの呪詛"
+                    Japanese = "ヴォイドの呪詛",
+                    Korean = "보이드의 저주"
                 },
                 CompanyAction = false
             });
@@ -5126,7 +5547,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Eerie Air",
                     French = "Présence du néant",
                     German = "Diabolische Aura",
-                    Japanese = "ヴォイドの妖気"
+                    Japanese = "ヴォイドの妖気",
+                    Korean = "보이드의 요기"
                 },
                 CompanyAction = false
             });
@@ -5138,7 +5560,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Noctoshield",
                     French = "Nocto-bouclier",
                     German = "Nachtschild",
-                    Japanese = "ノクトシールド"
+                    Japanese = "ノクトシールド",
+                    Korean = "밤의 방패"
                 },
                 CompanyAction = false
             });
@@ -5150,7 +5573,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow+",
                     French = "Lenteur +",
                     German = "Gemach +",
-                    Japanese = "スロウ＋"
+                    Japanese = "スロウ＋",
+                    Korean = "둔화+"
                 },
                 CompanyAction = false
             });
@@ -5162,7 +5586,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Haste+",
                     French = "Hâte +",
                     German = "Hast +",
-                    Japanese = "ヘイスト＋"
+                    Japanese = "ヘイスト＋",
+                    Korean = "헤이스트+"
                 },
                 CompanyAction = false
             });
@@ -5174,7 +5599,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Scale Flakes",
                     French = "Poussière érosive",
                     German = "Erosionsstaub",
-                    Japanese = "妖鱗粉"
+                    Japanese = "妖鱗粉",
+                    Korean = "환각 가루"
                 },
                 CompanyAction = false
             });
@@ -5186,7 +5612,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Misery",
                     French = "Désolation",
                     German = "Kummer",
-                    Japanese = "悲嘆"
+                    Japanese = "悲嘆",
+                    Korean = "비탄"
                 },
                 CompanyAction = false
             });
@@ -5198,7 +5625,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Water Resistance Down",
                     French = "Résistance à l'eau diminuée",
                     German = "Wasserresistenz -",
-                    Japanese = "水属性耐性低下"
+                    Japanese = "水属性耐性低下",
+                    Korean = "물속성 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -5210,7 +5638,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Briny Mirror",
                     French = "Reflets d'eau libérés",
                     German = "Wassermembran",
-                    Japanese = "水鏡飛散"
+                    Japanese = "水鏡飛散",
+                    Korean = "수경 확산"
                 },
                 CompanyAction = false
             });
@@ -5222,7 +5651,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Briny Veil",
                     French = "Reflet d'eau",
                     German = "Wasserspiegelung",
-                    Japanese = "水鏡"
+                    Japanese = "水鏡",
+                    Korean = "수경"
                 },
                 CompanyAction = false
             });
@@ -5234,7 +5664,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Absolute Bind",
                     French = "Étreinte impénétrable",
                     German = "Absoluter Bann",
-                    Japanese = "完全呪縛"
+                    Japanese = "完全呪縛",
+                    Korean = "완전한 속박"
                 },
                 CompanyAction = false
             });
@@ -5246,7 +5677,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Demon Eye",
                     French = "Œil diabolique",
                     German = "Dämonenauge",
-                    Japanese = "悪魔の瞳"
+                    Japanese = "悪魔の瞳",
+                    Korean = "악마의 눈동자"
                 },
                 CompanyAction = false
             });
@@ -5258,7 +5690,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Briar",
                     French = "Ronces sauvages",
                     German = "Dorngestrüpp",
-                    Japanese = "野茨"
+                    Japanese = "野茨",
+                    Korean = "가시밭"
                 },
                 CompanyAction = false
             });
@@ -5270,7 +5703,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stone Curse",
                     French = "Piège de pierre",
                     German = "Steinfluch",
-                    Japanese = "石化の呪い"
+                    Japanese = "石化の呪い",
+                    Korean = "석화의 저주"
                 },
                 CompanyAction = false
             });
@@ -5282,7 +5716,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Minimum",
                     French = "Mini",
                     German = "Wicht",
-                    Japanese = "ミニマム"
+                    Japanese = "ミニマム",
+                    Korean = "미니멈"
                 },
                 CompanyAction = true
             });
@@ -5294,7 +5729,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Toad",
                     French = "Crapaud",
                     German = "Frosch",
-                    Japanese = "トード"
+                    Japanese = "トード",
+                    Korean = "두꺼비"
                 },
                 CompanyAction = true
             });
@@ -5306,7 +5742,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Minimum",
                     French = "Mini",
                     German = "Wicht",
-                    Japanese = "ミニマム"
+                    Japanese = "ミニマム",
+                    Korean = "미니멈"
                 },
                 CompanyAction = true
             });
@@ -5318,7 +5755,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Toad",
                     French = "Crapaud",
                     German = "Frosch",
-                    Japanese = "トード"
+                    Japanese = "トード",
+                    Korean = "두꺼비"
                 },
                 CompanyAction = true
             });
@@ -5330,7 +5768,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow",
                     French = "Lenteur",
                     German = "Gemach",
-                    Japanese = "スロウ"
+                    Japanese = "スロウ",
+                    Korean = "둔화"
                 },
                 CompanyAction = false
             });
@@ -5342,7 +5781,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -5354,7 +5794,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Up",
                     French = "Vulnérabilité augmentée",
                     German = "Erhöhte Verwundbarkeit",
-                    Japanese = "被ダメージ上昇"
+                    Japanese = "被ダメージ上昇",
+                    Korean = "받는 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -5366,7 +5807,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thorny Vine",
                     French = "Sarment de ronces",
                     German = "Dornenranken",
-                    Japanese = "茨の蔓"
+                    Japanese = "茨の蔓",
+                    Korean = "가시덩굴"
                 },
                 CompanyAction = false
             });
@@ -5378,7 +5820,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Honey-glazed",
                     French = "Mielleux",
                     German = "Honigsüß",
-                    Japanese = "蜂蜜"
+                    Japanese = "蜂蜜",
+                    Korean = "벌꿀"
                 },
                 CompanyAction = false
             });
@@ -5390,7 +5833,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Potent Acid",
                     French = "Acide corrosif",
                     German = "Konzentrierte Säure",
-                    Japanese = "強酸"
+                    Japanese = "強酸",
+                    Korean = "강산"
                 },
                 CompanyAction = false
             });
@@ -5402,7 +5846,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Swarmed",
                     French = "Essaim",
                     German = "Umschwärmt",
-                    Japanese = "スウォーム"
+                    Japanese = "スウォーム",
+                    Korean = "벌레 떼"
                 },
                 CompanyAction = false
             });
@@ -5414,7 +5859,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Stung",
                     French = "Dard",
                     German = "Gestochen",
-                    Japanese = "蜂刺症"
+                    Japanese = "蜂刺症",
+                    Korean = "벌 중독"
                 },
                 CompanyAction = false
             });
@@ -5426,7 +5872,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Petrification Resistance",
                     French = "Résistance à Pétrification",
                     German = "Steinresistenz",
-                    Japanese = "石化無効"
+                    Japanese = "石化無効",
+                    Korean = "석화 무효"
                 },
                 CompanyAction = false
             });
@@ -5438,7 +5885,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Cursed Voice",
                     French = "Voix du maléfice",
                     German = "Stimme der Verwünschung",
-                    Japanese = "呪詛の声"
+                    Japanese = "呪詛の声",
+                    Korean = "저주의 목소리"
                 },
                 CompanyAction = false
             });
@@ -5450,7 +5898,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Cursed Shriek",
                     French = "Cri du maléfice",
                     German = "Schrei der Verwünschung",
-                    Japanese = "呪詛の叫声"
+                    Japanese = "呪詛の叫声",
+                    Korean = "저주의 외침"
                 },
                 CompanyAction = false
             });
@@ -5462,7 +5911,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Allagan Venom",
                     French = "Venin allagois",
                     German = "Allagisches Gift",
-                    Japanese = "アラガンポイズン"
+                    Japanese = "アラガンポイズン",
+                    Korean = "알라그 뱀독"
                 },
                 CompanyAction = false
             });
@@ -5474,7 +5924,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Allagan Field",
                     French = "Champ allagois",
                     German = "Allagisches Feld",
-                    Japanese = "アラガンフィールド"
+                    Japanese = "アラガンフィールド",
+                    Korean = "알라그 필드"
                 },
                 CompanyAction = false
             });
@@ -5486,7 +5937,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Languishing",
                     French = "Agonie vitale",
                     German = "Ermattung",
-                    Japanese = "生気減退"
+                    Japanese = "生気減退",
+                    Korean = "생기 감퇴"
                 },
                 CompanyAction = false
             });
@@ -5498,7 +5950,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Maximum HP Down",
                     French = "PV maximum réduits",
                     German = "LP-Malus",
-                    Japanese = "最大ＨＰダウン"
+                    Japanese = "最大ＨＰダウン",
+                    Korean = "최대 HP 감소"
                 },
                 CompanyAction = false
             });
@@ -5510,7 +5963,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bind+",
                     French = "Entrave +",
                     German = "Fessel +",
-                    Japanese = "バインド＋"
+                    Japanese = "バインド＋",
+                    Korean = "속박+"
                 },
                 CompanyAction = false
             });
@@ -5522,7 +5976,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Raven Blight",
                     French = "Bile de rapace",
                     German = "Pestschwinge",
-                    Japanese = "凶鳥毒気"
+                    Japanese = "凶鳥毒気",
+                    Korean = "흉조의 독"
                 },
                 CompanyAction = false
             });
@@ -5534,7 +5989,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Normal Stance",
                     French = "Posture normale",
                     German = "Normales Verhalten",
-                    Japanese = "ノーマルスタンス"
+                    Japanese = "ノーマルスタンス",
+                    Korean = "일반 태세"
                 },
                 CompanyAction = false
             });
@@ -5546,7 +6002,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aggressive Stance",
                     French = "Posture d'attaque",
                     German = "Aggressives Verhalten",
-                    Japanese = "アタッカースタンス"
+                    Japanese = "アタッカースタンス",
+                    Korean = "공격 태세"
                 },
                 CompanyAction = false
             });
@@ -5558,7 +6015,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Subversive Stance",
                     French = "Posture de diversion",
                     German = "Hemmendes Verhalten",
-                    Japanese = "ジャマースタンス"
+                    Japanese = "ジャマースタンス",
+                    Korean = "방해 태세"
                 },
                 CompanyAction = false
             });
@@ -5570,7 +6028,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Garrote Twist",
                     French = "Sangle accélérée",
                     German = "Leicht fixierbar",
-                    Japanese = "拘束加速"
+                    Japanese = "拘束加速",
+                    Korean = "구속 가속"
                 },
                 CompanyAction = false
             });
@@ -5582,7 +6041,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Garrote",
                     French = "Attache",
                     German = "Fixierungsfessel",
-                    Japanese = "拘束"
+                    Japanese = "拘束",
+                    Korean = "구속"
                 },
                 CompanyAction = false
             });
@@ -5594,7 +6054,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Firescorched",
                     French = "Corne-de-feu",
                     German = "Feuerhorn",
-                    Japanese = "ファイアホーン"
+                    Japanese = "ファイアホーン",
+                    Korean = "화염뿔"
                 },
                 CompanyAction = false
             });
@@ -5606,7 +6067,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Icebitten",
                     French = "Griffe-de-glace",
                     German = "Eisklaue",
-                    Japanese = "アイスクロウ"
+                    Japanese = "アイスクロウ",
+                    Korean = "얼음발톱"
                 },
                 CompanyAction = false
             });
@@ -5618,7 +6080,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thunderstruck",
                     French = "Aile-de-foudre",
                     German = "Donnerschwinge",
-                    Japanese = "サンダーウィング"
+                    Japanese = "サンダーウィング",
+                    Korean = "번개날개"
                 },
                 CompanyAction = false
             });
@@ -5630,7 +6093,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Briny Veil",
                     French = "Reflet d'eau",
                     German = "Wasserspiegelung",
-                    Japanese = "水鏡"
+                    Japanese = "水鏡",
+                    Korean = "수경"
                 },
                 CompanyAction = false
             });
@@ -5642,7 +6106,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Voidbound",
                     French = "Transfert du néant",
                     German = "Nichtsgebunden",
-                    Japanese = "異界の狭間"
+                    Japanese = "異界の狭間",
+                    Korean = "이계의 틈새"
                 },
                 CompanyAction = false
             });
@@ -5654,7 +6119,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "High and Mighty",
                     French = "Monarchie absolue",
                     German = "Absoluter Herrscher",
-                    Japanese = "極王"
+                    Japanese = "極王",
+                    Korean = "극왕"
                 },
                 CompanyAction = false
             });
@@ -5666,7 +6132,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Pombination",
                     French = "Mogtimisation",
                     German = "Pombination",
-                    Japanese = "モグビネーション"
+                    Japanese = "モグビネーション",
+                    Korean = "모그비네이션"
                 },
                 CompanyAction = false
             });
@@ -5678,7 +6145,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Moglight Resistance Down",
                     French = "Nyctophobie mog",
                     German = "Mogryschatten-Aversion",
-                    Japanese = "モグ闇過敏症"
+                    Japanese = "モグ闇過敏症",
+                    Korean = "모그어둠 과민증"
                 },
                 CompanyAction = false
             });
@@ -5690,7 +6158,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mogdark Resistance Down",
                     French = "Photophobie mog",
                     German = "Moglicht-Empfindlichkeit",
-                    Japanese = "モグ光過敏症"
+                    Japanese = "モグ光過敏症",
+                    Korean = "모그빛 과민증"
                 },
                 CompanyAction = false
             });
@@ -5702,7 +6171,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bemoggled",
                     French = "Tournis mog",
                     German = "Tohuwabohu-Wahn",
-                    Japanese = "モグルグル"
+                    Japanese = "モグルグル",
+                    Korean = "모글빙글"
                 },
                 CompanyAction = false
             });
@@ -5714,7 +6184,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Royal Rouse",
                     French = "Mogtivation",
                     German = "Mogul-Fanfare",
-                    Japanese = "闘魂"
+                    Japanese = "闘魂",
+                    Korean = "투혼"
                 },
                 CompanyAction = false
             });
@@ -5726,7 +6197,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slippery Prey",
                     French = "Marquage impossible",
                     German = "Unmarkierbar",
-                    Japanese = "マーキング対象外"
+                    Japanese = "マーキング対象外",
+                    Korean = "표식 대상 제외"
                 },
                 CompanyAction = false
             });
@@ -5738,7 +6210,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Gloam",
                     French = "Voile ombreux",
                     German = "Dämmerlicht",
-                    Japanese = "薄闇"
+                    Japanese = "薄闇",
+                    Korean = "희미한 어둠"
                 },
                 CompanyAction = false
             });
@@ -5750,7 +6223,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mantle of the Whorl",
                     French = "Manteau du Déchaîneur",
                     German = "Wogenmantel",
-                    Japanese = "水神のマント"
+                    Japanese = "水神のマント",
+                    Korean = "수신의 망토"
                 },
                 CompanyAction = false
             });
@@ -5762,7 +6236,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Veil of the Whorl",
                     French = "Voile du Déchaîneur",
                     German = "Wogenschleier",
-                    Japanese = "水神のヴェール"
+                    Japanese = "水神のヴェール",
+                    Korean = "수신의 장막"
                 },
                 CompanyAction = false
             });
@@ -5774,7 +6249,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rehabilitation",
                     French = "Recouvrement",
                     German = "Rehabilitation",
-                    Japanese = "徐々にＨＰ回復"
+                    Japanese = "徐々にＨＰ回復",
+                    Korean = "서서히 HP 회복"
                 },
                 CompanyAction = false
             });
@@ -5786,7 +6262,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Haste+",
                     French = "Hâte +",
                     German = "Hast +",
-                    Japanese = "ヘイスト＋"
+                    Japanese = "ヘイスト＋",
+                    Korean = "헤이스트+"
                 },
                 CompanyAction = false
             });
@@ -5798,7 +6275,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sprint",
                     French = "Sprint",
                     German = "Sprint",
-                    Japanese = "スプリント"
+                    Japanese = "スプリント",
+                    Korean = "전력 질주"
                 },
                 CompanyAction = false
             });
@@ -5810,7 +6288,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Paralysis",
                     French = "Paralysie",
                     German = "Paralyse",
-                    Japanese = "麻痺"
+                    Japanese = "麻痺",
+                    Korean = "마비"
                 },
                 CompanyAction = false
             });
@@ -5822,7 +6301,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "HP Boost",
                     French = "Bonus de PV",
                     German = "LP-Bonus",
-                    Japanese = "最大ＨＰアップ"
+                    Japanese = "最大ＨＰアップ",
+                    Korean = "최대 HP 증가"
                 },
                 CompanyAction = false
             });
@@ -5834,7 +6314,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ink",
                     French = "Sépia venimeux",
                     German = "Toxische Tinte",
-                    Japanese = "毒墨"
+                    Japanese = "毒墨",
+                    Korean = "먹물독"
                 },
                 CompanyAction = false
             });
@@ -5846,7 +6327,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dropsy",
                     French = "Œdème",
                     German = "Wassersucht",
-                    Japanese = "水毒"
+                    Japanese = "水毒",
+                    Korean = "물독"
                 },
                 CompanyAction = false
             });
@@ -5858,7 +6340,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Watery Grave",
                     French = "Geôle aqueuse",
                     German = "Wasserkäfig",
-                    Japanese = "水牢"
+                    Japanese = "水牢",
+                    Korean = "수중 감옥"
                 },
                 CompanyAction = false
             });
@@ -5870,7 +6353,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Deep Freeze",
                     French = "Congélation",
                     German = "Tiefkühlung",
-                    Japanese = "氷結"
+                    Japanese = "氷結",
+                    Korean = "빙결"
                 },
                 CompanyAction = false
             });
@@ -5882,7 +6366,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shade Shift",
                     French = "Décalage d'ombre",
                     German = "Superkniff",
-                    Japanese = "残影"
+                    Japanese = "残影",
+                    Korean = "잔영"
                 },
                 CompanyAction = false
             });
@@ -5894,7 +6379,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Kiss of the Wasp",
                     French = "Baiser de guêpe",
                     German = "Wespenkuss",
-                    Japanese = "蜂毒"
+                    Japanese = "蜂毒",
+                    Korean = "벌독"
                 },
                 CompanyAction = false
             });
@@ -5906,7 +6392,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Kiss of the Viper",
                     French = "Baiser de vipère",
                     German = "Vipernkuss",
-                    Japanese = "蛇毒"
+                    Japanese = "蛇毒",
+                    Korean = "뱀독"
                 },
                 CompanyAction = false
             });
@@ -5918,7 +6405,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dancing Edge",
                     French = "Lame dansante",
                     German = "Tanzende Schneide",
-                    Japanese = "舞踏刃"
+                    Japanese = "舞踏刃",
+                    Korean = "춤추는 칼날"
                 },
                 CompanyAction = false
             });
@@ -5930,7 +6418,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mutilation",
                     French = "Attaque mutilante",
                     German = "Verstümmeln",
-                    Japanese = "無双旋"
+                    Japanese = "無双旋",
+                    Korean = "무쌍베기"
                 },
                 CompanyAction = false
             });
@@ -5942,7 +6431,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shadow Fang",
                     French = "Croc d'ombre",
                     German = "Schattenfang",
-                    Japanese = "一閃"
+                    Japanese = "一閃",
+                    Korean = "일섬"
                 },
                 CompanyAction = false
             });
@@ -5954,7 +6444,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Goad",
                     French = "Aiguillonnement",
                     German = "Dampf",
-                    Japanese = "叱咤"
+                    Japanese = "叱咤",
+                    Korean = "질타"
                 },
                 CompanyAction = false
             });
@@ -5966,7 +6457,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mudra",
                     French = "Mudrâ",
                     German = "Mudra",
-                    Japanese = "印"
+                    Japanese = "印",
+                    Korean = "인"
                 },
                 CompanyAction = true
             });
@@ -5978,7 +6470,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Kassatsu",
                     French = "Kassatsu",
                     German = "Kassatsu",
-                    Japanese = "活殺自在"
+                    Japanese = "活殺自在",
+                    Korean = "생사여탈"
                 },
                 CompanyAction = false
             });
@@ -5990,7 +6483,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Huton",
                     French = "Fûton",
                     German = "Huton",
-                    Japanese = "風遁の術"
+                    Japanese = "風遁の術",
+                    Korean = "풍둔술"
                 },
                 CompanyAction = false
             });
@@ -6002,7 +6496,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Doton",
                     French = "Doton",
                     German = "Doton",
-                    Japanese = "土遁の術"
+                    Japanese = "土遁の術",
+                    Korean = "토둔술"
                 },
                 CompanyAction = false
             });
@@ -6014,7 +6509,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Doton Heavy",
                     French = "Pesanteur",
                     German = "Gewicht",
-                    Japanese = "ヘヴィ"
+                    Japanese = "ヘヴィ",
+                    Korean = "과중력"
                 },
                 CompanyAction = false
             });
@@ -6037,7 +6533,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fetters",
                     French = "Attache",
                     German = "Gefesselt",
-                    Japanese = "拘束"
+                    Japanese = "拘束",
+                    Korean = "구속"
                 },
                 CompanyAction = false
             });
@@ -6049,7 +6546,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -6061,7 +6559,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vertigo",
                     French = "Vertige",
                     German = "Schwindel",
-                    Japanese = "目眩"
+                    Japanese = "目眩",
+                    Korean = "현기증"
                 },
                 CompanyAction = false
             });
@@ -6073,7 +6572,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Suiton",
                     French = "Suiton",
                     German = "Suiton",
-                    Japanese = "水遁の術"
+                    Japanese = "水遁の術",
+                    Korean = "수둔술"
                 },
                 CompanyAction = false
             });
@@ -6085,7 +6585,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shadow Fang",
                     French = "Croc d'ombre",
                     German = "Schattenfang",
-                    Japanese = "影牙"
+                    Japanese = "影牙",
+                    Korean = "그림자 송곳니"
                 },
                 CompanyAction = false
             });
@@ -6097,7 +6598,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetherochemical Bomb",
                     French = "Magismobombe",
                     German = "Ätherochemischer Sprengkörper",
-                    Japanese = "魔爆弾"
+                    Japanese = "魔爆弾",
+                    Korean = "마폭탄"
                 },
                 CompanyAction = false
             });
@@ -6109,7 +6611,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fetters",
                     French = "Attache",
                     German = "Gefesselt",
-                    Japanese = "拘束"
+                    Japanese = "拘束",
+                    Korean = "구속"
                 },
                 CompanyAction = false
             });
@@ -6121,7 +6624,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fire Toad",
                     French = "Pyrocrapaud",
                     German = "Knallfrosch",
-                    Japanese = "ファイアトード"
+                    Japanese = "ファイアトード",
+                    Korean = "불두꺼비"
                 },
                 CompanyAction = true
             });
@@ -6133,7 +6637,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Electroconductivity",
                     French = "Électroconductivité",
                     German = "Elektrokonduktivität",
-                    Japanese = "導電"
+                    Japanese = "導電",
+                    Korean = "전기 전도"
                 },
                 CompanyAction = false
             });
@@ -6145,7 +6650,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Static Condensation",
                     French = "Charge électrostatique",
                     German = "Statische Ladung",
-                    Japanese = "蓄電"
+                    Japanese = "蓄電",
+                    Korean = "축전"
                 },
                 CompanyAction = false
             });
@@ -6157,7 +6663,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Causality",
                     French = "Causalité",
                     German = "Kausalität",
-                    Japanese = "因果"
+                    Japanese = "因果",
+                    Korean = "인과응보"
                 },
                 CompanyAction = true
             });
@@ -6169,7 +6676,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thunderclap",
                     French = "Roulement de tonnerre",
                     German = "Rollender Donner",
-                    Japanese = "雷鼓"
+                    Japanese = "雷鼓",
+                    Korean = "뇌신의 북소리"
                 },
                 CompanyAction = false
             });
@@ -6181,7 +6689,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Chaos",
                     French = "Chaos",
                     German = "Chaos",
-                    Japanese = "混沌"
+                    Japanese = "混沌",
+                    Korean = "혼돈"
                 },
                 CompanyAction = false
             });
@@ -6193,7 +6702,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Surge Protection",
                     French = "Parafoudre",
                     German = "Überspannungsschutz",
-                    Japanese = "避雷"
+                    Japanese = "避雷",
+                    Korean = "피뢰침"
                 },
                 CompanyAction = false
             });
@@ -6205,7 +6715,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Reflect",
                     French = "Miroir",
                     German = "Reflektion",
-                    Japanese = "リフレク"
+                    Japanese = "リフレク",
+                    Korean = "리플렉트"
                 },
                 CompanyAction = false
             });
@@ -6217,7 +6728,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Counter",
                     French = "Riposte",
                     German = "Konter",
-                    Japanese = "カウンター"
+                    Japanese = "カウンター",
+                    Korean = "반격"
                 },
                 CompanyAction = false
             });
@@ -6229,7 +6741,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fire Resistance Up",
                     French = "Résistance au feu accrue",
                     German = "Feuerresistenz +",
-                    Japanese = "火属性耐性向上"
+                    Japanese = "火属性耐性向上",
+                    Korean = "불속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6241,7 +6754,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Water Resistance Up",
                     French = "Résistance à l'eau accrue",
                     German = "Wasserresistenz +",
-                    Japanese = "水属性耐性向上"
+                    Japanese = "水属性耐性向上",
+                    Korean = "물속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6253,7 +6767,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wind Resistance Up",
                     French = "Résistance au vent accrue",
                     German = "Windresistenz +",
-                    Japanese = "風属性耐性向上"
+                    Japanese = "風属性耐性向上",
+                    Korean = "바람속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6265,7 +6780,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Lightning Resistance Up",
                     French = "Résistance à la foudre accrue",
                     German = "Blitzresistenz +",
-                    Japanese = "雷属性耐性向上"
+                    Japanese = "雷属性耐性向上",
+                    Korean = "번개속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6277,7 +6793,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Earth Resistance Up",
                     French = "Résistance à la terre accrue",
                     German = "Erdresistenz +",
-                    Japanese = "土属性耐性向上"
+                    Japanese = "土属性耐性向上",
+                    Korean = "땅속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6289,7 +6806,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ice Resistance Up",
                     French = "Résistance à la glace accrue",
                     German = "Eisresistenz +",
-                    Japanese = "氷属性耐性向上"
+                    Japanese = "氷属性耐性向上",
+                    Korean = "얼음속성 저항 상승"
                 },
                 CompanyAction = false
             });
@@ -6301,7 +6819,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frost Blade",
                     French = "Lame glaciale",
                     German = "Frostklinge",
-                    Japanese = "凍てつく剣"
+                    Japanese = "凍てつく剣",
+                    Korean = "얼어붙은 검"
                 },
                 CompanyAction = false
             });
@@ -6313,7 +6832,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frost Brand",
                     French = "Bâton glacial",
                     German = "Froststab",
-                    Japanese = "凍てつく杖"
+                    Japanese = "凍てつく杖",
+                    Korean = "얼어붙은 지팡이"
                 },
                 CompanyAction = false
             });
@@ -6325,7 +6845,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frost Bow",
                     French = "Arc glacial",
                     German = "Frostbogen",
-                    Japanese = "凍てつく弓"
+                    Japanese = "凍てつく弓",
+                    Korean = "얼어붙은 활"
                 },
                 CompanyAction = false
             });
@@ -6337,7 +6858,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Invincibility",
                     French = "Invulnérable",
                     German = "Unverwundbar",
-                    Japanese = "無敵"
+                    Japanese = "無敵",
+                    Korean = "무적"
                 },
                 CompanyAction = false
             });
@@ -6349,7 +6871,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Burns",
                     French = "Brûlure",
                     German = "Brandwunde",
-                    Japanese = "火傷"
+                    Japanese = "火傷",
+                    Korean = "화상"
                 },
                 CompanyAction = false
             });
@@ -6361,7 +6884,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Dropsy",
                     French = "Œdème",
                     German = "Wassersucht",
-                    Japanese = "水毒"
+                    Japanese = "水毒",
+                    Korean = "물독"
                 },
                 CompanyAction = false
             });
@@ -6373,7 +6897,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Windburn",
                     French = "Brûlure du vent",
                     German = "Beißender Wind",
-                    Japanese = "裂傷"
+                    Japanese = "裂傷",
+                    Korean = "열상"
                 },
                 CompanyAction = false
             });
@@ -6385,7 +6910,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Electrocution",
                     French = "Électrocution",
                     German = "Stromschlag",
-                    Japanese = "感電"
+                    Japanese = "感電",
+                    Korean = "감전"
                 },
                 CompanyAction = false
             });
@@ -6397,7 +6923,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Sludge",
                     French = "Emboué",
                     German = "Schlamm",
-                    Japanese = "汚泥"
+                    Japanese = "汚泥",
+                    Korean = "진흙탕"
                 },
                 CompanyAction = false
             });
@@ -6409,7 +6936,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frostbite",
                     French = "Gelure",
                     German = "Erfrierung",
-                    Japanese = "凍傷"
+                    Japanese = "凍傷",
+                    Korean = "동상"
                 },
                 CompanyAction = false
             });
@@ -6421,7 +6949,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion EXP Up",
                     French = "Compagnon d'expérience",
                     German = "Sternstunde der Mitstreiter",
-                    Japanese = "バディ強化：経験値アップ"
+                    Japanese = "バディ強化：経験値アップ",
+                    Korean = "버디 강화: 경험치 증가"
                 },
                 CompanyAction = false
             });
@@ -6433,7 +6962,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion EXP Up II",
                     French = "Compagnon d'expérience II",
                     German = "Sternstunde der Mitstreiter II",
-                    Japanese = "バディ強化：経験値アップII"
+                    Japanese = "バディ強化：経験値アップII",
+                    Korean = "버디 강화: 경험치 증가 2"
                 },
                 CompanyAction = false
             });
@@ -6445,7 +6975,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Attack Up",
                     French = "Compagnon d'attaque",
                     German = "Mitstreiter-Attackebonus",
-                    Japanese = "バディ強化：攻撃力アップ"
+                    Japanese = "バディ強化：攻撃力アップ",
+                    Korean = "버디 강화: 공격력 상승"
                 },
                 CompanyAction = false
             });
@@ -6457,7 +6988,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Attack Up II",
                     French = "Compagnon d'attaque II",
                     German = "Mitstreiter-Attackebonus II",
-                    Japanese = "バディ強化：攻撃力アップII"
+                    Japanese = "バディ強化：攻撃力アップII",
+                    Korean = "버디 강화: 공격력 상승 2"
                 },
                 CompanyAction = false
             });
@@ -6469,7 +7001,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Healing Potency Up",
                     French = "Compagnon attentionné",
                     German = "Mitstreiter-Heilmagiebonus",
-                    Japanese = "バディ強化：魔法回復力アップ"
+                    Japanese = "バディ強化：魔法回復力アップ",
+                    Korean = "버디 강화: 마법 회복력 상승"
                 },
                 CompanyAction = false
             });
@@ -6481,7 +7014,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Healing Potency Up II",
                     French = "Compagnon attentioné II",
                     German = "Mitstreiter-Heilmagiebonus II",
-                    Japanese = "バディ強化：魔法回復力アップII"
+                    Japanese = "バディ強化：魔法回復力アップII",
+                    Korean = "버디 강화: 마법 회복력 상승 2"
                 },
                 CompanyAction = false
             });
@@ -6493,7 +7027,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Maximum HP Up",
                     French = "Compagnon gaillard",
                     German = "Mitstreiter-LP-Bonus",
-                    Japanese = "バディ強化：最大ＨＰアップ"
+                    Japanese = "バディ強化：最大ＨＰアップ",
+                    Korean = "버디 강화: 최대 HP 증가"
                 },
                 CompanyAction = false
             });
@@ -6505,7 +7040,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Maximum HP Up II",
                     French = "Compagnon gaillard II",
                     German = "Mitstreiter-LP-Bonus II",
-                    Japanese = "バディ強化：最大ＨＰアップII"
+                    Japanese = "バディ強化：最大ＨＰアップII",
+                    Korean = "버디 강화: 최대 HP 증가 2"
                 },
                 CompanyAction = false
             });
@@ -6517,7 +7053,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Enmity Up",
                     French = "Compagnon boutefeu",
                     German = "Provokativer Mitstreiter",
-                    Japanese = "バディ強化：敵視アップ"
+                    Japanese = "バディ強化：敵視アップ",
+                    Korean = "버디 강화: 적개심 상승"
                 },
                 CompanyAction = false
             });
@@ -6529,7 +7066,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Companion Enmity Up II",
                     French = "Compagnon boutefeu II",
                     German = "Provokativer Mitstreiter II",
-                    Japanese = "バディ強化：敵視アップII"
+                    Japanese = "バディ強化：敵視アップII",
+                    Korean = "버디 강화: 적개심 상승 2"
                 },
                 CompanyAction = false
             });
@@ -6541,7 +7079,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Enervation",
                     French = "Dans les choux",
                     German = "Schöner Salat",
-                    Japanese = "攻防低下"
+                    Japanese = "攻防低下",
+                    Korean = "공방 감소"
                 },
                 CompanyAction = false
             });
@@ -6553,7 +7092,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Production",
                     French = "Installation: production",
                     German = "Arbeitsstätte: Herstellung",
-                    Japanese = "製作施設：部材工作"
+                    Japanese = "製作施設：部材工作",
+                    Korean = "제작시설: 부재제작"
                 },
                 CompanyAction = false
             });
@@ -6565,7 +7105,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Finishing",
                     French = "Installation: finition",
                     German = "Arbeitsstätte: Veredelung",
-                    Japanese = "製作施設：精密工作"
+                    Japanese = "製作施設：精密工作",
+                    Korean = "제작시설: 정밀제작"
                 },
                 CompanyAction = false
             });
@@ -6577,7 +7118,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Detailing",
                     French = "Installation: minutie",
                     German = "Arbeitsstätte: Feinarbeit",
-                    Japanese = "製作施設：難関工作"
+                    Japanese = "製作施設：難関工作",
+                    Korean = "제작시설: 고급제작"
                 },
                 CompanyAction = false
             });
@@ -6589,7 +7131,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Production II",
                     French = "Installation: production II",
                     German = "Arbeitsstätte: Herstellung II",
-                    Japanese = "製作施設：部材工作II"
+                    Japanese = "製作施設：部材工作II",
+                    Korean = "제작시설: 부재제작 2"
                 },
                 CompanyAction = false
             });
@@ -6601,7 +7144,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Specialization",
                     French = "Installation: spécialité",
                     German = "Arbeitsstätte: Spezialisierung",
-                    Japanese = "製作施設：専門工作"
+                    Japanese = "製作施設：専門工作",
+                    Korean = "제작시설: 전문제작"
                 },
                 CompanyAction = true
             });
@@ -6613,7 +7157,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Specialization II",
                     French = "Installation: spécialité II",
                     German = "Arbeitsstätte: Spezialisierung II",
-                    Japanese = "製作施設：専門工作II"
+                    Japanese = "製作施設：専門工作II",
+                    Korean = "제작시설: 전문제작 2"
                 },
                 CompanyAction = true
             });
@@ -6625,7 +7170,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Detailing II",
                     French = "Installation: minutie II",
                     German = "Arbeitsstätte: Feinarbeit II",
-                    Japanese = "製作施設：難関工作II"
+                    Japanese = "製作施設：難関工作II",
+                    Korean = "제작시설: 고급제작 2"
                 },
                 CompanyAction = false
             });
@@ -6637,7 +7183,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Facility Access: Finishing II",
                     French = "Installation: finition II",
                     German = "Arbeitsstätte: Veredelung II",
-                    Japanese = "製作施設：精密工作II"
+                    Japanese = "製作施設：精密工作II",
+                    Korean = "제작시설: 정밀제작 2"
                 },
                 CompanyAction = false
             });
@@ -6649,7 +7196,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Repelling Spray",
                     French = "Réplique",
                     German = "Reflektorschild",
-                    Japanese = "応射"
+                    Japanese = "応射",
+                    Korean = "대응"
                 },
                 CompanyAction = false
             });
@@ -6661,7 +7209,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Repelling Spray",
                     French = "Réplique",
                     German = "Reflektorschild",
-                    Japanese = "応射"
+                    Japanese = "応射",
+                    Korean = "대응"
                 },
                 CompanyAction = false
             });
@@ -6673,7 +7222,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Repelling Spray",
                     French = "Réplique",
                     German = "Reflektorschild",
-                    Japanese = "応射"
+                    Japanese = "応射",
+                    Korean = "대응"
                 },
                 CompanyAction = false
             });
@@ -6685,7 +7235,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Repelling Spray",
                     French = "Réplique",
                     German = "Reflektorschild",
-                    Japanese = "応射"
+                    Japanese = "応射",
+                    Korean = "대응"
                 },
                 CompanyAction = false
             });
@@ -6697,7 +7248,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Poison",
                     French = "Poison",
                     German = "Gift",
-                    Japanese = "毒"
+                    Japanese = "毒",
+                    Korean = "독"
                 },
                 CompanyAction = false
             });
@@ -6709,7 +7261,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Poison",
                     French = "Poison",
                     German = "Gift",
-                    Japanese = "毒"
+                    Japanese = "毒",
+                    Korean = "독"
                 },
                 CompanyAction = false
             });
@@ -6721,7 +7274,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slow",
                     French = "Lenteur",
                     German = "Gemach",
-                    Japanese = "スロウ"
+                    Japanese = "スロウ",
+                    Korean = "둔화"
                 },
                 CompanyAction = false
             });
@@ -6733,7 +7287,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Prey",
                     French = "Marquage",
                     German = "Markiert",
-                    Japanese = "マーキング"
+                    Japanese = "マーキング",
+                    Korean = "표식"
                 },
                 CompanyAction = false
             });
@@ -6745,7 +7300,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Up",
                     French = "Vulnérabilité augmentée",
                     German = "Erhöhte Verwundbarkeit",
-                    Japanese = "被ダメージ上昇"
+                    Japanese = "被ダメージ上昇",
+                    Korean = "받는 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -6757,7 +7313,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bind",
                     French = "Entrave",
                     German = "Fessel",
-                    Japanese = "バインド"
+                    Japanese = "バインド",
+                    Korean = "속박"
                 },
                 CompanyAction = false
             });
@@ -6769,7 +7326,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Transfiguration",
                     French = "Transformation",
                     German = "Verwandlung",
-                    Japanese = "変身"
+                    Japanese = "変身",
+                    Korean = "변신"
                 },
                 CompanyAction = true
             });
@@ -6781,7 +7339,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Damage Up",
                     French = "Bonus de dégâts",
                     German = "Schaden +",
-                    Japanese = "ダメージ上昇"
+                    Japanese = "ダメージ上昇",
+                    Korean = "공격 피해량 상승"
                 },
                 CompanyAction = false
             });
@@ -6793,7 +7352,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Shifting Sands",
                     French = "Sable mouvant",
                     German = "Treibsand",
-                    Japanese = "流砂"
+                    Japanese = "流砂",
+                    Korean = "모래지옥"
                 },
                 CompanyAction = false
             });
@@ -6805,7 +7365,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Fisher's Intuition",
                     French = "Instinct du pêcheur",
                     German = "Petri Heil",
-                    Japanese = "漁師の直感"
+                    Japanese = "漁師の直感",
+                    Korean = "어부의 직감"
                 },
                 CompanyAction = false
             });
@@ -6817,7 +7378,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slime",
                     French = "Mucus",
                     German = "Schleim",
-                    Japanese = "粘液"
+                    Japanese = "粘液",
+                    Korean = "점액"
                 },
                 CompanyAction = false
             });
@@ -6829,7 +7391,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "In the Line of Fire",
                     French = "Dans la ligne de tir",
                     German = "In der Schusslinie",
-                    Japanese = "エイム"
+                    Japanese = "エイム",
+                    Korean = "겨냥"
                 },
                 CompanyAction = false
             });
@@ -6841,7 +7404,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blind",
                     French = "Cécité",
                     German = "Blind",
-                    Japanese = "暗闇"
+                    Japanese = "暗闇",
+                    Korean = "암흑"
                 },
                 CompanyAction = false
             });
@@ -6853,7 +7417,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Slashing Resistance Down",
                     French = "Résistance au tranchant réduite",
                     German = "Hiebresistenz -",
-                    Japanese = "斬属性耐性低下"
+                    Japanese = "斬属性耐性低下",
+                    Korean = "베기 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -6865,7 +7430,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Blunt Resistance Down",
                     French = "Résistance au contondant réduite",
                     German = "Schlagresistenz -",
-                    Japanese = "打属性耐性低下"
+                    Japanese = "打属性耐性低下",
+                    Korean = "타격 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -6877,7 +7443,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Erratic Blaster",
                     French = "Électrochoc imprévisible",
                     German = "Erratischer Puls",
-                    Japanese = "エラティックブラスター"
+                    Japanese = "エラティックブラスター",
+                    Korean = "불안정한 블래스터"
                 },
                 CompanyAction = false
             });
@@ -6889,7 +7456,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Static Charge",
                     French = "Charge statique",
                     German = "Statische Ladung",
-                    Japanese = "帯電"
+                    Japanese = "帯電",
+                    Korean = "전류 충전"
                 },
                 CompanyAction = false
             });
@@ -6901,7 +7469,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Lightning Resistance Down",
                     French = "Résistance à la foudre réduite",
                     German = "Blitzresistenz -",
-                    Japanese = "雷属性耐性低下"
+                    Japanese = "雷属性耐性低下",
+                    Korean = "번개속성 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -6913,7 +7482,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Barofield",
                     French = "Barotraumatisme",
                     German = "Baro-Feld",
-                    Japanese = "バロフィールド"
+                    Japanese = "バロフィールド",
+                    Korean = "압력 필드"
                 },
                 CompanyAction = false
             });
@@ -6925,7 +7495,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "In the Headlights",
                     French = "À portée de tête",
                     German = "Hauptkopf",
-                    Japanese = "メインヘッド耐性低下"
+                    Japanese = "メインヘッド耐性低下",
+                    Korean = "가운뎃머리 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -6937,7 +7508,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Critical Strikes",
                     French = "Coups critiques",
                     German = "Kritische Attacke",
-                    Japanese = "クリティカル攻撃"
+                    Japanese = "クリティカル攻撃",
+                    Korean = "극대화 공격"
                 },
                 CompanyAction = false
             });
@@ -6949,7 +7521,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetherochemical Nanospores α",
                     French = "Magismoparticules α",
                     German = "Nanosporen α",
-                    Japanese = "魔科学粒子α"
+                    Japanese = "魔科学粒子α",
+                    Korean = "마과학 입자 α"
                 },
                 CompanyAction = false
             });
@@ -6961,7 +7534,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Aetherochemical Nanospores β",
                     French = "Magismoparticules β",
                     German = "Nanosporen β",
-                    Japanese = "魔科学粒子β"
+                    Japanese = "魔科学粒子β",
+                    Korean = "마과학 입자 β"
                 },
                 CompanyAction = false
             });
@@ -6973,7 +7547,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Vulnerability Down",
                     French = "Vulnérabilité magique diminuée",
                     German = "Verringerte Magie-Verwundbarkeit",
-                    Japanese = "被魔法ダメージ軽減"
+                    Japanese = "被魔法ダメージ軽減",
+                    Korean = "마법 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -6985,7 +7560,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Down",
                     French = "Vulnérabilité physique diminuée",
                     German = "Verringerte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ軽減"
+                    Japanese = "被物理ダメージ軽減",
+                    Korean = "물리 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -6997,7 +7573,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Energy Field",
                     French = "Champ défensif",
                     German = "Abwehrfeld",
-                    Japanese = "防御フィールド"
+                    Japanese = "防御フィールド",
+                    Korean = "방어 필드"
                 },
                 CompanyAction = false
             });
@@ -7009,7 +7586,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Energy Field Down",
                     French = "Anti-champ défensif",
                     German = "Anti-Abwehrfeld",
-                    Japanese = "対防御フィールド"
+                    Japanese = "対防御フィールド",
+                    Korean = "방어 필드 무효"
                 },
                 CompanyAction = false
             });
@@ -7021,7 +7599,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "HP Boost",
                     French = "Bonus de PV",
                     German = "LP-Bonus",
-                    Japanese = "最大ＨＰアップ"
+                    Japanese = "最大ＨＰアップ",
+                    Korean = "HP 최대치 증가"
                 },
                 CompanyAction = false
             });
@@ -7033,7 +7612,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Forked Lightning",
                     French = "Éclair ramifié",
                     German = "Gabelblitz",
-                    Japanese = "フォークライトニング"
+                    Japanese = "フォークライトニング",
+                    Korean = "갈래 번개"
                 },
                 CompanyAction = false
             });
@@ -7045,7 +7625,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Revelation Resistance Down",
                     French = "Résistance à Révélation réduite",
                     German = "Offenbarungs-Resistenz -",
-                    Japanese = "リヴァレーション耐性低下"
+                    Japanese = "リヴァレーション耐性低下",
+                    Korean = "계시 저항 감소"
                 },
                 CompanyAction = false
             });
@@ -7057,7 +7638,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Chain of Purgatory",
                     French = "Souffle du purgatoire",
                     German = "Kette der Purgation",
-                    Japanese = "誘爆"
+                    Japanese = "誘爆",
+                    Korean = "유폭"
                 },
                 CompanyAction = false
             });
@@ -7069,7 +7651,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Arm of Purgatory",
                     French = "Bras du purgatoire",
                     German = "Arm der Purgation",
-                    Japanese = "延焼"
+                    Japanese = "延焼",
+                    Korean = "연소"
                 },
                 CompanyAction = false
             });
@@ -7081,7 +7664,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Bluefire",
                     French = "Flamme bleue",
                     German = "Blaufeuer",
-                    Japanese = "青碧の炎"
+                    Japanese = "青碧の炎",
+                    Korean = "청벽의 불꽃"
                 },
                 CompanyAction = false
             });
@@ -7093,7 +7677,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Ring of Fire",
                     French = "Vortex de feu",
                     German = "Flammenwand",
-                    Japanese = "炎渦"
+                    Japanese = "炎渦",
+                    Korean = "불꽃의 소용돌이"
                 },
                 CompanyAction = false
             });
@@ -7105,7 +7690,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Rise of the Phoenix",
                     French = "Oiseau de feu",
                     German = "Feuervogel",
-                    Japanese = "不死鳥"
+                    Japanese = "不死鳥",
+                    Korean = "불사조"
                 },
                 CompanyAction = false
             });
@@ -7117,7 +7703,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Harvest",
                     French = "Buveur d'âme",
                     German = "Seelensog",
-                    Japanese = "吸魂"
+                    Japanese = "吸魂",
+                    Korean = "영혼 흡수"
                 },
                 CompanyAction = false
             });
@@ -7129,7 +7716,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Cloak of Death",
                     French = "Remous de la vie",
                     German = "Sog der Verzehrung",
-                    Japanese = "霊泉禍"
+                    Japanese = "霊泉禍",
+                    Korean = "영검의 소용돌이"
                 },
                 CompanyAction = false
             });
@@ -7141,7 +7729,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Suffocated Will",
                     French = "Aura du Dragon-dieu",
                     German = "Drachenopfer",
-                    Japanese = "龍圧"
+                    Japanese = "龍圧",
+                    Korean = "용의 위압"
                 },
                 CompanyAction = false
             });
@@ -7153,7 +7742,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Flare Dampening",
                     French = "ParaTéraBrasier",
                     German = "Neurolink",
-                    Japanese = "拘束装置"
+                    Japanese = "拘束装置",
+                    Korean = "구속 장치"
                 },
                 CompanyAction = false
             });
@@ -7165,7 +7755,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "(仮)物理シールド(ストンスキン)",
                     French = "(仮)物理シールド(ストンスキン)",
                     German = "(仮)物理シールド(ストンスキン)",
-                    Japanese = "(仮)物理シールド(ストンスキン)"
+                    Japanese = "(仮)物理シールド(ストンスキン)",
+                    Korean = "(仮)物理シールド(ストンスキン)"
                 },
                 CompanyAction = false
             });
@@ -7177,7 +7768,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "(仮)魔法シールド(ストンスキン)",
                     French = "(仮)魔法シールド(ストンスキン)",
                     German = "(仮)魔法シールド(ストンスキン)",
-                    Japanese = "(仮)魔法シールド(ストンスキン)"
+                    Japanese = "(仮)魔法シールド(ストンスキン)",
+                    Korean = "(仮)魔法シールド(ストンスキン)"
                 },
                 CompanyAction = false
             });
@@ -7189,7 +7781,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Magic Vulnerability Down",
                     French = "Vulnérabilité magique diminuée",
                     German = "Verringerte Magie-Verwundbarkeit",
-                    Japanese = "被魔法ダメージ軽減"
+                    Japanese = "被魔法ダメージ軽減",
+                    Korean = "마법 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -7201,7 +7794,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Physical Vulnerability Down",
                     French = "Vulnérabilité physique diminuée",
                     German = "Verringerte physische Verwundbarkeit",
-                    Japanese = "被物理ダメージ軽減"
+                    Japanese = "被物理ダメージ軽減",
+                    Korean = "물리 피해 감소"
                 },
                 CompanyAction = false
             });
@@ -7213,7 +7807,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Curse of the Mummy",
                     French = "Malédiction d'Azeyma",
                     German = "Azeymas Fluch",
-                    Japanese = "アーゼマの呪い"
+                    Japanese = "アーゼマの呪い",
+                    Korean = "아제마의 저주"
                 },
                 CompanyAction = false
             });
@@ -7225,7 +7820,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Mummification",
                     French = "Pion d'Azeyma",
                     German = "Azeymas Jünger",
-                    Japanese = "アーゼマの使徒"
+                    Japanese = "アーゼマの使徒",
+                    Korean = "아제마의 사도"
                 },
                 CompanyAction = true
             });
@@ -7237,7 +7833,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Thin Ice",
                     French = "Verglas",
                     German = "Glatteis",
-                    Japanese = "氷床"
+                    Japanese = "氷床",
+                    Korean = "얼음 바닥"
                 },
                 CompanyAction = false
             });
@@ -7249,7 +7846,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frostbite",
                     French = "Gelure",
                     German = "Erfrierung",
-                    Japanese = "凍傷"
+                    Japanese = "凍傷",
+                    Korean = "동상"
                 },
                 CompanyAction = false
             });
@@ -7261,7 +7859,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Frozen",
                     French = "Glaciation",
                     German = "Überfroren",
-                    Japanese = "凍結"
+                    Japanese = "凍結",
+                    Korean = "동결"
                 },
                 CompanyAction = false
             });
@@ -7273,7 +7872,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Snowball",
                     French = "Boule de neige",
                     German = "Schneeball",
-                    Japanese = "雪玉"
+                    Japanese = "雪玉",
+                    Korean = "눈덩이"
                 },
                 CompanyAction = false
             });
@@ -7285,7 +7885,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Death Throes",
                     French = "Affres de la mort",
                     German = "Agonales Klammern",
-                    Japanese = "道連れ"
+                    Japanese = "道連れ",
+                    Korean = "물귀신 작전"
                 },
                 CompanyAction = false
             });
@@ -7297,7 +7898,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Seized",
                     French = "Étreinte mortelle",
                     German = "Umschlungen",
-                    Japanese = "捕獲"
+                    Japanese = "捕獲",
+                    Korean = "포획"
                 },
                 CompanyAction = false
             });
@@ -7309,7 +7911,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Petrification",
                     French = "Pétrification",
                     German = "Stein",
-                    Japanese = "石化"
+                    Japanese = "石化",
+                    Korean = "석화"
                 },
                 CompanyAction = false
             });
@@ -7321,7 +7924,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Invigoration",
                     French = "Bonne humeur",
                     German = "Schwippdischwapp",
-                    Japanese = "気分上々"
+                    Japanese = "気分上々",
+                    Korean = "기분 최고"
                 },
                 CompanyAction = false
             });
@@ -7333,7 +7937,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Wet Plate",
                     French = "Plein d'eau",
                     German = "Vollgelaufen",
-                    Japanese = "うるおい"
+                    Japanese = "うるおい",
+                    Korean = "촉촉함"
                 },
                 CompanyAction = false
             });
@@ -7345,7 +7950,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Imp",
                     French = "Kappa",
                     German = "Flusskobold",
-                    Japanese = "カッパ"
+                    Japanese = "カッパ",
+                    Korean = "물요정"
                 },
                 CompanyAction = true
             });
@@ -7357,7 +7963,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hidden",
                     French = "Dissimulation",
                     German = "Versteckt",
-                    Japanese = "かくれる"
+                    Japanese = "かくれる",
+                    Korean = "은신술"
                 },
                 CompanyAction = true
             });
@@ -7369,7 +7976,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Hidden",
                     French = "Dissimulation",
                     German = "Versteckt",
-                    Japanese = "かくれる"
+                    Japanese = "かくれる",
+                    Korean = "은신술"
                 },
                 CompanyAction = true
             });
@@ -7477,7 +8085,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Flesh Wound",
                     French = "Blessure physique",
                     German = "Fleischwunde",
-                    Japanese = "切傷"
+                    Japanese = "切傷",
+                    Korean = "절상"
                 },
                 CompanyAction = false
             });
@@ -7489,7 +8098,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Down for the Count",
                     French = "Au tapis",
                     German = "Am Boden",
-                    Japanese = "ノックダウン"
+                    Japanese = "ノックダウン",
+                    Korean = "넉다운"
                 },
                 CompanyAction = false
             });
@@ -7501,7 +8111,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Out of the Action",
                     French = "Actions bloquées",
                     German = "Außer Gefecht",
-                    Japanese = "アクション実行不可"
+                    Japanese = "アクション実行不可",
+                    Korean = "기술 실행 불가"
                 },
                 CompanyAction = false
             });
@@ -7513,7 +8124,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Regen",
                     French = "Récup",
                     German = "Regena",
-                    Japanese = "リジェネ"
+                    Japanese = "リジェネ",
+                    Korean = "리제네"
                 },
                 CompanyAction = false
             });
@@ -7525,7 +8137,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Medica II",
                     French = "Extra Médica",
                     German = "Resedra",
-                    Japanese = "メディカラ"
+                    Japanese = "メディカラ",
+                    Korean = "메디카라"
                 },
                 CompanyAction = false
             });
@@ -7606,7 +8219,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Vulnerability Up",
                     French = "Vulnérabilité augmentée",
                     German = "Erhöhte Verwundbarkeit",
-                    Japanese = "被ダメージ上昇"
+                    Japanese = "被ダメージ上昇",
+                    Korean = "받는 피해 증가"
                 },
                 CompanyAction = false
             });
@@ -10389,6 +11003,24 @@ namespace FFXIVAPP.Memory.Helpers
                     French = "Vulnérabilité physique augmentée",
                     German = "Erhöhte physische Verwundbarkeit",
                     Japanese = "被物理ダメージ増加"
+                },
+                CompanyAction = false
+            });
+
+            // Korean version exclusive exp and echo buff when you're on PC bang ( https://imgur.com/a/thmzB )
+            StatusEffects.TryAdd(935, new StatusItem
+            {
+                Name = new StatusLocalization
+                {
+                    Korean = "PC방 혜택"
+                },
+                CompanyAction = false
+            });
+            StatusEffects.TryAdd(936, new StatusItem
+            {
+                Name = new StatusLocalization
+                {
+                    Korean = "PC방 초월하는 힘"
                 },
                 CompanyAction = false
             });

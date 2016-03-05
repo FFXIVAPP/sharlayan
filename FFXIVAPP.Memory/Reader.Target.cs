@@ -37,7 +37,7 @@ namespace FFXIVAPP.Memory
                     switch (MemoryHandler.Instance.GameLanguage)
                     {
                         case "Korean":
-                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
+                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] - 120664;
                             break;
                         case "Chinese":
                             targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
@@ -226,7 +226,8 @@ namespace FFXIVAPP.Memory
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
                                         case "Korean":
-                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
+                                            enmityEntry.Name   = null; // Search from the list later (old impl)
+                                            enmityEntry.ID     = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
                                             enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
                                             break;
                                         default:
