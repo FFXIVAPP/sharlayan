@@ -40,6 +40,10 @@ namespace FFXIVAPP.Memory.Helpers
         {
             var mapList = new List<MapInfo>
             {
+                new MapInfo(false, 1)
+                {
+                    Korean = "에오르제아"
+                },
                 new MapInfo(false, 128)
                 {
                     Chinese = "利姆萨·罗敏萨上层甲上层甲板",
@@ -157,6 +161,10 @@ namespace FFXIVAPP.Memory.Helpers
                     Japanese = "中央ザナラーン",
                     Korean = "중부 다날란"
                 },
+                new MapInfo(false, 143)
+                {
+                    Korean = "구름길"
+                },
                 new MapInfo(false, 145)
                 {
                     Chinese = "东萨纳兰",
@@ -192,6 +200,14 @@ namespace FFXIVAPP.Memory.Helpers
                     German = "Tiefer Wald",
                     Japanese = "黒衣森：中央森林",
                     Korean = "검은장막 숲 중부삼림"
+                },
+                new MapInfo(false, 150) // keeper of the lake
+                {
+                    Korean = "묵약의 탑" 
+                },
+                new MapInfo(false, 151) // world of darkness
+                {
+                    Korean = "어둠의 세계"
                 },
                 new MapInfo(false, 152)
                 {
@@ -427,6 +443,30 @@ namespace FFXIVAPP.Memory.Helpers
                     Japanese = "外地ラノシア",
                     Korean = "외지 라노시아"
                 },
+                new MapInfo(false, 188) // wander's palace hard
+                {
+                    Korean = "방랑자의 궁전(어려움)"
+                },
+                new MapInfo(false, 189) // amdapor keep hard
+                {
+                    Korean = "옛 암다포르 성(어려움)"
+                },
+                new MapInfo(false, 193) // T10
+                {
+                    Korean = "라그나로크급 6번함 함체 중앙부"
+                },
+                new MapInfo(false, 194) // T11
+                {
+                    Korean = "라그나로크급 6번함 재생 제어 구역"
+                },
+                new MapInfo(false, 195) // T12
+                {
+                    Korean = "라그나로크급 6번함 제1함교"
+                },
+                new MapInfo(false, 196) // T13
+                {
+                    Korean = "바하무트 핵심부"
+                },
                 new MapInfo(false, 198)
                 {
                     Chinese = "提督室",
@@ -514,8 +554,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "Heart of the Sworn",
                     French = "Hall d'argent",
                     German = "Hauptquartier der Palastwache",
-                    Japanese = "銀冑団総長室"//,
-                    // Korean = ""
+                    Japanese = "銀冑団総長室",
+                    Korean = "은갑옷단 총장실"
                 },
                 new MapInfo(false, 211)
                 {
@@ -523,8 +563,8 @@ namespace FFXIVAPP.Memory.Helpers
                     English = "The Fragrant Chamber",
                     French = "Chambre de l'encens",
                     German = "Die Weihrauchkammer",
-                    Japanese = "香煙の間"//,
-                    //Korean = ""
+                    Japanese = "香煙の間",
+                    Korean = "향불방"
                 },
                 new MapInfo(false, 212)
                 {
@@ -607,6 +647,10 @@ namespace FFXIVAPP.Memory.Helpers
                     Japanese = "ウルヴズジェイル係船場",
                     Korean = "늑대우리 부두"
                 },
+                new MapInfo(false, 281) // leviathan
+                {
+                    Korean = "대 리바이어선 쌍동선"
+                },
                 new MapInfo(false, 282)
                 {
                     Chinese = "海雾村私人小屋",
@@ -641,7 +685,11 @@ namespace FFXIVAPP.Memory.Helpers
                     French = "Hurlœil",
                     German = "Das Tosende Auge",
                     Japanese = "ハウリングアイ外縁",
-                    Korean = "울부짖는 눈 석탑군"
+                    Korean = "울부짖는 눈 테두리"
+                },
+                new MapInfo(false, 338)
+                {
+                    Korea = "에오르제아 지하공간"
                 },
                 new MapInfo(false, 339)
                 {
@@ -740,7 +788,7 @@ namespace FFXIVAPP.Memory.Helpers
                     French = "Mines de Clochecuivre (brutal)",
                     German = "Kupferglocken-Mine (schwer)",
                     Japanese = "カッパーベル銅山（騒乱坑道）",
-                    Korean = "구리종 광산 (어려움)"
+                    Korean = "구리종 광산(어려움)"
                 },
                 new MapInfo(true, 350)
                 {
@@ -749,7 +797,7 @@ namespace FFXIVAPP.Memory.Helpers
                     French = "Manoir des Haukke (brutal)",
                     German = "Haukke-Herrenhaus (schwer)",
                     Japanese = "ハウケタ御用邸（妖異屋敷）",
-                    Korean = "하우케타 별궁 (어려움)"
+                    Korean = "하우케타 별궁(어려움)"
                 },
                 new MapInfo(false, 351)
                 {
@@ -759,6 +807,93 @@ namespace FFXIVAPP.Memory.Helpers
                     German = "Sonnenstein",
                     Japanese = "石の家",
                     Korean = "돌의 집"
+                },
+                new MapInfo(false, 355) // T6
+                {
+                    Korean = "메테오의 그림자"
+                },
+                new MapInfo(false, 356) // T7
+                {
+                    Korean = "구속의 고리"
+                },
+                new MapInfo(false, 357) // T8
+                {
+                    Korean = "라그나로크급 3번함 함체 중앙부"
+                },new MapInfo(false, 358) // T9
+                {
+                    Korean = "라그나로크급 3번함 작전실"
+                },
+                new MapInfo(false, 355) // halatali hard
+                {
+                    Korean = "할라탈리 수련장(어려움)"
+                },
+                new MapInfo(false, 355) // hullbreaker isle
+                {
+                    Korean = "난파선의 섬"
+                },
+                new MapInfo(false, 355)  // longstop hard
+                {
+                    Korean = "브레이플록스의 야영지(어려움)"
+                },
+                new MapInfo(false, 363) // lost city of amdapor
+                {
+                    Korean = "옛 암다포르 시가지"
+                },
+                new MapInfo(false, 365) // stone vigil hard
+                {
+                    Korean = "돌방패 경계초소(어려움)"
+                },
+                new MapInfo(false, 366) //  battle on the big bridge
+                {
+                    Korean = "그리핀 대교"
+                },
+                new MapInfo(false, 367) // The Sunken Temple of Qarn, (dup entry, but maybe used for hard mode?)
+                {
+                    Korean = "카른의 무너진 사원"
+                },
+                new MapInfo(false, 371) // Snowcloak
+                {
+                    Korean = "얼음외투 대빙벽"
+                },
+                new MapInfo(false, 372) // syrcus tower
+                {
+                    Korean = "시르쿠스 탑"
+                },
+                new MapInfo(false, 373) // tam tara deepcroft hard
+                {
+                    Korean = "탐타라 묘소(어려움)"
+                },
+                new MapInfo(false, 374) // the striking tree
+                {
+                    Korean = "심판의 나무"
+                },
+                new MapInfo(false, 376) // frontline, maybe
+                {
+                    Korean = "카르테노 평원: 외곽 유적지대"
+                },
+                new MapInfo(false, 377) // Akh Afah Amphitheatre (aka shiva)
+                {
+                    Korean = "아크 아파 원형극장"
+                },
+                new MapInfo(false, 384) // personal room (the mist)
+                {
+                    Korean = "안갯빛 마을: 개인실"
+                },
+                new MapInfo(false, 385) // personal room (Lavender Beds)
+                {
+                    Korean = "라벤더 안식처: 개인실"
+                },
+                new MapInfo(false, 386) // personal room (The Goblet)
+                {
+                    Korean = "하늘잔 마루: 개인실"
+                },
+                new MapInfo(false, 387) // sastasha hard
+                {
+                    Korean = "사스타샤 침식 동굴(어려움)"
+                },
+                new MapInfo(false, 426) // The Chrysalis
+                {
+                    Korean = "계율의 고치"
                 }
             };
 
