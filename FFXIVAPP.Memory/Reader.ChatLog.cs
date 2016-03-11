@@ -80,7 +80,16 @@ namespace FFXIVAPP.Memory
 
             if (Scanner.Instance.Locations.ContainsKey("CHATLOG"))
             {
-                var chatPointerMap = (IntPtr) Scanner.Instance.Locations["CHATLOG"];
+                IntPtr chatPointerMap;
+                switch (MemoryHandler.Instance.GameLanguage)
+                {
+                    case "Korean":
+                        chatPointerMap = (IntPtr)MemoryHandler.Instance.GetUInt32(Scanner.Instance.Locations["GAMEMAIN"]) + 20;
+                        break;
+                    default:
+                        chatPointerMap = (IntPtr)Scanner.Instance.Locations["CHATLOG"];
+                        break;
+                }
 
                 if (chatPointerMap.ToInt64() <= 20)
                 {

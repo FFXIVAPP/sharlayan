@@ -19,7 +19,7 @@ using FFXIVAPP.Memory.Models;
 Process[] processes = Process.GetProcessesByName("ffxiv");
 if (processes.length)
 {
-    // supported: English, Chinese, Japanese, French, German
+    // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
     Process process = processes[0];
     ProcessModel processModel = new ProcessModel
@@ -33,7 +33,7 @@ if (processes.length)
 Process[] processes = Process.GetProcessesByName("ffxiv_dx11");
 if (processes.length)
 {
-    // supported: English, Chinese, Japanese, French, German
+    // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
     Process process = processes[0];
     ProcessModel processModel = new ProcessModel

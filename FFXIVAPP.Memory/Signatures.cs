@@ -28,37 +28,37 @@ namespace FFXIVAPP.Memory
 
             switch (gameLanguage)
             {
-                // Copied from 4adf758 (Patch 2.45)
+                // Copied from 6eae40ef (Patch 2.5)
                 case "Korean":
                     signatures.Add(new Signature
                     {
                         Key = "GAMEMAIN",
                         Value = "47616D654D61696E000000",
-                        Offset = 1248
+                        Offset = 1260 // pre 2.5 = 1248
                     });
                     signatures.Add(new Signature
                     {
                         Key = "CHARMAP",
-                        Value = "00000000DB0FC93FDB0F49416F1283????FFFFFF000000??000000??DB0FC93FDB0F49416F1283????FFFFFF",
-                        Offset = 872
+                        Value = "FFFFFFFF????????DB0FC93FDB0F49416F12833A00000000????????DB0FC93FDB0F49416F12833A00000000",
+                        Offset = 44
                     });
                     signatures.Add(new Signature
                     {
                         Key = "NPCMAP",
                         Value = "3E000000????????4000000001000000000000000001000000",
-                        Offset = 2716
+                        Offset = 2748
                     });
                     signatures.Add(new Signature
                     {
                         Key = "ACTORMAP",
                         Value = "3E000000????????4000000001000000000000000001000000",
-                        Offset = 1316
+                        Offset = 1348 // pre-2.5 = 1316
                     });
                     signatures.Add(new Signature
                     {
                         Key = "PARTYMAP",
-                        Value = "DB0F49416F1283??FFFFFFFF0000000000000000DB0FC93FDB0F49416F1283??00",
-                        Offset = 52
+                        Value = "DB0F49416F12833A0000000000000000000000000000000000000000000000000000000000000000????????DB0FC93F",
+                        Offset = 92
                     });
                     signatures.Add(new Signature
                     {
@@ -69,20 +69,20 @@ namespace FFXIVAPP.Memory
                     signatures.Add(new Signature
                     {
                         Key = "MAP",
-                        Value = "F783843E????????????????FFFFFFFFDB0FC93FDB0F49416F12833A",
-                        Offset = 896
+                        Value = "F783843E????????????????FFFFFFFF????????DB0FC93FDB0F49416F12833A",
+                        Offset = 820
                     });
                     signatures.Add(new Signature
                     {
                         Key = "TARGET",
-                        Value = "DB0FC93FDB0F49416F1283????FFFFFFDB0FC940920A063F",
-                        Offset = 172
+                        Value = "403F00000000000000000000000000000000????0000????000000000000??000000????????DB0FC93FDB0F49416F12833A",
+                        Offset = 218
                     });
                     signatures.Add(new Signature
                     {
                         Key = "INVENTORY",
-                        Value = "DB0FC93FDB0F49416F1283??FFFFFFFF00000000??00??00??00??00??00??00??00????DB0FC93FDB0F49416F12833AFFFFFFFF",
-                        Offset = 56
+                        Value = "DB0FC93FDB0F49416F1283??FFFFFFFF00000000??00??00??00??00??????00??00????0000????????????DB0FC93FDB0F49416F12833A",
+                        Offset = 60
                     });
                     break;
                 // copied from a4cab8e327 (patch 3.07)
