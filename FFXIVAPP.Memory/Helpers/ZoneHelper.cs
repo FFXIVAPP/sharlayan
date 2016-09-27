@@ -689,7 +689,7 @@ namespace FFXIVAPP.Memory.Helpers
                 },
                 new MapInfo(false, 338)
                 {
-                    Korea = "에오르제아 지하공간"
+                    Korean = "에오르제아 지하공간"
                 },
                 new MapInfo(false, 339)
                 {

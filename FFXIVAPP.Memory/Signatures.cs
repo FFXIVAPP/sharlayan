@@ -246,7 +246,7 @@ namespace FFXIVAPP.Memory
                         signatures.Add(new Signature
                         {
                             Key = "TARGET",
-                            Value = "0f84a005000048896808488978104c8960184c8968e8488d0d", // 25 digits,
+                            Value = "48896808488978104c8960184c8968e8488d0d", // 25 digits,
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
@@ -302,7 +302,7 @@ namespace FFXIVAPP.Memory
                         signatures.Add(new Signature
                         {
                             Key = "MAP",
-                            Value = "b83d020000488bac24a00000004883c4705f5e5bc38b0d",
+                            Value = "33ff488bd989b9b0000000c681bc000000008b0d",
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
@@ -315,9 +315,10 @@ namespace FFXIVAPP.Memory
                         signatures.Add(new Signature
                         {
                             Key = "PLAYERINFO",
+                            Value = "b83c020000ebc583ff7d75158d57c0488d0d",
                             PointerPath = new List<long>
                             {
-                                0x103F518
+                                0L
                             }
                         });
                         signatures.Add(new Signature
@@ -426,9 +427,9 @@ namespace FFXIVAPP.Memory
                             {
                                 0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT offsets
-                                92L
+                                88L
                                     // values above are "Target" from ACT. Adjust to what ffxivapp expects:
-                                + 16L
+                                + 20L
                             }
                         });
                         signatures.Add(new Signature
@@ -443,7 +444,7 @@ namespace FFXIVAPP.Memory
                                 24L,
                                 736L
                                     // values above are "ChatLogLenStart" from ACT. Adjust to what ffxivapp expects:
-                                - 0x24
+                                - 0x28
                             }
                         });
                         signatures.Add(new Signature
@@ -481,26 +482,26 @@ namespace FFXIVAPP.Memory
                                 0L
                             }
                         });
-
-                        // 02292318
-                        // or just pure offsets from base address
+                        
                         signatures.Add(new Signature
                         {
                             Key = "PLAYERINFO",
+                            Value = "83f8ff740f8b04875056b9",
                             PointerPath = new List<long>
                             {
-                                0x1092318
-                                //0x1042580
+                                0L,
+                                0L
                             }
                         });
-                        
+
+                        // or just pure offsets from base address
                         signatures.Add(new Signature
                         {
                             Key = "AGRO",
                             PointerPath = new List<long>
                             {
-                                0x10919F4
-                                //0x1041BF0
+                                0x1108824
+                                //0x10919F4
                             }
                         });
                         signatures.Add(new Signature
@@ -508,7 +509,7 @@ namespace FFXIVAPP.Memory
                             Key = "AGRO_COUNT",
                             PointerPath = new List<long>
                             {
-                                0x10919F4 + 0x900
+                                0x1108824 + 0x900
                             }
                         });
                         signatures.Add(new Signature
@@ -516,8 +517,8 @@ namespace FFXIVAPP.Memory
                             Key = "ENMITYMAP",
                             PointerPath = new List<long>
                             {
-                                0x10412EC
-                                //0x103E2EC
+                                0x1107F1C
+                                //0x10412EC
                             }
                         });
                         signatures.Add(new Signature
@@ -525,7 +526,9 @@ namespace FFXIVAPP.Memory
                             Key = "PARTYCOUNT",
                             PointerPath = new List<long>
                             {
-                                0x10A8EBC
+                                // PARTYMAP + 0x319C
+                                0x116F50C
+                                //0x10A8EBC
                             }
                         });
                         // TODO: Update the following for patch 3.1
