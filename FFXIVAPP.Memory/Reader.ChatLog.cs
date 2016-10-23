@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Reader.ChatLog.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -84,10 +84,10 @@ namespace FFXIVAPP.Memory
                 switch (MemoryHandler.Instance.GameLanguage)
                 {
                     case "Korean":
-                        chatPointerMap = (IntPtr)MemoryHandler.Instance.GetUInt32(Scanner.Instance.Locations["GAMEMAIN"]) + 20;
+                        chatPointerMap = (IntPtr) MemoryHandler.Instance.GetUInt32(Scanner.Instance.Locations["GAMEMAIN"]) + 20;
                         break;
                     default:
-                        chatPointerMap = (IntPtr)Scanner.Instance.Locations["CHATLOG"];
+                        chatPointerMap = Scanner.Instance.Locations["CHATLOG"];
                         break;
                 }
 

@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Reader.PlayerInfo.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ namespace FFXIVAPP.Memory
                             PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
                             break;
                     }
-                    
+
                     if (PlayerInfoMap.ToInt64() <= 6496)
                     {
                         return result;
@@ -77,7 +77,7 @@ namespace FFXIVAPP.Memory
                                 //enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
                                 //enmityStructure = Scanner.Instance.Locations["AGRO"];
 
-                                enmityCount =  MemoryHandler.Instance.GetInt16(PlayerInfoMap - 0x24);
+                                enmityCount = MemoryHandler.Instance.GetInt16(PlayerInfoMap - 0x24);
                                 enmityStructure = PlayerInfoMap - 0x924;
                                 break;
                         }

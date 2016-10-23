@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ PartyEntityHelper.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ namespace FFXIVAPP.Memory.Helpers
                         {
                             if (statusEntry.StatusID > 0)
                             {
-                                var statusInfo = StatusEffectHelper.StatusInfo(statusEntry.StatusID);
+                                var statusInfo = StatusEffectHelper.StatusInfo((uint) statusEntry.StatusID);
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                                 var statusKey = statusInfo.Name.English;
                                 switch (MemoryHandler.Instance.GameLanguage)

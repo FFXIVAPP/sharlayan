@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ StringHelper.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace FFXIVAPP.Memory.Helpers
         /// <returns> </returns>
         public static string TitleCase(string s, bool all = true)
         {
-            if (String.IsNullOrWhiteSpace(s.Trim()))
+            if (string.IsNullOrWhiteSpace(s.Trim()))
             {
                 return "";
             }
@@ -54,7 +54,7 @@ namespace FFXIVAPP.Memory.Helpers
             {
                 var num = Convert.ToString(title.Groups["num"].Value);
                 var designator = Convert.ToString(title.Groups["designator"].Value);
-                result = result.Replace(String.Format("{0}{1}", num, designator), String.Format("{0}{1}", num, designator.ToLower()));
+                result = result.Replace($"{num}{designator}", $"{num}{designator.ToLower()}");
             }
             return result;
         }
@@ -78,7 +78,7 @@ namespace FFXIVAPP.Memory.Helpers
             var sb = new StringBuilder();
             for (var i = 0; i <= hexValue.Length - 2; i += 2)
             {
-                sb.Append(Convert.ToChar(Int32.Parse(hexValue.Substring(i, 2), NumberStyles.HexNumber)));
+                sb.Append(Convert.ToChar(int.Parse(hexValue.Substring(i, 2), NumberStyles.HexNumber)));
             }
             return sb.ToString();
         }

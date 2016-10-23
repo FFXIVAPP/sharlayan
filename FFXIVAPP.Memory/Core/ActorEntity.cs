@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ ActorEntity.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -30,54 +30,54 @@ namespace FFXIVAPP.Memory.Core
 
         public double HPPercent
         {
-            get { return (double) (HPMax == 0 ? 0 : Decimal.Divide(HPCurrent, HPMax)); }
+            get { return (double) (HPMax == 0 ? 0 : decimal.Divide(HPCurrent, HPMax)); }
         }
 
         public string HPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", HPCurrent, HPMax, HPPercent); }
+            get { return $"{HPCurrent}/{HPMax} [{HPPercent:P2}]"; }
         }
 
         public double MPPercent
         {
-            get { return (double) (MPMax == 0 ? 0 : Decimal.Divide(MPCurrent, MPMax)); }
+            get { return (double) (MPMax == 0 ? 0 : decimal.Divide(MPCurrent, MPMax)); }
         }
 
         public string MPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", MPCurrent, MPMax, MPPercent); }
+            get { return $"{MPCurrent}/{MPMax} [{MPPercent:P2}]"; }
         }
 
         public int TPMax { get; set; }
 
         public double TPPercent
         {
-            get { return (double) (TPMax == 0 ? 0 : Decimal.Divide(TPCurrent, TPMax)); }
+            get { return (double) (TPMax == 0 ? 0 : decimal.Divide(TPCurrent, TPMax)); }
         }
 
         public string TPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", TPCurrent, TPMax, TPPercent); }
+            get { return $"{TPCurrent}/{TPMax} [{TPPercent:P2}]"; }
         }
 
         public double GPPercent
         {
-            get { return (double) (GPMax == 0 ? 0 : Decimal.Divide(GPCurrent, GPMax)); }
+            get { return (double) (GPMax == 0 ? 0 : decimal.Divide(GPCurrent, GPMax)); }
         }
 
         public string GPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", GPCurrent, GPMax, GPPercent); }
+            get { return $"{GPCurrent}/{GPMax} [{GPPercent:P2}]"; }
         }
 
         public double CPPercent
         {
-            get { return (double) (CPMax == 0 ? 0 : Decimal.Divide(CPCurrent, CPMax)); }
+            get { return (double) (CPMax == 0 ? 0 : decimal.Divide(CPCurrent, CPMax)); }
         }
 
         public string CPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", CPCurrent, CPMax, CPPercent); }
+            get { return $"{CPCurrent}/{CPMax} [{CPPercent:P2}]"; }
         }
 
         public bool IsFate
@@ -97,9 +97,9 @@ namespace FFXIVAPP.Memory.Core
                 switch (Type)
                 {
                     case Actor.Type.NPC:
-                        return !String.IsNullOrEmpty(Name) && ID != 0 && (NPCID1 != 0 || NPCID2 != 0);
+                        return !string.IsNullOrEmpty(Name) && ID != 0 && (NPCID1 != 0 || NPCID2 != 0);
                     default:
-                        return !String.IsNullOrEmpty(Name) && ID != 0;
+                        return !string.IsNullOrEmpty(Name) && ID != 0;
                 }
             }
         }

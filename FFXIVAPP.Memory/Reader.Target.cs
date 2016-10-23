@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Reader.Target.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -165,7 +165,8 @@ namespace FFXIVAPP.Memory
                             }
                             if (focusTarget > 0)
                             {
-                                var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), targetSize); // old size: 0x3F40
+                                var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), targetSize);
+                                // old size: 0x3F40
                                 var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                 if (Scanner.Instance.Locations.ContainsKey("MAP"))
                                 {
@@ -227,8 +228,8 @@ namespace FFXIVAPP.Memory
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {
                                         case "Korean":
-                                            enmityEntry.Name   = null; // Search from the list later (old impl)
-                                            enmityEntry.ID     = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
+                                            enmityEntry.Name = null; // Search from the list later (old impl)
+                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
                                             enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
                                             break;
                                         default:
@@ -242,7 +243,7 @@ namespace FFXIVAPP.Memory
                                     {
                                         continue;
                                     }
-                                    if (String.IsNullOrWhiteSpace(enmityEntry.Name))
+                                    if (string.IsNullOrWhiteSpace(enmityEntry.Name))
                                     {
                                         var pc = PCWorkerDelegate.GetEntity(enmityEntry.ID);
                                         var npc = NPCWorkerDelegate.GetEntity(enmityEntry.ID);

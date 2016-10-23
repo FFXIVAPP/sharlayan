@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ PartyInfoWorkerDelegate.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Concurrent;
 using FFXIVAPP.Memory.Core;
 
@@ -25,12 +24,12 @@ namespace FFXIVAPP.Memory.Delegates
     {
         #region Collection Access & Modification
 
-        public static void EnsureEntity(UInt32 key, PartyEntity entity)
+        public static void EnsureEntity(uint key, PartyEntity entity)
         {
             EntitiesDictionary.AddOrUpdate(key, entity, (k, v) => entity);
         }
 
-        public static PartyEntity GetEntity(UInt32 key)
+        public static PartyEntity GetEntity(uint key)
         {
             PartyEntity entity;
             EntitiesDictionary.TryGetValue(key, out entity);
@@ -41,11 +40,11 @@ namespace FFXIVAPP.Memory.Delegates
 
         #region Declarations
 
-        private static ConcurrentDictionary<UInt32, PartyEntity> _entitiesDictionary;
+        private static ConcurrentDictionary<uint, PartyEntity> _entitiesDictionary;
 
-        public static ConcurrentDictionary<UInt32, PartyEntity> EntitiesDictionary
+        public static ConcurrentDictionary<uint, PartyEntity> EntitiesDictionary
         {
-            get { return _entitiesDictionary ?? (_entitiesDictionary = new ConcurrentDictionary<UInt32, PartyEntity>()); }
+            get { return _entitiesDictionary ?? (_entitiesDictionary = new ConcurrentDictionary<uint, PartyEntity>()); }
             set { _entitiesDictionary = value; }
         }
 

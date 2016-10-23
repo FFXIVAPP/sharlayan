@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Reader.PartyInfo.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ namespace FFXIVAPP.Memory
 
         public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
         public Dictionary<uint, uint> PreviousParty { get; set; }
-        public List<UInt32> NewParty { get; set; }
+        public List<uint> NewParty { get; set; }
     }
 
     public static partial class Reader
@@ -63,7 +63,7 @@ namespace FFXIVAPP.Memory
                             {
                                 for (uint i = 0; i < partyCount; i++)
                                 {
-                                    UInt32 ID;
+                                    uint ID;
                                     uint size;
                                     switch (MemoryHandler.Instance.GameLanguage)
                                     {

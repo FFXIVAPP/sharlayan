@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Reader.Actor.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -45,9 +45,9 @@ namespace FFXIVAPP.Memory
         public Dictionary<uint, uint> PreviousMonster { get; set; }
         public Dictionary<uint, uint> PreviousNPC { get; set; }
         public Dictionary<uint, uint> PreviousPC { get; set; }
-        public List<UInt32> NewMonster { get; set; }
-        public List<UInt32> NewNPC { get; set; }
-        public List<UInt32> NewPC { get; set; }
+        public List<uint> NewMonster { get; set; }
+        public List<uint> NewNPC { get; set; }
+        public List<uint> NewPC { get; set; }
     }
 
     public static partial class Reader
@@ -134,8 +134,8 @@ namespace FFXIVAPP.Memory
                             var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
                             //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
 
-                            UInt32 ID;
-                            UInt32 NPCID2;
+                            uint ID;
+                            uint NPCID2;
                             Actor.Type Type;
 
                             switch (MemoryHandler.Instance.GameLanguage)

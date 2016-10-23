@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ PartyEntity.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -30,27 +30,27 @@ namespace FFXIVAPP.Memory.Core
 
         public double HPPercent
         {
-            get { return (double) (HPMax == 0 ? 0 : Decimal.Divide(HPCurrent, HPMax)); }
+            get { return (double) (HPMax == 0 ? 0 : decimal.Divide(HPCurrent, HPMax)); }
         }
 
         public string HPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", HPCurrent, HPMax, HPPercent); }
+            get { return $"{HPCurrent}/{HPMax} [{HPPercent:P2}]"; }
         }
 
         public double MPPercent
         {
-            get { return (double) (MPMax == 0 ? 0 : Decimal.Divide(MPCurrent, MPMax)); }
+            get { return (double) (MPMax == 0 ? 0 : decimal.Divide(MPCurrent, MPMax)); }
         }
 
         public string MPString
         {
-            get { return String.Format("{0}/{1} [{2:P2}]", MPCurrent, MPMax, MPPercent); }
+            get { return $"{MPCurrent}/{MPMax} [{MPPercent:P2}]"; }
         }
 
         public bool IsValid
         {
-            get { return ID > 0 && !String.IsNullOrWhiteSpace(Name); }
+            get { return ID > 0 && !string.IsNullOrWhiteSpace(Name); }
         }
 
         public Coordinate Coordinate { get; set; }

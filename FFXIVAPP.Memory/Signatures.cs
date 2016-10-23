@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Signatures.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -250,7 +250,8 @@ namespace FFXIVAPP.Memory
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT offsets
                                 144L
                                     // values above are "Target" from ACT. Adjust to what ffxivapp expects:
@@ -264,7 +265,8 @@ namespace FFXIVAPP.Memory
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "ChatLogLenStart" offsets
                                 0L,
                                 48L,
@@ -280,7 +282,8 @@ namespace FFXIVAPP.Memory
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "MobArray" offsets
                                 0L
                             }
@@ -292,7 +295,8 @@ namespace FFXIVAPP.Memory
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "PartyList" offsets
                                 0L
                                     // values above are "PartyList" from ACT. Adjust to what ffxivapp expects:
@@ -306,7 +310,8 @@ namespace FFXIVAPP.Memory
                             ASMSignature = true,
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "ZoneID" offsets
                                 0L
                             }
@@ -425,7 +430,8 @@ namespace FFXIVAPP.Memory
                             Value = "750e85d2750ab9", // 7 digits
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT offsets
                                 88L
                                     // values above are "Target" from ACT. Adjust to what ffxivapp expects:
@@ -438,7 +444,8 @@ namespace FFXIVAPP.Memory
                             Value = "8b55fc83e2f983ca098b4d08a1********515250E8********a1",
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "ChatLogLenStart" offsets
                                 0L,
                                 24L,
@@ -453,7 +460,8 @@ namespace FFXIVAPP.Memory
                             Value = "81feffff0000743581fe58010000732d8b3cb5",
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "MobArray" offsets
                                 0L
                             }
@@ -464,7 +472,8 @@ namespace FFXIVAPP.Memory
                             Value = "85c074178b407450b9",
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "PartyList" offsets
                                 0L
                                     // values above are "PartyList" from ACT. Adjust to what ffxivapp expects:
@@ -477,12 +486,13 @@ namespace FFXIVAPP.Memory
                             Value = "8b0d********85c975068b0d",
                             PointerPath = new List<long>
                             {
-                                0L, // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
+                                0L,
+                                // ACT assumes the first entry after the signature is the pointer. Manually do a zero offset to replicate.
                                 // Start ACT "ZoneID" offsets
                                 0L
                             }
                         });
-                        
+
                         signatures.Add(new Signature
                         {
                             Key = "PLAYERINFO",

@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ ActorEntityHelper.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -257,7 +257,7 @@ namespace FFXIVAPP.Memory.Helpers
                     }
                     try
                     {
-                        var statusInfo = StatusEffectHelper.StatusInfo(statusEntry.StatusID);
+                        var statusInfo = StatusEffectHelper.StatusInfo((uint) statusEntry.StatusID);
                         if (statusInfo != null)
                         {
                             statusEntry.IsCompanyAction = statusInfo.CompanyAction;

@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ ChatCleaner.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ namespace FFXIVAPP.Memory.Core
 
         #endregion
 
-        private Regex PlayerRegEx = new Regex(@"(?<full>\[[A-Z0-9]{10}(?<first>[A-Z0-9]{3,})20(?<last>[A-Z0-9]{3,})\](?<short>[\w']+\.? [\w']+\.?)\[[A-Z0-9]{12}\])", DefaultOptions);
+        private readonly Regex PlayerRegEx = new Regex(@"(?<full>\[[A-Z0-9]{10}(?<first>[A-Z0-9]{3,})20(?<last>[A-Z0-9]{3,})\](?<short>[\w']+\.? [\w']+\.?)\[[A-Z0-9]{12}\])", DefaultOptions);
 
         /// <summary>
         /// </summary>
@@ -72,7 +72,7 @@ namespace FFXIVAPP.Memory.Core
                 {
                     if (bytes[x] == 2)
                     {
-                        var byteString = String.Format("{0}{1}{2}{3}", bytes[x], bytes[x + 1], bytes[x + 2], bytes[x + 3]);
+                        var byteString = $"{bytes[x]}{bytes[x + 1]}{bytes[x + 2]}{bytes[x + 3]}";
                         switch (byteString)
                         {
                             case "22913":
@@ -103,7 +103,7 @@ namespace FFXIVAPP.Memory.Core
                                 var aCheckStr = "";
                                 var checkedAt = autoTranslateList.GetRange(1, autoTranslateList.Count - 1)
                                                                  .ToArray();
-                                if (String.IsNullOrWhiteSpace(aCheckStr))
+                                if (string.IsNullOrWhiteSpace(aCheckStr))
                                 {
                                     // TODO: implement showing or using in the chatlog
                                 }
@@ -163,9 +163,9 @@ namespace FFXIVAPP.Memory.Core
                     var fullName = playerMatch.Groups[1].Value;
                     var firstName = StringHelper.HexToString(playerMatch.Groups[2].Value);
                     var lastName = StringHelper.HexToString(playerMatch.Groups[3].Value);
-                    var player = String.Format("{0} {1}", firstName, lastName);
+                    var player = $"{firstName} {lastName}";
                     // remove double placement
-                    cleaned = line.Replace(String.Format("{0}:{1}", fullName, fullName), "•name•");
+                    cleaned = line.Replace($"{fullName}:{fullName}", "•name•");
                     // remove single placement
                     cleaned = cleaned.Replace(fullName, "•name•");
                     switch (Regex.IsMatch(cleaned, @"^([Vv]ous|[Dd]u|[Yy]ou)"))

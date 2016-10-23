@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ UnsafeNativeMethods.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -34,14 +34,14 @@ namespace FFXIVAPP.Memory
         /// <param name="dwProcessId"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, UInt32 dwProcessId);
+        public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, uint dwProcessId);
 
         /// <summary>
         /// </summary>
         /// <param name="hObject"></param>
         /// <returns></returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern Int32 CloseHandle(IntPtr hObject);
+        public static extern int CloseHandle(IntPtr hObject);
 
         /// <summary>
         /// </summary>
@@ -52,7 +52,7 @@ namespace FFXIVAPP.Memory
         /// <param name="lpNumberOfBytesRead"> </param>
         /// <returns> </returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool ReadProcessMemory(IntPtr processHandle, IntPtr lpBaseAddress, [In] [Out] Byte[] lpBuffer, IntPtr regionSize, out IntPtr lpNumberOfBytesRead);
+        public static extern bool ReadProcessMemory(IntPtr processHandle, IntPtr lpBaseAddress, [In] [Out] byte[] lpBuffer, IntPtr regionSize, out IntPtr lpNumberOfBytesRead);
 
         /// <summary>
         /// </summary>

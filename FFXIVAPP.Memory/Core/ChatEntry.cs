@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ ChatEntry.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ namespace FFXIVAPP.Memory.Core
             try
             {
                 chatLogEntry.Bytes = raw;
-                chatLogEntry.TimeStamp = UnixTimeStampToDateTime(Int32.Parse(ByteArrayToString(raw.Take(4)
-                                                                                                  .Reverse()
-                                                                                                  .ToArray()), NumberStyles.HexNumber));
+                chatLogEntry.TimeStamp = UnixTimeStampToDateTime(int.Parse(ByteArrayToString(raw.Take(4)
+                                                                                                .Reverse()
+                                                                                                .ToArray()), NumberStyles.HexNumber));
                 chatLogEntry.Code = ByteArrayToString(raw.Skip(4)
                                                          .Take(2)
                                                          .Reverse()
@@ -48,7 +48,7 @@ namespace FFXIVAPP.Memory.Core
                 chatLogEntry.JP = Encoding.UTF8.GetBytes(chatLogEntry.Line)
                                           .Any(b => b > 128);
 
-                chatLogEntry.Combined = String.Format("{0}:{1}", chatLogEntry.Code, chatLogEntry.Line);
+                chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
             }
             catch (Exception ex)
             {

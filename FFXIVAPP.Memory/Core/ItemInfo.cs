@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ ItemInfo.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using FFXIVAPP.Memory.Core.Interfaces;
 
 namespace FFXIVAPP.Memory.Core
@@ -31,14 +30,14 @@ namespace FFXIVAPP.Memory.Core
 
         public double SBPercent
         {
-            get { return (double) Decimal.Divide(SB, 10000); }
+            get { return (double) decimal.Divide(SB, 10000); }
         }
 
         public uint Durability { get; set; }
 
         public double DurabilityPercent
         {
-            get { return (double) Decimal.Divide(Durability, 30000); }
+            get { return (double) decimal.Divide(Durability, 30000); }
         }
     }
 }

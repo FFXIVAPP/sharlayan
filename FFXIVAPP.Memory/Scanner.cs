@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Scanner.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -206,7 +206,7 @@ namespace FFXIVAPP.Memory
                     }
                     else
                     {
-                        pattern[x] = (byte) (hexTable[Char.ToUpper(signature[i]) - '0'] << 4 | hexTable[Char.ToUpper(signature[i + 1]) - '0']);
+                        pattern[x] = (byte) (hexTable[char.ToUpper(signature[i]) - '0'] << 4 | hexTable[char.ToUpper(signature[i + 1]) - '0']);
                     }
                 }
                 return pattern;
@@ -253,6 +253,7 @@ namespace FFXIVAPP.Memory
         private const int PageExecuteReadwrite = 0x40;
         private const int PageExecuteWritecopy = 0x80;
         private const int PageGuard = 0x100;
+
         private const int Writable = PageReadwrite | PageWritecopy | PageExecuteReadwrite | PageExecuteWritecopy | PageGuard;
 
         #endregion
