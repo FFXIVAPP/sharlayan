@@ -157,7 +157,7 @@ namespace FFXIVAPP.Memory.Helpers
                         entry.HitBoxRadius = BitConverter.ToSingle(source, 0xC0 + defaultBaseOffset);
                         entry.Fate = BitConverter.ToUInt32(source, 0xE4 + defaultBaseOffset); // ??
                         entry.GatheringInvisible = source[0x11C]; // ??
-                        entry.ModelID = BitConverter.ToUInt32(source, 0x174);
+                        entry.ModelID = BitConverter.ToUInt32(source, 0x164);
                         entry.ActionStatus = (Actor.ActionStatus) source[0x16C];
                         // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                         entry.IsGM = BitConverter.ToBoolean(source, 0x183); // ?
