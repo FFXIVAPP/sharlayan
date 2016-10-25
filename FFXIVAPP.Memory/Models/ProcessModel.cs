@@ -21,11 +21,7 @@ namespace FFXIVAPP.Memory.Models
 {
     public class ProcessModel
     {
-        public int ProcessID
-        {
-            get { return Process != null ? Process.Id : -1; }
-        }
-
+        public int ProcessID => Process?.Id ?? -1;
         public Process Process { get; set; }
         public bool IsWin64 { get; set; }
     }

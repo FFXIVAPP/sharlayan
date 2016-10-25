@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
 using FFXIVAPP.Memory.Models;
@@ -71,10 +72,22 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            using (var webClient = new WebClient())
+            var file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
+            if (File.Exists(file))
             {
-                var json = webClient.DownloadString("http://xivapp.com/api/zones");
-                MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
+                using (var streamReader = new StreamReader(file))
+                {
+                    var json = streamReader.ReadToEnd();
+                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
+                }
+            }
+            else
+            {
+                using (var webClient = new WebClient())
+                {
+                    var json = webClient.DownloadString("http://xivapp.com/api/zones");
+                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
+                }
             }
         }
     }

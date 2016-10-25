@@ -1,4 +1,4 @@
-// FFXIVAPP.Memory
+﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
 using FFXIVAPP.Memory.Models;
@@ -70,10 +71,22 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            using (var webClient = new WebClient())
+            var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
+            if (File.Exists(file))
             {
-                var json = webClient.DownloadString("http://xivapp.com/api/statuses");
-                StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json);
+                using (var streamReader = new StreamReader(file))
+                {
+                    var json = streamReader.ReadToEnd();
+                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json);
+                }
+            }
+            else
+            {
+                using (var webClient = new WebClient())
+                {
+                    var json = webClient.DownloadString("http://xivapp.com/api/statuses");
+                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json);
+                }
             }
         }
     }

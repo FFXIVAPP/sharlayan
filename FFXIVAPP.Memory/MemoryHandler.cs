@@ -17,25 +17,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using FFXIVAPP.Memory.Models;
+using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory
 {
     public class MemoryHandler
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="processModel"> </param>
-        /// <param name="gameLanguage"></param>
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English")
+        public MemoryHandler(ProcessModel processModel,  string gameLanguage = "English", string patchVersion = "1.0")
         {
             GameLanguage = gameLanguage;
-            if (processModel != null)
+            if (processModel == null)
             {
-                SetProcess(processModel, gameLanguage);
+                return;
             }
+            SetProcess(processModel, gameLanguage, patchVersion);
+            SetStructures(processModel, patchVersion);
         }
 
         public string GameLanguage { get; set; }
@@ -52,7 +53,7 @@ namespace FFXIVAPP.Memory
             }
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English")
+        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "1.0")
         {
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
@@ -66,7 +67,26 @@ namespace FFXIVAPP.Memory
             }
             Constants.ProcessHandle = ProcessHandle;
             Scanner.Instance.Locations.Clear();
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, GameLanguage));
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, patchVersion));
+        }
+
+        private void SetStructures(ProcessModel processModel, string patchVersion = "1.0")
+        {
+            var file = Path.Combine(Directory.GetCurrentDirectory(), "structures.json");
+            if (File.Exists(file))
+            {
+                using (var streamReader = new StreamReader(file))
+                {
+                    var json = streamReader.ReadToEnd();
+                }
+            }
+            else
+            {
+                using (var webClient = new WebClient())
+                {
+                    var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
+                }
+            }
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)
