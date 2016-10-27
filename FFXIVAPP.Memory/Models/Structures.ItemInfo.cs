@@ -19,10 +19,16 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class PlayerInfoStructure
+        public class ItemInfoStructure
         {
-            public int EnmityCount { get; set; }
-            public int EnmityStructure { get; set; }
+            public int ContainerAmount { get; set; }
+            public int ID { get; set; }
+            public int Slot { get; set; }
+            public int ItemAmount { get; set; }
+            public int SB { get; set; }
+            public int Durability { get; set; }
+            public int GlamourID { get; set; }
+            public int IsHQ { get; set; }
         }
     }
 }

@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class EnmityEntry {
+        public class EnmityEntryStructure
+        {
             public int ID { get; set; }
             public int Name { get; set; }
             public int Enmity { get; set; }

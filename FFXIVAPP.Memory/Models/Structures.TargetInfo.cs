@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class TargetInfo {
+        public class TargetInfoStructure
+        {
             public int HateStructure { get; set; }
             public int MouseOver { get; set; }
             public int Focus { get; set; }

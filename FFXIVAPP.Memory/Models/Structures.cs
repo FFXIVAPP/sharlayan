@@ -19,6 +19,16 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        
+        public ActoryEntityStructure ActorEntity { get; set; }
+        public ChatLogPointersStructure ChatLogPointers { get; set; }
+        public EnmityEntryStructure EnmityEntry { get; set; }
+        public InventoryEntityStructure InventoryEntity { get; set; }
+        public ItemInfoStructure ItemInfo { get; set; }
+        public PartyEntityStructure PartyEntity { get; set; }
+        public PartyInfoStructure PartyInfo { get; set; }
+        public PlayerEntityStructure PlayerEntity { get; set; }
+        public PlayerInfoStructure PlayerInfo { get; set; }
+        public StatusEntryStructure StatusEntry { get; set; }
+        public TargetInfoStructure TargetInfo { get; set; }
     }
 }

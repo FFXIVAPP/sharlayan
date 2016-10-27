@@ -28,7 +28,7 @@ namespace FFXIVAPP.Memory
 {
     public class MemoryHandler
     {
-        public MemoryHandler(ProcessModel processModel,  string gameLanguage = "English", string patchVersion = "1.0")
+        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "1.0")
         {
             GameLanguage = gameLanguage;
             if (processModel == null)
@@ -41,7 +41,7 @@ namespace FFXIVAPP.Memory
 
         public string GameLanguage { get; set; }
         public int ScanCount { get; set; }
-        private Structures Structures { get; set; }
+        public Structures Structures { get; set; }
 
         ~MemoryHandler()
         {
@@ -79,6 +79,7 @@ namespace FFXIVAPP.Memory
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
+                    Structures = JsonConvert.DeserializeObject<Structures>(json);
                 }
             }
             else
@@ -86,7 +87,7 @@ namespace FFXIVAPP.Memory
                 using (var webClient = new WebClient())
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                    Structures = JsonConvert.DeserializeObject<Structure>(json);
+                    Structures = JsonConvert.DeserializeObject<Structures>(json);
                 }
             }
         }

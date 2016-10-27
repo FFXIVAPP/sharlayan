@@ -101,55 +101,18 @@ namespace FFXIVAPP.Memory
                 try
                 {
                     Indexes.Clear();
-                    switch (MemoryHandler.Instance.GameLanguage)
+                    ChatLogPointers = new ChatLogPointers
                     {
-                        case "Korean":
-                            ChatLogPointers = new ChatLogPointers
-                            {
-                                LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                                OffsetArrayStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x20),
-                                OffsetArrayPos = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x24),
-                                OffsetArrayEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x28),
-                                LogStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x30),
-                                LogNext = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x34),
-                                LogEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x38)
-                            };
-                            break;
-                        default:
-                            if (MemoryHandler.Instance.ProcessModel.IsWin64)
-                            {
-                                ChatLogPointers = new ChatLogPointers
-                                {
-                                    LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                                    OffsetArrayStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x3C),
-                                    OffsetArrayPos = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x44),
-                                    OffsetArrayEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x4C),
-                                    LogStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x5C),
-                                    LogNext = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x64),
-                                    LogEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x6C)
-                                };
-                            }
-                            else
-                            {
-                                ChatLogPointers = new ChatLogPointers
-                                {
-                                    LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                                    OffsetArrayStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x24),
-                                    OffsetArrayPos = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x28),
-                                    OffsetArrayEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x2C),
-                                    LogStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x34),
-                                    LogNext = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x38),
-                                    LogEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, 0x3C)
-                                };
-                            }
-                            break;
-                    }
-
-
+                        LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
+                        OffsetArrayStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
+                        OffsetArrayPos = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
+                        OffsetArrayEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
+                        LogStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
+                        LogNext = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
+                        LogEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
+                    };
                     EnsureArrayIndexes();
-
                     var currentArrayIndex = (ChatLogPointers.OffsetArrayPos - ChatLogPointers.OffsetArrayStart) / 4;
-
                     if (ChatLogFirstRun)
                     {
                         ChatLogFirstRun = false;

@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class PartyEntity {
+        public class PartyEntityStructure
+        {
             public int X { get; set; }
             public int Y { get; set; }
             public int Z { get; set; }

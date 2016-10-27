@@ -19,7 +19,7 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class ActoryEntity {
+        public class ActoryEntityStructure {
             public int Name { get; set; }
             public int ID { get; set; }
             public int NPCID1 { get; set; }

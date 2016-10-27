@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class PartyInfo {
+        public class PartyInfoStructure
+        {
             public int Size { get; set; }
         }
     }

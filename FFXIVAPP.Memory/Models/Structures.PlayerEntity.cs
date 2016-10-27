@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class PlayerEntity {
+        public class PlayerEntityStructure
+        {
             public int JobID { get; set; }
             public int PGL { get; set; }
             public int GLD { get; set; }

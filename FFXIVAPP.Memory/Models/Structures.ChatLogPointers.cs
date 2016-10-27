@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class ChatLogPointers {
+        public class ChatLogPointersStructure
+        {
             public int OffsetArrayStart { get; set; }
             public int OffsetArrayPos { get; set; }
             public int OffsetArrayEnd { get; set; }

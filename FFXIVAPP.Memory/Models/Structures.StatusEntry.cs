@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class StatusEntry {
+        public class StatusEntryStructure
+        {
             public int StatusID { get; set; }
             public int Stacks { get; set; }
             public int Duration { get; set; }

@@ -19,15 +19,9 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class Inventory {
-            public int ContainerAmount { get; set; }
-            public int ID { get; set; }
-            public int Slot { get; set; }
-            public int ItemAmount { get; set; }
-            public int SB { get; set; }
-            public int Durability { get; set; }
-            public int GlamourID { get; set; }
-            public int IsHQ { get; set; }
+        public class InventoryEntityStructure
+        {
+            public int Amount { get; set; }
         }
     }
 }
