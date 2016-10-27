@@ -40,7 +40,7 @@ namespace FFXIVAPP.Memory
             {
                 using (var webClient = new WebClient())
                 {
-                    var json = webClient.DownloadString($"http://xivapp.com/api/offsets?gameVersion={patchVersion}&platform={(IsWin64 ? "x64" : "x86")}");
+                    var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(IsWin64 ? "x64" : "x86")}");
                     return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
                 }
             }
