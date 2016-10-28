@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using FFXIVAPP.Memory.Models;
 using Newtonsoft.Json;
 
@@ -27,21 +28,29 @@ namespace FFXIVAPP.Memory
     {
         public static IEnumerable<Signature> Resolve(bool IsWin64, string patchVersion = "1.0")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "offsets.json");
+            var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(IsWin64 ? "x64" : "x86")}.json");
             if (File.Exists(file))
             {
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
+                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
                 }
             }
             else
             {
-                using (var webClient = new WebClient())
+                using (var webClient = new WebClient { Encoding = Encoding.UTF8 })
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(IsWin64 ? "x64" : "x86")}");
-                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
+                    var signatures = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(signatures, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }), Encoding.GetEncoding(932));
+                    return signatures;
                 }
             }
         }

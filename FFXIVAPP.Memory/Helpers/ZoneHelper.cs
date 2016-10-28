@@ -19,6 +19,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using FFXIVAPP.Memory.Models;
 using Newtonsoft.Json;
 
@@ -78,15 +79,22 @@ namespace FFXIVAPP.Memory.Helpers
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
+                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
                 }
             }
             else
             {
-                using (var webClient = new WebClient())
+                using (var webClient = new WebClient { Encoding = Encoding.UTF8 })
                 {
                     var json = webClient.DownloadString("http://xivapp.com/api/zones");
                     MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(MapInfos, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }), Encoding.UTF8);
                 }
             }
         }

@@ -71,23 +71,30 @@ namespace FFXIVAPP.Memory
             Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, patchVersion));
         }
 
-        private void SetStructures(ProcessModel processModel, string patchVersion = "1.0")
+        public void SetStructures(ProcessModel processModel, string patchVersion = "1.0")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "structures.json");
+            var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
             if (File.Exists(file))
             {
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    Structures = JsonConvert.DeserializeObject<Structures>(json);
+                    Structures = JsonConvert.DeserializeObject<Structures>(json, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
                 }
             }
             else
             {
-                using (var webClient = new WebClient())
+                using (var webClient = new WebClient { Encoding = Encoding.UTF8 })
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
                     Structures = JsonConvert.DeserializeObject<Structures>(json);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(Structures, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }), Encoding.UTF8);
                 }
             }
         }

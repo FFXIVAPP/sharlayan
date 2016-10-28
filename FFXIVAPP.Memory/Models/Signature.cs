@@ -25,6 +25,7 @@ namespace FFXIVAPP.Memory.Models
     {
         private int _Offset;
         private bool offsetSet;
+        private Regex _regularExpress;
 
         public Signature()
         {
@@ -37,7 +38,19 @@ namespace FFXIVAPP.Memory.Models
 
         public string Key { get; set; }
         public string Value { get; set; }
-        public Regex RegularExpress { get; set; }
+
+        public Regex RegularExpress
+        {
+            get { return _regularExpress; }
+            set
+            {
+                if (value != null)
+                {
+                    _regularExpress = value;
+                }
+            }
+        }
+
         public IntPtr SigScanAddress { get; set; }
         public bool ASMSignature { get; set; }
 

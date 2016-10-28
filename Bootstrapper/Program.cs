@@ -16,6 +16,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using FFXIVAPP.Memory;
+using FFXIVAPP.Memory.Helpers;
+using FFXIVAPP.Memory.Models;
 
 namespace Bootstrapper
 {
@@ -23,6 +26,10 @@ namespace Bootstrapper
     {
         private static void Main(string[] args)
         {
+            ZoneHelper.MapInfo(1);
+            StatusEffectHelper.StatusInfo(1);
+            MemoryHandler.Instance.SetStructures(new ProcessModel(), "3.45");
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(false, "3.45"));
             Console.WriteLine("To exit this application press \"Enter\".");
             Console.ReadLine();
         }
