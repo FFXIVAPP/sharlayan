@@ -26,6 +26,7 @@ namespace FFXIVAPP.Memory.Models
             public int Focus { get; set; }
             public int Previous { get; set; }
             public int Current { get; set; }
+            public int CurrentID { get; set; }
             public int Size { get; set; }
         }
     }

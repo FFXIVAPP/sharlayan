@@ -45,70 +45,27 @@ namespace FFXIVAPP.Memory
             {
                 if (Scanner.Instance.Locations.ContainsKey("PLAYERINFO"))
                 {
-                    switch (MemoryHandler.Instance.GameLanguage)
-                    {
-                        case "Korean":
-                            PlayerInfoMap = (IntPtr) Scanner.Instance.Locations["CHARMAP"] - 115996;
-                            break;
-                        default:
-                            PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
-                            break;
-                    }
-
+                    PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
                     if (PlayerInfoMap.ToInt64() <= 6496)
                     {
                         return result;
                     }
                     try
                     {
-                        short enmityCount;
-                        var enmityStructure = IntPtr.Zero;
-                        switch (MemoryHandler.Instance.GameLanguage)
-                        {
-                            case "Korean":
-                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) Scanner.Instance.Locations["CHARMAP"] - 0x1C590);
-                                enmityStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 0x1CE94;
-                                break;
-                            case "Chinese":
-                                enmityCount = MemoryHandler.Instance.GetInt16((IntPtr) Scanner.Instance.Locations["CHARMAP"] + 5688);
-                                enmityStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 3384;
-                                break;
-                            default:
-                                //enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
-                                //enmityStructure = Scanner.Instance.Locations["AGRO"];
-
-                                enmityCount = MemoryHandler.Instance.GetInt16(PlayerInfoMap - 0x24);
-                                enmityStructure = PlayerInfoMap - 0x924;
-                                break;
-                        }
+                        var enmityCount = MemoryHandler.Instance.GetInt16(PlayerInfoMap - MemoryHandler.Instance.Structures.PlayerInfo.EnmityCount);
+                        var enmityStructure = PlayerInfoMap - MemoryHandler.Instance.Structures.PlayerInfo.EnmityStructure;
                         var enmityEntries = new List<EnmityEntry>();
                         if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
                         {
                             for (uint i = 0; i < enmityCount; i++)
                             {
                                 var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
-
-                                EnmityEntry enmityEntry = null;
-                                switch (MemoryHandler.Instance.GameLanguage)
+                                var enmityEntry = new EnmityEntry
                                 {
-                                    case "Korean":
-                                        enmityEntry = new EnmityEntry
-                                        {
-                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address),
-                                            Name = MemoryHandler.Instance.GetString(address + 4),
-                                            Enmity = (uint) MemoryHandler.Instance.GetInt16(address + 72)
-                                        };
-                                        break;
-                                    default:
-                                        enmityEntry = new EnmityEntry
-                                        {
-                                            Name = MemoryHandler.Instance.GetString(address),
-                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address + 64),
-                                            Enmity = (uint) MemoryHandler.Instance.GetInt16(address + 68)
-                                        };
-                                        break;
-                                }
-
+                                    ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                    Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                    Enmity = (uint)MemoryHandler.Instance.GetInt16(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                };
                                 if (enmityEntry.ID > 0)
                                 {
                                     enmityEntries.Add(enmityEntry);

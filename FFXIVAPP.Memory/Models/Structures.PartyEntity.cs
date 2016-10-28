@@ -32,7 +32,7 @@ namespace FFXIVAPP.Memory.Models
             public int HPMax { get; set; }
             public int MPCurrent { get; set; }
             public int MPMax { get; set; }
-            public int StatusEffects { get; set; } 
+            public int DefaultStatusEffectOffset { get; set; } 
         }
     }
 }

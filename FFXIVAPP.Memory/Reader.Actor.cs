@@ -134,30 +134,9 @@ namespace FFXIVAPP.Memory
                             var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
                             //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
 
-                            uint ID;
-                            uint NPCID2;
-                            Actor.Type Type;
-
-                            switch (MemoryHandler.Instance.GameLanguage)
-                            {
-                                case "Korean":
-                                    // ActorEntityHelper.cs?
-                                    ID = BitConverter.ToUInt32(source, 0x74);
-                                    NPCID2 = BitConverter.ToUInt32(source, 0x80);
-                                    Type = (Actor.Type) source[0x8A];
-                                    break;
-                                case "Chinese":
-                                    ID = BitConverter.ToUInt32(source, 0x74);
-                                    NPCID2 = BitConverter.ToUInt32(source, 0x80);
-                                    Type = (Actor.Type) source[0x8A];
-                                    break;
-                                default:
-                                    ID = BitConverter.ToUInt32(source, 0x74);
-                                    NPCID2 = BitConverter.ToUInt32(source, 0x80);
-                                    Type = (Actor.Type) source[0x8A];
-                                    break;
-                            }
-
+                            var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                            var NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
+                            var Type = (Actor.Type)source[MemoryHandler.Instance.Structures.ActorEntity.Type];
                             ActorEntity existing = null;
                             var newEntry = false;
 
@@ -222,22 +201,8 @@ namespace FFXIVAPP.Memory
                             {
                                 if (targetAddress.ToInt64() > 0)
                                 {
-                                    uint currentTargetID;
                                     var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                    switch (MemoryHandler.Instance.GameLanguage)
-                                    {
-                                        case "Korean":
-                                            // MonsterWorker.cs:L194
-                                            currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x68);
-                                            break;
-                                        case "Chinese":
-                                            currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x68);
-                                            break;
-                                        default:
-                                            currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x74);
-                                            break;
-                                    }
-                                    entry.TargetID = (int) currentTargetID;
+                                    entry.TargetID = (int) BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                                 }
                             }
                             if (!entry.IsValid)

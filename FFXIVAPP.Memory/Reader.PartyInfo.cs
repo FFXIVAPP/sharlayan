@@ -63,34 +63,10 @@ namespace FFXIVAPP.Memory
                             {
                                 for (uint i = 0; i < partyCount; i++)
                                 {
-                                    uint ID;
-                                    uint size;
-                                    switch (MemoryHandler.Instance.GameLanguage)
-                                    {
-                                        case "Korean":
-                                            size = 544;
-                                            break;
-                                        case "Chinese":
-                                            size = 594;
-                                            break;
-                                        default:
-                                            size = 544;
-                                            break;
-                                    }
+                                    var size = (uint)MemoryHandler.Instance.Structures.PartyInfo.Size;
                                     var address = PartyInfoMap.ToInt64() + (i * size);
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
-                                    switch (MemoryHandler.Instance.GameLanguage)
-                                    {
-                                        case "Korean":
-                                            ID = BitConverter.ToUInt32(source, 0x10);
-                                            break;
-                                        case "Chinese":
-                                            ID = BitConverter.ToUInt32(source, 0x10);
-                                            break;
-                                        default:
-                                            ID = BitConverter.ToUInt32(source, 0x10);
-                                            break;
-                                    }
+                                    var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                                     ActorEntity existing = null;
                                     if (result.PreviousParty.ContainsKey(ID))
                                     {

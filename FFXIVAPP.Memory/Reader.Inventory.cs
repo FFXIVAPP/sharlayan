@@ -97,7 +97,7 @@ namespace FFXIVAPP.Memory
 
             var container = new InventoryEntity
             {
-                Amount = MemoryHandler.Instance.GetByte(address, offset + 0x8),
+                Amount = MemoryHandler.Instance.GetByte(address, offset + MemoryHandler.Instance.Structures.InventoryEntity.Amount),
                 Items = new List<ItemInfo>(),
                 Type = type
             };
@@ -118,19 +118,19 @@ namespace FFXIVAPP.Memory
             for (var ci = 0; ci < limit; ci += 64)
             {
                 var itemOffset = new IntPtr(containerAddress + ci);
-                var id = MemoryHandler.Instance.GetPlatformUInt(itemOffset, 0x8);
+                var id = MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID);
                 if (id > 0)
                 {
                     container.Items.Add(new ItemInfo
                     {
                         ID = (uint) id,
-                        Slot = MemoryHandler.Instance.GetByte(itemOffset, 0x4),
-                        Amount = MemoryHandler.Instance.GetByte(itemOffset, 0xC),
-                        SB = MemoryHandler.Instance.GetUInt16(itemOffset, 0x10),
-                        Durability = MemoryHandler.Instance.GetUInt16(itemOffset, 0x12),
-                        GlamourID = (uint) MemoryHandler.Instance.GetPlatformUInt(itemOffset, 0x30),
+                        Slot = MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.Slot),
+                        Amount = MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.Amount),
+                        SB = MemoryHandler.Instance.GetUInt16(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.SB),
+                        Durability = MemoryHandler.Instance.GetUInt16(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID),
+                        GlamourID = (uint) MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.GlamourID),
                         //get the flag that show if the item is hq or not
-                        IsHQ = (MemoryHandler.Instance.GetByte(itemOffset, 0x14) == 0x01)
+                        IsHQ = (MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.IsHQ) == 0x01)
                     });
                 }
             }

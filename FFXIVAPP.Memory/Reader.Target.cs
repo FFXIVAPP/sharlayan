@@ -33,23 +33,7 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    var targetHateStructure = IntPtr.Zero;
-                    switch (MemoryHandler.Instance.GameLanguage)
-                    {
-                        case "Korean":
-                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] - 120664;
-                            break;
-                        case "Chinese":
-                            targetHateStructure = (IntPtr) Scanner.Instance.Locations["CHARMAP"] + 1136;
-                            break;
-                        default:
-                            if (Scanner.Instance.Locations.ContainsKey("ENMITYMAP"))
-                            {
-                                //targetHateStructure = Scanner.Instance.Locations["ENMITYMAP"];
-                                targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) - 0x122C;
-                            }
-                            break;
-                    }
+                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) - MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
                     var enmityEntries = new List<EnmityEntry>();
 
                     if (Scanner.Instance.Locations.ContainsKey("TARGET"))
@@ -59,57 +43,13 @@ namespace FFXIVAPP.Memory
                         if (targetAddress.ToInt64() > 0)
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
-                            uint currentTarget = 0;
-                            uint mouseOverTarget = 0;
-                            uint focusTarget = 0;
-                            uint previousTarget = 0;
-                            uint currentTargetID = 0;
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 192);
-                            switch (MemoryHandler.Instance.GameLanguage)
-                            {
-                                case "Korean":
-                                    currentTarget = BitConverter.ToUInt32(targetInfoSource, 0x0);
-                                    mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0xC);
-                                    focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x3C);
-                                    previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x48);
-                                    currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x5C);
-                                    break;
-                                case "Chinese":
-                                    currentTarget = BitConverter.ToUInt32(targetInfoSource, 0x0);
-                                    mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0xC);
-                                    focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x3C);
-                                    previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x48);
-                                    currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x5C);
-                                    break;
-                                default:
-                                    currentTarget = BitConverter.ToUInt32(targetInfoSource, 0x0);
-                                    if (MemoryHandler.Instance.ProcessModel.IsWin64)
-                                    {
-                                        mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0x10);
-                                        focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x50);
-                                        previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x68);
-                                        currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x80);
-                                    }
-                                    else
-                                    {
-                                        mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, 0x10);
-                                        focusTarget = BitConverter.ToUInt32(targetInfoSource, 0x30);
-                                        previousTarget = BitConverter.ToUInt32(targetInfoSource, 0x3C);
-                                        currentTargetID = BitConverter.ToUInt32(targetInfoSource, 0x64);
-                                    }
-                                    break;
-                            }
-
-                            int targetSize;
-                            switch (MemoryHandler.Instance.GameLanguage)
-                            {
-                                case "Korean":
-                                    targetSize = 0x3F40;
-                                    break;
-                                default:
-                                    targetSize = 0x23F0;
-                                    break;
-                            }
+                            var currentTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                            var focusTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                            var previousTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+                            var targetSize = MemoryHandler.Instance.Structures.TargetInfo.Size;
                             if (currentTarget > 0)
                             {
                                 try
@@ -222,23 +162,13 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    var address = targetHateStructure.ToInt64() + (i * 72);
-
-                                    var enmityEntry = new EnmityEntry();
-                                    switch (MemoryHandler.Instance.GameLanguage)
+                                    var address = new IntPtr(targetHateStructure.ToInt64() + (i * 72));
+                                    var enmityEntry = new EnmityEntry
                                     {
-                                        case "Korean":
-                                            enmityEntry.Name = null; // Search from the list later (old impl)
-                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address));
-                                            enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 4);
-                                            break;
-                                        default:
-                                            enmityEntry.Name = MemoryHandler.Instance.GetString(new IntPtr(address));
-                                            enmityEntry.ID = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 64);
-                                            enmityEntry.Enmity = (uint) MemoryHandler.Instance.GetPlatformInt(new IntPtr(address), 68);
-                                            break;
-                                    }
-
+                                        ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                        Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                        Enmity = (uint)MemoryHandler.Instance.GetInt16(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                    };
                                     if (enmityEntry.ID <= 0)
                                     {
                                         continue;

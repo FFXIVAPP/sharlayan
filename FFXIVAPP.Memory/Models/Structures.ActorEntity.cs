@@ -63,7 +63,9 @@ namespace FFXIVAPP.Memory.Models
             public int CastingTargetID { get; set; }
             public int CastingProgress { get; set; }
             public int CastingTime { get; set; }
-            public int StatusEffect { get; set; }
+            public int DefaultBaseOffset { get; set; }
+            public int DefaultStatOffset { get; set; }
+            public int DefaultStatusEffectOffset { get; set; }
         }
     }
 }

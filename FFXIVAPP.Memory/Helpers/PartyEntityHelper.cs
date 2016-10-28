@@ -53,38 +53,24 @@ namespace FFXIVAPP.Memory.Helpers
                 var entry = new PartyEntity();
                 try
                 {
-                    switch (MemoryHandler.Instance.GameLanguage)
-                    {
-                        case "Korean":
-                        case "Chinese":
-                        default:
-                            entry.X = BitConverter.ToSingle(source, 0x0);
-                            entry.Z = BitConverter.ToSingle(source, 0x4);
-                            entry.Y = BitConverter.ToSingle(source, 0x8);
-                            entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
-                            entry.ID = BitConverter.ToUInt32(source, 0x10);
-                            entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, 0x20);
-                            entry.Job = (Actor.Job) source[0x61];
-                            entry.Level = source[0x63];
-                            entry.HPCurrent = BitConverter.ToInt32(source, 0x68);
-                            entry.HPMax = BitConverter.ToInt32(source, 0x6C);
-                            entry.MPCurrent = BitConverter.ToInt16(source, 0x70);
-                            entry.MPMax = BitConverter.ToInt16(source, 0x72);
-                            break;
-                    }
+                    entry.X = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.X);
+                    entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Z);
+                    entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Y);
+                    entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
+                    entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
+                    entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
+                    entry.Job = (Actor.Job)source[MemoryHandler.Instance.Structures.PartyEntity.Job];
+                    entry.Level = source[MemoryHandler.Instance.Structures.PartyEntity.Level];
+                    entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
+                    entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);
+                    entry.MPCurrent = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPCurrent);
+                    entry.MPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPMax);
                     const int limit = 15;
                     entry.StatusEntries = new List<StatusEntry>();
                     const int statusSize = 12;
                     var statusesSource = new byte[limit * statusSize];
-                    switch (MemoryHandler.Instance.GameLanguage)
-                    {
-                        case "Korean":
-                        case "Chinese":
-                        default:
-                            var defaultStatusEffectOffset = MemoryHandler.Instance.ProcessModel.IsWin64 ? 0x88 : 0x80;
-                            Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * 12);
-                            break;
-                    }
+                    var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.PartyEntity.DefaultStatusEffectOffset;
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * 12);
                     for (var i = 0; i < limit; i++)
                     {
                         var statusSource = new byte[statusSize];
@@ -92,10 +78,10 @@ namespace FFXIVAPP.Memory.Helpers
                         var statusEntry = new StatusEntry
                         {
                             TargetName = entry.Name,
-                            StatusID = BitConverter.ToInt16(statusSource, 0x0),
-                            Stacks = statusSource[0x2],
-                            Duration = BitConverter.ToSingle(statusSource, 0x4),
-                            CasterID = BitConverter.ToUInt32(statusSource, 0x8)
+                            StatusID = BitConverter.ToInt16(statusSource, MemoryHandler.Instance.Structures.StatusEntry.StatusID),
+                            Stacks = statusSource[MemoryHandler.Instance.Structures.StatusEntry.Stacks],
+                            Duration = BitConverter.ToSingle(statusSource, MemoryHandler.Instance.Structures.StatusEntry.Duration),
+                            CasterID = BitConverter.ToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusEntry.CasterID)
                         };
                         try
                         {
