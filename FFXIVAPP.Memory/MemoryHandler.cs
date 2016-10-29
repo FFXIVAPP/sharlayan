@@ -36,7 +36,6 @@ namespace FFXIVAPP.Memory
                 return;
             }
             SetProcess(processModel, gameLanguage, patchVersion);
-            SetStructures(processModel, patchVersion);
         }
 
         public string GameLanguage { get; set; }
@@ -69,6 +68,7 @@ namespace FFXIVAPP.Memory
             Constants.ProcessHandle = ProcessHandle;
             Scanner.Instance.Locations.Clear();
             Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, patchVersion));
+            SetStructures(processModel, patchVersion);
         }
 
         public void SetStructures(ProcessModel processModel, string patchVersion = "1.0")
