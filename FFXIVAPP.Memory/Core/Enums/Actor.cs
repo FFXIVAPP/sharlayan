@@ -137,6 +137,7 @@ namespace FFXIVAPP.Memory.Core.Enums
             NPC = 0x03,
             Aetheryte = 0x05,
             Gathering = 0x06,
+            EObj = 0x07,
             Minion = 0x09
         }
     }

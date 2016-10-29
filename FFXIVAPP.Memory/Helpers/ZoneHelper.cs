@@ -73,6 +73,12 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
+            //
+            // These ID's link to offset 7 in the old JSON values.
+            // eg: "map id = 4" would be 148 in offset 7.
+            // This is known as the TerritoryType value
+            // - It maps directly to SaintCoins map.csv against TerritoryType ID
+            //
             var file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
             if (File.Exists(file))
             {
