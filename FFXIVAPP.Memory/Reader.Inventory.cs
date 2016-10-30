@@ -17,26 +17,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Core.Enums;
+using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class InventoryReadResult
-    {
-        public InventoryReadResult()
-        {
-            InventoryEntities = new List<InventoryEntity>();
-        }
-
-        public List<InventoryEntity> InventoryEntities { get; set; }
-    }
-
     public static partial class Reader
     {
         public static IntPtr InventoryPointerMap { get; set; }
 
-        public static InventoryReadResult GetInventoryItems()
+        public static async Task<InventoryReadResult> GetInventoryItems()
         {
             var result = new InventoryReadResult();
 

@@ -43,15 +43,15 @@ namespace FFXIVAPP.Memory
                 LoadRegions();
                 if (signatures.Any())
                 {
-                    foreach (var sig in signatures)
+                    foreach (var signature in signatures)
                     {
-                        if (sig.Value == "")
+                        if (signature.Value == "")
                         {
                             // doesn't need a signature scan
-                            Locations[sig.Key] = sig;
+                            Locations[signature.Key] = signature;
                             continue;
                         }
-                        sig.Value = sig.Value.Replace("*", "?"); // allows either ? or * to be used as wildcard
+                        signature.Value = signature.Value.Replace("*", "?"); // allows either ? or * to be used as wildcard
                     }
                     signatures.RemoveAll(a => Locations.ContainsKey(a.Key));
                     FindExtendedSignatures(signatures);

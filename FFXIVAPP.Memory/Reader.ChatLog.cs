@@ -19,23 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class ChatLogReadResult
-    {
-        public ChatLogReadResult()
-        {
-            ChatLogEntries = new List<ChatLogEntry>();
-        }
-
-        public List<ChatLogEntry> ChatLogEntries { get; set; }
-        public int PreviousArrayIndex { get; set; }
-        public int PreviousOffset { get; set; }
-    }
-
     public static partial class Reader
     {
         private static ChatLogPointers ChatLogPointers;
@@ -71,7 +60,7 @@ namespace FFXIVAPP.Memory
             return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
         }
 
-        public static ChatLogReadResult GetChatLog(int previousArrayIndex = 0, int previousOffset = 0)
+        public static async Task<ChatLogReadResult> GetChatLog(int previousArrayIndex = 0, int previousOffset = 0)
         {
             var result = new ChatLogReadResult();
 

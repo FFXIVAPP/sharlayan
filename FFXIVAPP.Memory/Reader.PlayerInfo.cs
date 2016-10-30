@@ -17,27 +17,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Helpers;
+using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class PlayerInfoReadResult
-    {
-        public PlayerInfoReadResult()
-        {
-            PlayerEntity = new PlayerEntity();
-        }
-
-        public PlayerEntity PlayerEntity { get; set; }
-    }
-
     public static partial class Reader
     {
         private static IntPtr PlayerInfoMap { get; set; }
         private static PlayerEntity LastPlayerEntity { get; set; }
 
-        public static PlayerInfoReadResult GetPlayerInfo()
+        public static async Task<PlayerInfoReadResult> GetPlayerInfo()
         {
             var result = new PlayerInfoReadResult();
 

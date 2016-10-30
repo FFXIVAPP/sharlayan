@@ -16,40 +16,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
+using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class ActorReadResult
-    {
-        public ActorReadResult()
-        {
-            PreviousMonster = new Dictionary<uint, uint>();
-            PreviousNPC = new Dictionary<uint, uint>();
-            PreviousPC = new Dictionary<uint, uint>();
-
-            NewMonster = new List<uint>();
-            NewNPC = new List<uint>();
-            NewPC = new List<uint>();
-        }
-
-        public ConcurrentDictionary<uint, ActorEntity> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
-        public ConcurrentDictionary<uint, ActorEntity> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
-        public ConcurrentDictionary<uint, ActorEntity> PCEntities => PCWorkerDelegate.EntitiesDictionary;
-        public Dictionary<uint, uint> PreviousMonster { get; set; }
-        public Dictionary<uint, uint> PreviousNPC { get; set; }
-        public Dictionary<uint, uint> PreviousPC { get; set; }
-        public List<uint> NewMonster { get; set; }
-        public List<uint> NewNPC { get; set; }
-        public List<uint> NewPC { get; set; }
-    }
-
     public static partial class Reader
     {
         public static ActorReadResult GetActors()
@@ -202,7 +178,7 @@ namespace FFXIVAPP.Memory
                                 if (targetAddress.ToInt64() > 0)
                                 {
                                     var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                    entry.TargetID = (int) BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
+                                    entry.TargetID = (int) BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
                                 }
                             }
                             if (!entry.IsValid)

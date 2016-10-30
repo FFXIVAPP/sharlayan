@@ -16,34 +16,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
+using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
-    public class PartyInfoReadResult
-    {
-        public PartyInfoReadResult()
-        {
-            PreviousParty = new Dictionary<uint, uint>();
-
-            NewParty = new List<uint>();
-        }
-
-        public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
-        public Dictionary<uint, uint> PreviousParty { get; set; }
-        public List<uint> NewParty { get; set; }
-    }
-
     public static partial class Reader
     {
         public static IntPtr PartyInfoMap { get; set; }
         public static IntPtr PartyCountMap { get; set; }
 
-        public static PartyInfoReadResult GetPartyMembers()
+        public static async Task<PartyInfoReadResult> GetPartyMembers()
         {
             var result = new PartyInfoReadResult();
 

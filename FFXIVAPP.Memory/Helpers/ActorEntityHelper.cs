@@ -46,8 +46,8 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
                 defaultBaseOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultBaseOffset;
                 entry.X = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.X + defaultBaseOffset);
-                entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Y + defaultBaseOffset);
-                entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Z + defaultBaseOffset);
+                entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Z + defaultBaseOffset);
+                entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Y + defaultBaseOffset);
                 entry.Heading = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Heading + defaultBaseOffset);
                 entry.HitBoxRadius = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.HitBoxRadius + defaultBaseOffset);
                 entry.Fate = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??

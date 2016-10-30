@@ -80,7 +80,12 @@
     <Compile Include="Helpers\PartyEntityHelper.cs" />
     <Compile Include="Helpers\PlayerEntityHelper.cs" />
     <Compile Include="Helpers\StatusEffectHelper.cs" />
+    <Compile Include="Models\ActorReadResult.cs" />
+    <Compile Include="Models\ChatLogReadResult.cs" />
+    <Compile Include="Models\InventoryReadResult.cs" />
     <Compile Include="Models\MapItem.cs" />
+    <Compile Include="Models\PartyInfoReadResult.cs" />
+    <Compile Include="Models\PlayerInfoReadResult.cs" />
     <Compile Include="Models\StatusItem.cs" />
     <Compile Include="Models\Localization.cs" />
     <Compile Include="Helpers\ZoneHelper.cs" />
@@ -124,6 +129,7 @@
     <Compile Include="Models\Structures.PlayerInfo.cs" />
     <Compile Include="Models\Structures.StatusEntry.cs" />
     <Compile Include="Models\Structures.TargetInfo.cs" />
+    <Compile Include="Models\TargetReadResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Signature.cs" />
     <Compile Include="Reader.Actor.cs" />

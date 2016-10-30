@@ -17,15 +17,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
+using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
     public static partial class Reader
     {
-        public static TargetReadResult GetTargetInfo()
+        public static async Task<TargetReadResult> GetTargetInfo()
         {
             var result = new TargetReadResult();
 
@@ -202,17 +204,6 @@ namespace FFXIVAPP.Memory
             }
 
             return result;
-        }
-
-        public class TargetReadResult
-        {
-            public TargetReadResult()
-            {
-                TargetEntity = new TargetEntity();
-            }
-
-            public TargetEntity TargetEntity { get; set; }
-            public bool TargetsFound { get; set; }
         }
     }
 }
