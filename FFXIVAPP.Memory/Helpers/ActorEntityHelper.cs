@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ActorEntityHelper.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -40,10 +40,10 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.NPCID1 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
                 entry.NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
                 entry.OwnerID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
-                entry.Type = Actor.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
-                entry.TypeID = Actor.Job[entry.Type];
-                entry.TargetType = Actor.TargetType[source[MemoryHandler.Instance.Structures.ActorEntity.TargetType]];
-                entry.TargetTypeID = Actor.TargetType[entry.TargetType];
+                entry.Type = Entity.Type[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
+                entry.TypeID = Entity.Type[entry.Type];
+                entry.TargetType = Entity.TargetType[source[MemoryHandler.Instance.Structures.ActorEntity.TargetType]];
+                entry.TargetTypeID = Entity.TargetType[entry.TargetType];
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
                 defaultBaseOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultBaseOffset;
@@ -55,20 +55,20 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.Fate = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??
                 entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringInvisible]; // ??
                 entry.ModelID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
-                entry.ActionStatus = Actor.ActionStatus[source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus]];
-                entry.ActionStatusID = Actor.ActionStatus[entry.ActionStatus];
+                entry.ActionStatus = Entity.ActionStatus[source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus]];
+                entry.ActionStatusID = Entity.ActionStatus[entry.ActionStatus];
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
-                entry.Icon = Actor.Icon[source[MemoryHandler.Instance.Structures.ActorEntity.Icon]];
-                entry.IconID = Actor.Icon[entry.Icon];
-                entry.Status = Actor.Status[source[MemoryHandler.Instance.Structures.ActorEntity.Status]];
-                entry.StatusID = Actor.Status[entry.Status];
+                entry.Icon = Entity.Icon[source[MemoryHandler.Instance.Structures.ActorEntity.Icon]];
+                entry.IconID = Entity.Icon[entry.Icon];
+                entry.Status = Entity.Status[source[MemoryHandler.Instance.Structures.ActorEntity.Status]];
+                entry.StatusID = Entity.Status[entry.Status];
                 entry.ClaimedByID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
                 var targetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
                 defaultStatOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatOffset;
-                entry.Job = Actor.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset]];
-                entry.JobID = Actor.Job[entry.Job];
+                entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset]];
+                entry.JobID = Entity.Job[entry.Job];
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorEntity.Level + defaultStatOffset];
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompanyRank + defaultStatOffset];

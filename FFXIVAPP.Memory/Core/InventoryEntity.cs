@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ InventoryEntity.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ namespace FFXIVAPP.Memory.Core
     {
         public List<ItemInfo> Items { get; set; }
         public uint Amount { get; set; }
-        public Inventory.Container Type { get; set; }
+        public byte TypeID { get; set; }
+        public string Type { get; set; }
     }
 }

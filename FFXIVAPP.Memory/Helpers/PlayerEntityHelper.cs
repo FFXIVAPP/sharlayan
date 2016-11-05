@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ PlayerEntityHelper.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@ namespace FFXIVAPP.Memory.Helpers
 
                 switch (MemoryHandler.Instance.GameLanguage)
                 {
-                       default:
+                    default:
                         entry.JobID = source[MemoryHandler.Instance.Structures.PlayerEntity.JobID];
-                        entry.Job = Actor.Job[entry.JobID];
+                        entry.Job = Entity.Job[entry.JobID];
 
                         #region Job Levels
 

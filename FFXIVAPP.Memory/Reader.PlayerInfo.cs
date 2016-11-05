@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Reader.PlayerInfo.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
@@ -54,9 +53,9 @@ namespace FFXIVAPP.Memory
                                 var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
                                 var enmityEntry = new EnmityEntry
                                 {
-                                    ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                    ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
                                     Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                    Enmity = (uint)MemoryHandler.Instance.GetInt16(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                    Enmity = (uint) MemoryHandler.Instance.GetInt16(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
                                 };
                                 if (enmityEntry.ID > 0)
                                 {

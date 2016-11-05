@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ActorEntity.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
 using FFXIVAPP.Memory.Helpers;
 

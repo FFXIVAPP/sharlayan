@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Signatures.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ namespace FFXIVAPP.Memory
 {
     public static class Signatures
     {
-        public static IEnumerable<Signature> Resolve(bool IsWin64, string patchVersion = "latest")
+        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(IsWin64 ? "x64" : "x86")}.json");
+            var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
             if (File.Exists(file))
             {
                 using (var streamReader = new StreamReader(file))
@@ -42,9 +42,12 @@ namespace FFXIVAPP.Memory
             }
             else
             {
-                using (var webClient = new WebClient { Encoding = Encoding.UTF8 })
+                using (var webClient = new WebClient
                 {
-                    var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(IsWin64 ? "x64" : "x86")}");
+                    Encoding = Encoding.UTF8
+                })
+                {
+                    var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
                     var signatures = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
                     File.WriteAllText(file, JsonConvert.SerializeObject(signatures, Formatting.Indented, new JsonSerializerSettings
                     {

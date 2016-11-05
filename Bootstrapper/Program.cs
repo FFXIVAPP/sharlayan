@@ -30,8 +30,8 @@ namespace Bootstrapper
             ZoneHelper.MapInfo(1);
             StatusEffectHelper.StatusInfo(1);
             MemoryHandler.Instance.SetStructures(new ProcessModel());
+            MemoryHandler.Instance.SetEnumerations(new ProcessModel());
             Scanner.Instance.LoadOffsets(Signatures.Resolve(false));
-            Actor.Initialize(new ProcessModel());
             Console.WriteLine("To exit this application press \"Enter\".");
             Console.ReadLine();
         }

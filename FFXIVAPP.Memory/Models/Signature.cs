@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Signature.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ namespace FFXIVAPP.Memory.Models
     public class Signature
     {
         private int _Offset;
-        private bool offsetSet;
         private Regex _regularExpress;
+        private bool offsetSet;
 
         public Signature()
         {

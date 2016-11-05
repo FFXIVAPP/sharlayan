@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Reader.Actor.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -112,7 +112,7 @@ namespace FFXIVAPP.Memory
 
                             var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
                             var NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
-                            var Type = Actor.Type[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
+                            var Type = Entity.Type[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
                             ActorEntity existing = null;
                             var newEntry = false;
 

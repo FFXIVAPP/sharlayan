@@ -96,8 +96,7 @@
     <Compile Include="Core\ChatLogEntry.cs" />
     <Compile Include="Core\Coordinate.cs" />
     <Compile Include="Core\EnmityEntry.cs" />
-    <Compile Include="Core\Enums\Actor.cs" />
-    <Compile Include="Core\Enums\Inventory.cs" />
+    <Compile Include="Core\Enums\Entity.cs" />
     <Compile Include="Core\Interfaces\IActorEntity.cs" />
     <Compile Include="Core\Interfaces\IChatLogEntry.cs" />
     <Compile Include="Core\Interfaces\ICoordinate.cs" />

@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ MemoryHandler.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,13 +16,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FFXIVAPP.Memory
 {
@@ -66,9 +69,12 @@ namespace FFXIVAPP.Memory
                 ProcessHandle = processModel.Process.Handle;
             }
             Constants.ProcessHandle = ProcessHandle;
-            Scanner.Instance.Locations.Clear();
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, patchVersion));
+
             SetStructures(processModel, patchVersion);
+            SetEnumerations(processModel, patchVersion);
+
+            Scanner.Instance.Locations.Clear();
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion));
         }
 
         public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
@@ -87,7 +93,10 @@ namespace FFXIVAPP.Memory
             }
             else
             {
-                using (var webClient = new WebClient { Encoding = Encoding.UTF8 })
+                using (var webClient = new WebClient
+                {
+                    Encoding = Encoding.UTF8
+                })
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
                     Structures = JsonConvert.DeserializeObject<Structures>(json);
@@ -95,6 +104,32 @@ namespace FFXIVAPP.Memory
                     {
                         NullValueHandling = NullValueHandling.Ignore
                     }), Encoding.UTF8);
+                }
+            }
+        }
+
+        public void SetEnumerations(ProcessModel processModel, string patchVersion = "latest")
+        {
+            var file = Path.Combine(Directory.GetCurrentDirectory(), $"enums-{(processModel.IsWin64 ? "x64" : "x86")}.json");
+            if (File.Exists(file))
+            {
+                using (var streamReader = new StreamReader(file))
+                {
+                    var json = streamReader.ReadToEnd();
+                    Entity.Initialize(json);
+                }
+            }
+            else
+            {
+                using (var webClient = new WebClient
+                {
+                    Encoding = Encoding.UTF8
+                })
+                {
+                    var json = webClient.DownloadString($"http://xivapp.com/api/enums?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
+                    File.WriteAllText(file, JObject.Parse(json)
+                                                   .ToString(Formatting.Indented), Encoding.GetEncoding(932));
+                    Entity.Initialize(json);
                 }
             }
         }

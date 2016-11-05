@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ PartyEntityHelper.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -59,8 +59,8 @@ namespace FFXIVAPP.Memory.Helpers
                     entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
                     entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
-                    entry.Job = Actor.Job[source[MemoryHandler.Instance.Structures.PartyEntity.Job]];
-                    entry.JobID = Actor.Job[entry.Job];
+                    entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.PartyEntity.Job]];
+                    entry.JobID = Entity.Job[entry.Job];
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyEntity.Level];
                     entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
                     entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);

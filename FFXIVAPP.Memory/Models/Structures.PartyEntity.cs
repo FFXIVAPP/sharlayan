@@ -1,5 +1,5 @@
-// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Structures.PartyEntity.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ namespace FFXIVAPP.Memory.Models
             public int HPMax { get; set; }
             public int MPCurrent { get; set; }
             public int MPMax { get; set; }
-            public int DefaultStatusEffectOffset { get; set; } 
+            public int DefaultStatusEffectOffset { get; set; }
         }
     }
 }

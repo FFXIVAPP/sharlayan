@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Reader.PartyInfo.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Threading.Tasks;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
@@ -49,7 +48,7 @@ namespace FFXIVAPP.Memory
                             {
                                 for (uint i = 0; i < partyCount; i++)
                                 {
-                                    var size = (uint)MemoryHandler.Instance.Structures.PartyInfo.Size;
+                                    var size = (uint) MemoryHandler.Instance.Structures.PartyInfo.Size;
                                     var address = PartyInfoMap.ToInt64() + (i * size);
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
                                     var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);

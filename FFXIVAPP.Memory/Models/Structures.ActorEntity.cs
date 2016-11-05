@@ -1,5 +1,5 @@
-// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Structures.ActorEntity.cs
+// 
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,8 @@ namespace FFXIVAPP.Memory.Models
 {
     public partial class Structures
     {
-        public class ActoryEntityStructure {
+        public class ActoryEntityStructure
+        {
             public int Name { get; set; }
             public int ID { get; set; }
             public int NPCID1 { get; set; }
