@@ -27,7 +27,8 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         double X { get; set; }
         double Z { get; set; }
         double Y { get; set; }
-        Actor.Job Job { get; set; }
+        byte JobID { get; set; }
+        string Job { get; set; }
         byte Level { get; set; }
         int HPCurrent { get; set; }
         int HPMax { get; set; }

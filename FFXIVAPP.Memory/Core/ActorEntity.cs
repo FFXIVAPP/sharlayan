@@ -82,12 +82,12 @@ namespace FFXIVAPP.Memory.Core
 
         public bool IsFate
         {
-            get { return Fate == 0x801AFFFF && Type == Actor.Type.Monster; }
+            get { return Fate == 0x801AFFFF && Type == "Monster"; }
         }
 
         public bool IsClaimed
         {
-            get { return Status == Actor.Status.Claimed; }
+            get { return Status == "Claimed"; }
         }
 
         public bool IsValid
@@ -96,7 +96,7 @@ namespace FFXIVAPP.Memory.Core
             {
                 switch (Type)
                 {
-                    case Actor.Type.NPC:
+                    case "NPC":
                         return !string.IsNullOrEmpty(Name) && ID != 0 && (NPCID1 != 0 || NPCID2 != 0);
                     default:
                         return !string.IsNullOrEmpty(Name) && ID != 0;
@@ -125,8 +125,10 @@ namespace FFXIVAPP.Memory.Core
         public uint NPCID1 { get; set; }
         public uint NPCID2 { get; set; }
         public uint OwnerID { get; set; }
-        public Actor.Type Type { get; set; }
-        public Actor.TargetType TargetType { get; set; }
+        public byte TypeID { get; set; }
+        public string Type { get; set; }
+        public byte TargetTypeID { get; set; }
+        public string TargetType { get; set; }
         public byte Distance { get; set; }
         public double X { get; set; }
         public double Z { get; set; }
@@ -136,13 +138,17 @@ namespace FFXIVAPP.Memory.Core
         public byte GatheringInvisible { get; set; }
         public uint Fate { get; set; }
         public uint ModelID { get; set; }
-        public Actor.ActionStatus ActionStatus { get; set; }
+        public byte ActionStatusID { get; set; }
+        public string ActionStatus { get; set; }
         public bool IsGM { get; set; }
-        public Actor.Icon Icon { get; set; }
-        public Actor.Status Status { get; set; }
+        public byte IconID { get; set; }
+        public string Icon { get; set; }
+        public byte StatusID { get; set; }
+        public string Status { get; set; }
         public uint ClaimedByID { get; set; }
         public int TargetID { get; set; }
-        public Actor.Job Job { get; set; }
+        public byte JobID { get; set; }
+        public string Job { get; set; }
         public byte Level { get; set; }
         public byte GrandCompany { get; set; }
         public byte GrandCompanyRank { get; set; }
@@ -157,7 +163,8 @@ namespace FFXIVAPP.Memory.Core
         public short CPCurrent { get; set; }
         public short CPMax { get; set; }
         public byte Race { get; set; }
-        public Actor.Sex Sex { get; set; }
+        public byte SexID { get; set; }
+        public string Sex { get; set; }
 
         public List<StatusEntry> StatusEntries
         {

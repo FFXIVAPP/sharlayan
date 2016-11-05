@@ -28,7 +28,7 @@ namespace FFXIVAPP.Memory
     {
         public static IntPtr InventoryPointerMap { get; set; }
 
-        public static async Task<InventoryReadResult> GetInventoryItems()
+        public static InventoryReadResult GetInventoryItems()
         {
             var result = new InventoryReadResult();
 

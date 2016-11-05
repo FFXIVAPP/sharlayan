@@ -34,7 +34,7 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                        default:
                         entry.JobID = source[MemoryHandler.Instance.Structures.PlayerEntity.JobID];
-                        entry.Job = (Actor.Job) entry.JobID;
+                        entry.Job = Actor.Job[entry.JobID];
 
                         #region Job Levels
 
@@ -199,7 +199,7 @@ namespace FFXIVAPP.Memory.Helpers
                         break;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return entry;

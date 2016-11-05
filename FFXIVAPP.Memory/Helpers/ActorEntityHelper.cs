@@ -40,8 +40,10 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.NPCID1 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
                 entry.NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
                 entry.OwnerID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
-                entry.Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorEntity.Type];
-                entry.TargetType = (Actor.TargetType)source[MemoryHandler.Instance.Structures.ActorEntity.TargetType];
+                entry.Type = Actor.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
+                entry.TypeID = Actor.Job[entry.Type];
+                entry.TargetType = Actor.TargetType[source[MemoryHandler.Instance.Structures.ActorEntity.TargetType]];
+                entry.TargetTypeID = Actor.TargetType[entry.TargetType];
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
                 defaultBaseOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultBaseOffset;
@@ -53,16 +55,20 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.Fate = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??
                 entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringInvisible]; // ??
                 entry.ModelID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
-                entry.ActionStatus = (Actor.ActionStatus)source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus];
+                entry.ActionStatus = Actor.ActionStatus[source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus]];
+                entry.ActionStatusID = Actor.ActionStatus[entry.ActionStatus];
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
-                entry.Icon = (Actor.Icon)source[MemoryHandler.Instance.Structures.ActorEntity.Icon];
-                entry.Status = (Actor.Status)source[MemoryHandler.Instance.Structures.ActorEntity.Status];
+                entry.Icon = Actor.Icon[source[MemoryHandler.Instance.Structures.ActorEntity.Icon]];
+                entry.IconID = Actor.Icon[entry.Icon];
+                entry.Status = Actor.Status[source[MemoryHandler.Instance.Structures.ActorEntity.Status]];
+                entry.StatusID = Actor.Status[entry.Status];
                 entry.ClaimedByID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
                 var targetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
                 defaultStatOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatOffset;
-                entry.Job = (Actor.Job)source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset];
+                entry.Job = Actor.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset]];
+                entry.JobID = Actor.Job[entry.Job];
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorEntity.Level + defaultStatOffset];
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompanyRank + defaultStatOffset];
@@ -104,7 +110,7 @@ namespace FFXIVAPP.Memory.Helpers
                 var limit = 60;
                 switch (entry.Type)
                 {
-                    case Actor.Type.PC:
+                    case "PC":
                         limit = 30;
                         break;
                 }
@@ -133,7 +139,7 @@ namespace FFXIVAPP.Memory.Helpers
                         var monster = MonsterWorkerDelegate.GetEntity(statusEntry.CasterID);
                         statusEntry.SourceEntity = (pc ?? npc) ?? monster;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                     try
@@ -164,7 +170,7 @@ namespace FFXIVAPP.Memory.Helpers
                             statusEntry.StatusName = statusKey;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         statusEntry.StatusName = "UNKNOWN";
                     }
@@ -174,7 +180,7 @@ namespace FFXIVAPP.Memory.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             CleanXPValue(ref entry);

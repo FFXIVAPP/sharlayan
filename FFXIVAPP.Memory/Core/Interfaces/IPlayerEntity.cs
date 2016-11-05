@@ -29,7 +29,7 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         List<EnmityEntry> EnmityEntries { get; set; }
 
         byte JobID { get; set; }
-        Actor.Job Job { get; set; }
+        string Job { get; set; }
 
         #region Job Levels
 

@@ -50,7 +50,7 @@ namespace FFXIVAPP.Memory.Core
 
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 chatLogEntry.Bytes = new byte[0];
                 chatLogEntry.Raw = "";

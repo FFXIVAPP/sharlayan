@@ -47,7 +47,7 @@ namespace FFXIVAPP.Memory.Core
         }
 
         public byte JobID { get; set; }
-        public Actor.Job Job { get; set; }
+        public string Job { get; set; }
         public byte PGL { get; set; }
         public byte GLD { get; set; }
         public byte MRD { get; set; }

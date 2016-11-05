@@ -29,7 +29,7 @@ namespace FFXIVAPP.Memory
         private static IntPtr PlayerInfoMap { get; set; }
         private static PlayerEntity LastPlayerEntity { get; set; }
 
-        public static async Task<PlayerInfoReadResult> GetPlayerInfo()
+        public static PlayerInfoReadResult GetPlayerInfo()
         {
             var result = new PlayerInfoReadResult();
 

@@ -28,7 +28,7 @@ namespace FFXIVAPP.Memory
 {
     public class MemoryHandler
     {
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "1.0")
+        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest")
         {
             GameLanguage = gameLanguage;
             if (processModel == null)
@@ -48,12 +48,12 @@ namespace FFXIVAPP.Memory
             {
                 UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "1.0")
+        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest")
         {
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
@@ -61,7 +61,7 @@ namespace FFXIVAPP.Memory
             {
                 ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) ProcessModel.ProcessID);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ProcessHandle = processModel.Process.Handle;
             }
@@ -71,7 +71,7 @@ namespace FFXIVAPP.Memory
             SetStructures(processModel, patchVersion);
         }
 
-        public void SetStructures(ProcessModel processModel, string patchVersion = "1.0")
+        public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
             if (File.Exists(file))

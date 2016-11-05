@@ -26,7 +26,7 @@ namespace FFXIVAPP.Memory
 {
     public static class Signatures
     {
-        public static IEnumerable<Signature> Resolve(bool IsWin64, string patchVersion = "1.0")
+        public static IEnumerable<Signature> Resolve(bool IsWin64, string patchVersion = "latest")
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(IsWin64 ? "x64" : "x86")}.json");
             if (File.Exists(file))

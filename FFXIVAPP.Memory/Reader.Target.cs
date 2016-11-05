@@ -27,7 +27,7 @@ namespace FFXIVAPP.Memory
 {
     public static partial class Reader
     {
-        public static async Task<TargetReadResult> GetTargetInfo()
+        public static TargetReadResult GetTargetInfo()
         {
             var result = new TargetReadResult();
 

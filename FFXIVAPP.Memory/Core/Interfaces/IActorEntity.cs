@@ -29,8 +29,10 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         uint NPCID1 { get; set; }
         uint NPCID2 { get; set; }
         uint OwnerID { get; set; }
-        Actor.Type Type { get; set; }
-        Actor.TargetType TargetType { get; set; }
+        byte TypeID { get; set; }
+        string Type { get; set; }
+        byte TargetTypeID { get; set; }
+        string TargetType { get; set; }
         byte Distance { get; set; }
         byte GatheringStatus { get; set; }
         double X { get; set; }
@@ -41,13 +43,17 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         byte GatheringInvisible { get; set; }
         uint Fate { get; set; }
         uint ModelID { get; set; }
-        Actor.ActionStatus ActionStatus { get; set; }
+        byte ActionStatusID { get; set; }
+        string ActionStatus { get; set; }
         bool IsGM { get; set; }
-        Actor.Icon Icon { get; set; }
-        Actor.Status Status { get; set; }
+        byte IconID { get; set; }
+        string Icon { get; set; }
+        byte StatusID { get; set; }
+        string Status { get; set; }
         uint ClaimedByID { get; set; }
         int TargetID { get; set; }
-        Actor.Job Job { get; set; }
+        byte JobID { get; set; }
+        string Job { get; set; }
         byte Level { get; set; }
         byte GrandCompany { get; set; }
         byte GrandCompanyRank { get; set; }
@@ -62,7 +68,8 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         short CPCurrent { get; set; }
         short CPMax { get; set; }
         byte Race { get; set; }
-        Actor.Sex Sex { get; set; }
+        byte SexID { get; set; }
+        string Sex { get; set; }
         List<StatusEntry> StatusEntries { get; set; }
         bool IsCasting { get; set; }
         short CastingID { get; set; }

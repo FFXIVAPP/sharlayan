@@ -59,7 +59,8 @@ namespace FFXIVAPP.Memory.Helpers
                     entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
                     entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
-                    entry.Job = (Actor.Job)source[MemoryHandler.Instance.Structures.PartyEntity.Job];
+                    entry.Job = Actor.Job[source[MemoryHandler.Instance.Structures.PartyEntity.Job]];
+                    entry.JobID = Actor.Job[entry.Job];
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyEntity.Level];
                     entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
                     entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);
@@ -90,7 +91,7 @@ namespace FFXIVAPP.Memory.Helpers
                             var monster = MonsterWorkerDelegate.GetEntity(statusEntry.CasterID);
                             statusEntry.SourceEntity = (pc ?? npc) ?? monster;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         }
                         try
@@ -121,7 +122,7 @@ namespace FFXIVAPP.Memory.Helpers
                                 statusEntry.StatusName = statusKey;
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             statusEntry.StatusName = "UNKNOWN";
                         }
@@ -131,7 +132,7 @@ namespace FFXIVAPP.Memory.Helpers
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
                 CleanXPValue(ref entry);

@@ -60,7 +60,7 @@ namespace FFXIVAPP.Memory
             return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
         }
 
-        public static async Task<ChatLogReadResult> GetChatLog(int previousArrayIndex = 0, int previousOffset = 0)
+        public static ChatLogReadResult GetChatLog(int previousArrayIndex = 0, int previousOffset = 0)
         {
             var result = new ChatLogReadResult();
 

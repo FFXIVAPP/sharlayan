@@ -101,8 +101,7 @@ namespace FFXIVAPP.Memory.Core
                                 }
                                 autoTranslateList.Add(Convert.ToByte(']'));
                                 var aCheckStr = "";
-                                var checkedAt = autoTranslateList.GetRange(1, autoTranslateList.Count - 1)
-                                                                 .ToArray();
+                                // var checkedAt = autoTranslateList.GetRange(1, autoTranslateList.Count - 1).ToArray();
                                 if (string.IsNullOrWhiteSpace(aCheckStr))
                                 {
                                     // TODO: implement showing or using in the chatlog
@@ -141,7 +140,7 @@ namespace FFXIVAPP.Memory.Core
                 cleaned = Regex.Replace(cleaned, @"\[\]+", "");
                 line = cleaned;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return line;
@@ -183,7 +182,7 @@ namespace FFXIVAPP.Memory.Core
                 cleaned = Regex.Replace(cleaned, @"[\x00-\x1F]+", "");
                 line = cleaned;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return line;

@@ -65,7 +65,8 @@ namespace FFXIVAPP.Memory.Core
         public double X { get; set; }
         public double Z { get; set; }
         public double Y { get; set; }
-        public Actor.Job Job { get; set; }
+        public byte JobID { get; set; }
+        public string Job { get; set; }
         public byte Level { get; set; }
         public int HPCurrent { get; set; }
         public int HPMax { get; set; }

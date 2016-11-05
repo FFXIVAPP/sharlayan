@@ -29,7 +29,7 @@ namespace FFXIVAPP.Memory
         public static IntPtr PartyInfoMap { get; set; }
         public static IntPtr PartyCountMap { get; set; }
 
-        public static async Task<PartyInfoReadResult> GetPartyMembers()
+        public static PartyInfoReadResult GetPartyMembers()
         {
             var result = new PartyInfoReadResult();
 

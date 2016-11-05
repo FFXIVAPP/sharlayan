@@ -112,13 +112,13 @@ namespace FFXIVAPP.Memory
 
                             var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
                             var NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
-                            var Type = (Actor.Type)source[MemoryHandler.Instance.Structures.ActorEntity.Type];
+                            var Type = Actor.Type[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
                             ActorEntity existing = null;
                             var newEntry = false;
 
                             switch (Type)
                             {
-                                case Actor.Type.Monster:
+                                case "Monster":
                                     if (result.PreviousMonster.ContainsKey(ID))
                                     {
                                         result.PreviousMonster.Remove(ID);
@@ -130,7 +130,7 @@ namespace FFXIVAPP.Memory
                                         newEntry = true;
                                     }
                                     break;
-                                case Actor.Type.PC:
+                                case "PC":
                                     if (result.PreviousPC.ContainsKey(ID))
                                     {
                                         result.PreviousPC.Remove(ID);
@@ -142,7 +142,7 @@ namespace FFXIVAPP.Memory
                                         newEntry = true;
                                     }
                                     break;
-                                case Actor.Type.NPC:
+                                case "NPC":
                                     if (result.PreviousNPC.ContainsKey(NPCID2))
                                     {
                                         result.PreviousNPC.Remove(NPCID2);
@@ -200,13 +200,13 @@ namespace FFXIVAPP.Memory
                             {
                                 switch (entry.Type)
                                 {
-                                    case Actor.Type.Monster:
+                                    case "Monster":
                                         MonsterWorkerDelegate.EnsureEntity(entry.ID, entry);
                                         break;
-                                    case Actor.Type.PC:
+                                    case "PC":
                                         PCWorkerDelegate.EnsureEntity(entry.ID, entry);
                                         break;
-                                    case Actor.Type.NPC:
+                                    case "NPC":
                                         NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
                                         break;
                                     default:
