@@ -17,7 +17,6 @@
 
 using System;
 using FFXIVAPP.Memory;
-using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
 

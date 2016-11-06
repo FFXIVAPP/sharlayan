@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ MemoryHandler.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -367,9 +366,9 @@ namespace FFXIVAPP.Memory
         public T GetStructure<T>(IntPtr address, int offset = 0)
         {
             IntPtr lpNumberOfBytesRead;
-            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof (T)));
-            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof (T))), out lpNumberOfBytesRead);
-            var retValue = (T) Marshal.PtrToStructure(buffer, typeof (T));
+            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
+            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out lpNumberOfBytesRead);
+            var retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
             Marshal.FreeCoTaskMem(buffer);
             return retValue;
         }

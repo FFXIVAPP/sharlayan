@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Actor.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Concurrent;
-using System.IO;
-using System.Net;
-using System.Text;
-using FFXIVAPP.Memory.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

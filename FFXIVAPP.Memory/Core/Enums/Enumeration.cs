@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ Enumeration.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -24,13 +24,14 @@ namespace FFXIVAPP.Memory.Core.Enums
     {
         private ConcurrentDictionary<byte, string> _byte = new ConcurrentDictionary<byte, string>();
         private ConcurrentDictionary<string, byte> _string = new ConcurrentDictionary<string, byte>();
-        public string this[byte key] => _byte[key];
-        public byte this[string key] => _string[key];
 
         public Enumeration(ConcurrentDictionary<string, byte> dictionary)
         {
             _string = dictionary;
             _byte = new ConcurrentDictionary<byte, string>(dictionary.ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
         }
+
+        public string this[byte key] => _byte[key];
+        public byte this[string key] => _string[key];
     }
 }

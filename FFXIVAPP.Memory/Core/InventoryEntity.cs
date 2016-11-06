@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory ~ InventoryEntity.cs
-// 
+﻿// FFXIVAPP.Memory
+// FFXIVAPP & Related Plugins/Modules
 // Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
 
 namespace FFXIVAPP.Memory.Core
