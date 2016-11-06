@@ -26,11 +26,12 @@ namespace Bootstrapper
     {
         private static void Main(string[] args)
         {
-            ZoneHelper.MapInfo(1);
+            ActionHelper.ActionInfo(1);
             StatusEffectHelper.StatusInfo(1);
+            ZoneHelper.MapInfo(1);
             MemoryHandler.Instance.SetStructures(new ProcessModel());
             MemoryHandler.Instance.SetEnumerations(new ProcessModel());
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(false));
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel()));
             Console.WriteLine("To exit this application press \"Enter\".");
             Console.ReadLine();
         }

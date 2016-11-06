@@ -1,6 +1,6 @@
-﻿// FFXIVAPP.Memory
+// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright � 2007 - 2016 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,36 +25,36 @@ using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory.Helpers
 {
-    public static class StatusEffectHelper
+    public static class ActionHelper
     {
-        private static ConcurrentDictionary<uint, StatusItem> _statusEffects;
+        private static ConcurrentDictionary<uint, ActionItem> _actions;
 
-        private static ConcurrentDictionary<uint, StatusItem> StatusEffects
+        private static ConcurrentDictionary<uint, ActionItem> Actions
         {
-            get { return _statusEffects ?? (_statusEffects = new ConcurrentDictionary<uint, StatusItem>()); }
+            get { return _actions ?? (_actions = new ConcurrentDictionary<uint, ActionItem>()); }
             set
             {
-                if (_statusEffects == null)
+                if (_actions == null)
                 {
-                    _statusEffects = new ConcurrentDictionary<uint, StatusItem>();
+                    _actions = new ConcurrentDictionary<uint, ActionItem>();
                 }
-                _statusEffects = value;
+                _actions = value;
             }
         }
 
-        public static StatusItem StatusInfo(uint id)
+        public static ActionItem ActionInfo(uint id)
         {
-            lock (StatusEffects)
+            lock (Actions)
             {
-                if (!StatusEffects.Any())
+                if (!Actions.Any())
                 {
                     Generate();
                 }
-                if (StatusEffects.ContainsKey(id))
+                if (Actions.ContainsKey(id))
                 {
-                    return StatusEffects[id];
+                    return Actions[id];
                 }
-                return new StatusItem
+                return new ActionItem
                 {
                     Name = new Localization
                     {
@@ -64,21 +64,20 @@ namespace FFXIVAPP.Memory.Helpers
                         German = "???",
                         Japanese = "???",
                         Korean = "???"
-                    },
-                    CompanyAction = false
+                    }
                 };
             }
         }
 
         private static void Generate()
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
+            var file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
             if (File.Exists(file))
             {
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json, Constants.SerializerSettings);
+                    Actions = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, ActionItem>>(json, Constants.SerializerSettings);
                 }
             }
             else
@@ -88,9 +87,9 @@ namespace FFXIVAPP.Memory.Helpers
                     Encoding = Encoding.UTF8
                 })
                 {
-                    var json = webClient.DownloadString("http://xivapp.com/api/statuses");
-                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json, Constants.SerializerSettings);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(StatusEffects, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
+                    var json = webClient.DownloadString("http://xivapp.com/api/actions");
+                    Actions = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, ActionItem>>(json, Constants.SerializerSettings);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(Actions, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
                 }
             }
         }

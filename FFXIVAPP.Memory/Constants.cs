@@ -18,11 +18,17 @@
 using System;
 using System.Collections.Generic;
 using FFXIVAPP.Memory.Models;
+using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory
 {
     internal static class Constants
     {
+        public static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         #region Auto-Properties
 
         public static IntPtr ProcessHandle { get; set; }

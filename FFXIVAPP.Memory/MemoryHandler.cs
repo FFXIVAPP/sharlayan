@@ -84,10 +84,7 @@ namespace FFXIVAPP.Memory
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    Structures = JsonConvert.DeserializeObject<Structures>(json, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
+                    Structures = JsonConvert.DeserializeObject<Structures>(json, Constants.SerializerSettings);
                 }
             }
             else
@@ -99,10 +96,7 @@ namespace FFXIVAPP.Memory
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
                     Structures = JsonConvert.DeserializeObject<Structures>(json);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(Structures, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }), Encoding.UTF8);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(Structures, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
                 }
             }
         }

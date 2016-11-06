@@ -34,10 +34,7 @@ namespace FFXIVAPP.Memory
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
+                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
                 }
             }
             else
@@ -48,11 +45,8 @@ namespace FFXIVAPP.Memory
                 })
                 {
                     var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                    var signatures = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(signatures, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }), Encoding.GetEncoding(932));
+                    var signatures = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(signatures, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
                     return signatures;
                 }
             }

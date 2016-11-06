@@ -80,7 +80,9 @@
     <Compile Include="Helpers\ActorEntityHelper.cs" />
     <Compile Include="Helpers\PartyEntityHelper.cs" />
     <Compile Include="Helpers\PlayerEntityHelper.cs" />
+    <Compile Include="Helpers\ActionHelper.cs" />
     <Compile Include="Helpers\StatusEffectHelper.cs" />
+    <Compile Include="Models\ActionItem.cs" />
     <Compile Include="Models\ActorReadResult.cs" />
     <Compile Include="Models\ChatLogReadResult.cs" />
     <Compile Include="Models\InventoryReadResult.cs" />

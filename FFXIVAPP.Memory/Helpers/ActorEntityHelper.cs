@@ -28,9 +28,9 @@ namespace FFXIVAPP.Memory.Helpers
         public static ActorEntity ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorEntity entry = null)
         {
             entry = entry ?? new ActorEntity();
-            var defaultBaseOffset = 0;
-            var defaultStatOffset = 0;
-            var defaultStatusEffectOffset = 0;
+            var defaultBaseOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultBaseOffset;
+            var defaultStatOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatOffset;
+            var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatusEffectOffset;
             try
             {
                 entry.MapIndex = 0;
@@ -46,7 +46,7 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.TargetTypeID = Entity.TargetType[entry.TargetType];
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
-                defaultBaseOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultBaseOffset;
+
                 entry.X = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.X + defaultBaseOffset);
                 entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Z + defaultBaseOffset);
                 entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Y + defaultBaseOffset);
@@ -66,7 +66,7 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.ClaimedByID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
                 var targetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
-                defaultStatOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatOffset;
+
                 entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset]];
                 entry.JobID = Entity.Job[entry.Job];
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorEntity.Level + defaultStatOffset];
@@ -117,7 +117,7 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.StatusEntries = new List<StatusEntry>();
                 const int statusSize = 12;
                 var statusesSource = new byte[limit * statusSize];
-                defaultStatusEffectOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatusEffectOffset;
+
                 Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
                 for (var i = 0; i < limit; i++)
                 {

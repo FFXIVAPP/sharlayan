@@ -85,10 +85,7 @@ namespace FFXIVAPP.Memory.Helpers
                 using (var streamReader = new StreamReader(file))
                 {
                     var json = streamReader.ReadToEnd();
-                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
+                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json, Constants.SerializerSettings);
                 }
             }
             else
@@ -99,11 +96,8 @@ namespace FFXIVAPP.Memory.Helpers
                 })
                 {
                     var json = webClient.DownloadString("http://xivapp.com/api/zones");
-                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(MapInfos, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    }), Encoding.UTF8);
+                    MapInfos = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, MapItem>>(json, Constants.SerializerSettings);
+                    File.WriteAllText(file, JsonConvert.SerializeObject(MapInfos, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
                 }
             }
         }

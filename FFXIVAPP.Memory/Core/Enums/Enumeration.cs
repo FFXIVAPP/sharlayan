@@ -22,8 +22,8 @@ namespace FFXIVAPP.Memory.Core.Enums
 {
     public class Enumeration
     {
-        private ConcurrentDictionary<byte, string> _byte = new ConcurrentDictionary<byte, string>();
-        private ConcurrentDictionary<string, byte> _string = new ConcurrentDictionary<string, byte>();
+        private readonly ConcurrentDictionary<byte, string> _byte = new ConcurrentDictionary<byte, string>();
+        private readonly ConcurrentDictionary<string, byte> _string = new ConcurrentDictionary<string, byte>();
 
         public Enumeration(ConcurrentDictionary<string, byte> dictionary)
         {
@@ -31,7 +31,30 @@ namespace FFXIVAPP.Memory.Core.Enums
             _byte = new ConcurrentDictionary<byte, string>(dictionary.ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
         }
 
-        public string this[byte key] => _byte[key];
-        public byte this[string key] => _string[key];
+        public string this[byte key]
+        {
+            get
+            {
+                string result;
+                if (!_byte.TryGetValue(key, out result))
+                {
+                    result = "UNKNOWN";
+                }
+                return result;
+            }
+        }
+
+        public byte this[string key]
+        {
+            get
+            {
+                byte result;
+                if (!_string.TryGetValue(key, out result))
+                {
+                    result = 0;
+                }
+                return result;
+            }
+        }
     }
 }

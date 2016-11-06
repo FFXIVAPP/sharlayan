@@ -50,6 +50,7 @@ namespace FFXIVAPP.Memory.Helpers
             }
             else
             {
+                var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.PartyEntity.DefaultStatusEffectOffset;
                 var entry = new PartyEntity();
                 try
                 {
@@ -70,7 +71,7 @@ namespace FFXIVAPP.Memory.Helpers
                     entry.StatusEntries = new List<StatusEntry>();
                     const int statusSize = 12;
                     var statusesSource = new byte[limit * statusSize];
-                    var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.PartyEntity.DefaultStatusEffectOffset;
+
                     Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * 12);
                     for (var i = 0; i < limit; i++)
                     {

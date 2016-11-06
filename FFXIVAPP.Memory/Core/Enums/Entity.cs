@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,25 +24,37 @@ namespace FFXIVAPP.Memory.Core.Enums
 {
     public static class Entity
     {
-        public static Enumeration Container { get; set; }
-        public static Enumeration ActionStatus { get; set; }
-        public static Enumeration Icon { get; set; }
-        public static Enumeration Job { get; set; }
-        public static Enumeration Sex { get; set; }
-        public static Enumeration Status { get; set; }
-        public static Enumeration TargetType { get; set; }
-        public static Enumeration Type { get; set; }
+        public static Enumeration Container { get; private set; }
+        public static Enumeration ActionStatus { get; private set; }
+        public static Enumeration Icon { get; private set; }
+        public static Enumeration Job { get; private set; }
+        public static Enumeration Sex { get; private set; }
+        public static Enumeration Status { get; private set; }
+        public static Enumeration TargetType { get; private set; }
+        public static Enumeration Type { get; private set; }
 
         public static void Initialize(string json)
         {
-            Container = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Container"]?.ToString() ?? "{}"));
-            ActionStatus = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["ActionStatus"]?.ToString() ?? "{}"));
-            Icon = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Icon"]?.ToString() ?? "{}"));
-            Job = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Job"]?.ToString() ?? "{}"));
-            Sex = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Sex"]?.ToString() ?? "{}"));
-            Status = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Status"]?.ToString() ?? "{}"));
-            TargetType = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["TargetType"]?.ToString() ?? "{}"));
-            Type = new Enumeration(JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)["Type"]?.ToString() ?? "{}"));
+            Container = new Enumeration(JsonToDictionary(json, "Container"));
+            ActionStatus = new Enumeration(JsonToDictionary(json, "ActionStatus"));
+            Icon = new Enumeration(JsonToDictionary(json, "Icon"));
+            Job = new Enumeration(JsonToDictionary(json, "Job"));
+            Sex = new Enumeration(JsonToDictionary(json, "Sex"));
+            Status = new Enumeration(JsonToDictionary(json, "Status"));
+            TargetType = new Enumeration(JsonToDictionary(json, "TargetType"));
+            Type = new Enumeration(JsonToDictionary(json, "Type"));
+        }
+
+        private static ConcurrentDictionary<string, byte> JsonToDictionary(string json, string key)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)[key].ToString(), Constants.SerializerSettings);
+            }
+            catch (Exception)
+            {
+                return new ConcurrentDictionary<string, byte>();
+            }
         }
     }
 }
