@@ -75,6 +75,14 @@ namespace FFXIVAPP.Memory
                                         try
                                         {
                                             entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+
+                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
+                                            // if the map has more than 1 layer, overwrite the map id.
+                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
+                                            if (currentActiveMapID > 0)
+                                            {
+                                                entry.MapID = currentActiveMapID;
+                                            }
                                         }
                                         catch (Exception)
                                         {
@@ -115,6 +123,14 @@ namespace FFXIVAPP.Memory
                                         try
                                         {
                                             entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+
+                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
+                                            // if the map has more than 1 layer, overwrite the map id.
+                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
+                                            if (currentActiveMapID > 0)
+                                            {
+                                                entry.MapID = currentActiveMapID;
+                                            }
                                         }
                                         catch (Exception)
                                         {
@@ -154,6 +170,14 @@ namespace FFXIVAPP.Memory
                                     try
                                     {
                                         entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+
+                                        // current map is 0 if the map the actor is in does not have more than 1 layer.
+                                        // if the map has more than 1 layer, overwrite the map id.
+                                        uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
+                                        if (currentActiveMapID > 0)
+                                        {
+                                            entry.MapID = currentActiveMapID;
+                                        }
                                     }
                                     catch (Exception)
                                     {
@@ -189,6 +213,14 @@ namespace FFXIVAPP.Memory
                                         try
                                         {
                                             entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+
+                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
+                                            // if the map has more than 1 layer, overwrite the map id.
+                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
+                                            if (currentActiveMapID > 0)
+                                            {
+                                                entry.MapID = currentActiveMapID;
+                                            }
                                         }
                                         catch (Exception)
                                         {
