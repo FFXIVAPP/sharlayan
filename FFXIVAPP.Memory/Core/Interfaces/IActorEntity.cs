@@ -27,6 +27,7 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         uint MapID { get; set; }
         string Name { get; set; }
         uint ID { get; set; }
+        string UUID { get; set; }
         uint NPCID1 { get; set; }
         uint NPCID2 { get; set; }
         uint OwnerID { get; set; }

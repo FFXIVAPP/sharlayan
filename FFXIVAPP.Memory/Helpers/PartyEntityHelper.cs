@@ -36,6 +36,7 @@ namespace FFXIVAPP.Memory.Helpers
                     Z = actorEntity.Z,
                     Coordinate = actorEntity.Coordinate,
                     ID = actorEntity.ID,
+                    UUID = actorEntity.UUID,
                     Name = actorEntity.Name,
                     Job = actorEntity.Job,
                     Level = actorEntity.Level,
@@ -59,7 +60,8 @@ namespace FFXIVAPP.Memory.Helpers
                     entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Y);
                     entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
                     entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
-                    entry.UUID = Guid.NewGuid().ToString();
+                    entry.UUID = Guid.NewGuid()
+                                     .ToString();
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
                     entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.PartyEntity.Job]];
                     entry.JobID = Entity.Job[entry.Job];

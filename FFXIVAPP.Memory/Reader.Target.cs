@@ -34,8 +34,7 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) -
-                                              MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
+                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) - MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
                     var enmityEntries = new List<EnmityEntry>();
 
                     if (Scanner.Instance.Locations.ContainsKey("TARGET"))
@@ -46,16 +45,11 @@ namespace FFXIVAPP.Memory
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 192);
-                            var currentTarget = BitConverter.ToUInt32(targetInfoSource,
-                                MemoryHandler.Instance.Structures.TargetInfo.Current);
-                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource,
-                                MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                            var focusTarget = BitConverter.ToUInt32(targetInfoSource,
-                                MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                            var previousTarget = BitConverter.ToUInt32(targetInfoSource,
-                                MemoryHandler.Instance.Structures.TargetInfo.Previous);
-                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource,
-                                MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+                            var currentTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                            var focusTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                            var previousTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
                             if (currentTarget > 0)
                             {
                                 try

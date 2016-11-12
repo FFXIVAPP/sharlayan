@@ -23,6 +23,7 @@ namespace FFXIVAPP.Memory.Core.Interfaces
     {
         string Name { get; set; }
         uint ID { get; set; }
+        string UUID { get; set; }
         double X { get; set; }
         double Z { get; set; }
         double Y { get; set; }

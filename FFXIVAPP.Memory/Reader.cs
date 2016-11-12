@@ -17,7 +17,6 @@
 
 using System;
 using FFXIVAPP.Memory.Core;
-using FFXIVAPP.Memory.Models;
 
 namespace FFXIVAPP.Memory
 {
@@ -29,8 +28,8 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                    entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
+                    entry.MapTerritory = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                    entry.MapID = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                 }
                 catch (Exception)
                 {
@@ -41,11 +40,11 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"], 8);
+                    entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"], 8);
 
                     // current map is 0 if the map the actor is in does not have more than 1 layer.
                     // if the map has more than 1 layer, overwrite the map id.
-                    var currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"]);
+                    var currentActiveMapID = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"]);
                     if (currentActiveMapID > 0)
                     {
                         entry.MapID = currentActiveMapID;

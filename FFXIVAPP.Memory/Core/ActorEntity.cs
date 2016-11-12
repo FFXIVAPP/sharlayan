@@ -110,6 +110,8 @@ namespace FFXIVAPP.Memory.Core
             get { return IsCasting && CastingTime > 0 ? CastingProgress / CastingTime : 0; }
         }
 
+        public string UUID { get; set; }
+
         public byte GatheringStatus { get; set; }
         public ActorEntity CurrentUser { get; set; }
         public uint MapTerritory { get; set; }
@@ -123,7 +125,6 @@ namespace FFXIVAPP.Memory.Core
         }
 
         public uint ID { get; set; }
-        public string UUID { get; set; }
         public uint NPCID1 { get; set; }
         public uint NPCID2 { get; set; }
         public uint OwnerID { get; set; }

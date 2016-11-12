@@ -37,9 +37,10 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.MapIndex = 0;
                 entry.MapID = 0;
                 entry.TargetID = 0;
-                entry.UUID = Guid.NewGuid().ToString();
                 entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.ActorEntity.Name);
                 entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                entry.UUID = string.IsNullOrEmpty(entry.UUID) ? Guid.NewGuid()
+                                                                    .ToString() : entry.UUID;
                 entry.NPCID1 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
                 entry.NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
                 entry.OwnerID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
