@@ -34,7 +34,8 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) - MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
+                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"].GetAddress()) -
+                                              MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
                     var enmityEntries = new List<EnmityEntry>();
 
                     if (Scanner.Instance.Locations.ContainsKey("TARGET"))
@@ -45,50 +46,22 @@ namespace FFXIVAPP.Memory
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 192);
-                            var currentTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                            var focusTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                            var previousTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
-                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
-                            var targetSize = MemoryHandler.Instance.Structures.TargetInfo.Size;
+                            var currentTarget = BitConverter.ToUInt32(targetInfoSource,
+                                MemoryHandler.Instance.Structures.TargetInfo.Current);
+                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource,
+                                MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                            var focusTarget = BitConverter.ToUInt32(targetInfoSource,
+                                MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                            var previousTarget = BitConverter.ToUInt32(targetInfoSource,
+                                MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource,
+                                MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
                             if (currentTarget > 0)
                             {
                                 try
                                 {
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), targetSize); // old size: 0x3F40
-                                    var entry = ActorEntityHelper.ResolveActorFromBytes(source);
+                                    var entry = GetTargetActorEntityFromSource(currentTarget);
                                     currentTargetID = entry.ID;
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
-
-                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
-                                            // if the map has more than 1 layer, overwrite the map id.
-                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
-                                            if (currentActiveMapID > 0)
-                                            {
-                                                entry.MapID = currentActiveMapID;
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
                                     if (entry.IsValid)
                                     {
                                         result.TargetsFound = true;
@@ -104,39 +77,7 @@ namespace FFXIVAPP.Memory
                             {
                                 try
                                 {
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(mouseOverTarget), targetSize); // old size: 0x3F40
-                                    var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
-
-                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
-                                            // if the map has more than 1 layer, overwrite the map id.
-                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
-                                            if (currentActiveMapID > 0)
-                                            {
-                                                entry.MapID = currentActiveMapID;
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
+                                    var entry = GetTargetActorEntityFromSource(mouseOverTarget);
                                     if (entry.IsValid)
                                     {
                                         result.TargetsFound = true;
@@ -150,83 +91,25 @@ namespace FFXIVAPP.Memory
                             }
                             if (focusTarget > 0)
                             {
-                                var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), targetSize);
-                                // old size: 0x3F40
-                                var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
+                                try
                                 {
-                                    try
+                                    var entry = GetTargetActorEntityFromSource(focusTarget);
+                                    if (entry.IsValid)
                                     {
-                                        entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                                        entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
+                                        result.TargetsFound = true;
+                                        result.TargetEntity.FocusTarget = entry;
                                     }
                                 }
-                                if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                                catch (Exception)
                                 {
-                                    try
-                                    {
-                                        entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
-
-                                        // current map is 0 if the map the actor is in does not have more than 1 layer.
-                                        // if the map has more than 1 layer, overwrite the map id.
-                                        uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
-                                        if (currentActiveMapID > 0)
-                                        {
-                                            entry.MapID = currentActiveMapID;
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                }
-                                if (entry.IsValid)
-                                {
-                                    result.TargetsFound = true;
-                                    result.TargetEntity.FocusTarget = entry;
+                                    // ignored
                                 }
                             }
                             if (previousTarget > 0)
                             {
                                 try
                                 {
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), targetSize); // old size: 0x3F40
-                                    var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
-                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
-                                    {
-                                        try
-                                        {
-                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
-
-                                            // current map is 0 if the map the actor is in does not have more than 1 layer.
-                                            // if the map has more than 1 layer, overwrite the map id.
-                                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
-                                            if (currentActiveMapID > 0)
-                                            {
-                                                entry.MapID = currentActiveMapID;
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }
+                                    var entry = GetTargetActorEntityFromSource(previousTarget);
                                     if (entry.IsValid)
                                     {
                                         result.TargetsFound = true;
@@ -293,6 +176,16 @@ namespace FFXIVAPP.Memory
             }
 
             return result;
+        }
+
+        private static ActorEntity GetTargetActorEntityFromSource(uint address)
+        {
+            var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), MemoryHandler.Instance.Structures.TargetInfo.Size); // old size: 0x3F40
+            var entry = ActorEntityHelper.ResolveActorFromBytes(source);
+
+            EnsureMapAndZone(entry);
+
+            return entry;
         }
     }
 }

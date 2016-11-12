@@ -36,54 +36,9 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    #region Ensure Target & Map
+                    #region Ensure Target
 
                     var targetAddress = IntPtr.Zero;
-                    uint mapTerritory = 0;
-                    uint mapIndex = 0;
-                    uint mapID = 0;
-                    if (Scanner.Instance.Locations.ContainsKey("TARGET"))
-                    {
-                        try
-                        {
-                            targetAddress = Scanner.Instance.Locations["TARGET"];
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
-                    {
-                        try
-                        {
-                            mapTerritory = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
-                            mapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
-                    {
-                        try
-                        {
-                            mapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
-
-                            // current map is 0 if the map the actor is in does not have more than 1 layer.
-                            // if the map has more than 1 layer, overwrite the map id.
-                            uint currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"], -8);
-                            if (currentActiveMapID > 0)
-                            {
-                                mapID = currentActiveMapID;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
 
                     #endregion
 
@@ -196,9 +151,11 @@ namespace FFXIVAPP.Memory
 
                             var entry = ActorEntityHelper.ResolveActorFromBytes(source, isFirstEntry, existing);
 
-                            entry.MapTerritory = mapTerritory;
-                            entry.MapIndex = mapIndex;
-                            entry.MapID = mapID;
+                            #region Ensure Map & Zone
+
+                            EnsureMapAndZone(entry);
+
+                            #endregion
 
                             if (isFirstEntry)
                             {

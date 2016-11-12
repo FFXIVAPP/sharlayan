@@ -15,9 +15,47 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
+using FFXIVAPP.Memory.Core;
+using FFXIVAPP.Memory.Models;
+
 namespace FFXIVAPP.Memory
 {
     public static partial class Reader
     {
+        private static void EnsureMapAndZone(ActorEntity entry)
+        {
+            if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
+            {
+                try
+                {
+                    entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                    entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            if (Scanner.Instance.Locations.ContainsKey("ZONEINFO"))
+            {
+                try
+                {
+                    entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"], 8);
+
+                    // current map is 0 if the map the actor is in does not have more than 1 layer.
+                    // if the map has more than 1 layer, overwrite the map id.
+                    var currentActiveMapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["ZONEINFO"]);
+                    if (currentActiveMapID > 0)
+                    {
+                        entry.MapID = currentActiveMapID;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
     }
 }
