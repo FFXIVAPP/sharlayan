@@ -39,25 +39,41 @@ namespace FFXIVAPP.Memory
                     #region Ensure Target & Map
 
                     var targetAddress = IntPtr.Zero;
+                    uint mapTerritory = 0;
                     uint mapIndex = 0;
+                    uint mapID = 0;
                     if (Scanner.Instance.Locations.ContainsKey("TARGET"))
                     {
                         try
                         {
                             targetAddress = Scanner.Instance.Locations["TARGET"];
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
+                            // ignored
                         }
                     }
-                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
+                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
                     {
                         try
                         {
-                            mapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
+                            mapTerritory = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                            mapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
+                            // ignored
+                        }
+                    }
+                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                    {
+                        try
+                        {
+                            mapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
 
@@ -172,7 +188,10 @@ namespace FFXIVAPP.Memory
 
                             var entry = ActorEntityHelper.ResolveActorFromBytes(source, isFirstEntry, existing);
 
+                            entry.MapTerritory = mapTerritory;
                             entry.MapIndex = mapIndex;
+                            entry.MapID = mapID;
+
                             if (isFirstEntry)
                             {
                                 if (targetAddress.ToInt64() > 0)
@@ -215,8 +234,9 @@ namespace FFXIVAPP.Memory
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
+                            // ignored
                         }
                     }
 
@@ -224,8 +244,9 @@ namespace FFXIVAPP.Memory
 
                     #endregion
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
             }
 

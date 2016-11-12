@@ -86,8 +86,9 @@ namespace FFXIVAPP.Memory
                     address = IntPtr.Add(info.BaseAddress, info.RegionSize.ToInt32());
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
         }
 
@@ -134,8 +135,9 @@ namespace FFXIVAPP.Memory
                     regionCount++;
                     searchStart = IntPtr.Add(searchStart, bufferSize);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
             }
         }

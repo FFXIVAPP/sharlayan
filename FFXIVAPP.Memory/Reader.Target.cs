@@ -58,14 +58,27 @@ namespace FFXIVAPP.Memory
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(currentTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
                                     currentTargetID = entry.ID;
-                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
+                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                                         }
-                                        catch (Exception ex)
+                                        catch (Exception)
                                         {
+                                            // ignored
+                                        }
+                                    }
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                                    {
+                                        try
+                                        {
+                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
                                         }
                                     }
                                     if (entry.IsValid)
@@ -74,8 +87,9 @@ namespace FFXIVAPP.Memory
                                         result.TargetEntity.CurrentTarget = entry;
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                             if (mouseOverTarget > 0)
@@ -84,14 +98,27 @@ namespace FFXIVAPP.Memory
                                 {
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(mouseOverTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
+                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                                         }
-                                        catch (Exception ex)
+                                        catch (Exception)
                                         {
+                                            // ignored
+                                        }
+                                    }
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                                    {
+                                        try
+                                        {
+                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
                                         }
                                     }
                                     if (entry.IsValid)
@@ -100,8 +127,9 @@ namespace FFXIVAPP.Memory
                                         result.TargetEntity.MouseOverTarget = entry;
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                             if (focusTarget > 0)
@@ -109,14 +137,27 @@ namespace FFXIVAPP.Memory
                                 var source = MemoryHandler.Instance.GetByteArray(new IntPtr(focusTarget), targetSize);
                                 // old size: 0x3F40
                                 var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                if (Scanner.Instance.Locations.ContainsKey("MAP"))
+                                if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
                                 {
                                     try
                                     {
-                                        entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
+                                        entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                                        entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
+                                        // ignored
+                                    }
+                                }
+                                if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                                {
+                                    try
+                                    {
+                                        entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
                                     }
                                 }
                                 if (entry.IsValid)
@@ -131,14 +172,27 @@ namespace FFXIVAPP.Memory
                                 {
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(previousTarget), targetSize); // old size: 0x3F40
                                     var entry = ActorEntityHelper.ResolveActorFromBytes(source);
-                                    if (Scanner.Instance.Locations.ContainsKey("MAP"))
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINFO"))
                                     {
                                         try
                                         {
-                                            entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAP"]);
+                                            entry.MapTerritory = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
+                                            entry.MapID = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                                         }
-                                        catch (Exception ex)
+                                        catch (Exception)
                                         {
+                                            // ignored
+                                        }
+                                    }
+                                    if (Scanner.Instance.Locations.ContainsKey("MAPINDEX"))
+                                    {
+                                        try
+                                        {
+                                            entry.MapIndex = (uint)MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINDEX"]);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
                                         }
                                     }
                                     if (entry.IsValid)
@@ -147,8 +201,9 @@ namespace FFXIVAPP.Memory
                                         result.TargetEntity.PreviousTarget = entry;
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                             if (currentTargetID > 0)
@@ -183,22 +238,25 @@ namespace FFXIVAPP.Memory
                                         {
                                             enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
                                         }
-                                        catch (Exception ex)
+                                        catch (Exception)
                                         {
+                                            // ignored
                                         }
                                     }
                                     enmityEntries.Add(enmityEntry);
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
+                                    // ignored
                                 }
                             }
                         }
                         result.TargetEntity.EnmityEntries = enmityEntries;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
             }
 

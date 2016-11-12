@@ -122,8 +122,9 @@ namespace FFXIVAPP.Memory
                         PreviousArrayIndex = (int) currentArrayIndex;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
 
                 foreach (var bytes in buffered.Where(b => b.Count > 0))
@@ -136,8 +137,9 @@ namespace FFXIVAPP.Memory
                             result.ChatLogEntries.Add(chatLogEntry);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
+                        // ignored
                     }
                 }
             }

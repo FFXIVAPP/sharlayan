@@ -69,12 +69,14 @@ namespace FFXIVAPP.Memory
                             result.PlayerEntity = PlayerEntityHelper.ResolvePlayerFromBytes(source);
                             result.PlayerEntity.EnmityEntries = enmityEntries;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
+                            // ignored
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
+                        // ignored
                     }
                 }
             }

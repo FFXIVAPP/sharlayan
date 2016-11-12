@@ -33,7 +33,9 @@ namespace FFXIVAPP.Memory.Helpers
             var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.ActorEntity.DefaultStatusEffectOffset;
             try
             {
+                entry.MapTerritory = 0;
                 entry.MapIndex = 0;
+                entry.MapID = 0;
                 entry.TargetID = 0;
                 entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.ActorEntity.Name);
                 entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);

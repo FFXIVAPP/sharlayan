@@ -112,7 +112,9 @@ namespace FFXIVAPP.Memory.Core
 
         public byte GatheringStatus { get; set; }
         public ActorEntity CurrentUser { get; set; }
+        public uint MapTerritory { get; set; }
         public uint MapIndex { get; set; }
+        public uint MapID { get; set; }
 
         public string Name
         {

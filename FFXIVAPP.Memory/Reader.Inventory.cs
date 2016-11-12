@@ -73,8 +73,9 @@ namespace FFXIVAPP.Memory
                         GetItems(InventoryPointerMap, Entity.Container["AC_SOULS"])
                     };
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
             }
 
