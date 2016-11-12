@@ -123,6 +123,7 @@ namespace FFXIVAPP.Memory.Core
         }
 
         public uint ID { get; set; }
+        public string UUID { get; set; }
         public uint NPCID1 { get; set; }
         public uint NPCID2 { get; set; }
         public uint OwnerID { get; set; }

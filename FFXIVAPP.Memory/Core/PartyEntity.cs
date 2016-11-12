@@ -61,6 +61,7 @@ namespace FFXIVAPP.Memory.Core
         }
 
         public uint ID { get; set; }
+        public string UUID { get; set;  }
         public double X { get; set; }
         public double Z { get; set; }
         public double Y { get; set; }
