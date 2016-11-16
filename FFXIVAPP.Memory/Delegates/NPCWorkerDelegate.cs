@@ -36,6 +36,12 @@ namespace FFXIVAPP.Memory.Delegates
             return entity;
         }
 
+        public static bool RemoveEntity(uint key)
+        {
+            ActorEntity entity;
+            return EntitiesDictionary.TryRemove(key, out entity);
+        }
+
         #endregion
 
         #region Declarations

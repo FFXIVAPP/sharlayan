@@ -205,6 +205,24 @@ namespace FFXIVAPP.Memory
                         }
                     }
 
+                    // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.PreviousMonster)
+                    {
+                        MonsterWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
+
+                    // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.PreviousNPC)
+                    {
+                        NPCWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
+
+                    // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.PreviousPC)
+                    {
+                        MonsterWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
+
                     MemoryHandler.Instance.ScanCount++;
 
                     #endregion

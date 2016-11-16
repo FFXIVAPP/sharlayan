@@ -102,6 +102,12 @@ namespace FFXIVAPP.Memory
                                     }
                                 }
                             }
+
+                            // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
+                            foreach (var kvp in result.PreviousParty)
+                            {
+                                PartyInfoWorkerDelegate.RemoveEntity(kvp.Key);
+                            }
                         }
                         catch (Exception)
                         {
