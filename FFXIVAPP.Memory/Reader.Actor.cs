@@ -220,7 +220,7 @@ namespace FFXIVAPP.Memory
                     // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
                     foreach (var kvp in result.PreviousPC)
                     {
-                        MonsterWorkerDelegate.RemoveEntity(kvp.Key);
+                        PCWorkerDelegate.RemoveEntity(kvp.Key);
                     }
 
                     MemoryHandler.Instance.ScanCount++;
