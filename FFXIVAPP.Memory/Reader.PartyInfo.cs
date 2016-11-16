@@ -102,7 +102,14 @@ namespace FFXIVAPP.Memory
                                     }
                                 }
                             }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
 
+                        try
+                        {
                             // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
                             foreach (var kvp in result.PreviousParty)
                             {
