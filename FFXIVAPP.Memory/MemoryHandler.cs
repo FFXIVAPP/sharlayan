@@ -253,7 +253,7 @@ namespace FFXIVAPP.Memory
             {
                 var win64 = new byte[8];
                 Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return IntPtr.Add(IntPtr.Zero, (int) BitConverter.ToInt64(win64, 0));
+                return IntPtr.Add(address, (int) BitConverter.ToInt64(win64, 0));
             }
             var win32 = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), win32);

@@ -53,9 +53,9 @@ namespace FFXIVAPP.Memory
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
                                     var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                                     ActorEntity existing = null;
-                                    if (result.PreviousParty.ContainsKey(ID))
+                                    if (result.RemovedParty.ContainsKey(ID))
                                     {
-                                        result.PreviousParty.Remove(ID);
+                                        result.RemovedParty.Remove(ID);
                                         if (MonsterWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
                                         {
                                             existing = MonsterWorkerDelegate.GetEntity(ID);
@@ -87,9 +87,9 @@ namespace FFXIVAPP.Memory
                                 if (entry.IsValid)
                                 {
                                     var exists = false;
-                                    if (result.PreviousParty.ContainsKey(entry.ID))
+                                    if (result.RemovedParty.ContainsKey(entry.ID))
                                     {
-                                        result.PreviousParty.Remove(entry.ID);
+                                        result.RemovedParty.Remove(entry.ID);
                                         exists = true;
                                     }
                                     else
@@ -111,7 +111,7 @@ namespace FFXIVAPP.Memory
                         try
                         {
                             // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
-                            foreach (var kvp in result.PreviousParty)
+                            foreach (var kvp in result.RemovedParty)
                             {
                                 PartyInfoWorkerDelegate.RemoveEntity(kvp.Key);
                             }

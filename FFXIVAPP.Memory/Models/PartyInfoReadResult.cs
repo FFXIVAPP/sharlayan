@@ -26,13 +26,13 @@ namespace FFXIVAPP.Memory.Models
     {
         public PartyInfoReadResult()
         {
-            PreviousParty = new Dictionary<uint, uint>();
+            RemovedParty = new Dictionary<uint, uint>();
 
             NewParty = new List<uint>();
         }
 
         public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
-        public Dictionary<uint, uint> PreviousParty { get; set; }
+        public Dictionary<uint, uint> RemovedParty { get; set; }
         public List<uint> NewParty { get; set; }
     }
 }

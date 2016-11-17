@@ -26,9 +26,9 @@ namespace FFXIVAPP.Memory.Models
     {
         public ActorReadResult()
         {
-            PreviousMonster = new Dictionary<uint, uint>();
-            PreviousNPC = new Dictionary<uint, uint>();
-            PreviousPC = new Dictionary<uint, uint>();
+            RemovedMonster = new Dictionary<uint, uint>();
+            RemovedNPC = new Dictionary<uint, uint>();
+            RemovedPC = new Dictionary<uint, uint>();
 
             NewMonster = new List<uint>();
             NewNPC = new List<uint>();
@@ -38,9 +38,9 @@ namespace FFXIVAPP.Memory.Models
         public ConcurrentDictionary<uint, ActorEntity> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
         public ConcurrentDictionary<uint, ActorEntity> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
         public ConcurrentDictionary<uint, ActorEntity> PCEntities => PCWorkerDelegate.EntitiesDictionary;
-        public Dictionary<uint, uint> PreviousMonster { get; set; }
-        public Dictionary<uint, uint> PreviousNPC { get; set; }
-        public Dictionary<uint, uint> PreviousPC { get; set; }
+        public Dictionary<uint, uint> RemovedMonster { get; set; }
+        public Dictionary<uint, uint> RemovedNPC { get; set; }
+        public Dictionary<uint, uint> RemovedPC { get; set; }
         public List<uint> NewMonster { get; set; }
         public List<uint> NewNPC { get; set; }
         public List<uint> NewPC { get; set; }

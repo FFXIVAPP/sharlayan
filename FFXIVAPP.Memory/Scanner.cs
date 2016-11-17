@@ -126,7 +126,9 @@ namespace FFXIVAPP.Memory
                             }
                             var baseResult = new IntPtr((long) (baseAddress + (regionCount * bufferSize)));
                             var searchResult = IntPtr.Add(baseResult, idx + signature.Offset);
+
                             signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
+
                             Locations.Add(signature.Key, signature);
                         }
                         notFound = new List<Signature>(temp);

@@ -78,9 +78,9 @@ namespace FFXIVAPP.Memory
 
                     #region ActorEntity Handlers
 
-                    result.PreviousMonster = MonsterWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                    result.PreviousNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                    result.PreviousPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                    result.RemovedMonster = MonsterWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                    result.RemovedNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                    result.RemovedPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
 
                     foreach (var kvp in uniqueAddresses)
                     {
@@ -98,9 +98,9 @@ namespace FFXIVAPP.Memory
                             switch (Type)
                             {
                                 case "Monster":
-                                    if (result.PreviousMonster.ContainsKey(ID))
+                                    if (result.RemovedMonster.ContainsKey(ID))
                                     {
-                                        result.PreviousMonster.Remove(ID);
+                                        result.RemovedMonster.Remove(ID);
                                         existing = MonsterWorkerDelegate.GetEntity(ID);
                                     }
                                     else
@@ -110,9 +110,9 @@ namespace FFXIVAPP.Memory
                                     }
                                     break;
                                 case "PC":
-                                    if (result.PreviousPC.ContainsKey(ID))
+                                    if (result.RemovedPC.ContainsKey(ID))
                                     {
-                                        result.PreviousPC.Remove(ID);
+                                        result.RemovedPC.Remove(ID);
                                         existing = PCWorkerDelegate.GetEntity(ID);
                                     }
                                     else
@@ -122,9 +122,9 @@ namespace FFXIVAPP.Memory
                                     }
                                     break;
                                 case "NPC":
-                                    if (result.PreviousNPC.ContainsKey(NPCID2))
+                                    if (result.RemovedNPC.ContainsKey(NPCID2))
                                     {
-                                        result.PreviousNPC.Remove(NPCID2);
+                                        result.RemovedNPC.Remove(NPCID2);
                                         existing = NPCWorkerDelegate.GetEntity(NPCID2);
                                     }
                                     else
@@ -134,9 +134,9 @@ namespace FFXIVAPP.Memory
                                     }
                                     break;
                                 default:
-                                    if (result.PreviousNPC.ContainsKey(ID))
+                                    if (result.RemovedNPC.ContainsKey(ID))
                                     {
-                                        result.PreviousNPC.Remove(ID);
+                                        result.RemovedNPC.Remove(ID);
                                         existing = NPCWorkerDelegate.GetEntity(ID);
                                     }
                                     else
@@ -208,19 +208,19 @@ namespace FFXIVAPP.Memory
                     try
                     {
                         // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.PreviousMonster)
+                        foreach (var kvp in result.RemovedMonster)
                         {
                             MonsterWorkerDelegate.RemoveEntity(kvp.Key);
                         }
 
                         // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.PreviousNPC)
+                        foreach (var kvp in result.RemovedNPC)
                         {
                             NPCWorkerDelegate.RemoveEntity(kvp.Key);
                         }
 
                         // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.PreviousPC)
+                        foreach (var kvp in result.RemovedPC)
                         {
                             PCWorkerDelegate.RemoveEntity(kvp.Key);
                         }
