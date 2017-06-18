@@ -1,6 +1,6 @@
 ﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -159,9 +159,12 @@ namespace FFXIVAPP.Memory.Core
                 var playerMatch = PlayerRegEx.Match(line);
                 if (playerMatch.Success)
                 {
-                    var fullName = playerMatch.Groups[1].Value;
-                    var firstName = StringHelper.HexToString(playerMatch.Groups[2].Value);
-                    var lastName = StringHelper.HexToString(playerMatch.Groups[3].Value);
+                    var fullName = playerMatch.Groups[1]
+                                              .Value;
+                    var firstName = StringHelper.HexToString(playerMatch.Groups[2]
+                                                                        .Value);
+                    var lastName = StringHelper.HexToString(playerMatch.Groups[3]
+                                                                       .Value);
                     var player = $"{firstName} {lastName}";
                     // remove double placement
                     cleaned = line.Replace($"{fullName}:{fullName}", "•name•");

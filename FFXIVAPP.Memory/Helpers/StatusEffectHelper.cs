@@ -1,6 +1,6 @@
 ﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Concurrent;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using FFXIVAPP.Memory.Models;
-using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory.Helpers
 {
@@ -72,27 +68,7 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
-            if (File.Exists(file))
-            {
-                using (var streamReader = new StreamReader(file))
-                {
-                    var json = streamReader.ReadToEnd();
-                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json, Constants.SerializerSettings);
-                }
-            }
-            else
-            {
-                using (var webClient = new WebClient
-                {
-                    Encoding = Encoding.UTF8
-                })
-                {
-                    var json = webClient.DownloadString("http://xivapp.com/api/statuses");
-                    StatusEffects = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, StatusItem>>(json, Constants.SerializerSettings);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(StatusEffects, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-                }
-            }
+            APIHelper.GetStatusEffects(StatusEffects);
         }
     }
 }

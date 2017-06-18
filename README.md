@@ -21,12 +21,16 @@ if (processes.length)
 {
     // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
+	// whether to always hit API on start to get the latest sigs based on patchVersion
+	bool ignoreJSONCache = true;
+	// patchVersion of game, or latest
+	string patchVersion = "latest";
     Process process = processes[0];
     ProcessModel processModel = new ProcessModel
     {
         Process = process
     }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage);
+    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
 }
 
 // DX11
@@ -35,13 +39,17 @@ if (processes.length)
 {
     // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
+	// whether to always hit API on start to get the latest sigs based on patchVersion
+	bool ignoreJSONCache = true;
+	// patchVersion of game, or latest
+	string patchVersion = "latest";
     Process process = processes[0];
     ProcessModel processModel = new ProcessModel
     {
         Process = process,
         IsWin64 = true
     }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage);
+    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
 }
 ```
 
@@ -57,7 +65,7 @@ using FFXIVAPP.Memory;
 
 ActorReadResult readResult = Reader.GetActors();
 
-// Previous is list of ID's that were in the last scan
+// Removed is list of ID's that were in the last scan
 // New is all the new ID's added
 // Also returned is the Current list of actors.
 
@@ -66,9 +74,9 @@ public class ActorReadResult
 {
     public ActorReadResult()
     {
-        PreviousMonster = new Dictionary<uint, uint>();
-        PreviousNPC = new Dictionary<uint, uint>();
-        PreviousPC = new Dictionary<uint, uint>();
+        RemovedMonster = new Dictionary<uint, uint>();
+        RemovedNPC = new Dictionary<uint, uint>();
+        RemovedPC = new Dictionary<uint, uint>();
 
         NewMonster = new List<uint>();
         NewNPC = new List<uint>();
@@ -78,9 +86,9 @@ public class ActorReadResult
     public ConcurrentDictionary<uint, ActorEntity> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
     public ConcurrentDictionary<uint, ActorEntity> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
     public ConcurrentDictionary<uint, ActorEntity> PCEntities => PCWorkerDelegate.EntitiesDictionary;
-    public Dictionary<uint, uint> PreviousMonster { get; set; }
-    public Dictionary<uint, uint> PreviousNPC { get; set; }
-    public Dictionary<uint, uint> PreviousPC { get; set; }
+    public Dictionary<uint, uint> RemovedMonster { get; set; }
+    public Dictionary<uint, uint> RemovedNPC { get; set; }
+    public Dictionary<uint, uint> RemovedPC { get; set; }
     public List<UInt32> NewMonster { get; set; }
     public List<UInt32> NewNPC { get; set; }
     public List<UInt32> NewPC { get; set; }
@@ -143,7 +151,7 @@ using FFXIVAPP.Memory;
 
 PartyInfoReadResult readResult = Reader.GetPartyMembers();
 
-// Previous is list of ID's that were in the last scan
+// Removed is list of ID's that were in the last scan
 // New is all the new ID's added
 // Also returned is the Current list of actors.
 
@@ -152,13 +160,13 @@ public class PartyInfoReadResult
 {
     public PartyInfoReadResult()
     {
-        PreviousParty = new Dictionary<uint, uint>();
+        RemovedParty = new Dictionary<uint, uint>();
 
         NewParty = new List<uint>();
     }
 
     public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
-    public Dictionary<uint, uint> PreviousParty { get; set; }
+    public Dictionary<uint, uint> RemovedParty { get; set; }
     public List<UInt32> NewParty { get; set; }
 }
 ```

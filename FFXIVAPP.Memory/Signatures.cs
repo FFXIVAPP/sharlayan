@@ -1,6 +1,6 @@
 ﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
+using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
-using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory
 {
@@ -28,28 +25,7 @@ namespace FFXIVAPP.Memory
     {
         public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file))
-            {
-                using (var streamReader = new StreamReader(file))
-                {
-                    var json = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
-                }
-            }
-            else
-            {
-                using (var webClient = new WebClient
-                {
-                    Encoding = Encoding.UTF8
-                })
-                {
-                    var json = webClient.DownloadString($"http://xivapp.com/api/signatures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                    var signatures = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(signatures, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
-                    return signatures;
-                }
-            }
+            return APIHelper.GetSignatures(processModel, patchVersion);
         }
     }
 }

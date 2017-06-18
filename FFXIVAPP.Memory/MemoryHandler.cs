@@ -1,6 +1,6 @@
 ﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,28 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using FFXIVAPP.Memory.Core.Enums;
+using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace FFXIVAPP.Memory
 {
     public class MemoryHandler
     {
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest")
+        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false)
         {
             GameLanguage = gameLanguage;
+            IgnoreJSONCache = ignoreJSONCache;
             if (processModel == null)
             {
                 return;
             }
-            SetProcess(processModel, gameLanguage, patchVersion);
+            SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
         }
 
         public string GameLanguage { get; set; }
+        public bool IgnoreJSONCache { get; set; }
         public int ScanCount { get; set; }
         public Structures Structures { get; set; }
 
@@ -55,10 +53,11 @@ namespace FFXIVAPP.Memory
             }
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest")
+        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false)
         {
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
+            IgnoreJSONCache = ignoreJSONCache;
             try
             {
                 ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) ProcessModel.ProcessID);
@@ -78,53 +77,12 @@ namespace FFXIVAPP.Memory
 
         public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file))
-            {
-                using (var streamReader = new StreamReader(file))
-                {
-                    var json = streamReader.ReadToEnd();
-                    Structures = JsonConvert.DeserializeObject<Structures>(json, Constants.SerializerSettings);
-                }
-            }
-            else
-            {
-                using (var webClient = new WebClient
-                {
-                    Encoding = Encoding.UTF8
-                })
-                {
-                    var json = webClient.DownloadString($"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                    Structures = JsonConvert.DeserializeObject<Structures>(json);
-                    File.WriteAllText(file, JsonConvert.SerializeObject(Structures, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-                }
-            }
+            Structures = APIHelper.GetStructures(processModel, patchVersion);
         }
 
         public void SetEnumerations(ProcessModel processModel, string patchVersion = "latest")
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"enums-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file))
-            {
-                using (var streamReader = new StreamReader(file))
-                {
-                    var json = streamReader.ReadToEnd();
-                    Entity.Initialize(json);
-                }
-            }
-            else
-            {
-                using (var webClient = new WebClient
-                {
-                    Encoding = Encoding.UTF8
-                })
-                {
-                    var json = webClient.DownloadString($"http://xivapp.com/api/enums?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                    File.WriteAllText(file, JObject.Parse(json)
-                                                   .ToString(Formatting.Indented), Encoding.GetEncoding(932));
-                    Entity.Initialize(json);
-                }
-            }
+            APIHelper.GetEnumerations(processModel, patchVersion);
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)

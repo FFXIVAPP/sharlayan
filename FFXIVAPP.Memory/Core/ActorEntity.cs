@@ -1,6 +1,6 @@
 ﻿// FFXIVAPP.Memory
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,10 +95,8 @@ namespace FFXIVAPP.Memory.Core
             {
                 switch (Type)
                 {
-                    case "NPC":
-                        return !string.IsNullOrEmpty(Name) && ID != 0 && (NPCID1 != 0 || NPCID2 != 0);
-                    default:
-                        return !string.IsNullOrEmpty(Name) && ID != 0;
+                    case "NPC": return !string.IsNullOrEmpty(Name) && ID != 0 && (NPCID1 != 0 || NPCID2 != 0);
+                    default: return !string.IsNullOrEmpty(Name) && ID != 0;
                 }
             }
         }

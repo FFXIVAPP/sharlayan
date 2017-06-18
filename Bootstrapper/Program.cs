@@ -1,6 +1,6 @@
 ﻿// Bootstrapper
 // FFXIVAPP & Related Plugins/Modules
-// Copyright © 2007 - 2016 Ryan Wilson - All Rights Reserved
+// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,12 @@ namespace Bootstrapper
     {
         private static void Main(string[] args)
         {
-            ActionHelper.ActionInfo(1);
-            StatusEffectHelper.StatusInfo(1);
-            ZoneHelper.MapInfo(1);
+            var actionInfo = ActionHelper.ActionInfo(2);
+            Console.WriteLine(actionInfo.Name.English);
+            var statusInfo = StatusEffectHelper.StatusInfo(2);
+            Console.WriteLine(statusInfo.Name.English);
+            var mapInfo = ZoneHelper.MapInfo(138);
+            Console.WriteLine(mapInfo.Name.English);
             MemoryHandler.Instance.SetStructures(new ProcessModel());
             MemoryHandler.Instance.SetEnumerations(new ProcessModel());
             Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel()));
