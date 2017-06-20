@@ -58,11 +58,14 @@ namespace FFXIVAPP.Memory
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
-                            var currentTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                            var mouseOverTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                            var focusTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                            var previousTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+
+                            var currentTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                            var mouseOverTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                            var focusTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                            var previousTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+
                             var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+
                             if (currentTarget > 0)
                             {
                                 try
