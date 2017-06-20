@@ -32,9 +32,18 @@ namespace Bootstrapper
             Console.WriteLine(statusInfo.Name.English);
             var mapInfo = ZoneHelper.MapInfo(138);
             Console.WriteLine(mapInfo.Name.English);
-            MemoryHandler.Instance.SetStructures(new ProcessModel());
-            MemoryHandler.Instance.SetEnumerations(new ProcessModel());
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel()));
+            MemoryHandler.Instance.SetStructures(new ProcessModel
+            {
+                IsWin64 = true
+            });
+            MemoryHandler.Instance.SetEnumerations(new ProcessModel
+            {
+                IsWin64 = true
+            });
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel
+            {
+                IsWin64 = true
+            }));
             Console.WriteLine("To exit this application press \"Enter\".");
             Console.ReadLine();
         }

@@ -24,6 +24,7 @@ namespace FFXIVAPP.Memory.Core.Enums
 {
     public static class Entity
     {
+        private static ConcurrentDictionary<string, byte> DefaultDictionary = new ConcurrentDictionary<string, byte>();
         public static Enumeration Container { get; private set; }
         public static Enumeration ActionStatus { get; private set; }
         public static Enumeration Icon { get; private set; }
@@ -49,12 +50,17 @@ namespace FFXIVAPP.Memory.Core.Enums
         {
             try
             {
-                return JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(JObject.Parse(json)[key]
-                                                                                                .ToString(), Constants.SerializerSettings);
+                var node = JObject.Parse(json)[key]
+                                  .ToString();
+                if (string.IsNullOrWhiteSpace(node))
+                {
+                    return DefaultDictionary;
+                }
+                return JsonConvert.DeserializeObject<ConcurrentDictionary<string, byte>>(node, Constants.SerializerSettings);
             }
             catch (Exception)
             {
-                return new ConcurrentDictionary<string, byte>();
+                return DefaultDictionary;
             }
         }
     }

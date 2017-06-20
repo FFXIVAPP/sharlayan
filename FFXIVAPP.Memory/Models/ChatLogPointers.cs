@@ -20,11 +20,11 @@ namespace FFXIVAPP.Memory.Models
     internal class ChatLogPointers
     {
         public uint LineCount { get; set; }
-        public uint OffsetArrayStart { get; set; }
-        public uint OffsetArrayPos { get; set; }
-        public uint OffsetArrayEnd { get; set; }
-        public uint LogStart { get; set; }
-        public uint LogNext { get; set; }
-        public uint LogEnd { get; set; }
+        public long OffsetArrayStart { get; set; }
+        public long OffsetArrayPos { get; set; }
+        public long OffsetArrayEnd { get; set; }
+        public long LogStart { get; set; }
+        public long LogNext { get; set; }
+        public long LogEnd { get; set; }
     }
 }

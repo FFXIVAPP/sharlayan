@@ -92,14 +92,16 @@ namespace FFXIVAPP.Memory
                     ChatLogPointers = new ChatLogPointers
                     {
                         LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                        OffsetArrayStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
-                        OffsetArrayPos = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
-                        OffsetArrayEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
-                        LogStart = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
-                        LogNext = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
-                        LogEnd = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
+                        OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
+                        OffsetArrayPos = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
+                        OffsetArrayEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
+                        LogStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
+                        LogNext = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
+                        LogEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
                     };
+
                     EnsureArrayIndexes();
+
                     var currentArrayIndex = (ChatLogPointers.OffsetArrayPos - ChatLogPointers.OffsetArrayStart) / 4;
                     if (ChatLogFirstRun)
                     {
@@ -137,9 +139,9 @@ namespace FFXIVAPP.Memory
                             result.ChatLogEntries.Add(chatLogEntry);
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ignored
+                        // IGNORED
                     }
                 }
             }
