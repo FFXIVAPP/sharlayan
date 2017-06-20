@@ -34,8 +34,19 @@ namespace FFXIVAPP.Memory
             {
                 try
                 {
-                    var targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"]
-                                                      .GetAddress()) - MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
+                    IntPtr targetHateStructure;
+                    switch (MemoryHandler.Instance.GameLanguage) 
+                    {
+                        case "Chinese":
+                        case "Korean":
+                            targetHateStructure = (Scanner.Instance.Locations["PLAYERINFO"]
+                                                          .GetAddress()) - MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
+                            break;
+                        default:
+                            targetHateStructure = (Scanner.Instance.Locations["CHARMAP"]
+                                                          .GetAddress()) + MemoryHandler.Instance.Structures.TargetInfo.HateStructure;
+                            break;
+                    }
                     var enmityEntries = new List<EnmityEntry>();
 
                     if (Scanner.Instance.Locations.ContainsKey("TARGET"))
@@ -45,7 +56,7 @@ namespace FFXIVAPP.Memory
                         if (targetAddress.ToInt64() > 0)
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
-                            var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 192);
+                            var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
                             var currentTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
                             var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
                             var focusTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);

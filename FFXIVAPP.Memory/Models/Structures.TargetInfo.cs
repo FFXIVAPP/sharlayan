@@ -28,6 +28,7 @@ namespace FFXIVAPP.Memory.Models
             public int Current { get; set; }
             public int CurrentID { get; set; }
             public int Size { get; set; }
+            public int SourceSize { get; set; }
         }
     }
 }
