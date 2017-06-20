@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
 using FFXIVAPP.Memory.Helpers;
 
@@ -46,7 +47,7 @@ namespace FFXIVAPP.Memory.Core
         }
 
         public byte JobID { get; set; }
-        public string Job { get; set; }
+        public Actor.Job Job { get; set; }
         public byte PGL { get; set; }
         public byte GLD { get; set; }
         public byte MRD { get; set; }

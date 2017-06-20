@@ -69,7 +69,6 @@ namespace FFXIVAPP.Memory
             Constants.ProcessHandle = ProcessHandle;
 
             SetStructures(processModel, patchVersion);
-            SetEnumerations(processModel, patchVersion);
 
             Scanner.Instance.Locations.Clear();
             Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion));
@@ -78,11 +77,6 @@ namespace FFXIVAPP.Memory
         public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
         {
             Structures = APIHelper.GetStructures(processModel, patchVersion);
-        }
-
-        public void SetEnumerations(ProcessModel processModel, string patchVersion = "latest")
-        {
-            APIHelper.GetEnumerations(processModel, patchVersion);
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)

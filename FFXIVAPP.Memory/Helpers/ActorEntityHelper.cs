@@ -44,10 +44,11 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.NPCID1 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
                 entry.NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
                 entry.OwnerID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
-                entry.Type = Entity.Type[source[MemoryHandler.Instance.Structures.ActorEntity.Type]];
-                entry.TypeID = Entity.Type[entry.Type];
-                entry.TargetType = Entity.TargetType[source[MemoryHandler.Instance.Structures.ActorEntity.TargetType]];
-                entry.TargetTypeID = Entity.TargetType[entry.TargetType];
+                entry.TypeID = source[MemoryHandler.Instance.Structures.ActorEntity.Type];
+                entry.Type = (Actor.Type) entry.TypeID;
+                entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorEntity.TargetType];
+                entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
+                
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
 
@@ -59,20 +60,23 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.Fate = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??
                 entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringInvisible]; // ??
                 entry.ModelID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
-                entry.ActionStatus = Entity.ActionStatus[source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus]];
-                entry.ActionStatusID = Entity.ActionStatus[entry.ActionStatus];
+                entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus];
+                entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
+                
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
-                entry.Icon = Entity.Icon[source[MemoryHandler.Instance.Structures.ActorEntity.Icon]];
-                entry.IconID = Entity.Icon[entry.Icon];
-                entry.Status = Entity.Status[source[MemoryHandler.Instance.Structures.ActorEntity.Status]];
-                entry.StatusID = Entity.Status[entry.Status];
+                entry.IconID = source[MemoryHandler.Instance.Structures.ActorEntity.Icon];
+                entry.Icon = (Actor.Icon) entry.IconID;
+
+                entry.StatusID = source[MemoryHandler.Instance.Structures.ActorEntity.Status];
+                entry.Status = (Actor.Status) entry.StatusID;
+                
                 entry.ClaimedByID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
                 var targetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
 
-                entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset]];
-                entry.JobID = Entity.Job[entry.Job];
+                entry.JobID = source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset];
+                entry.Job = (Actor.Job) entry.JobID;
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorEntity.Level + defaultStatOffset];
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompanyRank + defaultStatOffset];
@@ -114,7 +118,7 @@ namespace FFXIVAPP.Memory.Helpers
                 var limit = 60;
                 switch (entry.Type)
                 {
-                    case "PC":
+                    case Actor.Type.PC:
                         limit = 30;
                         break;
                 }

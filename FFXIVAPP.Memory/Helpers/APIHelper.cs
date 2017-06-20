@@ -87,23 +87,6 @@ namespace FFXIVAPP.Memory.Helpers
             return APIResponseToClass<Structures>(file, $"http://xivapp.com/api/structures?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
         }
 
-        public static void GetEnumerations(ProcessModel processModel, string patchVersion = "latest")
-        {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"enums-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
-            {
-                var json = FileResponseToJSON(file);
-                Entity.Initialize(json);
-            }
-            else
-            {
-                var json = APIResponseToJSON($"http://xivapp.com/api/enums?patchVersion={patchVersion}&platform={(processModel.IsWin64 ? "x64" : "x86")}");
-                File.WriteAllText(file, JObject.Parse(json)
-                                               .ToString(Formatting.Indented), Encoding.GetEncoding(932));
-                Entity.Initialize(json);
-            }
-        }
-
         public static IEnumerable<Signature> GetSignatures(ProcessModel processModel, string patchVersion = "latest")
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(processModel.IsWin64 ? "x64" : "x86")}.json");

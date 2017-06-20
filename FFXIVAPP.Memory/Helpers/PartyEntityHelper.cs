@@ -63,8 +63,8 @@ namespace FFXIVAPP.Memory.Helpers
                     entry.UUID = Guid.NewGuid()
                                      .ToString();
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
-                    entry.Job = Entity.Job[source[MemoryHandler.Instance.Structures.PartyEntity.Job]];
-                    entry.JobID = Entity.Job[entry.Job];
+                    entry.JobID = source[MemoryHandler.Instance.Structures.PartyEntity.Job];
+                    entry.Job = (Actor.Job) entry.JobID;
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyEntity.Level];
                     entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
                     entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);

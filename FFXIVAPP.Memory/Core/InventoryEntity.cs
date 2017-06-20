@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
 
 namespace FFXIVAPP.Memory.Core
@@ -25,6 +26,6 @@ namespace FFXIVAPP.Memory.Core
         public List<ItemInfo> Items { get; set; }
         public uint Amount { get; set; }
         public byte TypeID { get; set; }
-        public string Type { get; set; }
+        public Inventory.Container Type { get; set; }
     }
 }

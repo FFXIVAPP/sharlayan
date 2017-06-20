@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using FFXIVAPP.Memory.Core.Enums;
 
 namespace FFXIVAPP.Memory.Core.Interfaces
 {
@@ -28,7 +29,7 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         List<EnmityEntry> EnmityEntries { get; set; }
 
         byte JobID { get; set; }
-        string Job { get; set; }
+        Actor.Job Job { get; set; }
 
         #region Job Levels
 
