@@ -53,14 +53,15 @@ namespace FFXIVAPP.Memory
                     {
                         var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
                         var somethingFound = false;
+                        var isWin64 = MemoryHandler.Instance.ProcessModel.IsWin64;
                         if (targetAddress.ToInt64() > 0)
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
                             var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
-                            var currentTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                            var mouseOverTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                            var focusTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                            var previousTarget = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                            var currentTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                            var mouseOverTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                            var focusTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                            var previousTarget = isWin64 ? BitConverter.ToInt64(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous) : BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
                             var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
                             if (currentTarget > 0)
                             {
@@ -144,7 +145,7 @@ namespace FFXIVAPP.Memory
                                     {
                                         ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
                                         Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                        Enmity = (uint) MemoryHandler.Instance.GetInt16(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                        Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
                                     };
                                     if (enmityEntry.ID <= 0)
                                     {
@@ -184,7 +185,7 @@ namespace FFXIVAPP.Memory
             return result;
         }
 
-        private static ActorEntity GetTargetActorEntityFromSource(uint address)
+        private static ActorEntity GetTargetActorEntityFromSource(long address)
         {
             var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), MemoryHandler.Instance.Structures.TargetInfo.Size); // old size: 0x3F40
             var entry = ActorEntityHelper.ResolveActorFromBytes(source);
