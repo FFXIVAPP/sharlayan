@@ -189,7 +189,7 @@ namespace FFXIVAPP.Memory
         public long GetPlatformInt(IntPtr address, long offset = 0)
         {
             var bytes = new byte[ProcessModel.IsWin64 ? 8 : 4];
-            Peek(new IntPtr(address.ToInt64() +offset), bytes);
+            Peek(new IntPtr(address.ToInt64() + offset), bytes);
             return GetPlatformIntFromBytes(bytes);
         }
 
