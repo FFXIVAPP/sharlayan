@@ -137,8 +137,11 @@ namespace FFXIVAPP.Memory.Core.Enums
             PC = 0x01,
             Monster = 0x02,
             NPC = 0x03,
+            Unknown_4 = 0x04,
             Aetheryte = 0x05,
             Gathering = 0x06,
+            EObj = 0x07,
+            Unknown_8 = 0x08,
             Minion = 0x09
         }
     }

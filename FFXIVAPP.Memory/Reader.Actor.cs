@@ -122,6 +122,8 @@ namespace FFXIVAPP.Memory
                                     }
                                     break;
                                 case Actor.Type.NPC:
+                                case Actor.Type.Aetheryte:
+                                case Actor.Type.EObj:
                                     if (result.RemovedNPC.ContainsKey(NPCID2))
                                     {
                                         result.RemovedNPC.Remove(NPCID2);
