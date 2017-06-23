@@ -36,10 +36,6 @@ namespace Bootstrapper
             {
                 IsWin64 = true
             });
-            MemoryHandler.Instance.SetEnumerations(new ProcessModel
-            {
-                IsWin64 = true
-            });
             Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel
             {
                 IsWin64 = true

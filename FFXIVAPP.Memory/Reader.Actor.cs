@@ -23,6 +23,7 @@ using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using BitConverter = FFXIVAPP.Memory.Helpers.BitConverter;
 
 namespace FFXIVAPP.Memory
 {
@@ -57,11 +58,11 @@ namespace FFXIVAPP.Memory
                         IntPtr characterAddress;
                         if (MemoryHandler.Instance.ProcessModel.IsWin64)
                         {
-                            characterAddress = new IntPtr(BitConverter.ToInt64(characterAddressMap, i * endianSize));
+                            characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
                         }
                         else
                         {
-                            characterAddress = new IntPtr(BitConverter.ToInt32(characterAddressMap, i * endianSize));
+                            characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
                         }
                         if (characterAddress == IntPtr.Zero)
                         {
@@ -89,8 +90,8 @@ namespace FFXIVAPP.Memory
                             var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
                             //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
 
-                            var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
-                            var NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
+                            var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                            var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
                             var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorEntity.Type];
                             ActorEntity existing = null;
                             var newEntry = false;
@@ -164,7 +165,7 @@ namespace FFXIVAPP.Memory
                                 if (targetAddress.ToInt64() > 0)
                                 {
                                     var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                    entry.TargetID = (int) BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                                    entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
                                 }
                             }
                             if (!entry.IsValid)

@@ -55,21 +55,21 @@ namespace FFXIVAPP.Memory.Helpers
                 var entry = new PartyEntity();
                 try
                 {
-                    entry.X = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.X);
-                    entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Z);
-                    entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Y);
+                    entry.X = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.X);
+                    entry.Z = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Z);
+                    entry.Y = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.PartyEntity.Y);
                     entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
-                    entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
+                    entry.ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                     entry.UUID = Guid.NewGuid()
                                      .ToString();
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyEntity.Name);
                     entry.JobID = source[MemoryHandler.Instance.Structures.PartyEntity.Job];
                     entry.Job = (Actor.Job) entry.JobID;
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyEntity.Level];
-                    entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
-                    entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);
-                    entry.MPCurrent = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPCurrent);
-                    entry.MPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPMax);
+                    entry.HPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPCurrent);
+                    entry.HPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyEntity.HPMax);
+                    entry.MPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPCurrent);
+                    entry.MPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PartyEntity.MPMax);
                     const int limit = 15;
                     entry.StatusEntries = new List<StatusEntry>();
                     const int statusSize = 12;
@@ -83,10 +83,10 @@ namespace FFXIVAPP.Memory.Helpers
                         var statusEntry = new StatusEntry
                         {
                             TargetName = entry.Name,
-                            StatusID = BitConverter.ToInt16(statusSource, MemoryHandler.Instance.Structures.StatusEntry.StatusID),
+                            StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusEntry.StatusID),
                             Stacks = statusSource[MemoryHandler.Instance.Structures.StatusEntry.Stacks],
-                            Duration = BitConverter.ToSingle(statusSource, MemoryHandler.Instance.Structures.StatusEntry.Duration),
-                            CasterID = BitConverter.ToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusEntry.CasterID)
+                            Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusEntry.Duration),
+                            CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusEntry.CasterID)
                         };
                         try
                         {

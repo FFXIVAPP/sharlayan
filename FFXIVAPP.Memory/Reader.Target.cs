@@ -21,6 +21,7 @@ using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using BitConverter = FFXIVAPP.Memory.Helpers.BitConverter;
 
 namespace FFXIVAPP.Memory
 {
@@ -53,18 +54,19 @@ namespace FFXIVAPP.Memory
                     {
                         var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
                         var somethingFound = false;
-                        var isWin64 = MemoryHandler.Instance.ProcessModel.IsWin64;
+
                         if (targetAddress.ToInt64() > 0)
                         {
                             //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
-                            var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
+                            var x = MemoryHandler.Instance.Structures.TargetInfo.SourceSize;
+                            var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, x);
 
                             var currentTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
                             var mouseOverTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
                             var focusTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
                             var previousTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
 
-                            var currentTargetID = BitConverter.ToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+                            var currentTargetID = BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
 
                             if (currentTarget > 0)
                             {
@@ -179,9 +181,10 @@ namespace FFXIVAPP.Memory
                         result.TargetEntity.EnmityEntries = enmityEntries;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignored
+                    var x = ex;
+                    var y = x;
                 }
             }
 

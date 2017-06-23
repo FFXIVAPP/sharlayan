@@ -26,7 +26,8 @@ namespace FFXIVAPP.Memory
     {
         public static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
         {
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Populate
         };
 
         #region Auto-Properties

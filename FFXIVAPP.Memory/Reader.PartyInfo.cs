@@ -20,6 +20,7 @@ using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using BitConverter = FFXIVAPP.Memory.Helpers.BitConverter;
 
 namespace FFXIVAPP.Memory
 {
@@ -51,7 +52,7 @@ namespace FFXIVAPP.Memory
                                     var size = (uint) MemoryHandler.Instance.Structures.PartyInfo.Size;
                                     var address = PartyInfoMap.ToInt64() + (i * size);
                                     var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
-                                    var ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
+                                    var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
                                     ActorEntity existing = null;
                                     if (result.RemovedParty.ContainsKey(ID))
                                     {

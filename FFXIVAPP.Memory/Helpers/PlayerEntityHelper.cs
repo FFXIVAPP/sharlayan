@@ -70,129 +70,129 @@ namespace FFXIVAPP.Memory.Helpers
 
                         #region Current Experience
 
-                        entry.PGL_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.PGL_CurrentEXP);
-                        entry.GLD_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.GLD_CurrentEXP);
-                        entry.MRD_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MRD_CurrentEXP);
-                        entry.ARC_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ARC_CurrentEXP);
-                        entry.LNC_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.LNC_CurrentEXP);
-                        entry.THM_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.THM_CurrentEXP);
-                        entry.CNJ_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CNJ_CurrentEXP);
+                        entry.PGL_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.PGL_CurrentEXP);
+                        entry.GLD_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.GLD_CurrentEXP);
+                        entry.MRD_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MRD_CurrentEXP);
+                        entry.ARC_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ARC_CurrentEXP);
+                        entry.LNC_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.LNC_CurrentEXP);
+                        entry.THM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.THM_CurrentEXP);
+                        entry.CNJ_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CNJ_CurrentEXP);
 
-                        entry.CPT_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CPT_CurrentEXP);
-                        entry.BSM_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.BSM_CurrentEXP);
-                        entry.ARM_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ARM_CurrentEXP);
-                        entry.GSM_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.GSM_CurrentEXP);
-                        entry.LTW_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.LTW_CurrentEXP);
-                        entry.WVR_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.WVR_CurrentEXP);
-                        entry.ALC_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ALC_CurrentEXP);
-                        entry.CUL_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CUL_CurrentEXP);
+                        entry.CPT_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CPT_CurrentEXP);
+                        entry.BSM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.BSM_CurrentEXP);
+                        entry.ARM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ARM_CurrentEXP);
+                        entry.GSM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.GSM_CurrentEXP);
+                        entry.LTW_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.LTW_CurrentEXP);
+                        entry.WVR_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.WVR_CurrentEXP);
+                        entry.ALC_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ALC_CurrentEXP);
+                        entry.CUL_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.CUL_CurrentEXP);
 
-                        entry.MIN_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MIN_CurrentEXP);
-                        entry.BTN_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.BTN_CurrentEXP);
-                        entry.FSH_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.FSH_CurrentEXP);
+                        entry.MIN_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MIN_CurrentEXP);
+                        entry.BTN_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.BTN_CurrentEXP);
+                        entry.FSH_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.FSH_CurrentEXP);
 
-                        entry.ACN_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ACN_CurrentEXP);
-                        entry.ROG_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ROG_CurrentEXP);
+                        entry.ACN_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ACN_CurrentEXP);
+                        entry.ROG_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.ROG_CurrentEXP);
 
-                        entry.MCH_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MCH_CurrentEXP);
-                        entry.DRK_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.DRK_CurrentEXP);
-                        entry.AST_CurrentEXP = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.AST_CurrentEXP);
+                        entry.MCH_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MCH_CurrentEXP);
+                        entry.DRK_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.DRK_CurrentEXP);
+                        entry.AST_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.AST_CurrentEXP);
 
                         #endregion
 
                         #region Base Stats
 
-                        entry.BaseStrength = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseStrength);
-                        entry.BaseDexterity = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseDexterity);
-                        entry.BaseVitality = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseVitality);
-                        entry.BaseIntelligence = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseIntelligence);
-                        entry.BaseMind = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseMind);
-                        entry.BasePiety = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BasePiety);
+                        entry.BaseStrength = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseStrength);
+                        entry.BaseDexterity = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseDexterity);
+                        entry.BaseVitality = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseVitality);
+                        entry.BaseIntelligence = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseIntelligence);
+                        entry.BaseMind = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BaseMind);
+                        entry.BasePiety = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BasePiety);
 
                         #endregion
 
                         #region Base Stats (base+gear+bonus)
 
-                        entry.Strength = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Strength);
-                        entry.Dexterity = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Dexterity);
-                        entry.Vitality = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Vitality);
-                        entry.Intelligence = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Intelligence);
-                        entry.Mind = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Mind);
-                        entry.Piety = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Piety);
+                        entry.Strength = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Strength);
+                        entry.Dexterity = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Dexterity);
+                        entry.Vitality = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Vitality);
+                        entry.Intelligence = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Intelligence);
+                        entry.Mind = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Mind);
+                        entry.Piety = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Piety);
 
                         #endregion
 
                         #region Basic Info
 
-                        entry.HPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.HPMax);
-                        entry.MPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.MPMax);
-                        entry.TPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.TPMax);
-                        entry.GPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.GPMax);
-                        entry.CPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.CPMax);
+                        entry.HPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.HPMax);
+                        entry.MPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.MPMax);
+                        entry.TPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.TPMax);
+                        entry.GPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.GPMax);
+                        entry.CPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.CPMax);
 
                         #endregion
 
                         #region Offensive Properties
 
-                        entry.Accuracy = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Accuracy);
-                        entry.CriticalHitRate = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.CriticalHitRate);
-                        entry.Determination = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Determination);
+                        entry.Accuracy = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Accuracy);
+                        entry.CriticalHitRate = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.CriticalHitRate);
+                        entry.Determination = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Determination);
 
                         #endregion
 
                         #region Defensive Properties
 
-                        entry.Parry = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Parry);
-                        entry.Defense = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Defense);
-                        entry.MagicDefense = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.MagicDefense);
+                        entry.Parry = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Parry);
+                        entry.Defense = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Defense);
+                        entry.MagicDefense = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.MagicDefense);
 
                         #endregion
 
                         #region Phyiscal Properties
 
-                        entry.AttackPower = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.AttackPower);
-                        entry.SkillSpeed = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SkillSpeed);
+                        entry.AttackPower = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.AttackPower);
+                        entry.SkillSpeed = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SkillSpeed);
 
                         #endregion
 
                         #region Mental Properties
 
-                        entry.SpellSpeed = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SpellSpeed);
-                        entry.AttackMagicPotency = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.AttackMagicPotency);
-                        entry.HealingMagicPotency = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.HealingMagicPotency);
+                        entry.SpellSpeed = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SpellSpeed);
+                        entry.AttackMagicPotency = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.AttackMagicPotency);
+                        entry.HealingMagicPotency = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.HealingMagicPotency);
 
                         #endregion
 
                         #region Elemental Resistances
 
-                        entry.FireResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.FireResistance);
-                        entry.IceResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.IceResistance);
-                        entry.WindResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.WindResistance);
-                        entry.EarthResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.EarthResistance);
-                        entry.LightningResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.LightningResistance);
-                        entry.WaterResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.WaterResistance);
+                        entry.FireResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.FireResistance);
+                        entry.IceResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.IceResistance);
+                        entry.WindResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.WindResistance);
+                        entry.EarthResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.EarthResistance);
+                        entry.LightningResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.LightningResistance);
+                        entry.WaterResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.WaterResistance);
 
                         #endregion
 
                         #region Physical Resistances
 
-                        entry.SlashingResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SlashingResistance);
-                        entry.PiercingResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.PiercingResistance);
-                        entry.BluntResistance = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BluntResistance);
+                        entry.SlashingResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.SlashingResistance);
+                        entry.PiercingResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.PiercingResistance);
+                        entry.BluntResistance = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.BluntResistance);
 
                         #endregion
 
                         #region Crafting
 
-                        entry.Craftmanship = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Craftmanship);
-                        entry.Control = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Control);
+                        entry.Craftmanship = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Craftmanship);
+                        entry.Control = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Control);
 
                         #endregion
 
                         #region Gathering
 
-                        entry.Gathering = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Gathering);
-                        entry.Perception = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Perception);
+                        entry.Gathering = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Gathering);
+                        entry.Perception = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Perception);
 
                         #endregion
 

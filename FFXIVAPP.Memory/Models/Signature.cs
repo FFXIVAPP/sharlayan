@@ -66,8 +66,7 @@ namespace FFXIVAPP.Memory.Models
             }
             set
             {
-                offsetSet = true;
-                _Offset = value;
+                // IGNORED
             }
         }
 
