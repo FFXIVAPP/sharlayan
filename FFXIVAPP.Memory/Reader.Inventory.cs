@@ -75,7 +75,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
             }
 

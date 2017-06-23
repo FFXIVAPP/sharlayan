@@ -33,7 +33,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
             }
             if (Scanner.Instance.Locations.ContainsKey("ZONEINFO"))
@@ -52,7 +52,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
             }
         }

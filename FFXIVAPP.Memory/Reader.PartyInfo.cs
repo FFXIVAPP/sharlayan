@@ -106,7 +106,7 @@ namespace FFXIVAPP.Memory
                         }
                         catch (Exception)
                         {
-                            // ignored
+                            // IGNORED
                         }
 
                         try
@@ -119,7 +119,7 @@ namespace FFXIVAPP.Memory
                         }
                         catch (Exception)
                         {
-                            // ignored
+                            // IGNORED
                         }
                     }
                 }

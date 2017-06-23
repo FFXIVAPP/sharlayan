@@ -43,26 +43,32 @@ namespace FFXIVAPP.Memory
                     }
                     try
                     {
-                        var enmityCount = MemoryHandler.Instance.GetInt16(PlayerInfoMap - MemoryHandler.Instance.Structures.PlayerInfo.EnmityCount);
-                        var enmityStructure = PlayerInfoMap - MemoryHandler.Instance.Structures.PlayerInfo.EnmityStructure;
                         var enmityEntries = new List<EnmityEntry>();
-                        if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
+
+                        if (Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT"))
                         {
-                            for (uint i = 0; i < enmityCount; i++)
+                            var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
+                            var enmityStructure = Scanner.Instance.Locations["AGROMAP"].GetAddress();
+
+                            if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
                             {
-                                var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
-                                var enmityEntry = new EnmityEntry
+                                for (uint i = 0; i < enmityCount; i++)
                                 {
-                                    ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
-                                    Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                    Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
-                                };
-                                if (enmityEntry.ID > 0)
-                                {
-                                    enmityEntries.Add(enmityEntry);
+                                    var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
+                                    var enmityEntry = new EnmityEntry
+                                    {
+                                        ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                        Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                        Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                    };
+                                    if (enmityEntry.ID > 0)
+                                    {
+                                        enmityEntries.Add(enmityEntry);
+                                    }
                                 }
                             }
                         }
+
                         var source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, 0x256);
                         try
                         {

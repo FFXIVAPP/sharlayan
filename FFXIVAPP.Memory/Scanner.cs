@@ -21,11 +21,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using FFXIVAPP.Memory.Models;
+using NLog;
 
 namespace FFXIVAPP.Memory
 {
     public class Scanner
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// </summary>
         /// <param name="pSignatures"> </param>
@@ -55,6 +58,10 @@ namespace FFXIVAPP.Memory
                     }
                     signatures.RemoveAll(a => Locations.ContainsKey(a.Key));
                     FindExtendedSignatures(signatures);
+                }
+                foreach (var kvp in Locations)
+                {
+                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{kvp.Value.GetAddress().ToString("X")}]");
                 }
                 _memDump = null;
                 sw.Stop();
@@ -88,7 +95,7 @@ namespace FFXIVAPP.Memory
             }
             catch (Exception)
             {
-                // ignored
+                // IGNORED
             }
         }
 
@@ -140,7 +147,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
             }
         }

@@ -126,7 +126,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
 
                 foreach (var bytes in buffered.Where(b => b.Count > 0))

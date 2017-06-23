@@ -27,7 +27,6 @@ namespace FFXIVAPP.Memory.Models
         public PartyEntityStructure PartyEntity { get; set; }
         public PartyInfoStructure PartyInfo { get; set; }
         public PlayerEntityStructure PlayerEntity { get; set; }
-        public PlayerInfoStructure PlayerInfo { get; set; }
         public StatusEntryStructure StatusEntry { get; set; }
         public TargetInfoStructure TargetInfo { get; set; }
     }

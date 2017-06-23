@@ -204,7 +204,7 @@ namespace FFXIVAPP.Memory
                         }
                         catch (Exception)
                         {
-                            // ignored
+                            // IGNORED
                         }
                     }
 
@@ -230,7 +230,7 @@ namespace FFXIVAPP.Memory
                     }
                     catch (Exception)
                     {
-                        // ignored
+                        // IGNORED
                     }
 
                     MemoryHandler.Instance.ScanCount++;
@@ -239,7 +239,7 @@ namespace FFXIVAPP.Memory
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    // IGNORED
                 }
             }
 
