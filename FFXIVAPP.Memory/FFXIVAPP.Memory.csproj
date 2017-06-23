@@ -84,6 +84,7 @@
     <Compile Include="Delegates\PCWorkerDelegate.cs" />
     <Compile Include="Helpers\ActorEntityHelper.cs" />
     <Compile Include="Helpers\APIHelper.cs" />
+    <Compile Include="Helpers\BitConverter.cs" />
     <Compile Include="Helpers\PartyEntityHelper.cs" />
     <Compile Include="Helpers\PlayerEntityHelper.cs" />
     <Compile Include="Helpers\ActionHelper.cs" />

@@ -38,12 +38,12 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.MapID = 0;
                 entry.TargetID = 0;
                 entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.ActorEntity.Name);
-                entry.ID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                entry.ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
                 entry.UUID = string.IsNullOrEmpty(entry.UUID) ? Guid.NewGuid()
                                                                     .ToString() : entry.UUID;
-                entry.NPCID1 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
-                entry.NPCID2 = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
-                entry.OwnerID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
+                entry.NPCID1 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID1);
+                entry.NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
+                entry.OwnerID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.OwnerID);
                 entry.TypeID = source[MemoryHandler.Instance.Structures.ActorEntity.Type];
                 entry.Type = (Actor.Type) entry.TypeID;
                 entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorEntity.TargetType];
@@ -52,27 +52,27 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
 
-                entry.X = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.X + defaultBaseOffset);
-                entry.Z = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Z + defaultBaseOffset);
-                entry.Y = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Y + defaultBaseOffset);
-                entry.Heading = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Heading + defaultBaseOffset);
-                entry.HitBoxRadius = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.HitBoxRadius + defaultBaseOffset);
-                entry.Fate = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??
+                entry.X = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.X + defaultBaseOffset);
+                entry.Z = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Z + defaultBaseOffset);
+                entry.Y = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Y + defaultBaseOffset);
+                entry.Heading = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.Heading + defaultBaseOffset);
+                entry.HitBoxRadius = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.HitBoxRadius + defaultBaseOffset);
+                entry.Fate = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.Fate + defaultBaseOffset); // ??
                 entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringInvisible]; // ??
-                entry.ModelID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
+                entry.ModelID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
                 entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
                 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
-                entry.IsGM = BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
+                entry.IsGM = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
                 entry.IconID = source[MemoryHandler.Instance.Structures.ActorEntity.Icon];
                 entry.Icon = (Actor.Icon) entry.IconID;
 
                 entry.StatusID = source[MemoryHandler.Instance.Structures.ActorEntity.Status];
                 entry.Status = (Actor.Status) entry.StatusID;
                 
-                entry.ClaimedByID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
-                var targetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
+                entry.ClaimedByID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
+                var targetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
 
                 entry.JobID = source[MemoryHandler.Instance.Structures.ActorEntity.Job + defaultStatOffset];
@@ -81,23 +81,23 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorEntity.GrandCompanyRank + defaultStatOffset];
                 entry.Title = source[MemoryHandler.Instance.Structures.ActorEntity.Title + defaultStatOffset];
-                entry.HPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.HPCurrent + defaultStatOffset);
-                entry.HPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.HPMax + defaultStatOffset);
-                entry.MPCurrent = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.MPCurrent + defaultStatOffset);
-                entry.MPMax = BitConverter.ToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.MPMax + defaultStatOffset);
-                entry.TPCurrent = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.TPCurrent + defaultStatOffset);
+                entry.HPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.HPCurrent + defaultStatOffset);
+                entry.HPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.HPMax + defaultStatOffset);
+                entry.MPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.MPCurrent + defaultStatOffset);
+                entry.MPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorEntity.MPMax + defaultStatOffset);
+                entry.TPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.TPCurrent + defaultStatOffset);
                 entry.TPMax = 1000;
-                entry.GPCurrent = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.GPCurrent + defaultStatOffset);
-                entry.GPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.GPMax + defaultStatOffset);
-                entry.CPCurrent = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CPCurrent + defaultStatOffset);
-                entry.CPMax = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CPMax + defaultStatOffset);
+                entry.GPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.GPCurrent + defaultStatOffset);
+                entry.GPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.GPMax + defaultStatOffset);
+                entry.CPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CPCurrent + defaultStatOffset);
+                entry.CPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CPMax + defaultStatOffset);
                 //entry.Race = source[0x2578]; // ??
                 //entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.IsCasting = BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting1) && BitConverter.ToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting2); // 0x2C90);
-                entry.CastingID = BitConverter.ToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CastingID); // 0x2C94);
-                entry.CastingTargetID = BitConverter.ToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.CastingTargetID); // 0x2CA0);
-                entry.CastingProgress = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.CastingProgress); // 0x2CC4);
-                entry.CastingTime = BitConverter.ToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.CastingTime); // 0x2DA8);
+                entry.IsCasting = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting1) && BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting2); // 0x2C90);
+                entry.CastingID = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CastingID); // 0x2C94);
+                entry.CastingTargetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.CastingTargetID); // 0x2CA0);
+                entry.CastingProgress = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.CastingProgress); // 0x2CC4);
+                entry.CastingTime = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.CastingTime); // 0x2DA8);
                 entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Y);
                 if (targetID > 0)
                 {
@@ -135,10 +135,10 @@ namespace FFXIVAPP.Memory.Helpers
                     {
                         TargetEntity = entry,
                         TargetName = entry.Name,
-                        StatusID = BitConverter.ToInt16(statusSource, MemoryHandler.Instance.Structures.StatusEntry.StatusID),
+                        StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusEntry.StatusID),
                         Stacks = statusSource[MemoryHandler.Instance.Structures.StatusEntry.Stacks],
-                        Duration = BitConverter.ToSingle(statusSource, MemoryHandler.Instance.Structures.StatusEntry.Duration),
-                        CasterID = BitConverter.ToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusEntry.CasterID)
+                        Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusEntry.Duration),
+                        CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusEntry.CasterID)
                     };
                     try
                     {

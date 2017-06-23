@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using BitConverter = FFXIVAPP.Memory.Helpers.BitConverter;
 
 namespace FFXIVAPP.Memory
 {
@@ -159,7 +160,7 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[2];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToInt16(value, 0);
+            return BitConverter.TryToInt16(value, 0);
         }
 
         /// <summary>
@@ -171,7 +172,7 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToInt32(value, 0);
+            return BitConverter.TryToInt32(value, 0);
         }
 
         /// <summary>
@@ -183,20 +184,23 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[8];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToInt64(value, 0);
+            return BitConverter.TryToInt64(value, 0);
         }
 
         public long GetPlatformInt(IntPtr address, long offset = 0)
         {
+            var bytes = new byte[ProcessModel.IsWin64 ? 8 : 4];
+            Peek(new IntPtr(address.ToInt64() + offset), bytes);
+            return GetPlatformIntFromBytes(bytes);
+        }
+
+        public long GetPlatformIntFromBytes(byte[] source, int index = 0)
+        {
             if (ProcessModel.IsWin64)
             {
-                var win64 = new byte[8];
-                Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return BitConverter.ToInt64(win64, 0);
+                return BitConverter.TryToInt64(source, index);
             }
-            var win32 = new byte[4];
-            Peek(new IntPtr(address.ToInt64() + offset), win32);
-            return BitConverter.ToInt32(win32, 0);
+            return BitConverter.TryToInt32(source, index);
         }
 
         public IntPtr ReadPointer(IntPtr address, long offset = 0)
@@ -205,11 +209,11 @@ namespace FFXIVAPP.Memory
             {
                 var win64 = new byte[8];
                 Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return new IntPtr(BitConverter.ToInt64(win64, 0));
+                return new IntPtr(BitConverter.TryToInt64(win64, 0));
             }
             var win32 = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), win32);
-            return IntPtr.Add(IntPtr.Zero, BitConverter.ToInt32(win32, 0));
+            return IntPtr.Add(IntPtr.Zero, BitConverter.TryToInt32(win32, 0));
         }
 
         /// <summary>
@@ -263,7 +267,7 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToUInt16(value, 0);
+            return BitConverter.TryToUInt16(value, 0);
         }
 
         /// <summary>
@@ -275,7 +279,7 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[4];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToUInt32(value, 0);
+            return BitConverter.TryToUInt32(value, 0);
         }
 
         /// <summary>
@@ -287,20 +291,23 @@ namespace FFXIVAPP.Memory
         {
             var value = new byte[8];
             Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.ToUInt32(value, 0);
+            return BitConverter.TryToUInt32(value, 0);
         }
 
         public long GetPlatformUInt(IntPtr address, long offset = 0)
         {
+            var bytes = new byte[ProcessModel.IsWin64 ? 8 : 4];
+            Peek(new IntPtr(address.ToInt64() + offset), bytes);
+            return GetPlatformUIntFromBytes(bytes);
+        }
+
+        public long GetPlatformUIntFromBytes(byte[] source, int index = 0)
+        {
             if (ProcessModel.IsWin64)
             {
-                var win64 = new byte[8];
-                Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return (long) BitConverter.ToUInt64(win64, 0);
+                return (long) BitConverter.TryToUInt64(source, index);
             }
-            var win32 = new byte[4];
-            Peek(new IntPtr(address.ToInt64() + offset), win32);
-            return BitConverter.ToUInt32(win32, 0);
+            return BitConverter.TryToUInt32(source, index);
         }
 
         /// <summary>
