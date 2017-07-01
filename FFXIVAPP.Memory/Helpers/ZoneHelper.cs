@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using FFXIVAPP.Memory.Models;
@@ -23,6 +24,23 @@ namespace FFXIVAPP.Memory.Helpers
 {
     public static class ZoneHelper
     {
+        private static bool Loading = false;
+
+        private static MapItem DefaultMapItem = new MapItem
+        {
+            Name = new Localization
+            {
+                Chinese = "???",
+                English = "???",
+                French = "???",
+                German = "???",
+                Japanese = "???",
+                Korean = "???"
+            },
+            Index = 0,
+            IsDungeonInstance = false
+        };
+
         private static ConcurrentDictionary<uint, MapItem> _mapInfos;
 
         private static ConcurrentDictionary<uint, MapItem> MapInfos
@@ -40,36 +58,33 @@ namespace FFXIVAPP.Memory.Helpers
 
         public static MapItem MapInfo(uint id)
         {
+            if (Loading)
+            {
+                return DefaultMapItem;
+            }
             lock (MapInfos)
             {
                 if (!MapInfos.Any())
                 {
+                    Loading = true;
                     Generate();
                 }
                 if (MapInfos.ContainsKey(id))
                 {
                     return MapInfos[id];
                 }
-                return new MapItem
-                {
-                    Name = new Localization
-                    {
-                        Chinese = "???",
-                        English = "???",
-                        French = "???",
-                        German = "???",
-                        Japanese = "???",
-                        Korean = "???"
-                    },
-                    Index = 0,
-                    IsDungeonInstance = false
-                };
+                return DefaultMapItem;
             }
         }
 
         private static void Generate()
         {
+            if (Loading)
+            {
+                return;
+            }
             APIHelper.GetZones(MapInfos);
+            Loading = false;
         }
     }
 }

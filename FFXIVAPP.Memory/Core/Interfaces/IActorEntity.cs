@@ -22,7 +22,6 @@ namespace FFXIVAPP.Memory.Core.Interfaces
 {
     public interface IActorEntity
     {
-        ActorEntity CurrentUser { get; set; }
         uint MapTerritory { get; set; }
         uint MapIndex { get; set; }
         uint MapID { get; set; }

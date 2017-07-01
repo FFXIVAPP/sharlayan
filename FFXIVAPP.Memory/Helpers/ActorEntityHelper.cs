@@ -197,7 +197,6 @@ namespace FFXIVAPP.Memory.Helpers
             {
                 PCWorkerDelegate.CurrentUser = entry;
             }
-            entry.CurrentUser = PCWorkerDelegate.CurrentUser;
             return entry;
         }
 

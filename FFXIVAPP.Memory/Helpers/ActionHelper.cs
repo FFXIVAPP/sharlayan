@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using FFXIVAPP.Memory.Models;
@@ -23,6 +24,21 @@ namespace FFXIVAPP.Memory.Helpers
 {
     public static class ActionHelper
     {
+        private static bool Loading = false;
+
+        private static ActionItem DefaultActionItem = new ActionItem
+        {
+            Name = new Localization
+            {
+                Chinese = "???",
+                English = "???",
+                French = "???",
+                German = "???",
+                Japanese = "???",
+                Korean = "???"
+            }
+        };
+
         private static ConcurrentDictionary<uint, ActionItem> _actions;
 
         private static ConcurrentDictionary<uint, ActionItem> Actions
@@ -40,34 +56,33 @@ namespace FFXIVAPP.Memory.Helpers
 
         public static ActionItem ActionInfo(uint id)
         {
-            lock (Actions)
+            if (Loading)
             {
+                return DefaultActionItem;
+            }
+            lock (Actions)
+            {   
                 if (!Actions.Any())
                 {
+                    Loading = true;
                     Generate();
                 }
                 if (Actions.ContainsKey(id))
                 {
                     return Actions[id];
                 }
-                return new ActionItem
-                {
-                    Name = new Localization
-                    {
-                        Chinese = "???",
-                        English = "???",
-                        French = "???",
-                        German = "???",
-                        Japanese = "???",
-                        Korean = "???"
-                    }
-                };
+                return DefaultActionItem;
             }
         }
 
         private static void Generate()
         {
+            if (Loading)
+            {
+                return;
+            }
             APIHelper.GetActions(Actions);
+            Loading = false;
         }
     }
 }

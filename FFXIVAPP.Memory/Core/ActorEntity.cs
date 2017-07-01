@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Core.Interfaces;
+using FFXIVAPP.Memory.Delegates;
 using FFXIVAPP.Memory.Helpers;
 
 namespace FFXIVAPP.Memory.Core
@@ -112,7 +113,7 @@ namespace FFXIVAPP.Memory.Core
         public string UUID { get; set; }
 
         public byte GatheringStatus { get; set; }
-        public ActorEntity CurrentUser { get; set; }
+        public static ActorEntity CurrentUser => PCWorkerDelegate.CurrentUser;
         public uint MapTerritory { get; set; }
         public uint MapIndex { get; set; }
         public uint MapID { get; set; }
@@ -187,19 +188,20 @@ namespace FFXIVAPP.Memory.Core
         public float CastingProgress { get; set; }
         public float CastingTime { get; set; }
 
+
         public float GetDistanceTo(ActorEntity compare)
         {
-            var distanceX = (float) Math.Abs(X - compare.X);
-            var distanceY = (float) Math.Abs(Y - compare.Y);
-            var distanceZ = (float) Math.Abs(Z - compare.Z);
-            return (float) Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY) + (distanceZ * distanceZ));
+            var distanceX = (float) Math.Abs(compare.X - X);
+            var distanceY = (float) Math.Abs(compare.Y - Y);
+            var distanceZ = (float) Math.Abs(compare.Z - Z);
+            return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2) + Math.Pow(distanceZ, 2));
         }
 
         public float GetHorizontalDistanceTo(ActorEntity compare)
         {
-            var distanceX = (float) Math.Abs(X - compare.X);
-            var distanceY = (float) Math.Abs(Y - compare.Y);
-            return (float) Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY));
+            var distanceX = (float) Math.Abs(compare.X - X);
+            var distanceY = (float) Math.Abs(compare.Y - Y);
+            return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2));
         }
 
         public float GetCastingDistanceTo(ActorEntity compare)
