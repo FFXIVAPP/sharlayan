@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ChatCleaner.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -70,6 +70,16 @@ namespace FFXIVAPP.Memory.Core
                 var newList = new List<byte>();
                 for (var x = 0; x < bytes.Count(); x++)
                 {
+                    if (bytes[x] == 238)
+                    {
+                        var byteString = $"{bytes[x]}{bytes[x + 1]}{bytes[x + 2]}";
+                        switch (byteString)
+                        {
+                            case "238129156":
+                                x += 3;
+                                break;
+                        }
+                    }
                     if (bytes[x] == 2)
                     {
                         var byteString = $"{bytes[x]}{bytes[x + 1]}{bytes[x + 2]}{bytes[x + 3]}";
@@ -128,8 +138,10 @@ namespace FFXIVAPP.Memory.Core
                 //var cleanedList = newList.Where(v => (v >= 0x0020 && v <= 0xD7FF) || (v >= 0xE000 && v <= 0xFFFD) || v == 0x0009 || v == 0x000A || v == 0x000D);
                 var cleaned = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(newList.ToArray()))
                                          .Replace("  ", " ");
+
                 autoTranslateList.Clear();
                 newList.Clear();
+
                 cleaned = Regex.Replace(cleaned, @"", "⇒");
                 cleaned = Regex.Replace(cleaned, @"", "[HQ]");
                 cleaned = Regex.Replace(cleaned, @"", "");
@@ -138,6 +150,7 @@ namespace FFXIVAPP.Memory.Core
                 cleaned = Regex.Replace(cleaned, @"\[+CF010101([\w]+)?\]+", "");
                 cleaned = Regex.Replace(cleaned, @"\[+..FF\w{6}\]+|\[+EC\]+", "");
                 cleaned = Regex.Replace(cleaned, @"\[\]+", "");
+
                 line = cleaned;
             }
             catch (Exception)

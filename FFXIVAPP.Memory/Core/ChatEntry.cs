@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ChatEntry.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -45,8 +45,7 @@ namespace FFXIVAPP.Memory.Core
                 var cut = (cleaned.Substring(1, 1) == ":") ? 2 : 1;
                 chatLogEntry.Line = XmlHelper.SanitizeXmlString(cleaned.Substring(cut));
                 chatLogEntry.Line = new ChatCleaner(chatLogEntry.Line).Result;
-                chatLogEntry.JP = Encoding.UTF8.GetBytes(chatLogEntry.Line)
-                                          .Any(b => b > 128);
+                chatLogEntry.JP = IsJapanese(chatLogEntry.Line);
 
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
             }
@@ -59,6 +58,14 @@ namespace FFXIVAPP.Memory.Core
                 chatLogEntry.Combined = "";
             }
             return chatLogEntry;
+        }
+
+        private static bool IsJapanese(string line)
+        {
+            // 0x3040 -> 0x309F === Hirigana
+            // 0x30A0 -> 0x30FF === Katakana
+            // 0x4E00 -> 0x9FBF === Kanji
+            return line.Any(c => c >= 0x3040 && c <= 0x309F) || line.Any(c => c >= 0x30A0 && c <= 0x30FF) || line.Any(c => c >= 0x4E00 && c <= 0x9FBF);
         }
 
         private static string ByteArrayToString(byte[] raw)

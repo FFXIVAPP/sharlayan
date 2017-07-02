@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Reader.Inventory.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ namespace FFXIVAPP.Memory
 
         private static InventoryEntity GetItems(IntPtr address, Inventory.Container type)
         {
-            var offset = (uint)((int) type * 24);
+            var offset = (uint) ((int) type * 24);
             var containerAddress = MemoryHandler.Instance.GetPlatformUInt(address, offset);
 
             var container = new InventoryEntity

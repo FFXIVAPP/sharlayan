@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Reader.Target.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace FFXIVAPP.Memory
                 try
                 {
                     IntPtr targetHateStructure;
-                    
+
                     var enmityEntries = new List<EnmityEntry>();
                     var agroPointersFound = Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT");
 
@@ -135,7 +135,8 @@ namespace FFXIVAPP.Memory
                                 var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["ENMITY_COUNT"]);
                                 if (agroCount > 0)
                                 {
-                                    var agroStructure = Scanner.Instance.Locations["ENMITYMAP"].GetAddress();
+                                    var agroStructure = Scanner.Instance.Locations["ENMITYMAP"]
+                                                               .GetAddress();
                                     for (uint i = 0; i < 16; i++)
                                     {
                                         try
@@ -143,7 +144,7 @@ namespace FFXIVAPP.Memory
                                             var address = new IntPtr(agroStructure.ToInt64() + (i * 72));
                                             var enmityEntry = new EnmityEntry
                                             {
-                                                ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                                ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
                                                 Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
                                                 Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
                                             };

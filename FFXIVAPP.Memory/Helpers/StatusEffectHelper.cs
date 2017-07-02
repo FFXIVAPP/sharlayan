@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ StatusEffectHelper.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using FFXIVAPP.Memory.Models;
@@ -24,7 +23,7 @@ namespace FFXIVAPP.Memory.Helpers
 {
     public static class StatusEffectHelper
     {
-        private static bool Loading = false;
+        private static bool Loading;
 
         private static StatusItem DefaultStatusItem = new StatusItem
         {
@@ -63,21 +62,22 @@ namespace FFXIVAPP.Memory.Helpers
             }
             lock (StatusEffects)
             {
-                if (!StatusEffects.Any())
+                if (StatusEffects.Any())
                 {
-                    Loading = true;
-                    Generate();
+                    return StatusEffects.ContainsKey(id) ? StatusEffects[id] : DefaultStatusItem;
                 }
-                if (StatusEffects.ContainsKey(id))
-                {
-                    return StatusEffects[id];
-                }
+                Generate();
                 return DefaultStatusItem;
             }
         }
 
         private static void Generate()
         {
+            if (Loading)
+            {
+                return;
+            }
+            Loading = true;
             APIHelper.GetStatusEffects(StatusEffects);
             Loading = false;
         }

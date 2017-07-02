@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ Scanner.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ namespace FFXIVAPP.Memory
                 }
                 foreach (var kvp in Locations)
                 {
-                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{kvp.Value.GetAddress().ToString("X")}]");
+                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{kvp.Value.GetAddress() .ToString("X")}]");
                 }
                 _memDump = null;
                 sw.Stop();

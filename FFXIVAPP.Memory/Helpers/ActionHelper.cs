@@ -1,5 +1,5 @@
-// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+// FFXIVAPP.Memory ~ ActionHelper.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using FFXIVAPP.Memory.Models;
@@ -24,7 +23,7 @@ namespace FFXIVAPP.Memory.Helpers
 {
     public static class ActionHelper
     {
-        private static bool Loading = false;
+        private static bool Loading;
 
         private static ActionItem DefaultActionItem = new ActionItem
         {
@@ -61,22 +60,23 @@ namespace FFXIVAPP.Memory.Helpers
                 return DefaultActionItem;
             }
             lock (Actions)
-            {   
-                if (!Actions.Any())
+            {
+                if (Actions.Any())
                 {
-                    Loading = true;
-                    Generate();
+                    return Actions.ContainsKey(id) ? Actions[id] : DefaultActionItem;
                 }
-                if (Actions.ContainsKey(id))
-                {
-                    return Actions[id];
-                }
+                Generate();
                 return DefaultActionItem;
             }
         }
 
         private static void Generate()
         {
+            if (Loading)
+            {
+                return;
+            }
+            Loading = true;
             APIHelper.GetActions(Actions);
             Loading = false;
         }

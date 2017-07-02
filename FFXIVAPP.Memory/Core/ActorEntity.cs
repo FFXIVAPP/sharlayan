@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ActorEntity.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -110,10 +110,11 @@ namespace FFXIVAPP.Memory.Core
             get { return IsCasting && CastingTime > 0 ? CastingProgress / CastingTime : 0; }
         }
 
+        public static ActorEntity CurrentUser => PCWorkerDelegate.CurrentUser;
+
         public string UUID { get; set; }
 
         public byte GatheringStatus { get; set; }
-        public static ActorEntity CurrentUser => PCWorkerDelegate.CurrentUser;
         public uint MapTerritory { get; set; }
         public uint MapIndex { get; set; }
         public uint MapID { get; set; }

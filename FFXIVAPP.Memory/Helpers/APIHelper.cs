@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ APIHelper.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -20,10 +20,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace FFXIVAPP.Memory.Helpers
 {

@@ -1,5 +1,5 @@
-﻿// FFXIVAPP.Memory
-// FFXIVAPP & Related Plugins/Modules
+﻿// FFXIVAPP.Memory ~ ActorEntityHelper.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.Type = (Actor.Type) entry.TypeID;
                 entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorEntity.TargetType];
                 entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
-                
+
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorEntity.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorEntity.Distance];
 
@@ -62,7 +62,7 @@ namespace FFXIVAPP.Memory.Helpers
                 entry.ModelID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ModelID);
                 entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorEntity.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
-                
+
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsGM); // ?
                 entry.IconID = source[MemoryHandler.Instance.Structures.ActorEntity.Icon];
@@ -70,7 +70,7 @@ namespace FFXIVAPP.Memory.Helpers
 
                 entry.StatusID = source[MemoryHandler.Instance.Structures.ActorEntity.Status];
                 entry.Status = (Actor.Status) entry.StatusID;
-                
+
                 entry.ClaimedByID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ClaimedByID);
                 var targetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.TargetID);
                 var pcTargetID = targetID;
