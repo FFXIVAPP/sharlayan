@@ -45,7 +45,10 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static ConcurrentDictionary<uint, MapItem> MapInfos
         {
-            get => _mapInfos ?? (_mapInfos = new ConcurrentDictionary<uint, MapItem>());
+            get
+            {
+                return _mapInfos ?? (_mapInfos = new ConcurrentDictionary<uint, MapItem>());
+            }
             set
             {
                 if (_mapInfos == null)
@@ -79,10 +82,6 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            if (Loading)
-            {
-                return;
-            }
             APIHelper.GetZones(MapInfos);
             Loading = false;
         }

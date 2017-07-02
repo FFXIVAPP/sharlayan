@@ -78,10 +78,6 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            if (Loading)
-            {
-                return;
-            }
             APIHelper.GetStatusEffects(StatusEffects);
             Loading = false;
         }

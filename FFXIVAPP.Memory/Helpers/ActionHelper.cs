@@ -77,10 +77,6 @@ namespace FFXIVAPP.Memory.Helpers
 
         private static void Generate()
         {
-            if (Loading)
-            {
-                return;
-            }
             APIHelper.GetActions(Actions);
             Loading = false;
         }
