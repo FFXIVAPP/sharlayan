@@ -24,12 +24,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using FFXIVAPP.Memory.Helpers;
+using NLog;
 
 namespace FFXIVAPP.Memory.Core
 {
     internal class ChatCleaner : INotifyPropertyChanged
     {
         private const RegexOptions DefaultOptions = RegexOptions.Compiled | RegexOptions.ExplicitCapture;
+
+        #region Logger
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
 
         #region Declarations
 
@@ -110,7 +117,7 @@ namespace FFXIVAPP.Memory.Core
                                     autoTranslateList.AddRange(Encoding.UTF8.GetBytes(b.ToString("X2")));
                                 }
                                 autoTranslateList.Add(Convert.ToByte(']'));
-                                var aCheckStr = "";
+                                var aCheckStr = string.Empty;
                                 // var checkedAt = autoTranslateList.GetRange(1, autoTranslateList.Count - 1).ToArray();
                                 if (string.IsNullOrWhiteSpace(aCheckStr))
                                 {
@@ -144,17 +151,18 @@ namespace FFXIVAPP.Memory.Core
 
                 cleaned = Regex.Replace(cleaned, @"", "⇒");
                 cleaned = Regex.Replace(cleaned, @"", "[HQ]");
-                cleaned = Regex.Replace(cleaned, @"", "");
-                cleaned = Regex.Replace(cleaned, @"�", "");
-                cleaned = Regex.Replace(cleaned, @"\[+0([12])010101([\w]+)?\]+", "");
-                cleaned = Regex.Replace(cleaned, @"\[+CF010101([\w]+)?\]+", "");
-                cleaned = Regex.Replace(cleaned, @"\[+..FF\w{6}\]+|\[+EC\]+", "");
-                cleaned = Regex.Replace(cleaned, @"\[\]+", "");
+                cleaned = Regex.Replace(cleaned, @"", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"�", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"\[+0([12])010101([\w]+)?\]+", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"\[+CF010101([\w]+)?\]+", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"\[+..FF\w{6}\]+|\[+EC\]+", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"\[\]+", string.Empty);
 
                 line = cleaned;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
             return line;
         }
@@ -187,19 +195,20 @@ namespace FFXIVAPP.Memory.Core
                     {
                         case true:
                             cleaned = cleaned.Substring(1)
-                                             .Replace("•name•", "");
+                                             .Replace("•name•", string.Empty);
                             break;
                         case false:
                             cleaned = cleaned.Replace("•name•", player);
                             break;
                     }
                 }
-                cleaned = Regex.Replace(cleaned, @"[\r\n]+", "");
-                cleaned = Regex.Replace(cleaned, @"[\x00-\x1F]+", "");
+                cleaned = Regex.Replace(cleaned, @"[\r\n]+", string.Empty);
+                cleaned = Regex.Replace(cleaned, @"[\x00-\x1F]+", string.Empty);
                 line = cleaned;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
             return line;
         }

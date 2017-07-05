@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
+
 namespace FFXIVAPP.Memory.Models
 {
     public class Localization
@@ -25,5 +27,10 @@ namespace FFXIVAPP.Memory.Models
         public string German { get; set; }
         public string Chinese { get; set; }
         public string Korean { get; set; }
+
+        public bool Matches(string name)
+        {
+            return string.Equals(English, name, StringComparison.InvariantCultureIgnoreCase) || string.Equals(French, name, StringComparison.InvariantCultureIgnoreCase) || string.Equals(Japanese, name, StringComparison.InvariantCultureIgnoreCase) || string.Equals(German, name, StringComparison.InvariantCultureIgnoreCase) || string.Equals(Chinese, name, StringComparison.InvariantCultureIgnoreCase) || string.Equals(Korean, name, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

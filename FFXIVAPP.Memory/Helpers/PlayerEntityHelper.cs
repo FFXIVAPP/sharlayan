@@ -18,11 +18,18 @@
 using System;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Core.Enums;
+using NLog;
 
 namespace FFXIVAPP.Memory.Helpers
 {
     internal static class PlayerEntityHelper
     {
+        #region Logger
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         public static PlayerEntity ResolvePlayerFromBytes(byte[] source)
         {
             var entry = new PlayerEntity();
@@ -199,8 +206,9 @@ namespace FFXIVAPP.Memory.Helpers
                         break;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
             return entry;
         }

@@ -66,12 +66,12 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                     return StatusEffects.ContainsKey(id) ? StatusEffects[id] : DefaultStatusItem;
                 }
-                Generate();
+                Resolve();
                 return DefaultStatusItem;
             }
         }
 
-        private static void Generate()
+        internal static void Resolve()
         {
             if (Loading)
             {

@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ EnmityEntry.cs
+﻿// FFXIVAPP.Memory ~ ExceptionEvent.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -15,22 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using FFXIVAPP.Memory.Core.Interfaces;
-using FFXIVAPP.Memory.Helpers;
+using System;
+using NLog;
 
-namespace FFXIVAPP.Memory.Core
+namespace FFXIVAPP.Memory.Events
 {
-    public class EnmityEntry : IEnmityEntry
+    public class ExceptionEvent : EventArgs
     {
-        private string _name;
-
-        public string Name
+        public ExceptionEvent(object sender, Logger logger, Exception exception, bool levelIsError = false)
         {
-            get { return _name ?? string.Empty; }
-            set { _name = StringHelper.TitleCase(value); }
+            Sender = sender;
+            Logger = logger;
+            Exception = exception;
+            LevelIsError = levelIsError;
         }
 
-        public uint ID { get; set; }
-        public uint Enmity { get; set; }
+        public object Sender { get; set; }
+        public Logger Logger { get; set; }
+        public Exception Exception { get; set; }
+        public bool LevelIsError { get; set; }
     }
 }

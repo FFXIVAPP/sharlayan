@@ -32,60 +32,66 @@ namespace FFXIVAPP.Memory
         {
             var result = new PlayerInfoReadResult();
 
-            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                if (Scanner.Instance.Locations.ContainsKey("PLAYERINFO"))
+                return result;
+            }
+            if (!Scanner.Instance.Locations.ContainsKey("PLAYERINFO"))
+            {
+                return result;
+            }
+
+            PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
+
+            if (PlayerInfoMap.ToInt64() <= 6496)
+            {
+                return result;
+            }
+
+            try
+            {
+                var enmityEntries = new List<EnmityEntry>();
+
+                if (Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT"))
                 {
-                    PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
-                    if (PlayerInfoMap.ToInt64() <= 6496)
-                    {
-                        return result;
-                    }
-                    try
-                    {
-                        var enmityEntries = new List<EnmityEntry>();
+                    var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
+                    var enmityStructure = Scanner.Instance.Locations["AGROMAP"]
+                                                 .GetAddress();
 
-                        if (Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT"))
+                    if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
+                    {
+                        for (uint i = 0; i < enmityCount; i++)
                         {
-                            var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
-                            var enmityStructure = Scanner.Instance.Locations["AGROMAP"]
-                                                         .GetAddress();
-
-                            if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
+                            var address = new IntPtr(enmityStructure.ToInt64() + i * 72);
+                            var enmityEntry = new EnmityEntry
                             {
-                                for (uint i = 0; i < enmityCount; i++)
-                                {
-                                    var address = new IntPtr(enmityStructure.ToInt64() + (i * 72));
-                                    var enmityEntry = new EnmityEntry
-                                    {
-                                        ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
-                                        Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                        Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
-                                    };
-                                    if (enmityEntry.ID > 0)
-                                    {
-                                        enmityEntries.Add(enmityEntry);
-                                    }
-                                }
+                                ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                            };
+                            if (enmityEntry.ID > 0)
+                            {
+                                enmityEntries.Add(enmityEntry);
                             }
                         }
-
-                        var source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, 0x256);
-                        try
-                        {
-                            result.PlayerEntity = PlayerEntityHelper.ResolvePlayerFromBytes(source);
-                            result.PlayerEntity.EnmityEntries = enmityEntries;
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
                     }
                 }
+
+                var source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, 0x256);
+
+                try
+                {
+                    result.PlayerEntity = PlayerEntityHelper.ResolvePlayerFromBytes(source);
+                    result.PlayerEntity.EnmityEntries = enmityEntries;
+                }
+                catch (Exception ex)
+                {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 
             return result;

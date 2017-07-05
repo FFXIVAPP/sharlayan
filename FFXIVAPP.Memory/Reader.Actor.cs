@@ -33,214 +33,216 @@ namespace FFXIVAPP.Memory
         {
             var result = new ActorReadResult();
 
-            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                try
+                return result;
+            }
+
+            try
+            {
+                #region Ensure Target
+
+                var targetAddress = IntPtr.Zero;
+
+                #endregion
+
+                var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
+
+                const int limit = 1372;
+
+                var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
+                var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
+                var firstAddress = IntPtr.Zero;
+
+                var firstTime = true;
+
+                for (var i = 0; i < limit; i++)
                 {
-                    #region Ensure Target
-
-                    var targetAddress = IntPtr.Zero;
-
-                    #endregion
-
-                    var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
-
-                    const int limit = 1372;
-
-                    var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
-                    var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
-                    var firstAddress = IntPtr.Zero;
-
-                    var firstTime = true;
-
-                    for (var i = 0; i < limit; i++)
+                    IntPtr characterAddress;
+                    if (MemoryHandler.Instance.ProcessModel.IsWin64)
                     {
-                        IntPtr characterAddress;
-                        if (MemoryHandler.Instance.ProcessModel.IsWin64)
+                        characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
+                    }
+                    else
+                    {
+                        characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
+                    }
+                    if (characterAddress == IntPtr.Zero)
+                    {
+                        continue;
+                    }
+
+                    if (firstTime)
+                    {
+                        firstAddress = characterAddress;
+                        firstTime = false;
+                    }
+                    uniqueAddresses[characterAddress] = characterAddress;
+                }
+
+                #region ActorEntity Handlers
+
+                result.RemovedMonster = MonsterWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                result.RemovedNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                result.RemovedPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+
+                foreach (var kvp in uniqueAddresses)
+                {
+                    try
+                    {
+                        var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
+                        //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
+
+                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                        var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
+                        var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorEntity.Type];
+                        ActorEntity existing = null;
+                        var newEntry = false;
+
+                        switch (Type)
                         {
-                            characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
+                            case Actor.Type.Monster:
+                                if (result.RemovedMonster.ContainsKey(ID))
+                                {
+                                    result.RemovedMonster.Remove(ID);
+                                    existing = MonsterWorkerDelegate.GetEntity(ID);
+                                }
+                                else
+                                {
+                                    result.NewMonster.Add(ID);
+                                    newEntry = true;
+                                }
+                                break;
+                            case Actor.Type.PC:
+                                if (result.RemovedPC.ContainsKey(ID))
+                                {
+                                    result.RemovedPC.Remove(ID);
+                                    existing = PCWorkerDelegate.GetEntity(ID);
+                                }
+                                else
+                                {
+                                    result.NewPC.Add(ID);
+                                    newEntry = true;
+                                }
+                                break;
+                            case Actor.Type.NPC:
+                            case Actor.Type.Aetheryte:
+                            case Actor.Type.EObj:
+                                if (result.RemovedNPC.ContainsKey(NPCID2))
+                                {
+                                    result.RemovedNPC.Remove(NPCID2);
+                                    existing = NPCWorkerDelegate.GetEntity(NPCID2);
+                                }
+                                else
+                                {
+                                    result.NewNPC.Add(NPCID2);
+                                    newEntry = true;
+                                }
+                                break;
+                            default:
+                                if (result.RemovedNPC.ContainsKey(ID))
+                                {
+                                    result.RemovedNPC.Remove(ID);
+                                    existing = NPCWorkerDelegate.GetEntity(ID);
+                                }
+                                else
+                                {
+                                    result.NewNPC.Add(ID);
+                                    newEntry = true;
+                                }
+                                break;
                         }
-                        else
+
+                        var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
+
+                        var entry = ActorEntityHelper.ResolveActorFromBytes(source, isFirstEntry, existing);
+
+                        #region Ensure Map & Zone
+
+                        EnsureMapAndZone(entry);
+
+                        #endregion
+
+                        if (isFirstEntry)
                         {
-                            characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
+                            if (targetAddress.ToInt64() > 0)
+                            {
+                                var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
+                                entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                            }
                         }
-                        if (characterAddress == IntPtr.Zero)
+                        if (!entry.IsValid)
+                        {
+                            result.NewMonster.Remove(entry.ID);
+                            result.NewMonster.Remove(entry.NPCID2);
+                            result.NewNPC.Remove(entry.ID);
+                            result.NewNPC.Remove(entry.NPCID2);
+                            result.NewPC.Remove(entry.ID);
+                            result.NewPC.Remove(entry.NPCID2);
+                            continue;
+                        }
+                        if (existing != null)
                         {
                             continue;
                         }
 
-                        if (firstTime)
+                        if (newEntry)
                         {
-                            firstAddress = characterAddress;
-                            firstTime = false;
-                        }
-                        uniqueAddresses[characterAddress] = characterAddress;
-                    }
-
-                    #region ActorEntity Handlers
-
-                    result.RemovedMonster = MonsterWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                    result.RemovedNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                    result.RemovedPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-
-                    foreach (var kvp in uniqueAddresses)
-                    {
-                        try
-                        {
-                            var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
-                            //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
-
-                            var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
-                            var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
-                            var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorEntity.Type];
-                            ActorEntity existing = null;
-                            var newEntry = false;
-
-                            switch (Type)
+                            switch (entry.Type)
                             {
                                 case Actor.Type.Monster:
-                                    if (result.RemovedMonster.ContainsKey(ID))
-                                    {
-                                        result.RemovedMonster.Remove(ID);
-                                        existing = MonsterWorkerDelegate.GetEntity(ID);
-                                    }
-                                    else
-                                    {
-                                        result.NewMonster.Add(ID);
-                                        newEntry = true;
-                                    }
+                                    MonsterWorkerDelegate.EnsureEntity(entry.ID, entry);
                                     break;
                                 case Actor.Type.PC:
-                                    if (result.RemovedPC.ContainsKey(ID))
-                                    {
-                                        result.RemovedPC.Remove(ID);
-                                        existing = PCWorkerDelegate.GetEntity(ID);
-                                    }
-                                    else
-                                    {
-                                        result.NewPC.Add(ID);
-                                        newEntry = true;
-                                    }
+                                    PCWorkerDelegate.EnsureEntity(entry.ID, entry);
                                     break;
                                 case Actor.Type.NPC:
-                                case Actor.Type.Aetheryte:
-                                case Actor.Type.EObj:
-                                    if (result.RemovedNPC.ContainsKey(NPCID2))
-                                    {
-                                        result.RemovedNPC.Remove(NPCID2);
-                                        existing = NPCWorkerDelegate.GetEntity(NPCID2);
-                                    }
-                                    else
-                                    {
-                                        result.NewNPC.Add(NPCID2);
-                                        newEntry = true;
-                                    }
+                                    NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
                                     break;
                                 default:
-                                    if (result.RemovedNPC.ContainsKey(ID))
-                                    {
-                                        result.RemovedNPC.Remove(ID);
-                                        existing = NPCWorkerDelegate.GetEntity(ID);
-                                    }
-                                    else
-                                    {
-                                        result.NewNPC.Add(ID);
-                                        newEntry = true;
-                                    }
+                                    NPCWorkerDelegate.EnsureEntity(entry.ID, entry);
                                     break;
                             }
-
-                            var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
-
-                            var entry = ActorEntityHelper.ResolveActorFromBytes(source, isFirstEntry, existing);
-
-                            #region Ensure Map & Zone
-
-                            EnsureMapAndZone(entry);
-
-                            #endregion
-
-                            if (isFirstEntry)
-                            {
-                                if (targetAddress.ToInt64() > 0)
-                                {
-                                    var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                    entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
-                                }
-                            }
-                            if (!entry.IsValid)
-                            {
-                                result.NewMonster.Remove(entry.ID);
-                                result.NewMonster.Remove(entry.NPCID2);
-                                result.NewNPC.Remove(entry.ID);
-                                result.NewNPC.Remove(entry.NPCID2);
-                                result.NewPC.Remove(entry.ID);
-                                result.NewPC.Remove(entry.NPCID2);
-                                continue;
-                            }
-                            if (existing != null)
-                            {
-                                continue;
-                            }
-
-                            if (newEntry)
-                            {
-                                switch (entry.Type)
-                                {
-                                    case Actor.Type.Monster:
-                                        MonsterWorkerDelegate.EnsureEntity(entry.ID, entry);
-                                        break;
-                                    case Actor.Type.PC:
-                                        PCWorkerDelegate.EnsureEntity(entry.ID, entry);
-                                        break;
-                                    case Actor.Type.NPC:
-                                        NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
-                                        break;
-                                    default:
-                                        NPCWorkerDelegate.EnsureEntity(entry.ID, entry);
-                                        break;
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // IGNORED
                         }
                     }
-
-                    try
+                    catch (Exception ex)
                     {
-                        // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.RemovedMonster)
-                        {
-                            MonsterWorkerDelegate.RemoveEntity(kvp.Key);
-                        }
-
-                        // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.RemovedNPC)
-                        {
-                            NPCWorkerDelegate.RemoveEntity(kvp.Key);
-                        }
-
-                        // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
-                        foreach (var kvp in result.RemovedPC)
-                        {
-                            PCWorkerDelegate.RemoveEntity(kvp.Key);
-                        }
+                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
                     }
-                    catch (Exception)
-                    {
-                        // IGNORED
-                    }
-
-                    MemoryHandler.Instance.ScanCount++;
-
-                    #endregion
                 }
-                catch (Exception)
+
+                try
                 {
-                    // IGNORED
+                    // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.RemovedMonster)
+                    {
+                        MonsterWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
+
+                    // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.RemovedNPC)
+                    {
+                        NPCWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
+
+                    // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
+                    foreach (var kvp in result.RemovedPC)
+                    {
+                        PCWorkerDelegate.RemoveEntity(kvp.Key);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                }
+
+                MemoryHandler.Instance.ScanCount++;
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 
             return result;

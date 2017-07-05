@@ -31,11 +31,12 @@ namespace FFXIVAPP.Memory
                     entry.MapTerritory = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"]);
                     entry.MapID = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["MAPINFO"], 8);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // IGNORED
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
             }
+
             if (Scanner.Instance.Locations.ContainsKey("ZONEINFO"))
             {
                 try
@@ -50,9 +51,9 @@ namespace FFXIVAPP.Memory
                         entry.MapID = currentActiveMapID;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // IGNORED
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
             }
         }

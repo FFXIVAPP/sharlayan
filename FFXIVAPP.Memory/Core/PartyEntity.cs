@@ -57,7 +57,7 @@ namespace FFXIVAPP.Memory.Core
 
         public string Name
         {
-            get { return _name ?? ""; }
+            get { return _name ?? string.Empty; }
             set { _name = StringHelper.TitleCase(value); }
         }
 
@@ -92,7 +92,7 @@ namespace FFXIVAPP.Memory.Core
             var distanceX = (float) Math.Abs(X - compare.X);
             var distanceY = (float) Math.Abs(Y - compare.Y);
             var distanceZ = (float) Math.Abs(Z - compare.Z);
-            return (float) Math.Sqrt((distanceX * distanceX) + (distanceY * distanceY) + (distanceZ * distanceZ));
+            return (float) Math.Sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
         }
     }
 }

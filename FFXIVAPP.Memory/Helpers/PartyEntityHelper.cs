@@ -20,11 +20,18 @@ using System.Collections.Generic;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Core.Enums;
 using FFXIVAPP.Memory.Delegates;
+using NLog;
 
 namespace FFXIVAPP.Memory.Helpers
 {
     internal static class PartyEntityHelper
     {
+        #region Logger
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         public static PartyEntity ResolvePartyMemberFromBytes(byte[] source, ActorEntity actorEntity = null)
         {
             if (actorEntity != null)
@@ -95,8 +102,9 @@ namespace FFXIVAPP.Memory.Helpers
                             var monster = MonsterWorkerDelegate.GetEntity(statusEntry.CasterID);
                             statusEntry.SourceEntity = (pc ?? npc) ?? monster;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
                         }
                         try
                         {
@@ -136,8 +144,9 @@ namespace FFXIVAPP.Memory.Helpers
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
                 CleanXPValue(ref entry);
                 return entry;

@@ -20,20 +20,27 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using FFXIVAPP.Memory.Events;
 using FFXIVAPP.Memory.Models;
 using NLog;
 
 namespace FFXIVAPP.Memory
 {
-    public class Scanner
+    public sealed class Scanner
     {
+        #region Logger
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
 
         /// <summary>
         /// </summary>
         /// <param name="pSignatures"> </param>
         public void LoadOffsets(IEnumerable<Signature> pSignatures)
         {
+            IsScanning = true;
+
             Func<bool> d = delegate
             {
                 var sw = new Stopwatch();
@@ -48,7 +55,7 @@ namespace FFXIVAPP.Memory
                 {
                     foreach (var signature in signatures)
                     {
-                        if (signature.Value == "")
+                        if (signature.Value == string.Empty)
                         {
                             // doesn't need a signature scan
                             Locations[signature.Key] = signature;
@@ -63,8 +70,12 @@ namespace FFXIVAPP.Memory
                 {
                     Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{kvp.Value.GetAddress() .ToString("X")}]");
                 }
-                _memDump = null;
                 sw.Stop();
+
+                RaiseSignaturesFound(Logger, Locations, sw.ElapsedMilliseconds);
+
+                IsScanning = false;
+
                 return true;
             };
             d.BeginInvoke(null, null);
@@ -90,12 +101,16 @@ namespace FFXIVAPP.Memory
                     {
                         _regions.Add(info);
                     }
+                    else
+                    {
+                        MemoryHandler.Instance.RaiseException(Logger, new Exception(info.ToString()));
+                    }
                     address = IntPtr.Add(info.BaseAddress, info.RegionSize.ToInt32());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // IGNORED
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
         }
 
@@ -132,7 +147,7 @@ namespace FFXIVAPP.Memory
                                 temp.Add(signature);
                                 continue;
                             }
-                            var baseResult = new IntPtr((long) (baseAddress + (regionCount * regionIncrement)));
+                            var baseResult = new IntPtr((long) (baseAddress + regionCount * regionIncrement));
                             var searchResult = IntPtr.Add(baseResult, idx + signature.Offset);
 
                             signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
@@ -145,9 +160,9 @@ namespace FFXIVAPP.Memory
                     regionCount++;
                     searchStart = IntPtr.Add(searchStart, regionIncrement);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // IGNORED
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
             }
         }
@@ -229,6 +244,17 @@ namespace FFXIVAPP.Memory
             }
         }
 
+        #region Event Raising
+
+        public event EventHandler<SignaturesFoundEvent> SignaturesFoundEvent = delegate { };
+
+        private void RaiseSignaturesFound(Logger logger, Dictionary<string, Signature> signatures, long processingTime)
+        {
+            SignaturesFoundEvent?.Invoke(this, new SignaturesFoundEvent(this, logger, signatures, processingTime));
+        }
+
+        #endregion
+
         #region Property Bindings
 
         private static Scanner _instance;
@@ -272,8 +298,9 @@ namespace FFXIVAPP.Memory
 
         #region Declarations
 
-        private byte[] _memDump;
         private List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION> _regions;
+
+        public bool IsScanning { get; set; }
 
         #endregion
     }

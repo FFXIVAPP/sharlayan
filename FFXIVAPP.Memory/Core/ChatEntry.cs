@@ -42,7 +42,7 @@ namespace FFXIVAPP.Memory.Core
                 var cleanable = raw.Skip(8)
                                    .ToArray();
                 var cleaned = new ChatCleaner(cleanable).Result;
-                var cut = (cleaned.Substring(1, 1) == ":") ? 2 : 1;
+                var cut = cleaned.Substring(1, 1) == ":" ? 2 : 1;
                 chatLogEntry.Line = XmlHelper.SanitizeXmlString(cleaned.Substring(cut));
                 chatLogEntry.Line = new ChatCleaner(chatLogEntry.Line).Result;
                 chatLogEntry.JP = IsJapanese(chatLogEntry.Line);
@@ -52,10 +52,10 @@ namespace FFXIVAPP.Memory.Core
             catch (Exception)
             {
                 chatLogEntry.Bytes = new byte[0];
-                chatLogEntry.Raw = "";
-                chatLogEntry.Line = "";
-                chatLogEntry.Code = "";
-                chatLogEntry.Combined = "";
+                chatLogEntry.Raw = string.Empty;
+                chatLogEntry.Line = string.Empty;
+                chatLogEntry.Code = string.Empty;
+                chatLogEntry.Combined = string.Empty;
             }
             return chatLogEntry;
         }

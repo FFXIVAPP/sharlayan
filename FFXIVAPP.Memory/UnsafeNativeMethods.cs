@@ -17,6 +17,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace FFXIVAPP.Memory
 {
@@ -96,6 +97,21 @@ namespace FFXIVAPP.Memory
             public uint State;
             public uint Protect;
             public uint Type;
+
+            public override string ToString()
+            {
+                var sb = new StringBuilder();
+
+                sb.AppendFormat($"BaseAddress:{BaseAddress}{Environment.NewLine}");
+                sb.AppendFormat($"AllocationBase:{AllocationBase}{Environment.NewLine}");
+                sb.AppendFormat($"AllocationProtect:{AllocationProtect}{Environment.NewLine}");
+                sb.AppendFormat($"RegionSize:{RegionSize}{Environment.NewLine}");
+                sb.AppendFormat($"State:{State}{Environment.NewLine}");
+                sb.AppendFormat($"Protect:{Protect}{Environment.NewLine}");
+                sb.AppendFormat($"Type:{Type}{Environment.NewLine}");
+
+                return sb.ToString();
+            }
         }
     }
 }

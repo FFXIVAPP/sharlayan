@@ -67,12 +67,12 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                     return MapInfos.ContainsKey(id) ? MapInfos[id] : DefaultMapItem;
                 }
-                Generate();
+                Resolve();
                 return DefaultMapItem;
             }
         }
 
-        private static void Generate()
+        internal static void Resolve()
         {
             if (Loading)
             {

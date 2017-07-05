@@ -52,5 +52,11 @@ namespace FFXIVAPP.Memory.Models
         public int ActionData { get; set; }
         public int EffectRange { get; set; }
         public int Type { get; set; }
+        public int Potency { get; set; }
+        public int OverTimePotency { get; set; }
+        public decimal Duration { get; set; }
+        public bool IsHealingOverTime { get; set; }
+        public bool IsDamageOverTime { get; set; }
+        public bool HasNoInitialResult { get; set; }
     }
 }

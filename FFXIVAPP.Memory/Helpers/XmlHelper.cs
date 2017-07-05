@@ -30,7 +30,7 @@ namespace FFXIVAPP.Memory.Helpers
         {
             if (xValue == null)
             {
-                return "";
+                return string.Empty;
             }
             var buffer = new StringBuilder(xValue.Length);
             foreach (var xChar in xValue.Where(xChar => IsLegalXmlChar(xChar)))
@@ -46,7 +46,7 @@ namespace FFXIVAPP.Memory.Helpers
         /// <returns> </returns>
         private static bool IsLegalXmlChar(int xChar)
         {
-            return (xChar == 0x9 || xChar == 0xA || xChar == 0xD || (xChar >= 0x20 && xChar <= 0xD7FF) || (xChar >= 0xE000 && xChar <= 0xFFFD) || (xChar >= 0x10000 && xChar <= 0x10FFFF));
+            return xChar == 0x9 || xChar == 0xA || xChar == 0xD || xChar >= 0x20 && xChar <= 0xD7FF || xChar >= 0xE000 && xChar <= 0xFFFD || xChar >= 0x10000 && xChar <= 0x10FFFF;
         }
     }
 }

@@ -31,52 +31,54 @@ namespace FFXIVAPP.Memory
         {
             var result = new InventoryReadResult();
 
-            if (Scanner.Instance.Locations.ContainsKey("INVENTORY"))
+            if (!Scanner.Instance.Locations.ContainsKey("INVENTORY"))
             {
-                try
-                {
-                    InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["INVENTORY"]));
+                return result;
+            }
 
-                    result.InventoryEntities = new List<InventoryEntity>
-                    {
-                        GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_1),
-                        GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_2),
-                        GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_3),
-                        GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_4),
-                        GetItems(InventoryPointerMap, Inventory.Container.CURRENT_EQ),
-                        GetItems(InventoryPointerMap, Inventory.Container.EXTRA_EQ),
-                        GetItems(InventoryPointerMap, Inventory.Container.CRYSTALS),
-                        GetItems(InventoryPointerMap, Inventory.Container.QUESTS_KI),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_1),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_2),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_3),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_4),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_5),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_6),
-                        GetItems(InventoryPointerMap, Inventory.Container.HIRE_7),
-                        GetItems(InventoryPointerMap, Inventory.Container.COMPANY_1),
-                        GetItems(InventoryPointerMap, Inventory.Container.COMPANY_2),
-                        GetItems(InventoryPointerMap, Inventory.Container.COMPANY_3),
-                        GetItems(InventoryPointerMap, Inventory.Container.COMPANY_CRYSTALS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_MH),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_OH),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_HEAD),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_BODY),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_HANDS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_BELT),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_LEGS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_FEET),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_EARRINGS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_NECK),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_WRISTS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_RINGS),
-                        GetItems(InventoryPointerMap, Inventory.Container.AC_SOULS)
-                    };
-                }
-                catch (Exception)
+            try
+            {
+                InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["INVENTORY"]));
+
+                result.InventoryEntities = new List<InventoryEntity>
                 {
-                    // IGNORED
-                }
+                    GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_1),
+                    GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_2),
+                    GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_3),
+                    GetItems(InventoryPointerMap, Inventory.Container.INVENTORY_4),
+                    GetItems(InventoryPointerMap, Inventory.Container.CURRENT_EQ),
+                    GetItems(InventoryPointerMap, Inventory.Container.EXTRA_EQ),
+                    GetItems(InventoryPointerMap, Inventory.Container.CRYSTALS),
+                    GetItems(InventoryPointerMap, Inventory.Container.QUESTS_KI),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_1),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_2),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_3),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_4),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_5),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_6),
+                    GetItems(InventoryPointerMap, Inventory.Container.HIRE_7),
+                    GetItems(InventoryPointerMap, Inventory.Container.COMPANY_1),
+                    GetItems(InventoryPointerMap, Inventory.Container.COMPANY_2),
+                    GetItems(InventoryPointerMap, Inventory.Container.COMPANY_3),
+                    GetItems(InventoryPointerMap, Inventory.Container.COMPANY_CRYSTALS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_MH),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_OH),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_HEAD),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_BODY),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_HANDS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_BELT),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_LEGS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_FEET),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_EARRINGS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_NECK),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_WRISTS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_RINGS),
+                    GetItems(InventoryPointerMap, Inventory.Container.AC_SOULS)
+                };
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 
             return result;
@@ -123,7 +125,7 @@ namespace FFXIVAPP.Memory
                         Durability = MemoryHandler.Instance.GetUInt16(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID),
                         GlamourID = (uint) MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.GlamourID),
                         //get the flag that show if the item is hq or not
-                        IsHQ = (MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.IsHQ) == 0x01)
+                        IsHQ = MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.IsHQ) == 0x01
                     });
                 }
             }

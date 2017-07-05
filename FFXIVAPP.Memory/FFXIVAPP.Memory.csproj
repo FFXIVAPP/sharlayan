@@ -85,6 +85,7 @@
     <Compile Include="Delegates\NPCWorkerDelegate.cs" />
     <Compile Include="Delegates\PartyInfoWorkerDelegate.cs" />
     <Compile Include="Delegates\PCWorkerDelegate.cs" />
+    <Compile Include="Events\SignaturesFoundEvent.cs" />
     <Compile Include="Helpers\ActorEntityHelper.cs" />
     <Compile Include="Helpers\APIHelper.cs" />
     <Compile Include="Helpers\BitConverter.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Helpers\PlayerEntityHelper.cs" />
     <Compile Include="Helpers\ActionHelper.cs" />
     <Compile Include="Helpers\StatusEffectHelper.cs" />
+    <Compile Include="Events\ExceptionEvent.cs" />
     <Compile Include="Models\ActionItem.cs" />
     <Compile Include="Models\ActorReadResult.cs" />
     <Compile Include="Models\ChatLogReadResult.cs" />

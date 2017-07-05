@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory.Helpers
 {
-    public static class APIHelper
+    internal static class APIHelper
     {
         private static WebClient _webClient = new WebClient
         {

@@ -121,7 +121,7 @@ namespace FFXIVAPP.Memory.Core
 
         public string Name
         {
-            get { return _name ?? ""; }
+            get { return _name ?? string.Empty; }
             set { _name = StringHelper.TitleCase(value); }
         }
 

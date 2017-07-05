@@ -21,11 +21,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FFXIVAPP.Memory.Core;
 using FFXIVAPP.Memory.Models;
+using NLog;
 
 namespace FFXIVAPP.Memory
 {
     public static partial class Reader
     {
+        #region Logger
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         private static ChatLogPointers ChatLogPointers;
         private static int PreviousArrayIndex;
         private static int PreviousOffset;
@@ -37,7 +44,7 @@ namespace FFXIVAPP.Memory
             Indexes.Clear();
             for (var i = 0; i < 1000; i++)
             {
-                Indexes.Add((int) MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + (i * 4))));
+                Indexes.Add((int) MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
             }
         }
 
@@ -66,9 +73,15 @@ namespace FFXIVAPP.Memory
             PreviousArrayIndex = previousArrayIndex;
             PreviousOffset = previousOffset;
 
-            if (Scanner.Instance.Locations.ContainsKey("CHATLOG"))
+            if (!Scanner.Instance.Locations.ContainsKey("CHATLOG"))
             {
-                IntPtr chatPointerMap;
+                return result;
+            }
+
+            IntPtr chatPointerMap;
+
+            try
+            {
                 switch (MemoryHandler.Instance.GameLanguage)
                 {
                     case "Korean":
@@ -83,66 +96,70 @@ namespace FFXIVAPP.Memory
                 {
                     return result;
                 }
+            }
+            catch (Exception)
+            {
+                return result;
+            }
 
-                var buffered = new List<List<byte>>();
+            var buffered = new List<List<byte>>();
 
+            try
+            {
+                Indexes.Clear();
+                ChatLogPointers = new ChatLogPointers
+                {
+                    LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
+                    OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
+                    OffsetArrayPos = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
+                    OffsetArrayEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
+                    LogStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
+                    LogNext = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
+                    LogEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
+                };
+
+                EnsureArrayIndexes();
+
+                var currentArrayIndex = (ChatLogPointers.OffsetArrayPos - ChatLogPointers.OffsetArrayStart) / 4;
+                if (ChatLogFirstRun)
+                {
+                    ChatLogFirstRun = false;
+                    PreviousOffset = Indexes[(int) currentArrayIndex - 1];
+                    PreviousArrayIndex = (int) currentArrayIndex - 1;
+                }
+                else
+                {
+                    if (currentArrayIndex < PreviousArrayIndex)
+                    {
+                        buffered.AddRange(ResolveEntries(PreviousArrayIndex, 1000));
+                        PreviousOffset = 0;
+                        PreviousArrayIndex = 0;
+                    }
+                    if (PreviousArrayIndex < currentArrayIndex)
+                    {
+                        buffered.AddRange(ResolveEntries(PreviousArrayIndex, (int) currentArrayIndex));
+                    }
+                    PreviousArrayIndex = (int) currentArrayIndex;
+                }
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+            }
+
+            foreach (var bytes in buffered.Where(b => b.Count > 0))
+            {
                 try
                 {
-                    Indexes.Clear();
-                    ChatLogPointers = new ChatLogPointers
+                    var chatLogEntry = ChatEntry.Process(bytes.ToArray());
+                    if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+"))
                     {
-                        LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                        OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
-                        OffsetArrayPos = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
-                        OffsetArrayEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
-                        LogStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
-                        LogNext = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
-                        LogEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
-                    };
-
-                    EnsureArrayIndexes();
-
-                    var currentArrayIndex = (ChatLogPointers.OffsetArrayPos - ChatLogPointers.OffsetArrayStart) / 4;
-                    if (ChatLogFirstRun)
-                    {
-                        ChatLogFirstRun = false;
-                        PreviousOffset = Indexes[(int) currentArrayIndex - 1];
-                        PreviousArrayIndex = (int) currentArrayIndex - 1;
-                    }
-                    else
-                    {
-                        if (currentArrayIndex < PreviousArrayIndex)
-                        {
-                            buffered.AddRange(ResolveEntries(PreviousArrayIndex, 1000));
-                            PreviousOffset = 0;
-                            PreviousArrayIndex = 0;
-                        }
-                        if (PreviousArrayIndex < currentArrayIndex)
-                        {
-                            buffered.AddRange(ResolveEntries(PreviousArrayIndex, (int) currentArrayIndex));
-                        }
-                        PreviousArrayIndex = (int) currentArrayIndex;
+                        result.ChatLogEntries.Add(chatLogEntry);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // IGNORED
-                }
-
-                foreach (var bytes in buffered.Where(b => b.Count > 0))
-                {
-                    try
-                    {
-                        var chatLogEntry = ChatEntry.Process(bytes.ToArray());
-                        if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+"))
-                        {
-                            result.ChatLogEntries.Add(chatLogEntry);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // IGNORED
-                    }
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
             }
 

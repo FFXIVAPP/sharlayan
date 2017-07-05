@@ -16,9 +16,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 using FFXIVAPP.Memory;
+using FFXIVAPP.Memory.Events;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using NLog;
+using NLog.Config;
 
 namespace Bootstrapper
 {
@@ -26,22 +35,43 @@ namespace Bootstrapper
     {
         private static void Main(string[] args)
         {
-            var actionInfo = ActionHelper.ActionInfo(2);
-            Console.WriteLine(actionInfo.Name.English);
-            var statusInfo = StatusEffectHelper.StatusInfo(2);
-            Console.WriteLine(statusInfo.Name.English);
-            var mapInfo = ZoneHelper.MapInfo(138);
-            Console.WriteLine(mapInfo.Name.English);
-            MemoryHandler.Instance.SetStructures(new ProcessModel
+            var stringReader = new StringReader(XElement.Load("./Bootstrapper.exe.nlog")
+                                                        .ToString());
+        
+            using (var xmlReader = XmlReader.Create(stringReader))
             {
-                IsWin64 = true
+                LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
+            }
+
+            ActionHelper.ActionInfo(2);
+            StatusEffectHelper.StatusInfo(2);
+            ZoneHelper.MapInfo(138);
+
+            var process = Process.GetProcessesByName("ffxiv_dx11")
+                                 .FirstOrDefault();
+
+            MemoryHandler.Instance.SetProcess(new ProcessModel
+            {
+                IsWin64 = true,
+                Process = process
             });
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(new ProcessModel
+
+            while (Scanner.Instance.IsScanning)
             {
-                IsWin64 = true
-            }));
-            Console.WriteLine("To exit this application press \"Enter\".");
-            Console.ReadLine();
+                Thread.Sleep(1000);
+                Console.WriteLine("Scanning...");
+            }
+
+            Scanner.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e)
+            {
+                foreach (var kvp in e.Signatures)
+                {
+                    Console.WriteLine($"{kvp.Key} => {kvp.Value.GetAddress():X}");
+                }
+
+                Console.WriteLine("To exit this application press \"Enter\".");
+                Console.ReadLine();
+            };
         }
     }
 }

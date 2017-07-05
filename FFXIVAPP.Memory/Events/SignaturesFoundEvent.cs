@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ EnmityEntry.cs
+﻿// FFXIVAPP.Memory ~ SignaturesFoundEvent.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -15,22 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using FFXIVAPP.Memory.Core.Interfaces;
-using FFXIVAPP.Memory.Helpers;
+using System;
+using System.Collections.Generic;
+using FFXIVAPP.Memory.Models;
+using NLog;
 
-namespace FFXIVAPP.Memory.Core
+namespace FFXIVAPP.Memory.Events
 {
-    public class EnmityEntry : IEnmityEntry
+    public class SignaturesFoundEvent : EventArgs
     {
-        private string _name;
-
-        public string Name
+        public SignaturesFoundEvent(object sender, Logger logger, Dictionary<string, Signature> signatures, long processingTime)
         {
-            get { return _name ?? string.Empty; }
-            set { _name = StringHelper.TitleCase(value); }
+            Sender = sender;
+            Logger = logger;
+            Signatures = signatures;
+            ProcessingTime = processingTime;
         }
 
-        public uint ID { get; set; }
-        public uint Enmity { get; set; }
+        public object Sender { get; set; }
+        public Logger Logger { get; set; }
+        public Dictionary<string, Signature> Signatures { get; set; }
+        public long ProcessingTime { get; set; }
     }
 }

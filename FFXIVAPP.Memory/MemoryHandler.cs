@@ -19,28 +19,38 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using FFXIVAPP.Memory.Events;
 using FFXIVAPP.Memory.Helpers;
 using FFXIVAPP.Memory.Models;
+using NLog;
 using BitConverter = FFXIVAPP.Memory.Helpers.BitConverter;
 
 namespace FFXIVAPP.Memory
 {
     public class MemoryHandler
     {
+        #region Logger
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        #endregion
+
         public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false)
         {
             GameLanguage = gameLanguage;
             IgnoreJSONCache = ignoreJSONCache;
+
             if (processModel == null)
             {
                 return;
             }
+
             SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
         }
 
         public string GameLanguage { get; set; }
-        public bool IgnoreJSONCache { get; set; }
-        public int ScanCount { get; set; }
+        internal bool IgnoreJSONCache { get; set; }
+        public long ScanCount { get; set; }
         public Structures Structures { get; set; }
 
         ~MemoryHandler()
@@ -49,8 +59,9 @@ namespace FFXIVAPP.Memory
             {
                 UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                RaiseException(Logger, ex);
             }
         }
 
@@ -73,6 +84,10 @@ namespace FFXIVAPP.Memory
 
             Scanner.Instance.Locations.Clear();
             Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion));
+
+            ActionHelper.Resolve();
+            StatusEffectHelper.Resolve();
+            ZoneHelper.Resolve();
         }
 
         public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
@@ -121,7 +136,7 @@ namespace FFXIVAPP.Memory
         /// <param name="address"> </param>
         /// <param name="buffer"> </param>
         /// <returns> </returns>
-        private bool Peek(IntPtr address, byte[] buffer)
+        public bool Peek(IntPtr address, byte[] buffer)
         {
             IntPtr lpNumberOfBytesRead;
             return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
@@ -332,6 +347,17 @@ namespace FFXIVAPP.Memory
         {
             public long Length;
             public long Start;
+        }
+
+        #endregion
+
+        #region Event Raising
+
+        public event EventHandler<ExceptionEvent> ExceptionEvent = delegate { };
+
+        protected internal virtual void RaiseException(Logger logger, Exception e, bool levelIsError = false)
+        {
+            ExceptionEvent?.Invoke(this, new ExceptionEvent(this, logger, e, levelIsError));
         }
 
         #endregion

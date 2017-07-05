@@ -31,158 +31,158 @@ namespace FFXIVAPP.Memory
         {
             var result = new TargetReadResult();
 
-            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                try
+                return result;
+            }
+
+            try
+            {
+                var enmityEntries = new List<EnmityEntry>();
+                var agroPointersFound = Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT");
+
+                if (!Scanner.Instance.Locations.ContainsKey("TARGET"))
                 {
-                    IntPtr targetHateStructure;
+                    return result;
+                }
 
-                    var enmityEntries = new List<EnmityEntry>();
-                    var agroPointersFound = Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT");
+                var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
 
-                    if (Scanner.Instance.Locations.ContainsKey("TARGET"))
+                if (targetAddress.ToInt64() > 0)
+                {
+                    var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
+
+                    var currentTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                    var mouseOverTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                    var focusTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                    var previousTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+
+                    var currentTargetID = BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+
+                    if (currentTarget > 0)
                     {
-                        var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
-                        var somethingFound = false;
-
-                        if (targetAddress.ToInt64() > 0)
+                        try
                         {
-                            //var targetInfo = MemoryHandler.Instance.GetStructure<Structures.Target>(targetAddress);
-                            var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
-
-                            var currentTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                            var mouseOverTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                            var focusTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                            var previousTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
-
-                            var currentTargetID = BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
-
-                            if (currentTarget > 0)
-                            {
-                                try
-                                {
-                                    var entry = GetTargetActorEntityFromSource(currentTarget);
-                                    currentTargetID = entry.ID;
-                                    if (entry.IsValid)
-                                    {
-                                        result.TargetsFound = true;
-                                        result.TargetEntity.CurrentTarget = entry;
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // IGNORED
-                                }
-                            }
-                            if (mouseOverTarget > 0)
-                            {
-                                try
-                                {
-                                    var entry = GetTargetActorEntityFromSource(mouseOverTarget);
-                                    if (entry.IsValid)
-                                    {
-                                        result.TargetsFound = true;
-                                        result.TargetEntity.MouseOverTarget = entry;
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // IGNORED
-                                }
-                            }
-                            if (focusTarget > 0)
-                            {
-                                try
-                                {
-                                    var entry = GetTargetActorEntityFromSource(focusTarget);
-                                    if (entry.IsValid)
-                                    {
-                                        result.TargetsFound = true;
-                                        result.TargetEntity.FocusTarget = entry;
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // IGNORED
-                                }
-                            }
-                            if (previousTarget > 0)
-                            {
-                                try
-                                {
-                                    var entry = GetTargetActorEntityFromSource(previousTarget);
-                                    if (entry.IsValid)
-                                    {
-                                        result.TargetsFound = true;
-                                        result.TargetEntity.PreviousTarget = entry;
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    // IGNORED
-                                }
-                            }
-                            if (currentTargetID > 0)
+                            var entry = GetTargetActorEntityFromSource(currentTarget);
+                            currentTargetID = entry.ID;
+                            if (entry.IsValid)
                             {
                                 result.TargetsFound = true;
-                                result.TargetEntity.CurrentTargetID = currentTargetID;
+                                result.TargetEntity.CurrentTarget = entry;
                             }
                         }
-                        if (result.TargetEntity.CurrentTargetID > 0)
+                        catch (Exception ex)
                         {
-                            if (agroPointersFound)
+                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        }
+                    }
+                    if (mouseOverTarget > 0)
+                    {
+                        try
+                        {
+                            var entry = GetTargetActorEntityFromSource(mouseOverTarget);
+                            if (entry.IsValid)
                             {
-                                var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["ENMITY_COUNT"]);
-                                if (agroCount > 0)
+                                result.TargetsFound = true;
+                                result.TargetEntity.MouseOverTarget = entry;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        }
+                    }
+                    if (focusTarget > 0)
+                    {
+                        try
+                        {
+                            var entry = GetTargetActorEntityFromSource(focusTarget);
+                            if (entry.IsValid)
+                            {
+                                result.TargetsFound = true;
+                                result.TargetEntity.FocusTarget = entry;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        }
+                    }
+                    if (previousTarget > 0)
+                    {
+                        try
+                        {
+                            var entry = GetTargetActorEntityFromSource(previousTarget);
+                            if (entry.IsValid)
+                            {
+                                result.TargetsFound = true;
+                                result.TargetEntity.PreviousTarget = entry;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        }
+                    }
+                    if (currentTargetID > 0)
+                    {
+                        result.TargetsFound = true;
+                        result.TargetEntity.CurrentTargetID = currentTargetID;
+                    }
+                }
+                if (result.TargetEntity.CurrentTargetID > 0)
+                {
+                    if (agroPointersFound)
+                    {
+                        var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["ENMITY_COUNT"]);
+                        if (agroCount > 0)
+                        {
+                            var agroStructure = Scanner.Instance.Locations["ENMITYMAP"]
+                                                       .GetAddress();
+                            for (uint i = 0; i < 16; i++)
+                            {
+                                try
                                 {
-                                    var agroStructure = Scanner.Instance.Locations["ENMITYMAP"]
-                                                               .GetAddress();
-                                    for (uint i = 0; i < 16; i++)
+                                    var address = new IntPtr(agroStructure.ToInt64() + i * 72);
+                                    var enmityEntry = new EnmityEntry
                                     {
+                                        ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                        Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                        Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                    };
+                                    if (enmityEntry.ID <= 0)
+                                    {
+                                        continue;
+                                    }
+                                    if (string.IsNullOrWhiteSpace(enmityEntry.Name))
+                                    {
+                                        var pc = PCWorkerDelegate.GetEntity(enmityEntry.ID);
+                                        var npc = NPCWorkerDelegate.GetEntity(enmityEntry.ID);
+                                        var monster = MonsterWorkerDelegate.GetEntity(enmityEntry.ID);
                                         try
                                         {
-                                            var address = new IntPtr(agroStructure.ToInt64() + (i * 72));
-                                            var enmityEntry = new EnmityEntry
-                                            {
-                                                ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
-                                                Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                                Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
-                                            };
-                                            if (enmityEntry.ID <= 0)
-                                            {
-                                                continue;
-                                            }
-                                            if (string.IsNullOrWhiteSpace(enmityEntry.Name))
-                                            {
-                                                var pc = PCWorkerDelegate.GetEntity(enmityEntry.ID);
-                                                var npc = NPCWorkerDelegate.GetEntity(enmityEntry.ID);
-                                                var monster = MonsterWorkerDelegate.GetEntity(enmityEntry.ID);
-                                                try
-                                                {
-                                                    enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
-                                                }
-                                                catch (Exception)
-                                                {
-                                                    // IGNORED
-                                                }
-                                            }
-                                            enmityEntries.Add(enmityEntry);
+                                            enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
                                         }
-                                        catch (Exception)
+                                        catch (Exception ex)
                                         {
-                                            // IGNORED
+                                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
                                         }
                                     }
+                                    enmityEntries.Add(enmityEntry);
+                                }
+                                catch (Exception ex)
+                                {
+                                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                                 }
                             }
                         }
-                        result.TargetEntity.EnmityEntries = enmityEntries;
                     }
                 }
-                catch (Exception)
-                {
-                    // IGNORED
-                }
+                result.TargetEntity.EnmityEntries = enmityEntries;
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 
             return result;

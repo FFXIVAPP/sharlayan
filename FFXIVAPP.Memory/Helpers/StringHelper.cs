@@ -38,7 +38,7 @@ namespace FFXIVAPP.Memory.Helpers
         {
             if (string.IsNullOrWhiteSpace(s.Trim()))
             {
-                return "";
+                return string.Empty;
             }
             s = TrimAndCleanSpaces(s);
             var result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(all ? s.ToLower() : s);

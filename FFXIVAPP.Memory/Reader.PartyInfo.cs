@@ -33,96 +33,101 @@ namespace FFXIVAPP.Memory
         {
             var result = new PartyInfoReadResult();
 
-            if (Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
             {
-                if (Scanner.Instance.Locations.ContainsKey("PARTYMAP"))
+                return result;
+            }
+            if (!Scanner.Instance.Locations.ContainsKey("PARTYMAP"))
+            {
+                return result;
+            }
+            if (!Scanner.Instance.Locations.ContainsKey("PARTYCOUNT"))
+            {
+                return result;
+            }
+
+            PartyInfoMap = Scanner.Instance.Locations["PARTYMAP"];
+            PartyCountMap = Scanner.Instance.Locations["PARTYCOUNT"];
+
+            try
+            {
+                var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);
+
+                if (partyCount > 1 && partyCount < 9)
                 {
-                    if (Scanner.Instance.Locations.ContainsKey("PARTYCOUNT"))
+                    for (uint i = 0; i < partyCount; i++)
                     {
-                        PartyInfoMap = Scanner.Instance.Locations["PARTYMAP"];
-                        PartyCountMap = Scanner.Instance.Locations["PARTYCOUNT"];
-                        try
+                        var size = (uint) MemoryHandler.Instance.Structures.PartyInfo.Size;
+                        var address = PartyInfoMap.ToInt64() + i * size;
+                        var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
+                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
+                        ActorEntity existing = null;
+                        if (result.RemovedParty.ContainsKey(ID))
                         {
-                            var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);
-
-                            if (partyCount > 1 && partyCount < 9)
+                            result.RemovedParty.Remove(ID);
+                            if (MonsterWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
                             {
-                                for (uint i = 0; i < partyCount; i++)
-                                {
-                                    var size = (uint) MemoryHandler.Instance.Structures.PartyInfo.Size;
-                                    var address = PartyInfoMap.ToInt64() + (i * size);
-                                    var source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), (int) size);
-                                    var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.PartyEntity.ID);
-                                    ActorEntity existing = null;
-                                    if (result.RemovedParty.ContainsKey(ID))
-                                    {
-                                        result.RemovedParty.Remove(ID);
-                                        if (MonsterWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
-                                        {
-                                            existing = MonsterWorkerDelegate.GetEntity(ID);
-                                        }
-                                        if (PCWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
-                                        {
-                                            existing = PCWorkerDelegate.GetEntity(ID);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        result.NewParty.Add(ID);
-                                    }
-                                    var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(source, existing);
-                                    if (!entry.IsValid)
-                                    {
-                                        continue;
-                                    }
-                                    if (existing != null)
-                                    {
-                                        continue;
-                                    }
-                                    PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
-                                }
+                                existing = MonsterWorkerDelegate.GetEntity(ID);
                             }
-                            else if (partyCount == 0 || partyCount == 1)
+                            if (PCWorkerDelegate.EntitiesDictionary.ContainsKey(ID))
                             {
-                                var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(new byte[0], PCWorkerDelegate.CurrentUser);
-                                if (entry.IsValid)
-                                {
-                                    var exists = false;
-                                    if (result.RemovedParty.ContainsKey(entry.ID))
-                                    {
-                                        result.RemovedParty.Remove(entry.ID);
-                                        exists = true;
-                                    }
-                                    else
-                                    {
-                                        result.NewParty.Add(entry.ID);
-                                    }
-                                    if (!exists)
-                                    {
-                                        PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
-                                    }
-                                }
+                                existing = PCWorkerDelegate.GetEntity(ID);
                             }
                         }
-                        catch (Exception)
+                        else
                         {
-                            // IGNORED
+                            result.NewParty.Add(ID);
                         }
-
-                        try
+                        var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(source, existing);
+                        if (!entry.IsValid)
                         {
-                            // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
-                            foreach (var kvp in result.RemovedParty)
-                            {
-                                PartyInfoWorkerDelegate.RemoveEntity(kvp.Key);
-                            }
+                            continue;
                         }
-                        catch (Exception)
+                        if (existing != null)
                         {
-                            // IGNORED
+                            continue;
+                        }
+                        PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
+                    }
+                }
+                else if (partyCount == 0 || partyCount == 1)
+                {
+                    var entry = PartyEntityHelper.ResolvePartyMemberFromBytes(new byte[0], PCWorkerDelegate.CurrentUser);
+                    if (entry.IsValid)
+                    {
+                        var exists = false;
+                        if (result.RemovedParty.ContainsKey(entry.ID))
+                        {
+                            result.RemovedParty.Remove(entry.ID);
+                            exists = true;
+                        }
+                        else
+                        {
+                            result.NewParty.Add(entry.ID);
+                        }
+                        if (!exists)
+                        {
+                            PartyInfoWorkerDelegate.EnsureEntity(entry.ID, entry);
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+            }
+
+            try
+            {
+                // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
+                foreach (var kvp in result.RemovedParty)
+                {
+                    PartyInfoWorkerDelegate.RemoveEntity(kvp.Key);
+                }
+            }
+            catch (Exception ex)
+            {
+                MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 
             return result;

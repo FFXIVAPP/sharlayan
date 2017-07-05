@@ -16,6 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using FFXIVAPP.Memory.Models;
 
@@ -53,6 +54,64 @@ namespace FFXIVAPP.Memory.Helpers
             }
         }
 
+        public static ActionItem ActionInfo(string name)
+        {
+            if (Loading)
+            {
+                return DefaultActionItem;
+            }
+            lock (Actions)
+            {
+                if (Actions.Any())
+                {
+                    return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name))
+                                  .Value ?? DefaultActionItem;
+                }
+                Resolve();
+                return DefaultActionItem;
+            }
+        }
+
+        public static List<ActionItem> HealingOverTimeActions()
+        {
+            var results = new List<ActionItem>();
+            if (Loading)
+            {
+                return results;
+            }
+            lock (Actions)
+            {
+                if (Actions.Any())
+                {
+                    results.AddRange(Actions.Where(kvp => kvp.Value.IsHealingOverTime)
+                                            .Select(kvp => kvp.Value));
+                    return results;
+                }
+                Resolve();
+                return results;
+            }
+        }
+
+        public static List<ActionItem> DamageOverTimeActions()
+        {
+            var results = new List<ActionItem>();
+            if (Loading)
+            {
+                return results;
+            }
+            lock (Actions)
+            {
+                if (Actions.Any())
+                {
+                    results.AddRange(Actions.Where(kvp => kvp.Value.IsDamageOverTime)
+                                            .Select(kvp => kvp.Value));
+                    return results;
+                }
+                Resolve();
+                return results;
+            }
+        }
+
         public static ActionItem ActionInfo(uint id)
         {
             if (Loading)
@@ -65,12 +124,12 @@ namespace FFXIVAPP.Memory.Helpers
                 {
                     return Actions.ContainsKey(id) ? Actions[id] : DefaultActionItem;
                 }
-                Generate();
+                Resolve();
                 return DefaultActionItem;
             }
         }
 
-        private static void Generate()
+        internal static void Resolve()
         {
             if (Loading)
             {
