@@ -137,8 +137,7 @@ namespace FFXIVAPP.Memory
                         var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["ENMITY_COUNT"]);
                         if (agroCount > 0)
                         {
-                            var agroStructure = Scanner.Instance.Locations["ENMITYMAP"]
-                                                       .GetAddress();
+                            var agroStructure = (IntPtr) Scanner.Instance.Locations["ENMITYMAP"];
                             for (uint i = 0; i < 16; i++)
                             {
                                 try

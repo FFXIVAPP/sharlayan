@@ -55,8 +55,7 @@ namespace FFXIVAPP.Memory
                 if (Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT"))
                 {
                     var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
-                    var enmityStructure = Scanner.Instance.Locations["AGROMAP"]
-                                                 .GetAddress();
+                    var enmityStructure = (IntPtr) Scanner.Instance.Locations["AGROMAP"];
 
                     if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
                     {

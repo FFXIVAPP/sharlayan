@@ -68,7 +68,7 @@ namespace FFXIVAPP.Memory
                 }
                 foreach (var kvp in Locations)
                 {
-                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{kvp.Value.GetAddress() .ToString("X")}]");
+                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{((IntPtr) kvp.Value).ToString("X")}]");
                 }
                 sw.Stop();
 

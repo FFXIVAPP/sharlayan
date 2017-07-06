@@ -18,14 +18,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace FFXIVAPP.Memory.Models
 {
     public class Signature
     {
-        private int _Offset;
         private Regex _regularExpress;
-        private bool offsetSet;
 
         public Signature()
         {
@@ -51,22 +50,16 @@ namespace FFXIVAPP.Memory.Models
             }
         }
 
+        [JsonIgnore]
         public IntPtr SigScanAddress { get; set; }
         public bool ASMSignature { get; set; }
 
+        [JsonIgnore]
         public int Offset
         {
             get
             {
-                if (!offsetSet)
-                {
-                    _Offset = Value.Length / 2;
-                }
-                return _Offset;
-            }
-            set
-            {
-                // IGNORED
+                return Value.Length / 2;
             }
         }
 
@@ -99,11 +92,9 @@ namespace FFXIVAPP.Memory.Models
             return MemoryHandler.Instance.ResolvePointerPath(PointerPath, baseAddress, FirstIsOffsetAddress);
         }
 
-        // convenience conversion for less code breakage. 
-        // FIXME: convert all calling functions to handle IntPtr properly someday, and stop using long for addresses
-        public static implicit operator IntPtr(Signature value)
+        public static implicit operator IntPtr(Signature signature)
         {
-            return value.GetAddress();
+            return signature.GetAddress();
         }
     }
 }
