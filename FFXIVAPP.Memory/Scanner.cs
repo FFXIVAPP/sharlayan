@@ -18,9 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using FFXIVAPP.Memory.Events;
 using FFXIVAPP.Memory.Models;
 using NLog;
 
@@ -37,7 +37,8 @@ namespace FFXIVAPP.Memory
         /// <summary>
         /// </summary>
         /// <param name="pSignatures"> </param>
-        public void LoadOffsets(IEnumerable<Signature> pSignatures, [Optional] bool ScanAllRegions)
+        /// <param name="scanAllMemoryRegions"></param>
+        public void LoadOffsets(IEnumerable<Signature> pSignatures, bool scanAllMemoryRegions = false)
         {
             IsScanning = true;
 
@@ -50,7 +51,12 @@ namespace FFXIVAPP.Memory
                     return false;
                 }
                 var signatures = new List<Signature>(pSignatures);
-                LoadRegions();
+
+                if (scanAllMemoryRegions)
+                {
+                    LoadRegions();
+                }
+                
                 if (signatures.Any())
                 {
                     foreach (var signature in signatures)
@@ -64,15 +70,13 @@ namespace FFXIVAPP.Memory
                         signature.Value = signature.Value.Replace("*", "?"); // allows either ? or * to be used as wildcard
                     }
                     signatures.RemoveAll(a => Locations.ContainsKey(a.Key));
-                    FindExtendedSignatures(signatures, ScanAllRegions);
+
+                    FindExtendedSignatures(signatures, scanAllMemoryRegions);
                 }
-                foreach (var kvp in Locations)
-                {
-                    Logger.Log(LogLevel.Info, $"Signature [{kvp.Key}] Found At Address: [{((IntPtr) kvp.Value).ToString("X")}]");
-                }
+
                 sw.Stop();
 
-                RaiseSignaturesFound(Logger, Locations, sw.ElapsedMilliseconds);
+                MemoryHandler.Instance.RaiseSignaturesFound(Logger, Locations, sw.ElapsedMilliseconds);
 
                 IsScanning = false;
 
@@ -81,8 +85,6 @@ namespace FFXIVAPP.Memory
             d.BeginInvoke(null, null);
         }
 
-        /// <summary>
-        /// </summary>
         private void LoadRegions()
         {
             try
@@ -97,7 +99,7 @@ namespace FFXIVAPP.Memory
                     {
                         break;
                     }
-                    if (0 != (info.State & MemCommit) && 0 != (info.Protect & Writable) && 0 == (info.Protect & PageGuard))
+                    if (!MemoryHandler.Instance.IsSystemModule(info.BaseAddress) && 0 != (info.State & MemCommit) && 0 != (info.Protect & Writable) && 0 == (info.Protect & PageGuard))
                     {
                         _regions.Add(info);
                     }
@@ -125,134 +127,83 @@ namespace FFXIVAPP.Memory
             }
         }
 
-        private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool ScanAllRegions = false)
+        private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false)
         {
-            //This entire function is not very x86 friendly at all, I believe it to be breaking the DX9 support actually. 
-            //So it probably needs some reworking.
+            var notFound = new List<Signature>(signatures);
 
-            const int bufferSize = 0x1200;
-            const int regionIncrement = 0x1000;
+            var baseAddress = MemoryHandler.Instance.ProcessModel.Process.MainModule.BaseAddress;
+            var searchEnd = IntPtr.Add(baseAddress, MemoryHandler.Instance.ProcessModel.Process.MainModule.ModuleMemorySize);
+            var searchStart = baseAddress;
 
-            if (ScanAllRegions)
+            ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
+
+            if (scanAllMemoryRegions)
             {
-                var notFound = new List<Signature>(signatures);
-                var temp = new List<Signature>();
-
                 foreach (var region in _regions)
                 {
-                    var moduleMemorySize = region.RegionSize;
-                    var baseAddress = region.BaseAddress;
-                    var searchEnd = new IntPtr(baseAddress.ToInt64() + moduleMemorySize.ToInt64());
-                    var searchStart = baseAddress;
-                    var lpBuffer = new byte[bufferSize];
-                    var regionCount = 0;
-
-                    while (searchStart.ToInt64() < searchEnd.ToInt64())
-                    {
-                        try
-                        {
-                            IntPtr lpNumberOfBytesRead;
-                            var regionSize = new IntPtr(bufferSize);
-                            if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64())
-                            {
-                                regionSize = (IntPtr)(searchEnd.ToInt64() - searchStart.ToInt64());
-                            }
-                            if (UnsafeNativeMethods.ReadProcessMemory(MemoryHandler.Instance.ProcessHandle, searchStart, lpBuffer, regionSize, out lpNumberOfBytesRead))
-                            {
-                                foreach (var signature in notFound)
-                                {
-                                    var idx = FindSuperSig(lpBuffer, SigToByte(signature.Value, WildCardChar));
-                                    if (idx < 0)
-                                    {
-                                        temp.Add(signature);
-                                        continue;
-                                    }
-
-                                    var baseResult = new IntPtr((long)(baseAddress + regionCount * regionIncrement));
-                                    var searchResult = IntPtr.Add(baseResult, idx + signature.Offset);
-
-                                    signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
-
-                                    if (!Locations.ContainsKey(signature.Key))
-                                        Locations.Add(signature.Key, signature);
-                                    
-                                    return;
-                                }
-                                notFound = new List<Signature>(temp);
-                                temp.Clear();
-                            }
-                            regionCount++;
-                            searchStart = IntPtr.Add(searchStart, regionIncrement);
-                        }
-                        catch (Exception ex)
-                        {
-                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-                var moduleMemorySize = MemoryHandler.Instance.ProcessModel.Process.MainModule.ModuleMemorySize;
-                var baseAddress = MemoryHandler.Instance.ProcessModel.Process.MainModule.BaseAddress;
-                var searchEnd = IntPtr.Add(baseAddress, moduleMemorySize);
-                var searchStart = baseAddress;
-                var lpBuffer = new byte[bufferSize];
-                var notFound = new List<Signature>(signatures);
-                var temp = new List<Signature>();
-                var regionCount = 0;
-
-                while (searchStart.ToInt64() < searchEnd.ToInt64())
-                {
-                    try
-                    {
-                        IntPtr lpNumberOfBytesRead;
-                        var regionSize = new IntPtr(bufferSize);
-                        if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64())
-                        {
-                            regionSize = (IntPtr)(searchEnd.ToInt64() - searchStart.ToInt64());
-                        }
-                        if (UnsafeNativeMethods.ReadProcessMemory(MemoryHandler.Instance.ProcessHandle, searchStart, lpBuffer, regionSize, out lpNumberOfBytesRead))
-                        {
-                            foreach (var signature in notFound)
-                            {
-                                var idx = FindSuperSig(lpBuffer, SigToByte(signature.Value, WildCardChar));
-                                if (idx < 0)
-                                {
-                                    temp.Add(signature);
-                                    continue;
-                                }
-
-                                var baseResult = new IntPtr((long)(baseAddress + regionCount * regionIncrement));
-                                var searchResult = IntPtr.Add(baseResult, idx + signature.Offset);
-
-                                signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
-
-                                if (!Locations.ContainsKey(signature.Key))
-                                    Locations.Add(signature.Key, signature);
-                            }
-                            notFound = new List<Signature>(temp);
-                            temp.Clear();
-                        }
-                        regionCount++;
-                        searchStart = IntPtr.Add(searchStart, regionIncrement);
-                    }
-                    catch (Exception ex)
-                    {
-                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                    }
+                    baseAddress = region.BaseAddress;
+                    searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize.ToInt64());
+                    searchStart = baseAddress;
+                    
+                    ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
                 }
             }
-            
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        private int FindSuperSig(byte[] buffer, byte[] pattern)
+        private void ResolveLocations(IntPtr baseAddress, IntPtr searchStart, IntPtr searchEnd, ref List<Signature> notFound)
+        {
+            const int bufferSize = 0x1200;
+            const int regionIncrement = 0x1000;
+            
+            var buffer = new byte[bufferSize];
+            var temp = new List<Signature>();
+            var regionCount = 0;
+
+            while (searchStart.ToInt64() < searchEnd.ToInt64())
+            {
+                try
+                {
+                    IntPtr lpNumberOfBytesRead;
+                    var regionSize = new IntPtr(bufferSize);
+                    if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64())
+                    {
+                        regionSize = (IntPtr)(searchEnd.ToInt64() - searchStart.ToInt64());
+                    }
+                    if (UnsafeNativeMethods.ReadProcessMemory(MemoryHandler.Instance.ProcessHandle, searchStart, buffer, regionSize, out lpNumberOfBytesRead))
+                    {
+                        foreach (var signature in notFound)
+                        {
+                            var index = FindSuperSignature(buffer, SignatureToByte(signature.Value, WildCardChar));
+                            if (index < 0)
+                            {
+                                temp.Add(signature);
+                                continue;
+                            }
+
+                            var baseResult = new IntPtr((long)(baseAddress + regionCount * regionIncrement));
+                            var searchResult = IntPtr.Add(baseResult, index + signature.Offset);
+
+                            signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
+
+                            if (!Locations.ContainsKey(signature.Key))
+                            {
+                                Locations.Add(signature.Key, signature);
+                            }
+                        }
+                        notFound = new List<Signature>(temp);
+                        temp.Clear();
+                    }
+                    regionCount++;
+                    searchStart = IntPtr.Add(searchStart, regionIncrement);
+                }
+                catch (Exception ex)
+                {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                }
+            }
+        }
+
+        private int FindSuperSignature(byte[] buffer, byte[] pattern)
         {
             var result = -1;
             if (buffer.Length <= 0 || pattern.Length <= 0 || buffer.Length < pattern.Length)
@@ -296,7 +247,7 @@ namespace FFXIVAPP.Memory
         /// <param name="signature">A hex string "signature"</param>
         /// <param name="wildcard">The byte to treat as the wildcard</param>
         /// <returns>The converted binary array. Null if the conversion failed.</returns>
-        private byte[] SigToByte(string signature, byte wildcard)
+        private byte[] SignatureToByte(string signature, byte wildcard)
         {
             var pattern = new byte[signature.Length / 2];
             var hexTable = new[]
@@ -323,18 +274,7 @@ namespace FFXIVAPP.Memory
                 return null;
             }
         }
-
-        #region Event Raising
-
-        public event EventHandler<SignaturesFoundEvent> SignaturesFoundEvent = delegate { };
-
-        private void RaiseSignaturesFound(Logger logger, Dictionary<string, Signature> signatures, long processingTime)
-        {
-            SignaturesFoundEvent?.Invoke(this, new SignaturesFoundEvent(this, logger, signatures, processingTime));
-        }
-
-        #endregion
-
+        
         #region Property Bindings
 
         private static Scanner _instance;

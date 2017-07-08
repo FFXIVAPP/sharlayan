@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using FFXIVAPP.Memory.Events;
@@ -35,7 +36,7 @@ namespace FFXIVAPP.Memory
 
         #endregion
 
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false)
+        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false, bool scanAllMemoryRegions = false)
         {
             GameLanguage = gameLanguage;
             IgnoreJSONCache = ignoreJSONCache;
@@ -45,7 +46,7 @@ namespace FFXIVAPP.Memory
                 return;
             }
 
-            SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
+            SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache, scanAllMemoryRegions);
         }
 
         public string GameLanguage { get; set; }
@@ -65,7 +66,7 @@ namespace FFXIVAPP.Memory
             }
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false)
+        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false, bool scanAllMemoryRegions = false)
         {
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
@@ -80,10 +81,12 @@ namespace FFXIVAPP.Memory
             }
             Constants.ProcessHandle = ProcessHandle;
 
+            _systemModules = GetProcessModules();
+
             SetStructures(processModel, patchVersion);
 
             Scanner.Instance.Locations.Clear();
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion));
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion), scanAllMemoryRegions);
 
             ActionHelper.Resolve();
             StatusEffectHelper.Resolve();
@@ -341,6 +344,64 @@ namespace FFXIVAPP.Memory
             return retValue;
         }
 
+        private List<ProcessModule> GetProcessModules()
+        {
+            var modules = ProcessModel.Process.Modules;
+            var result = new List<ProcessModule>(modules.Count);
+
+            for (var i = 0; i < modules.Count; i++)
+            {
+                var module = modules[i];
+                result.Add(module);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Allows the user to find out what module an address is in.
+        /// </summary>
+        /// <param name="address">Int32 Address</param>
+        /// <returns>ProcessModule</returns>
+        internal ProcessModule GetModuleByAddress(IntPtr address)
+        {
+            try
+            {
+                for (var i = 0; i < _systemModules.Count; i++)
+                {
+                    var module = _systemModules[i];
+                    var baseAddress = ProcessModel.IsWin64 ? module.BaseAddress.ToInt64() : module.BaseAddress.ToInt32();
+                    if (baseAddress <= (long) address && baseAddress + module.ModuleMemorySize >= (long) address)
+                    {
+                        return module;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<ProcessModule> _systemModules;
+
+        internal bool IsSystemModule(IntPtr address)
+        {
+            var moduleByAddress = GetModuleByAddress(address);
+            if (moduleByAddress != null)
+            {
+                foreach (var module in _systemModules)
+                {
+                    if (module.ModuleName == moduleByAddress.ModuleName)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         #region Private Structs
 
         internal struct MemoryBlock
@@ -358,6 +419,13 @@ namespace FFXIVAPP.Memory
         protected internal virtual void RaiseException(Logger logger, Exception e, bool levelIsError = false)
         {
             ExceptionEvent?.Invoke(this, new ExceptionEvent(this, logger, e, levelIsError));
+        }
+
+        public event EventHandler<SignaturesFoundEvent> SignaturesFoundEvent = delegate { };
+
+        protected internal virtual void RaiseSignaturesFound(Logger logger, Dictionary<string, Signature> signatures, long processingTime)
+        {
+            SignaturesFoundEvent?.Invoke(this, new SignaturesFoundEvent(this, logger, signatures, processingTime));
         }
 
         #endregion
