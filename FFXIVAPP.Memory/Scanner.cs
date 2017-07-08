@@ -105,8 +105,6 @@ namespace FFXIVAPP.Memory
                     {
                         MemoryHandler.Instance.RaiseException(Logger, new Exception(info.ToString()));
                     }
-                    //address = IntPtr.Add(info.BaseAddress, info.RegionSize.ToInt32());
-                    
                     unchecked
                     {
                         switch (IntPtr.Size)
@@ -118,7 +116,7 @@ namespace FFXIVAPP.Memory
                                 address = new IntPtr(info.BaseAddress.ToInt64() + info.RegionSize.ToInt64());
                                 break;
                         }
-                    }
+                    }                    
                 }
             }
             catch (Exception ex)
