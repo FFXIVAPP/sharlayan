@@ -110,9 +110,9 @@ namespace FFXIVAPP.Memory
                     break;
             }
 
-            for (var ci = 0; ci < limit; ci += 64)
+            for (var i = 0; i < limit; i += 64)
             {
-                var itemOffset = new IntPtr(containerAddress + ci);
+                var itemOffset = new IntPtr(containerAddress + i);
                 var id = MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID);
                 if (id > 0)
                 {

@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ Structures.cs
+﻿// FFXIVAPP.Memory ~ InventoryReadResult.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -15,20 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using FFXIVAPP.Memory.Core;
+
 namespace FFXIVAPP.Memory.Models
 {
-    public partial class Structures
+    public class HotBarReadResult
     {
-        public ActoryEntityStructure ActorEntity { get; set; }
-        public ChatLogPointersStructure ChatLogPointers { get; set; }
-        public EnmityEntryStructure EnmityEntry { get; set; }
-        public InventoryEntityStructure InventoryEntity { get; set; }
-        public ItemInfoStructure ItemInfo { get; set; }
-        public PartyEntityStructure PartyEntity { get; set; }
-        public PartyInfoStructure PartyInfo { get; set; }
-        public PlayerEntityStructure PlayerEntity { get; set; }
-        public StatusEntryStructure StatusEntry { get; set; }
-        public TargetInfoStructure TargetInfo { get; set; }
-        public HotBarEntityStructure HotBarEntity { get; set; }
+        public HotBarReadResult()
+        {
+            HotBarEntities = new List<HotBarEntity>();
+        }
+
+        public List<HotBarEntity> HotBarEntities { get; set; }
     }
 }

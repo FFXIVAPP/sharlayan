@@ -260,6 +260,11 @@ namespace FFXIVAPP.Memory
 
         public string GetStringFromBytes(byte[] source, int offset = 0, int size = 256)
         {
+            var safeSize = source.Length - offset;
+            if (safeSize < size)
+            {
+                size = safeSize;
+            }
             var bytes = new byte[size];
             Array.Copy(source, offset, bytes, 0, size);
             var realSize = 0;
