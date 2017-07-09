@@ -98,7 +98,7 @@ namespace FFXIVAPP.Memory
             Structures = APIHelper.GetStructures(processModel, patchVersion);
         }
 
-        public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool ASMSignature = false)
+        public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false)
         {
             var nextAddress = baseAddress;
             foreach (var offset in path)
@@ -111,10 +111,10 @@ namespace FFXIVAPP.Memory
                         return IntPtr.Zero;
                     }
 
-                    if (ASMSignature)
+                    if (IsASMSignature)
                     {
                         nextAddress = baseAddress + Instance.GetInt32(new IntPtr(baseAddress.ToInt64())) + 4;
-                        ASMSignature = false;
+                        IsASMSignature = false;
                     }
                     else
                     {
