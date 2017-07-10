@@ -1,0 +1,1 @@
+nuget pack .\Sharlayan.csproj -Build -Properties Configuration=Release -Properties Platform=x86
