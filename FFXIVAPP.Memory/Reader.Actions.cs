@@ -179,7 +179,7 @@ namespace FFXIVAPP.Memory
                 item.Category = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Category);
                 item.Type = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Type);
                 item.Icon = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Icon);
-                item.CoolDownPercent = readyPercent & 0xFF;
+                item.CoolDownPercent = readyPercent > 100 ? 0 : readyPercent;
                 item.IsAvailable = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.IsAvailable);
 
                 var remainingCost = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.RemainingCost);
@@ -187,7 +187,7 @@ namespace FFXIVAPP.Memory
                 item.RemainingCost = remainingCost != -1 ? remainingCost : 0;
                 item.Amount = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Amount);
                 item.InRange = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.InRange);
-                item.IsProcOrCombo = readyPercent >> 8 > 1;
+                item.IsProcOrCombo = readyPercent > 100;
 
                 #endregion
 
