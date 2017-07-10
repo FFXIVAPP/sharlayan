@@ -22,12 +22,12 @@ using System.Linq;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using FFXIVAPP.Memory;
-using FFXIVAPP.Memory.Events;
-using FFXIVAPP.Memory.Helpers;
-using FFXIVAPP.Memory.Models;
 using NLog;
 using NLog.Config;
+using Sharlayan;
+using Sharlayan.Events;
+using Sharlayan.Helpers;
+using Sharlayan.Models;
 
 namespace Bootstrapper
 {

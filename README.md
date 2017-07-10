@@ -1,4 +1,4 @@
-# ffxivapp-memory
+# sharlayan
 Issue tracking, feature request and release repository.
 
 # What is this?
@@ -12,8 +12,8 @@ Pending anything catastrophic update-wise it should be good to go.
 That's the basic of it. For actual instantiation it works as follows:
 
 ```csharp
-using FFXIVAPP.Memory;
-using FFXIVAPP.Memory.Models;
+using Sharlayan;
+using Sharlayan.Models;
 
 // DX9
 Process[] processes = Process.GetProcessesByName("ffxiv");
@@ -61,7 +61,7 @@ The following functions are available:
 ## Actors (Monster, Player, NPC, etc) Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 ActorReadResult readResult = Reader.GetActors();
 
@@ -98,7 +98,7 @@ public class ActorReadResult
 ## ChatLog Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 // For chatlog you must locally store previous array offsets and indexes in order to pull the correct log from the last time you read it.
 int previousArrayOffset = 0;
@@ -128,7 +128,7 @@ public class ChatLogReadResult
 ## Inventory Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 InventoryReadResult readResult = Reader.GetInventoryItems();
 
@@ -147,7 +147,7 @@ public class InventoryReadResult
 ## Party Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 PartyInfoReadResult readResult = Reader.GetPartyMembers();
 
@@ -174,7 +174,7 @@ public class PartyInfoReadResult
 ## Player Info Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 PlayerInfoReadResult readResult = Reader.GetPlayerInfo();
 
@@ -193,7 +193,7 @@ public class PlayerInfoReadResult
 ## Target Reading
 
 ```csharp
-using FFXIVAPP.Memory;
+using Sharlayan;
 
 TargetReadResult readResult = Reader.GetTargetInfo();
 
