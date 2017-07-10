@@ -41,7 +41,7 @@ namespace Sharlayan
         {
             IsScanning = true;
 
-            Func<bool> d = delegate
+            Func<bool> scanningFunc = delegate
             {
                 var sw = new Stopwatch();
                 sw.Start();
@@ -81,7 +81,7 @@ namespace Sharlayan
 
                 return true;
             };
-            d.BeginInvoke(null, null);
+            scanningFunc.BeginInvoke(null, null);
         }
 
         private void LoadRegions()
