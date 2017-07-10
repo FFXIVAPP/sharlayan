@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ Reader.HotBar.cs
+﻿// FFXIVAPP.Memory ~ Reader.Actions.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -45,7 +45,7 @@ namespace FFXIVAPP.Memory
                 HotBarMap = Scanner.Instance.Locations["HOTBAR"];
                 RecastMap = Scanner.Instance.Locations["RECAST"];
 
-                result.HotBarEntities = new List<ActionEntity>
+                result.ActionEntities = new List<ActionEntity>
                 {
                     GetHotBarRecast(HotBarRecast.Container.HOTBAR_1),
                     GetHotBarRecast(HotBarRecast.Container.HOTBAR_2),
@@ -83,7 +83,7 @@ namespace FFXIVAPP.Memory
             var hotbarContainerAddress = IntPtr.Add(HotBarMap, (int) type * hotbarContainerSize);
 
             var recastContainerSize = 0x280;
-            var recastContainerAddress = IntPtr.Add(HotBarMap, (int)type * recastContainerSize);
+            var recastContainerAddress = IntPtr.Add(RecastMap, (int) type * recastContainerSize);
 
             var container = new ActionEntity
             {
@@ -96,8 +96,7 @@ namespace FFXIVAPP.Memory
             var hotbarItemSize = 0xD0;
             var recastItemSize = 0x28;
 
-            int hotbarLimit;
-            int recastLimit;
+            int limit;
 
             switch (type)
             {
@@ -110,26 +109,28 @@ namespace FFXIVAPP.Memory
                 case HotBarRecast.Container.CROSS_HOTBAR_7:
                 case HotBarRecast.Container.CROSS_HOTBAR_8:
                 case HotBarRecast.Container.CROSS_PETBAR:
-                    hotbarLimit = 16 * hotbarItemSize;
-                    recastLimit = 16 * recastItemSize;
+                    limit = 16;
                     break;
                 default:
-                    hotbarLimit = 12 * hotbarItemSize;
-                    recastLimit = 12 * recastItemSize;
+                    limit = 12;
                     canUseKeyBinds = true;
                     break;
             }
 
-            var hotbarSource = MemoryHandler.Instance.GetByteArray(hotbarContainerAddress, hotbarContainerSize);
-            var recastSoruce = MemoryHandler.Instance.GetByteArray(recastContainerAddress, recastContainerSize);
+            var hotbarItemsSource = MemoryHandler.Instance.GetByteArray(hotbarContainerAddress, hotbarContainerSize);
+            var recastItemsSource = MemoryHandler.Instance.GetByteArray(recastContainerAddress, recastContainerSize);
 
-            for (var i = 0; i < limit; i += itemSize)
+            for (var i = 0; i < limit; i++)
             {
-                var itemOffset = IntPtr.Add(containerAddress, i);
-                var source = MemoryHandler.Instance.GetByteArray(itemOffset, itemSize);
+                var hotbarSource = new byte[hotbarItemSize];
+                var recastSource = new byte[recastItemSize];
 
-                var name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.HotBarEntity.Name);
-                var slot = i / itemSize;
+                Buffer.BlockCopy(hotbarItemsSource, i * hotbarItemSize, hotbarSource, 0, hotbarItemSize);
+                Buffer.BlockCopy(recastItemsSource, i * recastItemSize, recastSource, 0, recastItemSize);
+
+                var name = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.Name);
+                var slot = i;
+
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     continue;
@@ -137,10 +138,13 @@ namespace FFXIVAPP.Memory
                 var item = new HotBarRecastItem
                 {
                     Name = name,
-                    ID = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.HotBarEntity.ID),
-                    KeyBinds = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.HotBarEntity.KeyBinds),
+                    ID = BitConverter.TryToInt16(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.ID),
+                    KeyBinds = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.KeyBinds),
                     Slot = slot
                 };
+
+                #region KeyBind Resolution
+
                 if (canUseKeyBinds)
                 {
                     if (!string.IsNullOrWhiteSpace(item.KeyBinds))
@@ -152,22 +156,42 @@ namespace FFXIVAPP.Memory
                                               '+'
                                           }, StringSplitOptions.RemoveEmptyEntries)
                                           .ToList();
-                        if (buttons.Count <= 0)
+                        if (buttons.Count > 0)
                         {
-                            continue;
+                            item.ActionKey = buttons.Last();
                         }
-                        item.ActionKey = buttons.Last();
-                        if (buttons.Count <= 1)
+                        if (buttons.Count > 1)
                         {
-                            continue;
-                        }
-                        for (var x = 0; x < buttons.Count - 1; x++)
-                        {
-                            item.Modifiers.Add(buttons[x]);
+                            for (var x = 0; x < buttons.Count - 1; x++)
+                            {
+                                item.Modifiers.Add(buttons[x]);
+                            }
                         }
                     }
                 }
-                container.HotBarItems.Add(item);
+
+                #endregion
+
+                #region Recast Information
+
+                var readyPercent = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.ReadyPercent);
+
+                item.Category = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Category);
+                item.Type = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Type);
+                item.Icon = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Icon);
+                item.CoolDownPercent = readyPercent & 0xFF;
+                item.IsAvailable = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.IsAvailable);
+
+                var remainingCost = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.RemainingCost);
+
+                item.RemainingCost = remainingCost != -1 ? remainingCost : 0;
+                item.Amount = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Amount);
+                item.InRange = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.InRange);
+                item.IsProcOrCombo = readyPercent >> 8 > 1;
+
+                #endregion
+
+                container.Actions.Add(item);
             }
 
             return container;

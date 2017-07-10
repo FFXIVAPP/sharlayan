@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ HotBarReadResult.cs
+﻿// FFXIVAPP.Memory ~ ActionReadResult.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -24,11 +24,9 @@ namespace FFXIVAPP.Memory.Models
     {
         public ActionReadResult()
         {
-            HotBarEntities = new List<ActionEntity>();
-            RecastEntities = new List<RecastEntity>();
+            ActionEntities = new List<ActionEntity>();
         }
 
-        public List<ActionEntity> HotBarEntities { get; set; }
-        public List<RecastEntity> RecastEntities { get; set; }
+        public List<ActionEntity> ActionEntities { get; set; }
     }
 }

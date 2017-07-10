@@ -78,13 +78,13 @@
   <ItemGroup>
     <Compile Include="Core\ChatCleaner.cs" />
     <Compile Include="Core\ChatEntry.cs" />
-    <Compile Include="Core\HotBarItem.cs" />
+    <Compile Include="Core\HotBarRecastItem.cs" />
     <Compile Include="Core\Enums\Actor.cs" />
-    <Compile Include="Core\Enums\HotBar.cs" />
+    <Compile Include="Core\Enums\HotBarRecast.cs" />
     <Compile Include="Core\Enums\Inventory.cs" />
-    <Compile Include="Core\Interfaces\IHotBarItem.cs" />
     <Compile Include="Core\ActionEntity.cs" />
     <Compile Include="Core\Interfaces\IActionEntity.cs" />
+    <Compile Include="Core\Interfaces\IHotBarRecastItem.cs" />
     <Compile Include="Delegates\ChatLogWorkerDelegate.cs" />
     <Compile Include="Delegates\MonsterWorkerDelegate.cs" />
     <Compile Include="Delegates\NPCWorkerDelegate.cs" />

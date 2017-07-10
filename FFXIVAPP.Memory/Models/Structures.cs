@@ -17,7 +17,7 @@
 
 namespace FFXIVAPP.Memory.Models
 {
-    internal partial class Structures
+    public partial class Structures
     {
         public ActoryEntityStructure ActorEntity { get; set; }
         public ChatLogPointersStructure ChatLogPointers { get; set; }

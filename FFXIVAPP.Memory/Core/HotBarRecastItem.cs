@@ -36,7 +36,7 @@ namespace FFXIVAPP.Memory.Core
         public int Category { get; set; }
         public int Type { get; set; }
         public int Icon { get; set; }
-        public int ReadyPercent { get; set; }
+        public int CoolDownPercent { get; set; }
         public bool IsAvailable { get; set; }
         public int RemainingCost { get; set; }
         public int Amount { get; set; }

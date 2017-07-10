@@ -30,7 +30,7 @@ namespace FFXIVAPP.Memory.Core.Interfaces
         int Category { get; set; }
         int Type { get; set; }
         int Icon { get; set; }
-        int ReadyPercent { get; set; }
+        int CoolDownPercent { get; set; }
         bool IsAvailable { get; set; }
         int RemainingCost { get; set; }
         int Amount { get; set; }
