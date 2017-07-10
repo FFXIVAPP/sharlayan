@@ -1,6 +1,6 @@
-﻿// FFXIVAPP.Memory ~ IHotBarEntry.cs
+// FFXIVAPP.Memory ~ IActionEntity.cs
 // 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
+// Copyright � 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using FFXIVAPP.Memory.Core.Enums;
 
 namespace FFXIVAPP.Memory.Core.Interfaces
 {
-    public interface IHotBarItem
+    public interface IActionEntity
     {
-        string Name { get; set; }
-        int ID { get; set; }
-        string KeyBinds { get; set; }
-        List<string> Modifiers { get; set; }
-        string ActionKey { get; set; }
-        int Slot { get; set; }
-        bool IsWaiting { get; set; }
+        List<HotBarRecastItem> Actions { get; set; }
+        HotBarRecast.Container Type { get; set; }
     }
 }

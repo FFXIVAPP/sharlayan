@@ -1,6 +1,6 @@
-﻿// FFXIVAPP.Memory ~ HotBar.cs
+// FFXIVAPP.Memory ~ Structures.RecastEntity.cs
 // 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
+// Copyright � 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace FFXIVAPP.Memory.Core.Enums
+namespace FFXIVAPP.Memory.Models
 {
-    public class HotBar
+    internal partial class Structures
     {
-        public enum Container : byte
+        public class RecastEntityStructure
         {
-            HOTBAR_1,
-            HOTBAR_2,
-            HOTBAR_3,
-            HOTBAR_4,
-            HOTBAR_5,
-            HOTBAR_6,
-            HOTBAR_7,
-            HOTBAR_8,
-            HOTBAR_9,
-            HOTBAR_10,
-
-            CROSS_HOTBAR_1,
-            CROSS_HOTBAR_2,
-            CROSS_HOTBAR_3,
-            CROSS_HOTBAR_4,
-            CROSS_HOTBAR_5,
-            CROSS_HOTBAR_6,
-            CROSS_HOTBAR_7,
-            CROSS_HOTBAR_8,
-
-            PETBAR,
-            CROSS_PETBAR
+            public int Category { get; set; }
+            public int Type { get; set; }
+            public int ID { get; set; }
+            public int Icon { get; set; }
+            public int ReadyPercent { get; set; }
+            public int IsAvailable { get; set; }
+            public int RemainingCost { get; set; }
+            public int Amount { get; set; }
+            public int InRange { get; set; }
         }
     }
 }

@@ -17,7 +17,7 @@
 
 namespace FFXIVAPP.Memory.Models
 {
-    public partial class Structures
+    internal partial class Structures
     {
         public class InventoryEntityStructure
         {

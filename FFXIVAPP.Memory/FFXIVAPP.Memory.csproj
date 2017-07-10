@@ -83,8 +83,8 @@
     <Compile Include="Core\Enums\HotBar.cs" />
     <Compile Include="Core\Enums\Inventory.cs" />
     <Compile Include="Core\Interfaces\IHotBarItem.cs" />
-    <Compile Include="Core\HotBarEntity.cs" />
-    <Compile Include="Core\Interfaces\IHotBarEntity.cs" />
+    <Compile Include="Core\ActionEntity.cs" />
+    <Compile Include="Core\Interfaces\IActionEntity.cs" />
     <Compile Include="Delegates\ChatLogWorkerDelegate.cs" />
     <Compile Include="Delegates\MonsterWorkerDelegate.cs" />
     <Compile Include="Delegates\NPCWorkerDelegate.cs" />
@@ -102,7 +102,7 @@
     <Compile Include="Models\ActionItem.cs" />
     <Compile Include="Models\ActorReadResult.cs" />
     <Compile Include="Models\ChatLogReadResult.cs" />
-    <Compile Include="Models\HotBarReadResult.cs" />
+    <Compile Include="Models\ActionReadResult.cs" />
     <Compile Include="Models\InventoryReadResult.cs" />
     <Compile Include="Models\MapItem.cs" />
     <Compile Include="Models\PartyInfoReadResult.cs" />
@@ -140,6 +140,7 @@
     <Compile Include="Models\Structures.ChatLogPointers.cs" />
     <Compile Include="Models\Structures.cs" />
     <Compile Include="Models\Structures.EnmityEntry.cs" />
+    <Compile Include="Models\Structures.RecastEntity.cs" />
     <Compile Include="Models\Structures.HotBarEntity.cs" />
     <Compile Include="Models\Structures.InventoryEntity.cs" />
     <Compile Include="Models\Structures.ItemInfo.cs" />
@@ -154,7 +155,7 @@
     <Compile Include="Reader.Actor.cs" />
     <Compile Include="Reader.ChatLog.cs" />
     <Compile Include="Reader.cs" />
-    <Compile Include="Reader.HotBar.cs" />
+    <Compile Include="Reader.Actions.cs" />
     <Compile Include="Reader.Inventory.cs" />
     <Compile Include="Reader.PlayerInfo.cs" />
     <Compile Include="Reader.Target.cs" />

@@ -36,6 +36,8 @@ namespace FFXIVAPP.Memory
 
         #endregion
 
+        private List<ProcessModule> _systemModules;
+
         public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false, bool scanAllMemoryRegions = false)
         {
             GameLanguage = gameLanguage;
@@ -364,7 +366,7 @@ namespace FFXIVAPP.Memory
         }
 
         /// <summary>
-        /// Allows the user to find out what module an address is in.
+        ///     Allows the user to find out what module an address is in.
         /// </summary>
         /// <param name="address">Int32 Address</param>
         /// <returns>ProcessModule</returns>
@@ -388,8 +390,6 @@ namespace FFXIVAPP.Memory
                 return null;
             }
         }
-
-        private List<ProcessModule> _systemModules;
 
         internal bool IsSystemModule(IntPtr address)
         {

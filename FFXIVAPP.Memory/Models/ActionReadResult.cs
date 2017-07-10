@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ IInventoryEntity.cs
+﻿// FFXIVAPP.Memory ~ HotBarReadResult.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -16,13 +16,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using FFXIVAPP.Memory.Core.Enums;
+using FFXIVAPP.Memory.Core;
 
-namespace FFXIVAPP.Memory.Core.Interfaces
+namespace FFXIVAPP.Memory.Models
 {
-    public interface IHotBarEntity
+    public class ActionReadResult
     {
-        List<HotBarItem> HotBarItems { get; set; }
-        HotBar.Container Type { get; set; }
+        public ActionReadResult()
+        {
+            HotBarEntities = new List<ActionEntity>();
+            RecastEntities = new List<RecastEntity>();
+        }
+
+        public List<ActionEntity> HotBarEntities { get; set; }
+        public List<RecastEntity> RecastEntities { get; set; }
     }
 }

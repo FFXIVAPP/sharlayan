@@ -17,7 +17,7 @@
 
 namespace FFXIVAPP.Memory.Models
 {
-    public partial class Structures
+    internal partial class Structures
     {
         public ActoryEntityStructure ActorEntity { get; set; }
         public ChatLogPointersStructure ChatLogPointers { get; set; }
@@ -30,5 +30,6 @@ namespace FFXIVAPP.Memory.Models
         public StatusEntryStructure StatusEntry { get; set; }
         public TargetInfoStructure TargetInfo { get; set; }
         public HotBarEntityStructure HotBarEntity { get; set; }
+        public RecastEntityStructure RecastEntity { get; set; }
     }
 }

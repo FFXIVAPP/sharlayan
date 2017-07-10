@@ -1,4 +1,4 @@
-﻿// FFXIVAPP.Memory ~ InventoryEntity.cs
+﻿// FFXIVAPP.Memory ~ IHotBarRecastItem.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -16,19 +16,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using FFXIVAPP.Memory.Core.Enums;
-using FFXIVAPP.Memory.Core.Interfaces;
 
-namespace FFXIVAPP.Memory.Core
+namespace FFXIVAPP.Memory.Core.Interfaces
 {
-    public class HotBarEntity : IHotBarEntity
+    public interface IHotBarRecastItem
     {
-        public HotBarEntity()
-        {
-            HotBarItems = new List<HotBarItem>();
-        }
-
-        public List<HotBarItem> HotBarItems { get; set; }
-        public HotBar.Container Type { get; set; }
+        string Name { get; set; }
+        int ID { get; set; }
+        string KeyBinds { get; set; }
+        List<string> Modifiers { get; set; }
+        string ActionKey { get; set; }
+        int Slot { get; set; }
+        int Category { get; set; }
+        int Type { get; set; }
+        int Icon { get; set; }
+        int ReadyPercent { get; set; }
+        bool IsAvailable { get; set; }
+        int RemainingCost { get; set; }
+        int Amount { get; set; }
+        bool InRange { get; set; }
+        bool IsProcOrCombo { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿// FFXIVAPP.Memory ~ HotBarEntry.cs
+// FFXIVAPP.Memory ~ HotBarRecastItem.cs
 // 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
+// Copyright � 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ using FFXIVAPP.Memory.Core.Interfaces;
 
 namespace FFXIVAPP.Memory.Core
 {
-    public class HotBarItem : IHotBarItem
+    public class HotBarRecastItem : IHotBarRecastItem
     {
-        public HotBarItem()
+        public HotBarRecastItem()
         {
             Modifiers = new List<string>();
         }
@@ -33,6 +33,14 @@ namespace FFXIVAPP.Memory.Core
         public List<string> Modifiers { get; set; }
         public string ActionKey { get; set; }
         public int Slot { get; set; }
-        public bool IsWaiting { get; set; }
+        public int Category { get; set; }
+        public int Type { get; set; }
+        public int Icon { get; set; }
+        public int ReadyPercent { get; set; }
+        public bool IsAvailable { get; set; }
+        public int RemainingCost { get; set; }
+        public int Amount { get; set; }
+        public bool InRange { get; set; }
+        public bool IsProcOrCombo { get; set; }
     }
 }
