@@ -52,15 +52,13 @@ namespace FFXIVAPP.Memory.Models
 
         [JsonIgnore]
         public IntPtr SigScanAddress { get; set; }
+
         public bool ASMSignature { get; set; }
 
         [JsonIgnore]
         public int Offset
         {
-            get
-            {
-                return Value.Length / 2;
-            }
+            get { return Value.Length / 2; }
         }
 
         public List<long> PointerPath { get; set; }

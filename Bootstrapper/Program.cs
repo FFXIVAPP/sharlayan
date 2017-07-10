@@ -62,7 +62,7 @@ namespace Bootstrapper
                 Console.WriteLine("Scanning...");
             }
 
-            Scanner.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e)
+            MemoryHandler.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e)
             {
                 foreach (var kvp in e.Signatures)
                 {
