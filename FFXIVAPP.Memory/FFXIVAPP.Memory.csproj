@@ -177,6 +177,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="FFXIVAPP.Memory.nuspec" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
