@@ -42,5 +42,10 @@ namespace FFXIVAPP.Memory.Core
         public int Amount { get; set; }
         public bool InRange { get; set; }
         public bool IsProcOrCombo { get; set; }
+
+        public bool IsKeyBindAssigned
+        {
+            get { return !string.IsNullOrWhiteSpace(KeyBinds); }
+        }
     }
 }
