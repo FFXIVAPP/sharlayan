@@ -160,9 +160,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Sharlayan.nuspec">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Sharlayan.csproj.nuspec" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -16,8 +16,8 @@
     <tags>ffxiv memory tracking</tags>
   </metadata>
   <files>
-    <file src=".\distribution\Sharlayan.dll" target="lib\NET461" />
-    <file src=".\distribution\Sharlayan.pdb" target="lib\NET461" />
-    <file src=".\distribution\Sharlayan.xml" target="lib\NET461" />
+    <file src="..\distribution\Sharlayan.dll" target="lib\NET461" />
+    <file src="..\distribution\Sharlayan.pdb" target="lib\NET461" />
+    <file src="..\distribution\Sharlayan.xml" target="lib\NET461" />
   </files>
 </package>
