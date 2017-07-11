@@ -101,15 +101,15 @@ public class ActorReadResult
 using Sharlayan;
 
 // For chatlog you must locally store previous array offsets and indexes in order to pull the correct log from the last time you read it.
-int previousArrayOffset = 0;
-int previousIndex = 0;
+int _previousArrayIndex = 0;
+int _previousOffset = 0;
 
-ChatLogReadResult readResult = Reader.GetChatLog(previousArrayOffset, previousIndex);
+ChatLogReadResult readResult = Reader.GetChatLog(_previousArrayIndex, _previousOffset);
 
 List<ChatLogEntry> chatLogEntries = readResult.ChatLogEntries;
 
-previousArrayOffset = readResult.PreviousArrayOffset;
-previousIndex = readResult.PreviousIndex;
+_previousArrayIndex = readResult.PreviousArrayIndex;
+_previousOffset = readResult.PreviousOffset;
 
 // The result is the following class
 public class ChatLogReadResult
