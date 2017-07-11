@@ -1,0 +1,1 @@
+nuget pack .\Sharlayan.csproj.nuspec -OutputDirectory .\packages\
