@@ -4,7 +4,7 @@
   <Import Project="..\..\ffxivapp-props\Fody.props" Condition="Exists('..\ffxivapp-props\Fody.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{9510D5EF-208A-4897-A582-8EAE5C6E9406}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
