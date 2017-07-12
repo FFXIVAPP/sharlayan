@@ -11,7 +11,9 @@
     <iconUrl>https://raw.githubusercontent.com/Icehunter/sharlayan/master/Sharlayan/Logo.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>
+      3.0.1 use lazy loading in scanner instance
+    </releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>ffxiv memory tracking</tags>
   </metadata>

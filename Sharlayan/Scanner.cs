@@ -277,13 +277,12 @@ namespace Sharlayan
 
         #region Property Bindings
 
-        private static Scanner _instance;
+        private static Lazy<Scanner> _instance = new Lazy<Scanner>(() => new Scanner());
         private Dictionary<string, Signature> _locations;
 
         public static Scanner Instance
         {
-            get { return _instance ?? (_instance = new Scanner()); }
-            set { _instance = value; }
+            get { return _instance.Value; }
         }
 
         public Dictionary<string, Signature> Locations
