@@ -17,8 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using Sharlayan.Models;
 using NLog;
+using Sharlayan.Models;
 
 namespace Sharlayan.Events
 {

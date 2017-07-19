@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using NLog;
 using Sharlayan.Events;
 using Sharlayan.Helpers;
 using Sharlayan.Models;
-using NLog;
 using BitConverter = Sharlayan.Helpers.BitConverter;
 
 namespace Sharlayan

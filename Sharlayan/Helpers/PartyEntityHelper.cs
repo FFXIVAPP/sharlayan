@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+using NLog;
 using Sharlayan.Core;
 using Sharlayan.Core.Enums;
 using Sharlayan.Delegates;
-using NLog;
 
 namespace Sharlayan.Helpers
 {

@@ -1,6 +1,6 @@
 // Sharlayan ~ HotBarRecastItem.cs
 // 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
+// Copyright Â© 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,11 @@ namespace Sharlayan.Core
             Modifiers = new List<string>();
         }
 
+        public bool IsKeyBindAssigned
+        {
+            get { return !string.IsNullOrWhiteSpace(KeyBinds); }
+        }
+
         public string Name { get; set; }
         public int ID { get; set; }
         public string KeyBinds { get; set; }
@@ -42,10 +47,5 @@ namespace Sharlayan.Core
         public int Amount { get; set; }
         public bool InRange { get; set; }
         public bool IsProcOrCombo { get; set; }
-
-        public bool IsKeyBindAssigned
-        {
-            get { return !string.IsNullOrWhiteSpace(KeyBinds); }
-        }
     }
 }

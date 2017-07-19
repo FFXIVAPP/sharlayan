@@ -16,9 +16,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using NLog;
 using Sharlayan.Core;
 using Sharlayan.Core.Enums;
-using NLog;
 
 namespace Sharlayan.Helpers
 {
