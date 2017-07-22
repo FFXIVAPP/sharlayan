@@ -48,7 +48,7 @@ namespace Sharlayan
 
                 var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
 
-                const int limit = 1372;
+                const int limit = 424;
 
                 var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
                 var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
