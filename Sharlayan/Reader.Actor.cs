@@ -197,6 +197,8 @@ namespace Sharlayan
                                     PCWorkerDelegate.EnsureEntity(entry.ID, entry);
                                     break;
                                 case Actor.Type.NPC:
+                                case Actor.Type.Aetheryte:
+                                case Actor.Type.EObj:
                                     NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
                                     break;
                                 default:
