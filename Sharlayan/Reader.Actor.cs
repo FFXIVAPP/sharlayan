@@ -43,12 +43,12 @@ namespace Sharlayan
                 #region Ensure Target
 
                 var targetAddress = IntPtr.Zero;
-
+                
                 #endregion
 
                 var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
 
-                const int limit = 1372;
+                var limit = MemoryHandler.Instance.Structures.ActorInfo.Size;
 
                 var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
                 var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
@@ -59,6 +59,7 @@ namespace Sharlayan
                 for (var i = 0; i < limit; i++)
                 {
                     IntPtr characterAddress;
+
                     if (MemoryHandler.Instance.ProcessModel.IsWin64)
                     {
                         characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
@@ -196,6 +197,8 @@ namespace Sharlayan
                                 case Actor.Type.PC:
                                     PCWorkerDelegate.EnsureEntity(entry.ID, entry);
                                     break;
+                                case Actor.Type.Aetheryte:
+                                case Actor.Type.EObj:
                                 case Actor.Type.NPC:
                                     NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
                                     break;

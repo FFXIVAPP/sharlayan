@@ -60,6 +60,8 @@ namespace Sharlayan.Core
         public byte AST { get; set; }
         public byte DRK { get; set; }
         public byte MCH { get; set; }
+        public byte SAM { get; set; }
+        public byte RDM { get; set; }
         public byte CPT { get; set; }
         public byte BSM { get; set; }
         public byte ARM { get; set; }
@@ -83,6 +85,8 @@ namespace Sharlayan.Core
         public int AST_CurrentEXP { get; set; }
         public int DRK_CurrentEXP { get; set; }
         public int MCH_CurrentEXP { get; set; }
+        public int SAM_CurrentEXP { get; set; }
+        public int RDM_CurrentEXP { get; set; }
         public int CPT_CurrentEXP { get; set; }
         public int BSM_CurrentEXP { get; set; }
         public int ARM_CurrentEXP { get; set; }
@@ -111,7 +115,7 @@ namespace Sharlayan.Core
         public int TPMax { get; set; }
         public int GPMax { get; set; }
         public int CPMax { get; set; }
-        public short Parry { get; set; }
+        public short Tenacity { get; set; }
         public short Defense { get; set; }
         public short Evasion { get; set; }
         public short MagicDefense { get; set; }
@@ -125,7 +129,7 @@ namespace Sharlayan.Core
         public short LightningResistance { get; set; }
         public short WaterResistance { get; set; }
         public short AttackPower { get; set; }
-        public short Accuracy { get; set; }
+        public short DirectHit { get; set; }
         public short CriticalHitRate { get; set; }
         public short AttackMagicPotency { get; set; }
         public short HealingMagicPotency { get; set; }

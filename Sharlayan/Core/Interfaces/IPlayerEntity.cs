@@ -57,6 +57,10 @@ namespace Sharlayan.Core.Interfaces
 
         byte MCH { get; set; }
 
+        byte SAM { get; set; }
+
+        byte RDM { get; set; }
+
         byte CPT { get; set; }
 
         byte BSM { get; set; }
@@ -106,6 +110,10 @@ namespace Sharlayan.Core.Interfaces
         int DRK_CurrentEXP { get; set; }
 
         int MCH_CurrentEXP { get; set; }
+
+        int SAM_CurrentEXP { get; set; }
+
+        int RDM_CurrentEXP { get; set; }
 
         int CPT_CurrentEXP { get; set; }
 
@@ -179,7 +187,7 @@ namespace Sharlayan.Core.Interfaces
 
         #region Defensive stats
 
-        short Parry { get; set; }
+        short Tenacity { get; set; }
 
         short Defense { get; set; }
 
@@ -211,7 +219,7 @@ namespace Sharlayan.Core.Interfaces
 
         short AttackPower { get; set; }
 
-        short Accuracy { get; set; }
+        short DirectHit { get; set; }
 
         short CriticalHitRate { get; set; }
 

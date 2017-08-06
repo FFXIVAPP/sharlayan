@@ -73,7 +73,12 @@ namespace Sharlayan.Core.Interfaces
         byte SexID { get; set; }
         Actor.Sex Sex { get; set; }
         List<StatusEntry> StatusEntries { get; set; }
-        bool IsCasting { get; set; }
+        byte CombatFlags { get; set; }
+        bool IsAggressive { get; }
+        bool InCombat { get; }
+        bool WeaponUnsheathed { get; }
+        bool IsCasting { get; }
+        byte DifficultyRank { get; set; }
         short CastingID { get; set; }
         uint CastingTargetID { get; set; }
         float CastingProgress { get; set; }

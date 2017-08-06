@@ -73,6 +73,9 @@ namespace Sharlayan.Helpers
                         entry.DRK = source[MemoryHandler.Instance.Structures.PlayerEntity.DRK];
                         entry.AST = source[MemoryHandler.Instance.Structures.PlayerEntity.AST];
 
+                        entry.SAM = source[MemoryHandler.Instance.Structures.PlayerEntity.SAM];
+                        entry.RDM = source[MemoryHandler.Instance.Structures.PlayerEntity.RDM];
+
                         #endregion
 
                         #region Current Experience
@@ -104,6 +107,9 @@ namespace Sharlayan.Helpers
                         entry.MCH_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.MCH_CurrentEXP);
                         entry.DRK_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.DRK_CurrentEXP);
                         entry.AST_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.AST_CurrentEXP);
+
+                        entry.SAM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.SAM_CurrentEXP);
+                        entry.RDM_CurrentEXP = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PlayerEntity.RDM_CurrentEXP);
 
                         #endregion
 
@@ -141,7 +147,7 @@ namespace Sharlayan.Helpers
 
                         #region Offensive Properties
 
-                        entry.Accuracy = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Accuracy);
+                        entry.DirectHit = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.DirectHit);
                         entry.CriticalHitRate = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.CriticalHitRate);
                         entry.Determination = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Determination);
 
@@ -149,7 +155,7 @@ namespace Sharlayan.Helpers
 
                         #region Defensive Properties
 
-                        entry.Parry = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Parry);
+                        entry.Tenacity = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Tenacity);
                         entry.Defense = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.Defense);
                         entry.MagicDefense = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PlayerEntity.MagicDefense);
 

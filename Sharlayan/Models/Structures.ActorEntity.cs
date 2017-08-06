@@ -19,7 +19,7 @@ namespace Sharlayan.Models
 {
     public partial class Structures
     {
-        public class ActoryEntityStructure
+        public class ActorEntityStructure
         {
             public int Name { get; set; }
             public int ID { get; set; }
@@ -58,6 +58,8 @@ namespace Sharlayan.Models
             public int GPMax { get; set; }
             public int CPCurrent { get; set; }
             public int CPMax { get; set; }
+            public int CombatFlags { get; set; }
+            public int DifficultyRank { get; set; }
             public int IsCasting1 { get; set; }
             public int IsCasting2 { get; set; }
             public int CastingID { get; set; }

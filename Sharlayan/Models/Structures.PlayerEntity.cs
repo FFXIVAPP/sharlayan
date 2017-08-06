@@ -45,6 +45,8 @@ namespace Sharlayan.Models
             public int MCH { get; set; }
             public int DRK { get; set; }
             public int AST { get; set; }
+            public int SAM { get; set; }
+            public int RDM { get; set; }
             public int PGL_CurrentEXP { get; set; }
             public int GLD_CurrentEXP { get; set; }
             public int MRD_CurrentEXP { get; set; }
@@ -68,6 +70,8 @@ namespace Sharlayan.Models
             public int MCH_CurrentEXP { get; set; }
             public int DRK_CurrentEXP { get; set; }
             public int AST_CurrentEXP { get; set; }
+            public int SAM_CurrentEXP { get; set; }
+            public int RDM_CurrentEXP { get; set; }
             public int BaseStrength { get; set; }
             public int BaseDexterity { get; set; }
             public int BaseVitality { get; set; }
@@ -85,10 +89,10 @@ namespace Sharlayan.Models
             public int TPMax { get; set; }
             public int GPMax { get; set; }
             public int CPMax { get; set; }
-            public int Accuracy { get; set; }
+            public int DirectHit { get; set; }
             public int CriticalHitRate { get; set; }
             public int Determination { get; set; }
-            public int Parry { get; set; }
+            public int Tenacity { get; set; }
             public int Defense { get; set; }
             public int MagicDefense { get; set; }
             public int AttackPower { get; set; }

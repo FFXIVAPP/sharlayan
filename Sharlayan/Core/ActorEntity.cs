@@ -183,7 +183,29 @@ namespace Sharlayan.Core
             }
         }
 
-        public bool IsCasting { get; set; }
+        public byte CombatFlags { get; set; }
+
+        public bool IsAggressive
+        {
+            get { return (CombatFlags & (1 << 0)) != 0; }
+        }
+
+        public bool InCombat
+        {
+            get { return (CombatFlags & (1 << 1)) != 0; }
+        }
+
+        public bool WeaponUnsheathed
+        {
+            get { return (CombatFlags & (1 << 3)) != 0; }
+        }
+
+        public bool IsCasting
+        {
+            get { return (CombatFlags & (1 << 7)) != 0; }
+        }
+
+        public byte DifficultyRank { get; set; }
         public short CastingID { get; set; }
         public uint CastingTargetID { get; set; }
         public float CastingProgress { get; set; }

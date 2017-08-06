@@ -100,7 +100,8 @@ namespace Sharlayan.Helpers
                 entry.CPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CPMax + defaultStatOffset);
                 //entry.Race = source[0x2578]; // ??
                 //entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.IsCasting = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting1) && BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorEntity.IsCasting2); // 0x2C90);
+                entry.CombatFlags = source[MemoryHandler.Instance.Structures.ActorEntity.CombatFlags];
+                entry.DifficultyRank = source[MemoryHandler.Instance.Structures.ActorEntity.DifficultyRank];
                 entry.CastingID = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorEntity.CastingID); // 0x2C94);
                 entry.CastingTargetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.CastingTargetID); // 0x2CA0);
                 entry.CastingProgress = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorEntity.CastingProgress); // 0x2CC4);

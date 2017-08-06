@@ -19,17 +19,18 @@ namespace Sharlayan.Models
 {
     public partial class Structures
     {
-        public ActoryEntityStructure ActorEntity { get; set; }
+        public ActorEntityStructure ActorEntity { get; set; }
+        public ActorInfoStructure ActorInfo { get; set; }
         public ChatLogPointersStructure ChatLogPointers { get; set; }
         public EnmityEntryStructure EnmityEntry { get; set; }
+        public HotBarEntityStructure HotBarEntity { get; set; }
         public InventoryEntityStructure InventoryEntity { get; set; }
         public ItemInfoStructure ItemInfo { get; set; }
         public PartyEntityStructure PartyEntity { get; set; }
         public PartyInfoStructure PartyInfo { get; set; }
         public PlayerEntityStructure PlayerEntity { get; set; }
+        public RecastEntityStructure RecastEntity { get; set; }
         public StatusEntryStructure StatusEntry { get; set; }
         public TargetInfoStructure TargetInfo { get; set; }
-        public HotBarEntityStructure HotBarEntity { get; set; }
-        public RecastEntityStructure RecastEntity { get; set; }
     }
 }

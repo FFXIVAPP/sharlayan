@@ -1,4 +1,4 @@
-﻿// Sharlayan ~ ActionReadResult.cs
+﻿// Sharlayan ~ Structures.ActorInfo.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -15,19 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using Sharlayan.Core;
-
 namespace Sharlayan.Models
 {
-    public class ActionReadResult
+    public partial class Structures
     {
-        public ActionReadResult()
+        public class ActorInfoStructure
         {
-            ActionEntities = new List<ActionEntity>();
+            public int Size { get; set; }
         }
-
-        public List<ActionEntity> ActionEntities { get; set; }
     }
 }
