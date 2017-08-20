@@ -25,21 +25,27 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        public static IntPtr InventoryPointerMap { get; set; }
+        public static bool CanGetInventory()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.InventoryKey);
+            if (canRead)
+            {
+                // OTHER STUFF?
+            }
+            return canRead;
+        }
 
         public static InventoryReadResult GetInventoryItems()
         {
             var result = new InventoryReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("INVENTORY"))
+            if (!CanGetInventory())
             {
                 return result;
             }
 
             try
             {
-                InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations["INVENTORY"]));
-
                 result.InventoryEntities = new List<InventoryEntity>
                 {
                     GetItems(Inventory.Container.INVENTORY_1),
@@ -86,6 +92,8 @@ namespace Sharlayan
 
         private static InventoryEntity GetItems(Inventory.Container type)
         {
+            var InventoryPointerMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.InventoryKey]));
+
             var offset = (uint) ((int) type * 24);
             var containerAddress = MemoryHandler.Instance.GetPlatformUInt(InventoryPointerMap, offset);
 

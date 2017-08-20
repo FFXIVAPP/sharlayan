@@ -28,6 +28,7 @@
 *.tli
 *.tlh
 *.tmp
+.vs/
 *.vspscc
 *.vssscc
 .builds

@@ -25,23 +25,26 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        private static IntPtr PlayerInfoMap { get; set; }
-        private static PlayerEntity LastPlayerEntity { get; set; }
+        public static bool CanGetPlayerInfo()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PlayerInformationKey);
+            if (canRead)
+            {
+                // OTHER STUFF?
+            }
+            return canRead;
+        }
 
         public static PlayerInfoReadResult GetPlayerInfo()
         {
             var result = new PlayerInfoReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
-            {
-                return result;
-            }
-            if (!Scanner.Instance.Locations.ContainsKey("PLAYERINFO"))
+            if (!CanGetPlayerInfo())
             {
                 return result;
             }
 
-            PlayerInfoMap = Scanner.Instance.Locations["PLAYERINFO"];
+            var PlayerInfoMap = (IntPtr) Scanner.Instance.Locations[Signatures.PlayerInformationKey];
 
             if (PlayerInfoMap.ToInt64() <= 6496)
             {
@@ -50,27 +53,27 @@ namespace Sharlayan
 
             try
             {
-                var enmityEntries = new List<EnmityEntry>();
+                var agroEntries = new List<EnmityEntry>();
 
-                if (Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT"))
+                if (CanGetAgroEntities())
                 {
-                    var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["AGRO_COUNT"]);
-                    var enmityStructure = (IntPtr) Scanner.Instance.Locations["AGROMAP"];
+                    var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations[Signatures.AgroCountKey]);
+                    var agroStructure = (IntPtr) Scanner.Instance.Locations[Signatures.AgroMapKey];
 
-                    if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0)
+                    if (agroCount > 0 && agroCount < 32 && agroStructure.ToInt64() > 0)
                     {
-                        for (uint i = 0; i < enmityCount; i++)
+                        for (uint i = 0; i < agroCount; i++)
                         {
-                            var address = new IntPtr(enmityStructure.ToInt64() + i * 72);
-                            var enmityEntry = new EnmityEntry
+                            var address = new IntPtr(agroStructure.ToInt64() + i * 72);
+                            var agroEntry = new EnmityEntry
                             {
                                 ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
                                 Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
                                 Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
                             };
-                            if (enmityEntry.ID > 0)
+                            if (agroEntry.ID > 0)
                             {
-                                enmityEntries.Add(enmityEntry);
+                                agroEntries.Add(agroEntry);
                             }
                         }
                     }
@@ -81,7 +84,7 @@ namespace Sharlayan
                 try
                 {
                     result.PlayerEntity = PlayerEntityHelper.ResolvePlayerFromBytes(source);
-                    result.PlayerEntity.EnmityEntries = enmityEntries;
+                    result.PlayerEntity.EnmityEntries = agroEntries;
                 }
                 catch (Exception ex)
                 {

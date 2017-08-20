@@ -36,25 +36,37 @@ namespace Sharlayan
 
         #endregion
 
-        private List<ProcessModule> _systemModules;
+        private List<ProcessModule> SystemModules;
 
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false, bool scanAllMemoryRegions = false)
+        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false)
         {
             GameLanguage = gameLanguage;
-            IgnoreJSONCache = ignoreJSONCache;
+            UseLocalCache = useLocalCache;
 
             if (processModel == null)
             {
                 return;
             }
 
-            SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache, scanAllMemoryRegions);
+            SetProcess(processModel, gameLanguage, patchVersion, useLocalCache, scanAllMemoryRegions);
         }
 
-        public string GameLanguage { get; set; }
-        internal bool IgnoreJSONCache { get; set; }
+        #region Public Properties
+        
         public long ScanCount { get; set; }
-        public Structures Structures { get; set; }
+        public bool IsAttached { get; set; }
+
+        #endregion
+
+        #region Internals
+
+        internal string GameLanguage { get; set; }
+        internal bool UseLocalCache { get; set; }
+        internal Structures Structures { get; set; }
+        internal ProcessModel ProcessModel { get; set; }
+        internal IntPtr ProcessHandle { get; set; }
+
+        #endregion
 
         ~MemoryHandler()
         {
@@ -68,11 +80,29 @@ namespace Sharlayan
             }
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool ignoreJSONCache = false, bool scanAllMemoryRegions = false)
+        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false)
         {
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
-            IgnoreJSONCache = ignoreJSONCache;
+            UseLocalCache = useLocalCache;
+
+            try
+            {
+                if (IsAttached)
+                {
+                    UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
+                }
+            }
+            catch (Exception)
+            {
+                // IGNORED
+            }
+            finally
+            {
+                Constants.ProcessHandle = ProcessHandle = IntPtr.Zero;
+                IsAttached = false;
+            }
+
             try
             {
                 ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) ProcessModel.ProcessID);
@@ -81,9 +111,13 @@ namespace Sharlayan
             {
                 ProcessHandle = processModel.Process.Handle;
             }
-            Constants.ProcessHandle = ProcessHandle;
+            finally
+            {
+                Constants.ProcessHandle = ProcessHandle;
+                IsAttached = true;
+            }
 
-            _systemModules = GetProcessModules();
+            SystemModules = GetProcessModules();
 
             SetStructures(processModel, patchVersion);
 
@@ -374,9 +408,9 @@ namespace Sharlayan
         {
             try
             {
-                for (var i = 0; i < _systemModules.Count; i++)
+                for (var i = 0; i < SystemModules.Count; i++)
                 {
-                    var module = _systemModules[i];
+                    var module = SystemModules[i];
                     var baseAddress = ProcessModel.IsWin64 ? module.BaseAddress.ToInt64() : module.BaseAddress.ToInt32();
                     if (baseAddress <= (long) address && baseAddress + module.ModuleMemorySize >= (long) address)
                     {
@@ -396,7 +430,7 @@ namespace Sharlayan
             var moduleByAddress = GetModuleByAddress(address);
             if (moduleByAddress != null)
             {
-                foreach (var module in _systemModules)
+                foreach (var module in SystemModules)
                 {
                     if (module.ModuleName == moduleByAddress.ModuleName)
                     {
@@ -438,11 +472,7 @@ namespace Sharlayan
         #region Property Bindings
 
         private static Lazy<MemoryHandler> _instance = new Lazy<MemoryHandler>(() => new MemoryHandler(null));
-
-        public ProcessModel ProcessModel { get; set; }
-
-        public IntPtr ProcessHandle { get; set; }
-
+        
         public static MemoryHandler Instance
         {
             get { return _instance.Value; }

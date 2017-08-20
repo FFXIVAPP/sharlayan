@@ -27,26 +27,28 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
+        public static bool CanGetTargetInfo()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.TargetKey);
+            if (canRead)
+            {
+                // OTHER STUFF?
+            }
+            return canRead;
+        }
+
         public static TargetReadResult GetTargetInfo()
         {
             var result = new TargetReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!CanGetTargetInfo())
             {
                 return result;
             }
 
             try
-            {
-                var enmityEntries = new List<EnmityEntry>();
-                var agroPointersFound = Scanner.Instance.Locations.ContainsKey("AGROMAP") && Scanner.Instance.Locations.ContainsKey("AGRO_COUNT");
-
-                if (!Scanner.Instance.Locations.ContainsKey("TARGET"))
-                {
-                    return result;
-                }
-
-                var targetAddress = (IntPtr) Scanner.Instance.Locations["TARGET"];
+            {               
+                var targetAddress = (IntPtr) Scanner.Instance.Locations[Signatures.TargetKey];
 
                 if (targetAddress.ToInt64() > 0)
                 {
@@ -132,52 +134,63 @@ namespace Sharlayan
                 }
                 if (result.TargetEntity.CurrentTargetID > 0)
                 {
-                    if (agroPointersFound)
+                    var enmityEntries = new List<EnmityEntry>();
+
+                    try
                     {
-                        var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations["ENMITY_COUNT"]);
-                        if (agroCount > 0)
+                        if (CanGetEnmityEntities())
                         {
-                            var agroStructure = (IntPtr) Scanner.Instance.Locations["ENMITYMAP"];
-                            for (uint i = 0; i < 16; i++)
+                            var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations[Signatures.EnmityCountKey]);
+                            var enmityStructure = (IntPtr) Scanner.Instance.Locations[Signatures.EnmityMapKey];
+
+                            if (enmityCount > 0 && enmityCount < 16 && enmityStructure.ToInt64() > 0)
                             {
-                                try
+                                for (uint i = 0; i < enmityCount; i++)
                                 {
-                                    var address = new IntPtr(agroStructure.ToInt64() + i * 72);
-                                    var enmityEntry = new EnmityEntry
+                                    try
                                     {
-                                        ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
-                                        Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
-                                        Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
-                                    };
-                                    if (enmityEntry.ID <= 0)
-                                    {
-                                        continue;
-                                    }
-                                    if (string.IsNullOrWhiteSpace(enmityEntry.Name))
-                                    {
-                                        var pc = PCWorkerDelegate.GetEntity(enmityEntry.ID);
-                                        var npc = NPCWorkerDelegate.GetEntity(enmityEntry.ID);
-                                        var monster = MonsterWorkerDelegate.GetEntity(enmityEntry.ID);
-                                        try
+                                        var address = new IntPtr(enmityStructure.ToInt64() + i * 72);
+                                        var enmityEntry = new EnmityEntry
                                         {
-                                            enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
-                                        }
-                                        catch (Exception ex)
+                                            ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                            Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
+                                            Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
+                                        };
+                                        if (enmityEntry.ID <= 0)
                                         {
-                                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                            continue;
                                         }
+                                        if (string.IsNullOrWhiteSpace(enmityEntry.Name))
+                                        {
+                                            var pc = PCWorkerDelegate.GetEntity(enmityEntry.ID);
+                                            var npc = NPCWorkerDelegate.GetEntity(enmityEntry.ID);
+                                            var monster = MonsterWorkerDelegate.GetEntity(enmityEntry.ID);
+                                            try
+                                            {
+                                                enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                            }
+                                        }
+                                        enmityEntries.Add(enmityEntry);
                                     }
-                                    enmityEntries.Add(enmityEntry);
-                                }
-                                catch (Exception ex)
-                                {
-                                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                    catch (Exception ex)
+                                    {
+                                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                    }
                                 }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                    }
+
+                    result.TargetEntity.EnmityEntries = enmityEntries;
                 }
-                result.TargetEntity.EnmityEntries = enmityEntries;
             }
             catch (Exception ex)
             {

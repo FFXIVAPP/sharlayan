@@ -34,12 +34,6 @@ namespace Sharlayan
 
         public static IntPtr ProcessHandle { get; set; }
 
-        public static ProcessModel ProcessModel { get; set; }
-
-        public static bool IsOpen { get; set; }
-
-        public static List<ProcessModel> ProcessModels { get; set; }
-
         #endregion
     }
 }

@@ -29,11 +29,21 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
+        public static bool CanGetActors()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey);
+            if (canRead)
+            {
+                // OTHER STUFF?
+            }
+            return canRead;
+        }
+
         public static ActorReadResult GetActors()
         {
             var result = new ActorReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
+            if (!CanGetActors())
             {
                 return result;
             }
@@ -50,7 +60,7 @@ namespace Sharlayan
 
                 var limit = MemoryHandler.Instance.Structures.ActorInfo.Size;
 
-                var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["CHARMAP"], endianSize * limit);
+                var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
                 var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
                 var firstAddress = IntPtr.Zero;
 

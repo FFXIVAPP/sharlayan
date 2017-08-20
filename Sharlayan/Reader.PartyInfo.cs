@@ -26,28 +26,27 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        public static IntPtr PartyInfoMap { get; set; }
-        public static IntPtr PartyCountMap { get; set; }
+        public static bool CanGetPartyMembers()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PartyMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PartyCountKey);
+            if (canRead)
+            {
+                // OTHER STUFF?
+            }
+            return canRead;
+        }
 
         public static PartyInfoReadResult GetPartyMembers()
         {
             var result = new PartyInfoReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("CHARMAP"))
-            {
-                return result;
-            }
-            if (!Scanner.Instance.Locations.ContainsKey("PARTYMAP"))
-            {
-                return result;
-            }
-            if (!Scanner.Instance.Locations.ContainsKey("PARTYCOUNT"))
+            if (!CanGetPartyMembers())
             {
                 return result;
             }
 
-            PartyInfoMap = Scanner.Instance.Locations["PARTYMAP"];
-            PartyCountMap = Scanner.Instance.Locations["PARTYCOUNT"];
+            var PartyInfoMap = (IntPtr) Scanner.Instance.Locations[Signatures.PartyMapKey];
+            var PartyCountMap = Scanner.Instance.Locations[Signatures.PartyCountKey];
 
             try
             {

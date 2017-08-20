@@ -28,23 +28,27 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        public static IntPtr HotBarMap { get; set; }
-        public static IntPtr RecastMap { get; set; }
+        public static bool CanGetActions()
+        {
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.HotBarKey) && Scanner.Instance.Locations.ContainsKey(Signatures.RecastKey);
+            if (canRead)
+            {
+                // OTHER STUFF
+            }
+            return canRead;
+        }
 
         public static ActionReadResult GetActions()
         {
             var result = new ActionReadResult();
 
-            if (!Scanner.Instance.Locations.ContainsKey("HOTBAR") && !Scanner.Instance.Locations.ContainsKey("RECAST"))
+            if (!CanGetActions())
             {
                 return result;
             }
 
             try
             {
-                HotBarMap = Scanner.Instance.Locations["HOTBAR"];
-                RecastMap = Scanner.Instance.Locations["RECAST"];
-
                 result.ActionEntities = new List<ActionEntity>
                 {
                     GetHotBarRecast(HotBarRecast.Container.HOTBAR_1),
@@ -79,6 +83,9 @@ namespace Sharlayan
 
         private static ActionEntity GetHotBarRecast(HotBarRecast.Container type)
         {
+            var HotBarMap = Scanner.Instance.Locations[Signatures.HotBarKey];
+            var RecastMap = Scanner.Instance.Locations[Signatures.RecastKey];
+
             var hotbarContainerSize = 0xD00;
             var hotbarContainerAddress = IntPtr.Add(HotBarMap, (int) type * hotbarContainerSize);
 

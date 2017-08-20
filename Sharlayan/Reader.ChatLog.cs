@@ -27,77 +27,67 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        #region Logger
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        #endregion
-
-        private static ChatLogPointers ChatLogPointers;
-        private static int PreviousArrayIndex;
-        private static int PreviousOffset;
-        private static readonly List<int> Indexes = new List<int>();
-        private static bool ChatLogFirstRun = true;
-
-        private static void EnsureArrayIndexes()
+        private static class ChatLogReader
         {
-            Indexes.Clear();
-            for (var i = 0; i < 1000; i++)
+            public static ChatLogPointers ChatLogPointers;
+            public static int PreviousArrayIndex;
+            public static int PreviousOffset;
+            public static readonly List<int> Indexes = new List<int>();
+            public static bool ChatLogFirstRun = true;
+
+            public static void EnsureArrayIndexes()
             {
-                Indexes.Add((int) MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
+                Indexes.Clear();
+                for (var i = 0; i < 1000; i++)
+                {
+                    Indexes.Add((int)MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
+                }
+            }
+
+            public static IEnumerable<List<byte>> ResolveEntries(int offset, int length)
+            {
+                var entries = new List<List<byte>>();
+                for (var i = offset; i < length; i++)
+                {
+                    EnsureArrayIndexes();
+                    var currentOffset = Indexes[i];
+                    entries.Add(ResolveEntry(PreviousOffset, currentOffset));
+                    PreviousOffset = currentOffset;
+                }
+                return entries;
+            }
+
+            private static List<byte> ResolveEntry(int offset, int length)
+            {
+                return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
             }
         }
 
-        private static IEnumerable<List<byte>> ResolveEntries(int offset, int length)
+        public static bool CanGetChatLog()
         {
-            var entries = new List<List<byte>>();
-            for (var i = offset; i < length; i++)
+            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.ChatLogKey);
+            if (canRead)
             {
-                EnsureArrayIndexes();
-                var currentOffset = Indexes[i];
-                entries.Add(ResolveEntry(PreviousOffset, currentOffset));
-                PreviousOffset = currentOffset;
+                // OTHER STUFF?
             }
-            return entries;
-        }
-
-        private static List<byte> ResolveEntry(int offset, int length)
-        {
-            return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
+            return canRead;
         }
 
         public static ChatLogReadResult GetChatLog(int previousArrayIndex = 0, int previousOffset = 0)
         {
             var result = new ChatLogReadResult();
 
-            PreviousArrayIndex = previousArrayIndex;
-            PreviousOffset = previousOffset;
-
-            if (!Scanner.Instance.Locations.ContainsKey("CHATLOG"))
+            if (!CanGetChatLog())
             {
                 return result;
             }
 
-            IntPtr chatPointerMap;
+            ChatLogReader.PreviousArrayIndex = previousArrayIndex;
+            ChatLogReader.PreviousOffset = previousOffset;
 
-            try
-            {
-                switch (MemoryHandler.Instance.GameLanguage)
-                {
-                    case "Korean":
-                        chatPointerMap = (IntPtr) MemoryHandler.Instance.GetUInt32(Scanner.Instance.Locations["GAMEMAIN"]) + 20;
-                        break;
-                    default:
-                        chatPointerMap = Scanner.Instance.Locations["CHATLOG"];
-                        break;
-                }
+            var chatPointerMap = (IntPtr) Scanner.Instance.Locations[Signatures.ChatLogKey];
 
-                if (chatPointerMap.ToInt64() <= 20)
-                {
-                    return result;
-                }
-            }
-            catch (Exception)
+            if (chatPointerMap.ToInt64() <= 20)
             {
                 return result;
             }
@@ -106,8 +96,8 @@ namespace Sharlayan
 
             try
             {
-                Indexes.Clear();
-                ChatLogPointers = new ChatLogPointers
+                ChatLogReader.Indexes.Clear();
+                ChatLogReader.ChatLogPointers = new ChatLogPointers
                 {
                     LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
                     OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
@@ -118,28 +108,28 @@ namespace Sharlayan
                     LogEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd)
                 };
 
-                EnsureArrayIndexes();
+                ChatLogReader.EnsureArrayIndexes();
 
-                var currentArrayIndex = (ChatLogPointers.OffsetArrayPos - ChatLogPointers.OffsetArrayStart) / 4;
-                if (ChatLogFirstRun)
+                var currentArrayIndex = (ChatLogReader.ChatLogPointers.OffsetArrayPos - ChatLogReader.ChatLogPointers.OffsetArrayStart) / 4;
+                if (ChatLogReader.ChatLogFirstRun)
                 {
-                    ChatLogFirstRun = false;
-                    PreviousOffset = Indexes[(int) currentArrayIndex - 1];
-                    PreviousArrayIndex = (int) currentArrayIndex - 1;
+                    ChatLogReader.ChatLogFirstRun = false;
+                    ChatLogReader.PreviousOffset = ChatLogReader.Indexes[(int) currentArrayIndex - 1];
+                    ChatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
                 }
                 else
                 {
-                    if (currentArrayIndex < PreviousArrayIndex)
+                    if (currentArrayIndex < ChatLogReader.PreviousArrayIndex)
                     {
-                        buffered.AddRange(ResolveEntries(PreviousArrayIndex, 1000));
-                        PreviousOffset = 0;
-                        PreviousArrayIndex = 0;
+                        buffered.AddRange(ChatLogReader.ResolveEntries(ChatLogReader.PreviousArrayIndex, 1000));
+                        ChatLogReader.PreviousOffset = 0;
+                        ChatLogReader.PreviousArrayIndex = 0;
                     }
-                    if (PreviousArrayIndex < currentArrayIndex)
+                    if (ChatLogReader.PreviousArrayIndex < currentArrayIndex)
                     {
-                        buffered.AddRange(ResolveEntries(PreviousArrayIndex, (int) currentArrayIndex));
+                        buffered.AddRange(ChatLogReader.ResolveEntries(ChatLogReader.PreviousArrayIndex, (int) currentArrayIndex));
                     }
-                    PreviousArrayIndex = (int) currentArrayIndex;
+                    ChatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
                 }
             }
             catch (Exception ex)
@@ -163,8 +153,8 @@ namespace Sharlayan
                 }
             }
 
-            result.PreviousArrayIndex = PreviousArrayIndex;
-            result.PreviousOffset = PreviousOffset;
+            result.PreviousArrayIndex = ChatLogReader.PreviousArrayIndex;
+            result.PreviousOffset = ChatLogReader.PreviousOffset;
 
             return result;
         }

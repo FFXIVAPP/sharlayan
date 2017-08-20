@@ -35,7 +35,7 @@ namespace Sharlayan.Helpers
         public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions)
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
+            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache)
             {
                 EnsureDictionaryValues(actions, file);
             }
@@ -48,7 +48,7 @@ namespace Sharlayan.Helpers
         public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects)
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
+            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache)
             {
                 EnsureDictionaryValues(statusEffects, file);
             }
@@ -65,7 +65,7 @@ namespace Sharlayan.Helpers
             // This is known as the TerritoryType value
             // - It maps directly to SaintCoins map.csv against TerritoryType ID
             var file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
+            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache)
             {
                 EnsureDictionaryValues(mapInfos, file);
             }
@@ -78,7 +78,7 @@ namespace Sharlayan.Helpers
         public static Structures GetStructures(ProcessModel processModel, string patchVersion = "latest")
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
+            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache)
             {
                 return EnsureClassValues<Structures>(file);
             }
@@ -88,7 +88,7 @@ namespace Sharlayan.Helpers
         public static IEnumerable<Signature> GetSignatures(ProcessModel processModel, string patchVersion = "latest")
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{(processModel.IsWin64 ? "x64" : "x86")}.json");
-            if (File.Exists(file) && !MemoryHandler.Instance.IgnoreJSONCache)
+            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache)
             {
                 var json = FileResponseToJSON(file);
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);

@@ -23,6 +23,27 @@ namespace Sharlayan
 {
     public static class Signatures
     {
+        #region Locations Keys
+        
+        public static string AgroCountKey = "AGRO_COUNT";
+        public static string AgroMapKey = "AGROMAP";
+        public static string CharacterMapKey = "CHARMAP";
+        public static string ChatLogKey = "CHATLOG";
+        public static string EnmityCountKey = "ENMITY_COUNT";
+        public static string EnmityMapKey = "ENMITYMAP";
+        public static string GameMainKey = "GAMEMAIN";
+        public static string HotBarKey = "HOTBAR";
+        public static string InventoryKey = "INVENTORY";
+        public static string MapInformationKey = "MAPINFO";
+        public static string PartyCountKey = "PARTYCOUNT";
+        public static string PartyMapKey = "PARTYMAP";
+        public static string PlayerInformationKey = "PLAYERINFO";
+        public static string RecastKey = "RECAST";
+        public static string TargetKey = "TARGET";
+        public static string ZoneInformationKey = "ZONEINFO";
+        
+        #endregion
+
         public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
         {
             return APIHelper.GetSignatures(processModel, patchVersion);
