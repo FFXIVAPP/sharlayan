@@ -1,4 +1,4 @@
-﻿// Sharlayan ~ Reader.Inventory.cs
+// Sharlayan ~ Reader.Inventory.cs
 // 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
@@ -111,14 +111,14 @@ namespace Sharlayan
                 case Inventory.Container.COMPANY_1:
                 case Inventory.Container.COMPANY_2:
                 case Inventory.Container.COMPANY_3:
-                    limit = 3200;
+                    limit = 2800;
                     break;
                 default:
-                    limit = 1600;
+                    limit = 1400;
                     break;
             }
 
-            for (var i = 0; i < limit; i += 64)
+            for (var i = 0; i < limit; i += 56)
             {
                 var itemOffset = new IntPtr(containerAddress + i);
                 var id = MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID);
@@ -128,7 +128,7 @@ namespace Sharlayan
                     {
                         ID = (uint) id,
                         Slot = MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.Slot),
-                        Amount = MemoryHandler.Instance.GetByte(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.Amount),
+                        Amount = MemoryHandler.Instance.GetUInt32(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.Amount),
                         SB = MemoryHandler.Instance.GetUInt16(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.SB),
                         Durability = MemoryHandler.Instance.GetUInt16(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.ID),
                         GlamourID = (uint) MemoryHandler.Instance.GetPlatformUInt(itemOffset, MemoryHandler.Instance.Structures.ItemInfo.GlamourID),
