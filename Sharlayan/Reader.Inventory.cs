@@ -99,7 +99,7 @@ namespace Sharlayan
 
             var container = new InventoryEntity
             {
-                Amount = MemoryHandler.Instance.GetByte(InventoryPointerMap, offset + MemoryHandler.Instance.Structures.InventoryEntity.Amount),
+                //Amount = MemoryHandler.Instance.GetByte(InventoryPointerMap, offset + MemoryHandler.Instance.Structures.InventoryEntity.Amount),
                 Items = new List<ItemInfo>(),
                 TypeID = (byte) type,
                 Type = type
