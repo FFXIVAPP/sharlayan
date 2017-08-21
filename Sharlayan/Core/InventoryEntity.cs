@@ -24,7 +24,7 @@ namespace Sharlayan.Core
     public class InventoryEntity : IInventoryEntity
     {
         public List<ItemInfo> Items { get; set; }
-        public uint Amount { get; set; }
+        public uint Amount => (uint) Items.Count;
         public byte TypeID { get; set; }
         public Inventory.Container Type { get; set; }
     }
