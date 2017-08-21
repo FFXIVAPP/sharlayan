@@ -23,7 +23,7 @@ namespace Sharlayan.Core.Interfaces
     public interface IInventoryEntity
     {
         List<ItemInfo> Items { get; set; }
-        uint Amount { get; set; }
+        uint Amount { get; }
         byte TypeID { get; set; }
         Inventory.Container Type { get; set; }
     }
