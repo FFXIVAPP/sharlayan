@@ -23,8 +23,13 @@ namespace Sharlayan
 {
     public static class Signatures
     {
+        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
+        {
+            return APIHelper.GetSignatures(processModel, patchVersion);
+        }
+
         #region Locations Keys
-        
+
         public static string AgroCountKey = "AGRO_COUNT";
         public static string AgroMapKey = "AGROMAP";
         public static string CharacterMapKey = "CHARMAP";
@@ -41,12 +46,7 @@ namespace Sharlayan
         public static string RecastKey = "RECAST";
         public static string TargetKey = "TARGET";
         public static string ZoneInformationKey = "ZONEINFO";
-        
-        #endregion
 
-        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
-        {
-            return APIHelper.GetSignatures(processModel, patchVersion);
-        }
+        #endregion
     }
 }

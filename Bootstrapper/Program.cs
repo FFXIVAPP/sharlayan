@@ -1,5 +1,5 @@
-﻿// Bootstrapper
-// FFXIVAPP & Related Plugins/Modules
+﻿// Bootstrapper ~ Program.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ namespace Bootstrapper
         {
             var stringReader = new StringReader(XElement.Load("./Bootstrapper.exe.nlog")
                                                         .ToString());
-        
+
             using (var xmlReader = XmlReader.Create(stringReader))
             {
                 LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);

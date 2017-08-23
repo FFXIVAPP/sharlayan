@@ -33,32 +33,29 @@ namespace Sharlayan
 
         #endregion
 
-        /// <summary>
-        /// </summary>
-        /// <param name="pSignatures"> </param>
-        /// <param name="scanAllMemoryRegions"></param>
-        public void LoadOffsets(IEnumerable<Signature> pSignatures, bool scanAllMemoryRegions = false)
+        public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false)
         {
+            if (MemoryHandler.Instance.ProcessModel?.Process == null)
+            {
+                return;
+            }
+
             IsScanning = true;
 
             Func<bool> scanningFunc = delegate
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                if (MemoryHandler.Instance.ProcessModel?.Process == null)
-                {
-                    return false;
-                }
-                var signatures = new List<Signature>(pSignatures);
 
                 if (scanAllMemoryRegions)
                 {
                     LoadRegions();
                 }
 
-                if (signatures.Any())
+                var scanable = signatures as List<Signature> ?? signatures.ToList();
+                if (scanable.Any())
                 {
-                    foreach (var signature in signatures)
+                    foreach (var signature in scanable)
                     {
                         if (signature.Value == string.Empty)
                         {
@@ -68,9 +65,9 @@ namespace Sharlayan
                         }
                         signature.Value = signature.Value.Replace("*", "?"); // allows either ? or * to be used as wildcard
                     }
-                    signatures.RemoveAll(a => Locations.ContainsKey(a.Key));
+                    scanable.RemoveAll(a => Locations.ContainsKey(a.Key));
 
-                    FindExtendedSignatures(signatures, scanAllMemoryRegions);
+                    FindExtendedSignatures(scanable, scanAllMemoryRegions);
                 }
 
                 sw.Stop();
@@ -81,7 +78,7 @@ namespace Sharlayan
 
                 return true;
             };
-            scanningFunc.BeginInvoke(null, null);
+            scanningFunc.BeginInvoke(delegate { }, scanningFunc);
         }
 
         private void LoadRegions()
@@ -241,12 +238,6 @@ namespace Sharlayan
             return result;
         }
 
-        /// <summary>
-        ///     Convert a hex string to a binary array while preserving any wildcard characters.
-        /// </summary>
-        /// <param name="signature">A hex string "signature"</param>
-        /// <param name="wildcard">The byte to treat as the wildcard</param>
-        /// <returns>The converted binary array. Null if the conversion failed.</returns>
         private byte[] SignatureToByte(string signature, byte wildcard)
         {
             var pattern = new byte[signature.Length / 2];
@@ -278,25 +269,13 @@ namespace Sharlayan
         #region Property Bindings
 
         private static Lazy<Scanner> _instance = new Lazy<Scanner>(() => new Scanner());
-        private Dictionary<string, Signature> _locations;
 
         public static Scanner Instance
         {
             get { return _instance.Value; }
         }
 
-        public Dictionary<string, Signature> Locations
-        {
-            get { return _locations ?? (_locations = new Dictionary<string, Signature>()); }
-            private set
-            {
-                if (_locations == null)
-                {
-                    _locations = new Dictionary<string, Signature>();
-                }
-                _locations = value;
-            }
-        }
+        public Dictionary<string, Signature> Locations { get; set; } = new Dictionary<string, Signature>();
 
         #endregion
 

@@ -40,7 +40,7 @@ namespace Sharlayan
         {
             var result = new PartyInfoReadResult();
 
-            if (!CanGetPartyMembers())
+            if (!CanGetPartyMembers() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }

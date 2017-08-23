@@ -21,8 +21,8 @@ if (processes.length)
 {
     // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
-	// whether to always hit API on start to get the latest sigs based on patchVersion
-	bool ignoreJSONCache = true;
+	// whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
+	bool useLocalCache = true;
 	// patchVersion of game, or latest
 	string patchVersion = "latest";
     Process process = processes[0];
@@ -30,7 +30,7 @@ if (processes.length)
     {
         Process = process
     }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
+    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, useLocalCache);
 }
 
 // DX11
@@ -39,8 +39,8 @@ if (processes.length)
 {
     // supported: English, Chinese, Japanese, French, German, Korean
     string gameLanguage = "English";
-	// whether to always hit API on start to get the latest sigs based on patchVersion
-	bool ignoreJSONCache = true;
+	// whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
+	bool useLocalCache = true;
 	// patchVersion of game, or latest
 	string patchVersion = "latest";
     Process process = processes[0];
@@ -49,7 +49,7 @@ if (processes.length)
         Process = process,
         IsWin64 = true
     }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, ignoreJSONCache);
+    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, useLocalCache);
 }
 ```
 

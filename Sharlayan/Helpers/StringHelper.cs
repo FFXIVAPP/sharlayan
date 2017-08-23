@@ -29,11 +29,6 @@ namespace Sharlayan.Helpers
         private static readonly Regex Titles = new Regex(@"(?<num>\d+)(?<designator>\w+)", DefaultOptions | RegexOptions.IgnoreCase);
         private static readonly Regex CleanSpaces = new Regex(@"[ ]+", RegexOptions.Compiled);
 
-        /// <summary>
-        /// </summary>
-        /// <param name="s"> </param>
-        /// <param name="all"> </param>
-        /// <returns> </returns>
         public static string TitleCase(string s, bool all = true)
         {
             if (string.IsNullOrWhiteSpace(s.Trim()))
@@ -62,20 +57,12 @@ namespace Sharlayan.Helpers
             return result;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         public static string TrimAndCleanSpaces(string name)
         {
             return CleanSpaces.Replace(name, " ")
                               .Trim();
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="hexValue"></param>
-        /// <returns></returns>
         public static string HexToString(string hexValue)
         {
             var sb = new StringBuilder();

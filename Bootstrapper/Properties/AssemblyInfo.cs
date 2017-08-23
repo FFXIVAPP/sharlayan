@@ -1,5 +1,5 @@
-﻿// Bootstrapper
-// FFXIVAPP & Related Plugins/Modules
+﻿// Bootstrapper ~ AssemblyInfo.cs
+// 
 // Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
 // 
 // This program is free software: you can redistribute it and/or modify

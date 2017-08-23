@@ -22,6 +22,7 @@ namespace Sharlayan.Models
     public class ProcessModel
     {
         public int ProcessID => Process?.Id ?? -1;
+        public string ProcessName => Process?.ProcessName ?? string.Empty;
         public Process Process { get; set; }
         public bool IsWin64 { get; set; }
     }

@@ -39,7 +39,7 @@ namespace Sharlayan
         {
             var result = new InventoryReadResult();
 
-            if (!CanGetInventory())
+            if (!CanGetInventory() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }

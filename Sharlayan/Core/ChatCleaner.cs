@@ -46,27 +46,17 @@ namespace Sharlayan.Core
 
         private readonly Regex PlayerRegEx = new Regex(@"(?<full>\[[A-Z0-9]{10}(?<first>[A-Z0-9]{3,})20(?<last>[A-Z0-9]{3,})\](?<short>[\w']+\.? [\w']+\.?)\[[A-Z0-9]{12}\])", DefaultOptions);
 
-        /// <summary>
-        /// </summary>
-        /// <param name="line"></param>
         public ChatCleaner(string line)
         {
             Result = ProcessName(line);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="bytes"></param>
         public ChatCleaner(byte[] bytes)
         {
             Result = ProcessFullLine(bytes)
                 .Trim();
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="bytes"> </param>
-        /// <returns> </returns>
         private string ProcessFullLine(byte[] bytes)
         {
             var line = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(bytes.ToArray()))
@@ -167,10 +157,6 @@ namespace Sharlayan.Core
             return line;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="cleaned"></param>
-        /// <returns></returns>
         private string ProcessName(string cleaned)
         {
             var line = cleaned;

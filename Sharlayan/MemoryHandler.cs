@@ -36,48 +36,9 @@ namespace Sharlayan
 
         #endregion
 
-        private List<ProcessModule> SystemModules;
-
-        public MemoryHandler(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false)
-        {
-            GameLanguage = gameLanguage;
-            UseLocalCache = useLocalCache;
-
-            if (processModel == null)
-            {
-                return;
-            }
-
-            SetProcess(processModel, gameLanguage, patchVersion, useLocalCache, scanAllMemoryRegions);
-        }
-
-        #region Public Properties
-        
-        public long ScanCount { get; set; }
-        public bool IsAttached { get; set; }
-
-        #endregion
-
-        #region Internals
-
-        internal string GameLanguage { get; set; }
-        internal bool UseLocalCache { get; set; }
-        internal Structures Structures { get; set; }
-        internal ProcessModel ProcessModel { get; set; }
-        internal IntPtr ProcessHandle { get; set; }
-
-        #endregion
-
         ~MemoryHandler()
         {
-            try
-            {
-                UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
-            }
-            catch (Exception ex)
-            {
-                RaiseException(Logger, ex);
-            }
+            UnsetProcess();
         }
 
         public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false)
@@ -85,6 +46,52 @@ namespace Sharlayan
             ProcessModel = processModel;
             GameLanguage = gameLanguage;
             UseLocalCache = useLocalCache;
+
+            UnsetProcess();
+
+            try
+            {
+                ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) ProcessModel.ProcessID);
+            }
+            catch (Exception)
+            {
+                ProcessHandle = processModel.Process.Handle;
+            }
+            finally
+            {
+                Constants.ProcessHandle = ProcessHandle;
+                IsAttached = true;
+            }
+
+            if (IsNewInstance)
+            {
+                IsNewInstance = false;
+
+                ActionHelper.Resolve();
+                StatusEffectHelper.Resolve();
+                ZoneHelper.Resolve();
+
+                ResolveMemoryStructures(processModel, patchVersion);
+            }
+
+            AttachmentWorker = new AttachmentWorker();
+            AttachmentWorker.StartScanning(processModel);
+
+            SystemModules.Clear();
+            GetProcessModules();
+
+            Scanner.Instance.Locations.Clear();
+            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion), scanAllMemoryRegions);
+        }
+
+        public void UnsetProcess()
+        {
+
+            if (AttachmentWorker != null)
+            {
+                AttachmentWorker.StopScanning();
+                AttachmentWorker.Dispose();
+            }
 
             try
             {
@@ -102,36 +109,141 @@ namespace Sharlayan
                 Constants.ProcessHandle = ProcessHandle = IntPtr.Zero;
                 IsAttached = false;
             }
-
-            try
-            {
-                ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) ProcessModel.ProcessID);
-            }
-            catch (Exception)
-            {
-                ProcessHandle = processModel.Process.Handle;
-            }
-            finally
-            {
-                Constants.ProcessHandle = ProcessHandle;
-                IsAttached = true;
-            }
-
-            SystemModules = GetProcessModules();
-
-            SetStructures(processModel, patchVersion);
-
-            Scanner.Instance.Locations.Clear();
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion), scanAllMemoryRegions);
-
-            ActionHelper.Resolve();
-            StatusEffectHelper.Resolve();
-            ZoneHelper.Resolve();
         }
 
-        public void SetStructures(ProcessModel processModel, string patchVersion = "latest")
+        internal void ResolveMemoryStructures(ProcessModel processModel, string patchVersion = "latest")
         {
             Structures = APIHelper.GetStructures(processModel, patchVersion);
+        }
+
+        public bool Peek(IntPtr address, byte[] buffer)
+        {
+            IntPtr lpNumberOfBytesRead;
+            return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
+        }
+
+        public IntPtr GetStaticAddress(long offset)
+        {
+            return new IntPtr(Instance.ProcessModel.Process.MainModule.BaseAddress.ToInt64() + offset);
+        }
+
+        public T GetStructure<T>(IntPtr address, int offset = 0)
+        {
+            IntPtr lpNumberOfBytesRead;
+            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
+            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out lpNumberOfBytesRead);
+            var retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
+            Marshal.FreeCoTaskMem(buffer);
+            return retValue;
+        }
+
+        #region Private Structs
+
+        internal struct MemoryBlock
+        {
+            public long Length;
+            public long Start;
+        }
+
+        #endregion
+
+        #region Private
+
+        private List<ProcessModule> SystemModules { get; set; } = new List<ProcessModule>();
+        private bool IsNewInstance = true;
+        private AttachmentWorker AttachmentWorker;
+
+        #endregion
+
+        #region Public Properties
+
+        public long ScanCount { get; set; }
+        public bool IsAttached { get; set; }
+
+        #endregion
+
+        #region Internals
+
+        internal string GameLanguage { get; set; }
+        internal bool UseLocalCache { get; set; }
+        internal Structures Structures { get; set; }
+        internal ProcessModel ProcessModel { get; set; }
+        internal IntPtr ProcessHandle { get; set; }
+
+        #endregion
+
+        #region Peek Bytes
+
+        public byte GetByte(IntPtr address, long offset = 0)
+        {
+            var data = new byte[1];
+            Peek(new IntPtr(address.ToInt64() + offset), data);
+            return data[0];
+        }
+
+        public byte[] GetByteArray(IntPtr address, int length)
+        {
+            var data = new byte[length];
+            Peek(address, data);
+            return data;
+        }
+
+        #endregion
+
+        #region Peek Ints
+
+        public short GetInt16(IntPtr address, long offset = 0)
+        {
+            var value = new byte[2];
+            Peek(new IntPtr(address.ToInt64() + offset), value);
+            return BitConverter.TryToInt16(value, 0);
+        }
+
+        public int GetInt32(IntPtr address, long offset = 0)
+        {
+            var value = new byte[4];
+            Peek(new IntPtr(address.ToInt64() + offset), value);
+            return BitConverter.TryToInt32(value, 0);
+        }
+
+        public long GetInt64(IntPtr address, long offset = 0)
+        {
+            var value = new byte[8];
+            Peek(new IntPtr(address.ToInt64() + offset), value);
+            return BitConverter.TryToInt64(value, 0);
+        }
+
+        public long GetPlatformInt(IntPtr address, long offset = 0)
+        {
+            var bytes = new byte[ProcessModel.IsWin64 ? 8 : 4];
+            Peek(new IntPtr(address.ToInt64() + offset), bytes);
+            return GetPlatformIntFromBytes(bytes);
+        }
+
+        public long GetPlatformIntFromBytes(byte[] source, int index = 0)
+        {
+            if (ProcessModel.IsWin64)
+            {
+                return BitConverter.TryToInt64(source, index);
+            }
+            return BitConverter.TryToInt32(source, index);
+        }
+
+        #endregion
+
+        #region Pointers
+
+        public IntPtr ReadPointer(IntPtr address, long offset = 0)
+        {
+            if (ProcessModel.IsWin64)
+            {
+                var win64 = new byte[8];
+                Peek(new IntPtr(address.ToInt64() + offset), win64);
+                return new IntPtr(BitConverter.TryToInt64(win64, 0));
+            }
+            var win32 = new byte[4];
+            Peek(new IntPtr(address.ToInt64() + offset), win32);
+            return IntPtr.Add(IntPtr.Zero, BitConverter.TryToInt32(win32, 0));
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false)
@@ -165,117 +277,10 @@ namespace Sharlayan
             return baseAddress;
         }
 
-        public IntPtr GetStaticAddress(long offset)
-        {
-            return new IntPtr(Instance.ProcessModel.Process.MainModule.BaseAddress.ToInt64() + offset);
-        }
+        #endregion
 
-        /// <summary>
-        /// </summary>
-        /// <param name="address"> </param>
-        /// <param name="buffer"> </param>
-        /// <returns> </returns>
-        public bool Peek(IntPtr address, byte[] buffer)
-        {
-            IntPtr lpNumberOfBytesRead;
-            return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
-        }
+        #region Peek Strings
 
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public byte GetByte(IntPtr address, long offset = 0)
-        {
-            var data = new byte[1];
-            Peek(new IntPtr(address.ToInt64() + offset), data);
-            return data[0];
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        public byte[] GetByteArray(IntPtr address, int length)
-        {
-            var data = new byte[length];
-            Peek(address, data);
-            return data;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public short GetInt16(IntPtr address, long offset = 0)
-        {
-            var value = new byte[2];
-            Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt16(value, 0);
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public int GetInt32(IntPtr address, long offset = 0)
-        {
-            var value = new byte[4];
-            Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt32(value, 0);
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public long GetInt64(IntPtr address, long offset = 0)
-        {
-            var value = new byte[8];
-            Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt64(value, 0);
-        }
-
-        public long GetPlatformInt(IntPtr address, long offset = 0)
-        {
-            var bytes = new byte[ProcessModel.IsWin64 ? 8 : 4];
-            Peek(new IntPtr(address.ToInt64() + offset), bytes);
-            return GetPlatformIntFromBytes(bytes);
-        }
-
-        public long GetPlatformIntFromBytes(byte[] source, int index = 0)
-        {
-            if (ProcessModel.IsWin64)
-            {
-                return BitConverter.TryToInt64(source, index);
-            }
-            return BitConverter.TryToInt32(source, index);
-        }
-
-        public IntPtr ReadPointer(IntPtr address, long offset = 0)
-        {
-            if (ProcessModel.IsWin64)
-            {
-                var win64 = new byte[8];
-                Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return new IntPtr(BitConverter.TryToInt64(win64, 0));
-            }
-            var win32 = new byte[4];
-            Peek(new IntPtr(address.ToInt64() + offset), win32);
-            return IntPtr.Add(IntPtr.Zero, BitConverter.TryToInt32(win32, 0));
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
         public string GetString(IntPtr address, long offset = 0, int size = 256)
         {
             var bytes = new byte[size];
@@ -317,11 +322,10 @@ namespace Sharlayan
             return Encoding.UTF8.GetString(bytes);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
+        #endregion
+
+        #region Peek UInts
+
         public ushort GetUInt16(IntPtr address, long offset = 0)
         {
             var value = new byte[4];
@@ -329,11 +333,6 @@ namespace Sharlayan
             return BitConverter.TryToUInt16(value, 0);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public uint GetUInt32(IntPtr address, long offset = 0)
         {
             var value = new byte[4];
@@ -341,11 +340,6 @@ namespace Sharlayan
             return BitConverter.TryToUInt32(value, 0);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
         public ulong GetUInt64(IntPtr address, long offset = 0)
         {
             var value = new byte[8];
@@ -369,41 +363,21 @@ namespace Sharlayan
             return BitConverter.TryToUInt32(source, index);
         }
 
-        /// <summary>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="address"></param>
-        /// <param name="offset"></param>
-        /// <returns></returns>
-        public T GetStructure<T>(IntPtr address, int offset = 0)
-        {
-            IntPtr lpNumberOfBytesRead;
-            var buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            UnsafeNativeMethods.ReadProcessMemory(ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out lpNumberOfBytesRead);
-            var retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
-            Marshal.FreeCoTaskMem(buffer);
-            return retValue;
-        }
+        #endregion
 
-        private List<ProcessModule> GetProcessModules()
+        #region Modules
+
+        private void GetProcessModules()
         {
             var modules = ProcessModel.Process.Modules;
-            var result = new List<ProcessModule>(modules.Count);
 
             for (var i = 0; i < modules.Count; i++)
             {
                 var module = modules[i];
-                result.Add(module);
+                SystemModules.Add(module);
             }
-
-            return result;
         }
 
-        /// <summary>
-        ///     Allows the user to find out what module an address is in.
-        /// </summary>
-        /// <param name="address">Int32 Address</param>
-        /// <returns>ProcessModule</returns>
         internal ProcessModule GetModuleByAddress(IntPtr address)
         {
             try
@@ -441,14 +415,6 @@ namespace Sharlayan
             return false;
         }
 
-        #region Private Structs
-
-        internal struct MemoryBlock
-        {
-            public long Length;
-            public long Start;
-        }
-
         #endregion
 
         #region Event Raising
@@ -471,8 +437,8 @@ namespace Sharlayan
 
         #region Property Bindings
 
-        private static Lazy<MemoryHandler> _instance = new Lazy<MemoryHandler>(() => new MemoryHandler(null));
-        
+        private static Lazy<MemoryHandler> _instance = new Lazy<MemoryHandler>(() => new MemoryHandler());
+
         public static MemoryHandler Instance
         {
             get { return _instance.Value; }

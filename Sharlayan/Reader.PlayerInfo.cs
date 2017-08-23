@@ -39,7 +39,7 @@ namespace Sharlayan
         {
             var result = new PlayerInfoReadResult();
 
-            if (!CanGetPlayerInfo())
+            if (!CanGetPlayerInfo() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }

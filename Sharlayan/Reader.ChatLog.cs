@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NLog;
 using Sharlayan.Core;
 using Sharlayan.Models;
 
@@ -27,42 +26,6 @@ namespace Sharlayan
 {
     public static partial class Reader
     {
-        private static class ChatLogReader
-        {
-            public static ChatLogPointers ChatLogPointers;
-            public static int PreviousArrayIndex;
-            public static int PreviousOffset;
-            public static readonly List<int> Indexes = new List<int>();
-            public static bool ChatLogFirstRun = true;
-
-            public static void EnsureArrayIndexes()
-            {
-                Indexes.Clear();
-                for (var i = 0; i < 1000; i++)
-                {
-                    Indexes.Add((int)MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
-                }
-            }
-
-            public static IEnumerable<List<byte>> ResolveEntries(int offset, int length)
-            {
-                var entries = new List<List<byte>>();
-                for (var i = offset; i < length; i++)
-                {
-                    EnsureArrayIndexes();
-                    var currentOffset = Indexes[i];
-                    entries.Add(ResolveEntry(PreviousOffset, currentOffset));
-                    PreviousOffset = currentOffset;
-                }
-                return entries;
-            }
-
-            private static List<byte> ResolveEntry(int offset, int length)
-            {
-                return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
-            }
-        }
-
         public static bool CanGetChatLog()
         {
             var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.ChatLogKey);
@@ -77,7 +40,7 @@ namespace Sharlayan
         {
             var result = new ChatLogReadResult();
 
-            if (!CanGetChatLog())
+            if (!CanGetChatLog() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }
@@ -157,6 +120,42 @@ namespace Sharlayan
             result.PreviousOffset = ChatLogReader.PreviousOffset;
 
             return result;
+        }
+
+        private static class ChatLogReader
+        {
+            public static ChatLogPointers ChatLogPointers;
+            public static int PreviousArrayIndex;
+            public static int PreviousOffset;
+            public static readonly List<int> Indexes = new List<int>();
+            public static bool ChatLogFirstRun = true;
+
+            public static void EnsureArrayIndexes()
+            {
+                Indexes.Clear();
+                for (var i = 0; i < 1000; i++)
+                {
+                    Indexes.Add((int) MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
+                }
+            }
+
+            public static IEnumerable<List<byte>> ResolveEntries(int offset, int length)
+            {
+                var entries = new List<List<byte>>();
+                for (var i = offset; i < length; i++)
+                {
+                    EnsureArrayIndexes();
+                    var currentOffset = Indexes[i];
+                    entries.Add(ResolveEntry(PreviousOffset, currentOffset));
+                    PreviousOffset = currentOffset;
+                }
+                return entries;
+            }
+
+            private static List<byte> ResolveEntry(int offset, int length)
+            {
+                return new List<byte>(MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.LogStart + offset), length - offset));
+            }
         }
     }
 }

@@ -22,10 +22,6 @@ namespace Sharlayan.Helpers
 {
     public static class XmlHelper
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="xValue"> </param>
-        /// <returns> </returns>
         public static string SanitizeXmlString(string xValue)
         {
             if (xValue == null)
@@ -40,10 +36,6 @@ namespace Sharlayan.Helpers
             return buffer.ToString();
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="xChar"> </param>
-        /// <returns> </returns>
         private static bool IsLegalXmlChar(int xChar)
         {
             return xChar == 0x9 || xChar == 0xA || xChar == 0xD || xChar >= 0x20 && xChar <= 0xD7FF || xChar >= 0xE000 && xChar <= 0xFFFD || xChar >= 0x10000 && xChar <= 0x10FFFF;

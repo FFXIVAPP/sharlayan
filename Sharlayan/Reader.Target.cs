@@ -41,13 +41,13 @@ namespace Sharlayan
         {
             var result = new TargetReadResult();
 
-            if (!CanGetTargetInfo())
+            if (!CanGetTargetInfo() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }
 
             try
-            {               
+            {
                 var targetAddress = (IntPtr) Scanner.Instance.Locations[Signatures.TargetKey];
 
                 if (targetAddress.ToInt64() > 0)
@@ -152,7 +152,7 @@ namespace Sharlayan
                                         var address = new IntPtr(enmityStructure.ToInt64() + i * 72);
                                         var enmityEntry = new EnmityEntry
                                         {
-                                            ID = (uint)MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
+                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityEntry.ID),
                                             Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityEntry.Name),
                                             Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityEntry.Enmity)
                                         };

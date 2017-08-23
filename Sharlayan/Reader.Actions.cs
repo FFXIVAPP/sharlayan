@@ -42,7 +42,7 @@ namespace Sharlayan
         {
             var result = new ActionReadResult();
 
-            if (!CanGetActions())
+            if (!CanGetActions() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }

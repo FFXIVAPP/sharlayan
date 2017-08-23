@@ -43,7 +43,7 @@ namespace Sharlayan
         {
             var result = new ActorReadResult();
 
-            if (!CanGetActors())
+            if (!CanGetActors() || !MemoryHandler.Instance.IsAttached)
             {
                 return result;
             }
@@ -53,7 +53,7 @@ namespace Sharlayan
                 #region Ensure Target
 
                 var targetAddress = IntPtr.Zero;
-                
+
                 #endregion
 
                 var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
