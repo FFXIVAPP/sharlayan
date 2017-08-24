@@ -97,6 +97,8 @@ namespace Sharlayan
                 result.RemovedNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
                 result.RemovedPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
 
+                List<uint> npcIds = new List<uint>();
+
                 foreach (var kvp in uniqueAddresses)
                 {
                     try
@@ -139,6 +141,8 @@ namespace Sharlayan
                             case Actor.Type.NPC:
                             case Actor.Type.Aetheryte:
                             case Actor.Type.EObj:
+                                if (npcIds.Contains(NPCID2)) break;
+                                npcIds.Add(NPCID2);
                                 if (result.RemovedNPC.ContainsKey(NPCID2))
                                 {
                                     result.RemovedNPC.Remove(NPCID2);
