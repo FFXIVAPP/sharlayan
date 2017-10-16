@@ -126,16 +126,15 @@ namespace Sharlayan
 
             var hotbarItemsSource = MemoryHandler.Instance.GetByteArray(hotbarContainerAddress, hotbarContainerSize);
             var recastItemsSource = MemoryHandler.Instance.GetByteArray(recastContainerAddress, recastContainerSize);
+            var hotbarItemSource = new byte[hotbarItemSize];
+            var recastItemSource = new byte[recastItemSize];
 
             for (var i = 0; i < limit; i++)
             {
-                var hotbarSource = new byte[hotbarItemSize];
-                var recastSource = new byte[recastItemSize];
+                Buffer.BlockCopy(hotbarItemsSource, i * hotbarItemSize, hotbarItemSource, 0, hotbarItemSize);
+                Buffer.BlockCopy(recastItemsSource, i * recastItemSize, recastItemSource, 0, recastItemSize);
 
-                Buffer.BlockCopy(hotbarItemsSource, i * hotbarItemSize, hotbarSource, 0, hotbarItemSize);
-                Buffer.BlockCopy(recastItemsSource, i * recastItemSize, recastSource, 0, recastItemSize);
-
-                var name = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.Name);
+                var name = MemoryHandler.Instance.GetStringFromBytes(hotbarItemSource, MemoryHandler.Instance.Structures.HotBarEntity.Name);
                 var slot = i;
 
                 if (string.IsNullOrWhiteSpace(name))
@@ -145,8 +144,8 @@ namespace Sharlayan
                 var item = new HotBarRecastItem
                 {
                     Name = name,
-                    ID = BitConverter.TryToInt16(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.ID),
-                    KeyBinds = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarEntity.KeyBinds),
+                    ID = BitConverter.TryToInt16(hotbarItemSource, MemoryHandler.Instance.Structures.HotBarEntity.ID),
+                    KeyBinds = MemoryHandler.Instance.GetStringFromBytes(hotbarItemSource, MemoryHandler.Instance.Structures.HotBarEntity.KeyBinds),
                     Slot = slot
                 };
 
@@ -181,18 +180,18 @@ namespace Sharlayan
 
                 #region Recast Information
 
-                item.Category = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Category);
-                item.Type = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Type);
-                item.Icon = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Icon);
-                item.CoolDownPercent = recastSource[MemoryHandler.Instance.Structures.RecastEntity.CoolDownPercent];
-                item.IsAvailable = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.IsAvailable);
+                item.Category = BitConverter.TryToInt32(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.Category);
+                item.Type = BitConverter.TryToInt32(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.Type);
+                item.Icon = BitConverter.TryToInt32(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.Icon);
+                item.CoolDownPercent = recastItemSource[MemoryHandler.Instance.Structures.RecastEntity.CoolDownPercent];
+                item.IsAvailable = BitConverter.TryToBoolean(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.IsAvailable);
 
-                var remainingCost = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.RemainingCost);
+                var remainingCost = BitConverter.TryToInt32(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.RemainingCost);
 
                 item.RemainingCost = remainingCost != -1 ? remainingCost : 0;
-                item.Amount = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastEntity.Amount);
-                item.InRange = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastEntity.InRange);
-                item.IsProcOrCombo = recastSource[MemoryHandler.Instance.Structures.RecastEntity.ActionProc] > 0;
+                item.Amount = BitConverter.TryToInt32(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.Amount);
+                item.InRange = BitConverter.TryToBoolean(recastItemSource, MemoryHandler.Instance.Structures.RecastEntity.InRange);
+                item.IsProcOrCombo = recastItemSource[MemoryHandler.Instance.Structures.RecastEntity.ActionProc] > 0;
 
                 #endregion
 
