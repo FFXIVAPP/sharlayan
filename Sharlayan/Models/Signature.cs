@@ -63,7 +63,11 @@ namespace Sharlayan.Models
 
         public List<long> PointerPath { get; set; }
 
-        public IntPtr GetAddress()
+        #region Address Resolution
+
+        private IntPtr _resolvedPointerPath = IntPtr.Zero;
+
+        private IntPtr GetAddress()
         {
             var baseAddress = IntPtr.Zero;
             var IsASMSignature = false;
@@ -87,8 +91,14 @@ namespace Sharlayan.Models
             {
                 return baseAddress;
             }
-            return MemoryHandler.Instance.ResolvePointerPath(PointerPath, baseAddress, IsASMSignature);
+            if (_resolvedPointerPath == IntPtr.Zero)
+            {
+                _resolvedPointerPath = MemoryHandler.Instance.ResolvePointerPath(PointerPath, baseAddress, IsASMSignature);
+            }
+            return _resolvedPointerPath;
         }
+
+        #endregion
 
         public static implicit operator IntPtr(Signature signature)
         {
