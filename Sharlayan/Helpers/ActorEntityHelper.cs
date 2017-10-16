@@ -133,11 +133,12 @@ namespace Sharlayan.Helpers
                 entry.StatusEntries = new List<StatusEntry>();
                 const int statusSize = 12;
                 var statusesSource = new byte[limit * statusSize];
+                var statusSource = new byte[statusSize];
 
                 Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
+                
                 for (var i = 0; i < limit; i++)
                 {
-                    var statusSource = new byte[statusSize];
                     Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
                     var statusEntry = new StatusEntry
                     {

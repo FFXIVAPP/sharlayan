@@ -285,18 +285,16 @@ namespace Sharlayan
         {
             var bytes = new byte[size];
             Peek(new IntPtr(address.ToInt64() + offset), bytes);
-            var realSize = 0;
             for (var i = 0; i < size; i++)
             {
                 if (bytes[i] != 0)
                 {
                     continue;
                 }
-                realSize = i;
+                size = i;
                 break;
             }
-            Array.Resize(ref bytes, realSize);
-            return Encoding.UTF8.GetString(bytes);
+            return Encoding.UTF8.GetString(bytes, 0, size);
         }
 
         public string GetStringFromBytes(byte[] source, int offset = 0, int size = 256)
@@ -306,20 +304,7 @@ namespace Sharlayan
             {
                 size = safeSize;
             }
-            var bytes = new byte[size];
-            Array.Copy(source, offset, bytes, 0, size);
-            var realSize = 0;
-            for (var i = 0; i < size; i++)
-            {
-                if (bytes[i] != 0)
-                {
-                    continue;
-                }
-                realSize = i;
-                break;
-            }
-            Array.Resize(ref bytes, realSize);
-            return Encoding.UTF8.GetString(bytes);
+            return Encoding.UTF8.GetString(source, offset, size);
         }
 
         #endregion
