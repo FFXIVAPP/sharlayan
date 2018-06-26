@@ -83,9 +83,9 @@ public class ActorReadResult
         NewPC = new List<uint>();
     }
 
-    public ConcurrentDictionary<uint, ActorEntity> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
-    public ConcurrentDictionary<uint, ActorEntity> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
-    public ConcurrentDictionary<uint, ActorEntity> PCEntities => PCWorkerDelegate.EntitiesDictionary;
+    public ConcurrentDictionary<uint, ActorItem> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
+    public ConcurrentDictionary<uint, ActorItem> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
+    public ConcurrentDictionary<uint, ActorItem> PCEntities => PCWorkerDelegate.EntitiesDictionary;
     public Dictionary<uint, uint> RemovedMonster { get; set; }
     public Dictionary<uint, uint> RemovedNPC { get; set; }
     public Dictionary<uint, uint> RemovedPC { get; set; }
@@ -165,7 +165,7 @@ public class PartyInfoReadResult
         NewParty = new List<uint>();
     }
 
-    public ConcurrentDictionary<uint, PartyEntity> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
+    public ConcurrentDictionary<uint, PartyMember> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
     public Dictionary<uint, uint> RemovedParty { get; set; }
     public List<UInt32> NewParty { get; set; }
 }
@@ -183,10 +183,10 @@ public class PlayerInfoReadResult
 {
     public PlayerInfoReadResult()
     {
-        PlayerEntity = new PlayerEntity();
+        CurrentPlayer = new CurrentPlayer();
     }
 
-    public PlayerEntity PlayerEntity { get; set; }
+    public CurrentPlayer CurrentPlayer { get; set; }
 }
 ```
 

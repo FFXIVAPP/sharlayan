@@ -1,51 +1,52 @@
-﻿// Sharlayan ~ Signature.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Signature.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   Signature.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+namespace Sharlayan.Models {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
 
-namespace Sharlayan.Models
-{
-    public class Signature
-    {
+    using Newtonsoft.Json;
+
+    public class Signature {
         private Regex _regularExpress;
 
-        public Signature()
-        {
-            Key = "";
-            Value = "";
-            RegularExpress = null;
-            SigScanAddress = IntPtr.Zero;
-            PointerPath = null;
+        public Signature() {
+            this.Key = string.Empty;
+            this.Value = string.Empty;
+            this.RegularExpress = null;
+            this.SigScanAddress = IntPtr.Zero;
+            this.PointerPath = null;
         }
 
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public bool ASMSignature { get; set; }
 
-        public Regex RegularExpress
-        {
-            get { return _regularExpress; }
-            set
-            {
-                if (value != null)
-                {
-                    _regularExpress = value;
+        public string Key { get; set; }
+
+        [JsonIgnore]
+        public int Offset {
+            get {
+                return this.Value.Length / 2;
+            }
+        }
+
+        public List<long> PointerPath { get; set; }
+
+        public Regex RegularExpress {
+            get {
+                return this._regularExpress;
+            }
+
+            set {
+                if (value != null) {
+                    this._regularExpress = value;
                 }
             }
         }
@@ -53,46 +54,34 @@ namespace Sharlayan.Models
         [JsonIgnore]
         public IntPtr SigScanAddress { get; set; }
 
-        public bool ASMSignature { get; set; }
+        public string Value { get; set; }
 
-        [JsonIgnore]
-        public int Offset
-        {
-            get { return Value.Length / 2; }
+        public static implicit operator IntPtr(Signature signature) {
+            return signature.GetAddress();
         }
 
-        public List<long> PointerPath { get; set; }
-
-        public IntPtr GetAddress()
-        {
-            var baseAddress = IntPtr.Zero;
+        public IntPtr GetAddress() {
+            IntPtr baseAddress = IntPtr.Zero;
             var IsASMSignature = false;
-            if (SigScanAddress != IntPtr.Zero)
-            {
-                baseAddress = SigScanAddress; // Scanner should have already applied the base offset
-                if (MemoryHandler.Instance.ProcessModel.IsWin64 && ASMSignature)
-                {
+            if (this.SigScanAddress != IntPtr.Zero) {
+                baseAddress = this.SigScanAddress; // Scanner should have already applied the base offset
+                if (MemoryHandler.Instance.ProcessModel.IsWin64 && this.ASMSignature) {
                     IsASMSignature = true;
                 }
             }
-            else
-            {
-                if (PointerPath == null || PointerPath.Count == 0)
-                {
+            else {
+                if (this.PointerPath == null || this.PointerPath.Count == 0) {
                     return IntPtr.Zero;
                 }
+
                 baseAddress = MemoryHandler.Instance.GetStaticAddress(0);
             }
-            if (PointerPath == null || PointerPath.Count == 0)
-            {
+
+            if (this.PointerPath == null || this.PointerPath.Count == 0) {
                 return baseAddress;
             }
-            return MemoryHandler.Instance.ResolvePointerPath(PointerPath, baseAddress, IsASMSignature);
-        }
 
-        public static implicit operator IntPtr(Signature signature)
-        {
-            return signature.GetAddress();
+            return MemoryHandler.Instance.ResolvePointerPath(this.PointerPath, baseAddress, IsASMSignature);
         }
     }
 }

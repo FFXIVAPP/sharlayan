@@ -1,260 +1,228 @@
-﻿// Sharlayan ~ Reader.Actor.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Reader.Actor.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   Reader.Actor.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Sharlayan.Core;
-using Sharlayan.Core.Enums;
-using Sharlayan.Delegates;
-using Sharlayan.Helpers;
-using Sharlayan.Models;
-using BitConverter = Sharlayan.Helpers.BitConverter;
+namespace Sharlayan {
+    using System;
+    using System.Collections.Generic;
 
-namespace Sharlayan
-{
-    public static partial class Reader
-    {
-        public static bool CanGetActors()
-        {
+    using Sharlayan.Core;
+    using Sharlayan.Core.Enums;
+    using Sharlayan.Delegates;
+    using Sharlayan.Models.ReadResults;
+    using Sharlayan.Utilities;
+
+    using BitConverter = Sharlayan.Utilities.BitConverter;
+
+    public static partial class Reader {
+        public static bool CanGetActors() {
             var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey);
-            if (canRead)
-            {
+            if (canRead) {
                 // OTHER STUFF?
             }
+
             return canRead;
         }
 
-        public static ActorReadResult GetActors()
-        {
-            var result = new ActorReadResult();
+        public static ActorResult GetActors() {
+            var result = new ActorResult();
 
-            if (!CanGetActors() || !MemoryHandler.Instance.IsAttached)
-            {
+            if (!CanGetActors() || !MemoryHandler.Instance.IsAttached) {
                 return result;
             }
 
-            try
-            {
-                #region Ensure Target
+            try {
+                IntPtr targetAddress = IntPtr.Zero;
 
-                var targetAddress = IntPtr.Zero;
+                var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64
+                                     ? 8
+                                     : 4;
 
-                #endregion
-
-                var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64 ? 8 : 4;
-
-                var limit = MemoryHandler.Instance.Structures.ActorInfo.Size;
-
-                var characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
-                var uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
-                var firstAddress = IntPtr.Zero;
+                var sourceSize = MemoryHandler.Instance.Structures.ActorItem.SourceSize;
+                var limit = MemoryHandler.Instance.Structures.ActorItem.EntityCount;
+                byte[] characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
+                Dictionary<IntPtr, IntPtr> uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
+                IntPtr firstAddress = IntPtr.Zero;
 
                 var firstTime = true;
 
-                for (var i = 0; i < limit; i++)
-                {
+                for (var i = 0; i < limit; i++) {
                     IntPtr characterAddress;
 
-                    if (MemoryHandler.Instance.ProcessModel.IsWin64)
-                    {
+                    if (MemoryHandler.Instance.ProcessModel.IsWin64) {
                         characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
                     }
-                    else
-                    {
+                    else {
                         characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
                     }
-                    if (characterAddress == IntPtr.Zero)
-                    {
+
+                    if (characterAddress == IntPtr.Zero) {
                         continue;
                     }
 
-                    if (firstTime)
-                    {
+                    if (firstTime) {
                         firstAddress = characterAddress;
                         firstTime = false;
                     }
+
                     uniqueAddresses[characterAddress] = characterAddress;
                 }
 
-                #region ActorEntity Handlers
+                foreach (KeyValuePair<uint, ActorItem> kvp in MonsterWorkerDelegate.ActorItems) {
+                    result.RemovedMonsters.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                }
 
-                result.RemovedMonster = MonsterWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                result.RemovedNPC = NPCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
-                result.RemovedPC = PCWorkerDelegate.EntitiesDictionary.Keys.ToDictionary(key => key);
+                foreach (KeyValuePair<uint, ActorItem> kvp in NPCWorkerDelegate.ActorItems) {
+                    result.RemovedNPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                }
 
-                foreach (var kvp in uniqueAddresses)
-                {
-                    try
-                    {
-                        var source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), 0x23F0);
-                        //var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
+                foreach (KeyValuePair<uint, ActorItem> kvp in PCWorkerDelegate.ActorItems) {
+                    result.RemovedPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                }
 
-                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.ID);
-                        var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorEntity.NPCID2);
-                        var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorEntity.Type];
-                        ActorEntity existing = null;
+                foreach (KeyValuePair<IntPtr, IntPtr> kvp in uniqueAddresses) {
+                    try {
+                        byte[] source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), sourceSize);
+
+                        // var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
+                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
+                        var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
+                        var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorItem.Type];
+                        ActorItem existing = null;
                         var newEntry = false;
 
-                        switch (Type)
-                        {
+                        switch (Type) {
                             case Actor.Type.Monster:
-                                if (result.RemovedMonster.ContainsKey(ID))
-                                {
-                                    result.RemovedMonster.Remove(ID);
-                                    existing = MonsterWorkerDelegate.GetEntity(ID);
+                                if (result.RemovedMonsters.ContainsKey(ID)) {
+                                    result.RemovedMonsters.TryRemove(ID, out ActorItem removedMonster);
+                                    existing = MonsterWorkerDelegate.GetActorItem(ID);
                                 }
-                                else
-                                {
-                                    result.NewMonster.Add(ID);
+                                else {
                                     newEntry = true;
                                 }
+
                                 break;
                             case Actor.Type.PC:
-                                if (result.RemovedPC.ContainsKey(ID))
-                                {
-                                    result.RemovedPC.Remove(ID);
-                                    existing = PCWorkerDelegate.GetEntity(ID);
+                                if (result.RemovedPCs.ContainsKey(ID)) {
+                                    result.RemovedPCs.TryRemove(ID, out ActorItem removedPC);
+                                    existing = PCWorkerDelegate.GetActorItem(ID);
                                 }
-                                else
-                                {
-                                    result.NewPC.Add(ID);
+                                else {
                                     newEntry = true;
                                 }
+
                                 break;
                             case Actor.Type.NPC:
                             case Actor.Type.Aetheryte:
                             case Actor.Type.EObj:
-                                if (result.RemovedNPC.ContainsKey(NPCID2))
-                                {
-                                    result.RemovedNPC.Remove(NPCID2);
-                                    existing = NPCWorkerDelegate.GetEntity(NPCID2);
+                                if (result.RemovedNPCs.ContainsKey(NPCID2)) {
+                                    result.RemovedNPCs.TryRemove(NPCID2, out ActorItem removedNPC);
+                                    existing = NPCWorkerDelegate.GetActorItem(NPCID2);
                                 }
-                                else
-                                {
-                                    result.NewNPC.Add(NPCID2);
+                                else {
                                     newEntry = true;
                                 }
+
                                 break;
                             default:
-                                if (result.RemovedNPC.ContainsKey(ID))
-                                {
-                                    result.RemovedNPC.Remove(ID);
-                                    existing = NPCWorkerDelegate.GetEntity(ID);
+                                if (result.RemovedNPCs.ContainsKey(ID)) {
+                                    result.RemovedNPCs.TryRemove(ID, out ActorItem removedNPC);
+                                    existing = NPCWorkerDelegate.GetActorItem(ID);
                                 }
-                                else
-                                {
-                                    result.NewNPC.Add(ID);
+                                else {
                                     newEntry = true;
                                 }
+
                                 break;
                         }
 
                         var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
-                        var entry = ActorEntityHelper.ResolveActorFromBytes(source, isFirstEntry, existing);
-
-                        #region Ensure Map & Zone
+                        ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
 
                         EnsureMapAndZone(entry);
 
-                        #endregion
-
-                        if (isFirstEntry)
-                        {
-                            if (targetAddress.ToInt64() > 0)
-                            {
-                                var targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorEntity.ID);
+                        if (isFirstEntry) {
+                            if (targetAddress.ToInt64() > 0) {
+                                byte[] targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
+                                entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorItem.ID);
                             }
                         }
-                        if (!entry.IsValid)
-                        {
-                            result.NewMonster.Remove(entry.ID);
-                            result.NewMonster.Remove(entry.NPCID2);
-                            result.NewNPC.Remove(entry.ID);
-                            result.NewNPC.Remove(entry.NPCID2);
-                            result.NewPC.Remove(entry.ID);
-                            result.NewPC.Remove(entry.NPCID2);
-                            continue;
-                        }
-                        if (existing != null)
-                        {
+
+                        // it doesn't matter what this is set to; it won't be used in code below
+                        ActorItem removed;
+
+                        if (!entry.IsValid) {
+                            result.NewMonsters.TryRemove(entry.ID, out removed);
+                            result.NewMonsters.TryRemove(entry.NPCID2, out removed);
+                            result.NewNPCs.TryRemove(entry.ID, out removed);
+                            result.NewNPCs.TryRemove(entry.NPCID2, out removed);
+                            result.NewPCs.TryRemove(entry.ID, out removed);
+                            result.NewPCs.TryRemove(entry.NPCID2, out removed);
                             continue;
                         }
 
-                        if (newEntry)
-                        {
-                            switch (entry.Type)
-                            {
+                        if (existing != null) {
+                            continue;
+                        }
+
+                        if (newEntry) {
+                            switch (entry.Type) {
                                 case Actor.Type.Monster:
-                                    MonsterWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                    MonsterWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    result.NewMonsters.TryAdd(entry.ID, JsonUtilities.Clone(entry));
                                     break;
                                 case Actor.Type.PC:
-                                    PCWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                    PCWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    result.NewPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
                                     break;
                                 case Actor.Type.Aetheryte:
                                 case Actor.Type.EObj:
                                 case Actor.Type.NPC:
-                                    NPCWorkerDelegate.EnsureEntity(entry.NPCID2, entry);
+                                    NPCWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
+                                    result.NewNPCs.TryAdd(entry.NPCID2, JsonUtilities.Clone(entry));
                                     break;
                                 default:
-                                    NPCWorkerDelegate.EnsureEntity(entry.ID, entry);
+                                    NPCWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    result.NewNPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
                                     break;
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         MemoryHandler.Instance.RaiseException(Logger, ex, true);
                     }
                 }
 
-                try
-                {
+                try {
                     // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
-                    foreach (var kvp in result.RemovedMonster)
-                    {
-                        MonsterWorkerDelegate.RemoveEntity(kvp.Key);
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters) {
+                        MonsterWorkerDelegate.RemoveActorItem(kvp.Key);
                     }
 
                     // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
-                    foreach (var kvp in result.RemovedNPC)
-                    {
-                        NPCWorkerDelegate.RemoveEntity(kvp.Key);
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs) {
+                        NPCWorkerDelegate.RemoveActorItem(kvp.Key);
                     }
 
                     // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
-                    foreach (var kvp in result.RemovedPC)
-                    {
-                        PCWorkerDelegate.RemoveEntity(kvp.Key);
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs) {
+                        PCWorkerDelegate.RemoveActorItem(kvp.Key);
                     }
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
 
                 MemoryHandler.Instance.ScanCount++;
-
-                #endregion
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MemoryHandler.Instance.RaiseException(Logger, ex, true);
             }
 

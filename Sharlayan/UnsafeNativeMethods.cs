@@ -1,30 +1,20 @@
-﻿// Sharlayan ~ UnsafeNativeMethods.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UnsafeNativeMethods.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   UnsafeNativeMethods.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
+namespace Sharlayan {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Text;
 
-namespace Sharlayan
-{
-    internal static class UnsafeNativeMethods
-    {
-        public enum ProcessAccessFlags
-        {
+    internal static class UnsafeNativeMethods {
+        public enum ProcessAccessFlags {
             PROCESS_VM_ALL = 0x001F0FFF
         }
 
@@ -44,27 +34,31 @@ namespace Sharlayan
         public static extern int VirtualQueryEx(IntPtr processHandle, IntPtr lpBaseAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct MEMORY_BASIC_INFORMATION
-        {
+        public struct MEMORY_BASIC_INFORMATION {
             public IntPtr BaseAddress;
+
             public IntPtr AllocationBase;
+
             public uint AllocationProtect;
+
             public IntPtr RegionSize;
+
             public uint State;
+
             public uint Protect;
+
             public uint Type;
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 var sb = new StringBuilder();
 
-                sb.AppendFormat($"BaseAddress:{BaseAddress}{Environment.NewLine}");
-                sb.AppendFormat($"AllocationBase:{AllocationBase}{Environment.NewLine}");
-                sb.AppendFormat($"AllocationProtect:{AllocationProtect}{Environment.NewLine}");
-                sb.AppendFormat($"RegionSize:{RegionSize}{Environment.NewLine}");
-                sb.AppendFormat($"State:{State}{Environment.NewLine}");
-                sb.AppendFormat($"Protect:{Protect}{Environment.NewLine}");
-                sb.AppendFormat($"Type:{Type}{Environment.NewLine}");
+                sb.AppendFormat($"BaseAddress:{this.BaseAddress}{Environment.NewLine}");
+                sb.AppendFormat($"AllocationBase:{this.AllocationBase}{Environment.NewLine}");
+                sb.AppendFormat($"AllocationProtect:{this.AllocationProtect}{Environment.NewLine}");
+                sb.AppendFormat($"RegionSize:{this.RegionSize}{Environment.NewLine}");
+                sb.AppendFormat($"State:{this.State}{Environment.NewLine}");
+                sb.AppendFormat($"Protect:{this.Protect}{Environment.NewLine}");
+                sb.AppendFormat($"Type:{this.Type}{Environment.NewLine}");
 
                 return sb.ToString();
             }
