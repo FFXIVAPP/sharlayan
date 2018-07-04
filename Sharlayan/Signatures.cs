@@ -1,52 +1,54 @@
-﻿// Sharlayan ~ Signatures.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Signatures.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   Signatures.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Generic;
-using Sharlayan.Helpers;
-using Sharlayan.Models;
+namespace Sharlayan {
+    using System.Collections.Generic;
 
-namespace Sharlayan
-{
-    public static class Signatures
-    {
-        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest")
-        {
+    using Sharlayan.Models;
+    using Sharlayan.Utilities;
+
+    public static class Signatures {
+        public const string AgroCountKey = "AGRO_COUNT";
+
+        public const string AgroMapKey = "AGROMAP";
+
+        public const string CharacterMapKey = "CHARMAP";
+
+        public const string ChatLogKey = "CHATLOG";
+
+        public const string EnmityCountKey = "ENMITY_COUNT";
+
+        public const string EnmityMapKey = "ENMITYMAP";
+
+        public const string GameMainKey = "GAMEMAIN";
+
+        public const string HotBarKey = "HOTBAR";
+
+        public const string InventoryKey = "INVENTORY";
+
+        public const string MapInformationKey = "MAPINFO";
+
+        public const string PartyCountKey = "PARTYCOUNT";
+
+        public const string PartyMapKey = "PARTYMAP";
+
+        public const string PlayerInformationKey = "PLAYERINFO";
+
+        public const string RecastKey = "RECAST";
+
+        public const string TargetKey = "TARGET";
+
+        public const string ZoneInformationKey = "ZONEINFO";
+
+        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest") {
             return APIHelper.GetSignatures(processModel, patchVersion);
         }
-
-        #region Locations Keys
-
-        public static string AgroCountKey = "AGRO_COUNT";
-        public static string AgroMapKey = "AGROMAP";
-        public static string CharacterMapKey = "CHARMAP";
-        public static string ChatLogKey = "CHATLOG";
-        public static string EnmityCountKey = "ENMITY_COUNT";
-        public static string EnmityMapKey = "ENMITYMAP";
-        public static string GameMainKey = "GAMEMAIN";
-        public static string HotBarKey = "HOTBAR";
-        public static string InventoryKey = "INVENTORY";
-        public static string MapInformationKey = "MAPINFO";
-        public static string PartyCountKey = "PARTYCOUNT";
-        public static string PartyMapKey = "PARTYMAP";
-        public static string PlayerInformationKey = "PLAYERINFO";
-        public static string RecastKey = "RECAST";
-        public static string TargetKey = "TARGET";
-        public static string ZoneInformationKey = "ZONEINFO";
-
-        #endregion
     }
 }

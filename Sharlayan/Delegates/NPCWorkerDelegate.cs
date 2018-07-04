@@ -1,59 +1,32 @@
-﻿// Sharlayan ~ NPCWorkerDelegate.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NPCWorkerDelegate.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   NPCWorkerDelegate.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System.Collections.Concurrent;
-using Sharlayan.Core;
+namespace Sharlayan.Delegates {
+    using System.Collections.Concurrent;
 
-namespace Sharlayan.Delegates
-{
-    internal static class NPCWorkerDelegate
-    {
-        #region Collection Access & Modification
+    using Sharlayan.Core;
 
-        public static void EnsureEntity(uint key, ActorEntity entity)
-        {
-            EntitiesDictionary.AddOrUpdate(key, entity, (k, v) => entity);
+    internal static class NPCWorkerDelegate {
+        public static ConcurrentDictionary<uint, ActorItem> ActorItems = new ConcurrentDictionary<uint, ActorItem>();
+
+        public static void EnsureActorItem(uint key, ActorItem entity) {
+            ActorItems.AddOrUpdate(key, entity, (k, v) => entity);
         }
 
-        public static ActorEntity GetEntity(uint key)
-        {
-            ActorEntity entity;
-            EntitiesDictionary.TryGetValue(key, out entity);
+        public static ActorItem GetActorItem(uint key) {
+            ActorItems.TryGetValue(key, out ActorItem entity);
             return entity;
         }
 
-        public static bool RemoveEntity(uint key)
-        {
-            ActorEntity entity;
-            return EntitiesDictionary.TryRemove(key, out entity);
+        public static bool RemoveActorItem(uint key) {
+            return ActorItems.TryRemove(key, out ActorItem entity);
         }
-
-        #endregion
-
-        #region Declarations
-
-        private static ConcurrentDictionary<uint, ActorEntity> _entitiesDictionary;
-
-        public static ConcurrentDictionary<uint, ActorEntity> EntitiesDictionary
-        {
-            get { return _entitiesDictionary ?? (_entitiesDictionary = new ConcurrentDictionary<uint, ActorEntity>()); }
-            set { _entitiesDictionary = value; }
-        }
-
-        #endregion
     }
 }

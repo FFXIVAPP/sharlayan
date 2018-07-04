@@ -1,77 +1,71 @@
-﻿// Bootstrapper ~ Program.cs
-// 
-// Copyright © 2007 - 2017 Ryan Wilson - All Rights Reserved
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="SyndicatedLife">
+//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   Program.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Xml;
-using System.Xml.Linq;
-using NLog;
-using NLog.Config;
-using Sharlayan;
-using Sharlayan.Events;
-using Sharlayan.Helpers;
-using Sharlayan.Models;
+namespace Bootstrapper {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Xml;
+    using System.Xml.Linq;
 
-namespace Bootstrapper
-{
-    internal class Program
-    {
-        private static void Main(string[] args)
-        {
-            var stringReader = new StringReader(XElement.Load("./Bootstrapper.exe.nlog")
-                                                        .ToString());
+    using NLog;
+    using NLog.Config;
 
-            using (var xmlReader = XmlReader.Create(stringReader))
-            {
+    using Sharlayan;
+    using Sharlayan.Events;
+    using Sharlayan.Models;
+    using Sharlayan.Models.XIVDatabase;
+    using Sharlayan.Utilities;
+
+    class Program {
+        static void Main(string[] args) {
+            var stringReader = new StringReader(XElement.Load("./Bootstrapper.exe.nlog").ToString());
+
+            using (XmlReader xmlReader = XmlReader.Create(stringReader)) {
                 LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
             }
 
-            ActionHelper.ActionInfo(2);
-            StatusEffectHelper.StatusInfo(2);
-            ZoneHelper.MapInfo(138);
+            ActionLookup.GetActionInfo(2);
+            StatusEffectLookup.GetStatusInfo(2);
+            ZoneLookup.GetZoneInfo(138);
 
-            var process = Process.GetProcessesByName("ffxiv_dx11")
-                                 .FirstOrDefault();
+            ActionItem action = ActionLookup.GetActionInfo(2);
+            StatusItem status = StatusEffectLookup.GetStatusInfo(2);
+            MapItem zone = ZoneLookup.GetZoneInfo(138);
 
-            MemoryHandler.Instance.SetProcess(new ProcessModel
-            {
-                IsWin64 = true,
-                Process = process
-            });
+            Process process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
 
-            while (Scanner.Instance.IsScanning)
-            {
-                Thread.Sleep(1000);
-                Console.WriteLine("Scanning...");
-            }
+            if (process != null) {
+                MemoryHandler.Instance.SetProcess(
+                    new ProcessModel {
+                        IsWin64 = true,
+                        Process = process
+                    });
 
-            MemoryHandler.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e)
-            {
-                foreach (var kvp in e.Signatures)
-                {
-                    Console.WriteLine($"{kvp.Key} => {kvp.Value.GetAddress():X}");
+                while (Scanner.Instance.IsScanning) {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("Scanning...");
                 }
 
-                Console.WriteLine("To exit this application press \"Enter\".");
-                Console.ReadLine();
-            };
+                MemoryHandler.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e) {
+                    foreach (KeyValuePair<string, Signature> kvp in e.Signatures) {
+                        Console.WriteLine($"{kvp.Key} => {kvp.Value.GetAddress():X}");
+                    }
+                };
+            }
+
+            Console.WriteLine("To exit this application press \"Enter\".");
+            Console.ReadLine();
         }
     }
 }
