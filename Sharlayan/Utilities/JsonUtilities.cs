@@ -14,8 +14,9 @@ namespace Sharlayan.Utilities {
 
     public static class JsonUtilities {
         public static readonly JsonSerializerSettings DefaultSerializerSettings = new JsonSerializerSettings {
-            NullValueHandling = NullValueHandling.Ignore,
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
 
