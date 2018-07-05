@@ -13,5 +13,37 @@ namespace Sharlayan.Core {
 
     public class PartyMember : ActorItemBase, IPartyMember {
         public bool IsValid => this.ID > 0 && !string.IsNullOrWhiteSpace(this.Name);
+
+        public PartyMember Clone() {
+            var cloned = (PartyMember) this.MemberwiseClone();
+
+            cloned.Coordinate = new Coordinate(this.Coordinate.X, this.Coordinate.Z, this.Coordinate.Y);
+            cloned.EnmityItems.Clear();
+            cloned.StatusItems.Clear();
+
+            foreach (EnmityItem item in this.EnmityItems) {
+                cloned.EnmityItems.Add(
+                    new EnmityItem {
+                        Enmity = item.Enmity,
+                        ID = item.ID,
+                        Name = item.Name
+                    });
+            }
+
+            foreach (StatusItem item in this.StatusItems) {
+                cloned.StatusItems.Add(
+                    new StatusItem {
+                        CasterID = item.CasterID,
+                        Duration = item.Duration,
+                        IsCompanyAction = item.IsCompanyAction,
+                        Stacks = item.Stacks,
+                        StatusID = item.StatusID,
+                        StatusName = item.StatusName,
+                        TargetName = item.TargetName
+                    });
+            }
+
+            return cloned;
+        }
     }
 }

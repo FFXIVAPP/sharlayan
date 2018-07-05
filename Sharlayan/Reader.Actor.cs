@@ -75,15 +75,15 @@ namespace Sharlayan {
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in MonsterWorkerDelegate.ActorItems) {
-                    result.RemovedMonsters.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedMonsters.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in NPCWorkerDelegate.ActorItems) {
-                    result.RemovedNPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedNPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in PCWorkerDelegate.ActorItems) {
-                    result.RemovedPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<IntPtr, IntPtr> kvp in uniqueAddresses) {
@@ -176,21 +176,21 @@ namespace Sharlayan {
                             switch (entry.Type) {
                                 case Actor.Type.Monster:
                                     MonsterWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewMonsters.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewMonsters.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.PC:
                                     PCWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.Aetheryte:
                                 case Actor.Type.EObj:
                                 case Actor.Type.NPC:
                                     NPCWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
-                                    result.NewNPCs.TryAdd(entry.NPCID2, JsonUtilities.Clone(entry));
+                                    result.NewNPCs.TryAdd(entry.NPCID2, entry.Clone());
                                     break;
                                 default:
                                     NPCWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewNPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewNPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                             }
                         }

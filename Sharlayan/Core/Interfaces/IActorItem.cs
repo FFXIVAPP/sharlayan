@@ -139,5 +139,7 @@ namespace Sharlayan.Core.Interfaces {
         double Y { get; set; }
 
         double Z { get; set; }
+
+        ActorItem Clone();
     }
 }

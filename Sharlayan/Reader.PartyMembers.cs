@@ -41,7 +41,7 @@ namespace Sharlayan {
             Signature PartyCountMap = Scanner.Instance.Locations[Signatures.PartyCountKey];
 
             foreach (KeyValuePair<uint, PartyMember> kvp in PartyWorkerDelegate.PartyMembers) {
-                result.RemovedPartyMembers.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                result.RemovedPartyMembers.TryAdd(kvp.Key, kvp.Value.Clone());
             }
 
             try {
@@ -81,7 +81,7 @@ namespace Sharlayan {
 
                         if (newEntry) {
                             PartyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
-                            result.NewPartyMembers.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                            result.NewPartyMembers.TryAdd(entry.ID, entry.Clone());
                         }
                     }
                 }

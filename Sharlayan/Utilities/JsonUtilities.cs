@@ -20,10 +20,6 @@ namespace Sharlayan.Utilities {
             TypeNameHandling = TypeNameHandling.Auto
         };
 
-        public static T Clone<T>(T value) {
-            return Deserialize<T>(Serialize(value));
-        }
-
         public static T Deserialize<T>(string value) {
             return JsonConvert.DeserializeObject<T>(value, DefaultSerializerSettings);
         }
