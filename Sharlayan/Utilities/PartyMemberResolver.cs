@@ -54,6 +54,7 @@ namespace Sharlayan.Utilities {
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyMember.Name);
                     entry.JobID = source[MemoryHandler.Instance.Structures.PartyMember.Job];
                     entry.Job = (Actor.Job) entry.JobID;
+
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyMember.Level];
                     entry.HPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyMember.HPCurrent);
                     entry.HPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyMember.HPMax);

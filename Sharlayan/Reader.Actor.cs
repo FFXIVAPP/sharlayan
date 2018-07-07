@@ -75,25 +75,27 @@ namespace Sharlayan {
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in MonsterWorkerDelegate.ActorItems) {
-                    result.RemovedMonsters.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedMonsters.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in NPCWorkerDelegate.ActorItems) {
-                    result.RemovedNPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedNPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<uint, ActorItem> kvp in PCWorkerDelegate.ActorItems) {
-                    result.RemovedPCs.TryAdd(kvp.Key, JsonUtilities.Clone(kvp.Value));
+                    result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
                 foreach (KeyValuePair<IntPtr, IntPtr> kvp in uniqueAddresses) {
                     try {
-                        byte[] source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), sourceSize);
+                        var characterAddress = new IntPtr(kvp.Value.ToInt64());
+                        byte[] source = MemoryHandler.Instance.GetByteArray(characterAddress, sourceSize);
 
                         // var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
                         var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
                         var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
                         var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorItem.Type];
+
                         ActorItem existing = null;
                         var newEntry = false;
 
@@ -120,7 +122,7 @@ namespace Sharlayan {
                                 break;
                             case Actor.Type.NPC:
                             case Actor.Type.Aetheryte:
-                            case Actor.Type.EObj:
+                            case Actor.Type.EventObject:
                                 if (result.RemovedNPCs.ContainsKey(NPCID2)) {
                                     result.RemovedNPCs.TryRemove(NPCID2, out ActorItem removedNPC);
                                     existing = NPCWorkerDelegate.GetActorItem(NPCID2);
@@ -145,6 +147,12 @@ namespace Sharlayan {
                         var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
                         ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
+
+                        if (entry.Type == Actor.Type.EventObject) {
+                            var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
+                            entry.EventObjectTypeID = EventObjectTypeID;
+                            entry.EventObjectType = EventObjectType;
+                        }
 
                         EnsureMapAndZone(entry);
 
@@ -176,21 +184,21 @@ namespace Sharlayan {
                             switch (entry.Type) {
                                 case Actor.Type.Monster:
                                     MonsterWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewMonsters.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewMonsters.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.PC:
                                     PCWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.Aetheryte:
-                                case Actor.Type.EObj:
+                                case Actor.Type.EventObject:
                                 case Actor.Type.NPC:
                                     NPCWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
-                                    result.NewNPCs.TryAdd(entry.NPCID2, JsonUtilities.Clone(entry));
+                                    result.NewNPCs.TryAdd(entry.NPCID2, entry.Clone());
                                     break;
                                 default:
                                     NPCWorkerDelegate.EnsureActorItem(entry.ID, entry);
-                                    result.NewNPCs.TryAdd(entry.ID, JsonUtilities.Clone(entry));
+                                    result.NewNPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                             }
                         }

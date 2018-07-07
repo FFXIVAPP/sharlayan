@@ -12,6 +12,7 @@ namespace Sharlayan {
     using System;
 
     using Sharlayan.Core;
+    using Sharlayan.Core.Enums;
     using Sharlayan.Delegates;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
@@ -161,8 +162,16 @@ namespace Sharlayan {
         }
 
         private static ActorItem GetTargetActorItemFromSource(long address) {
-            byte[] source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), MemoryHandler.Instance.Structures.TargetInfo.Size);
+            var targetAddress = new IntPtr(address);
+
+            byte[] source = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.Size);
             ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source);
+
+            if (entry.Type == Actor.Type.EventObject) {
+                var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
+                entry.EventObjectTypeID = EventObjectTypeID;
+                entry.EventObjectType = EventObjectType;
+            }
 
             EnsureMapAndZone(entry);
 

@@ -14,6 +14,7 @@ namespace Sharlayan {
     using NLog;
 
     using Sharlayan.Core;
+    using Sharlayan.Core.Enums;
 
     public static partial class Reader {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -62,6 +63,15 @@ namespace Sharlayan {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
             }
+        }
+
+        private static (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) GetEventObjectType(IntPtr address) {
+            IntPtr eventObjectTypePointer = IntPtr.Add(address, MemoryHandler.Instance.Structures.ActorItem.EventObjectType);
+            IntPtr eventObjectTypeAddress = MemoryHandler.Instance.ReadPointer(eventObjectTypePointer, 4);
+
+            var eventObjectTypeID = MemoryHandler.Instance.GetUInt16(eventObjectTypeAddress);
+
+            return (eventObjectTypeID, (Actor.EventObjectType) eventObjectTypeID);
         }
     }
 }

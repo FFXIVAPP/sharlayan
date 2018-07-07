@@ -42,6 +42,8 @@ namespace Sharlayan.Models.Structures {
 
         public int EntityCount { get; set; }
 
+        public int EventObjectType { get; set; }
+
         public int Fate { get; set; }
 
         public int GatheringInvisible { get; set; }

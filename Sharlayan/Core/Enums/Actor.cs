@@ -30,6 +30,24 @@ namespace Sharlayan.Core.Enums {
             SMachine = 0x08
         }
 
+        public enum EventObjectType : ushort {
+            Unknown,
+
+            BronzeTrap = 5478,
+
+            SilverTreasureCoffer = 5479,
+
+            CairnOfPassage = 11292,
+
+            CairnOfReturn = 11297,
+
+            GoldTreasureCoffer = 11500,
+
+            Banded = 12347,
+
+            Hoard = 12353
+        }
+
         public enum Icon : byte {
             None = 0x0,
 
@@ -213,7 +231,7 @@ namespace Sharlayan.Core.Enums {
 
             Gathering = 0x06,
 
-            EObj = 0x07,
+            EventObject = 0x07,
 
             Mount = 0x08,
 

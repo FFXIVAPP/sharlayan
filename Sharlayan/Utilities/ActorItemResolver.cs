@@ -40,6 +40,7 @@ namespace Sharlayan.Utilities {
                 entry.OwnerID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.OwnerID);
                 entry.TypeID = source[MemoryHandler.Instance.Structures.ActorItem.Type];
                 entry.Type = (Actor.Type) entry.TypeID;
+
                 entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorItem.TargetType];
                 entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
 
@@ -72,6 +73,7 @@ namespace Sharlayan.Utilities {
 
                 entry.JobID = source[MemoryHandler.Instance.Structures.ActorItem.Job + defaultStatOffset];
                 entry.Job = (Actor.Job) entry.JobID;
+
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorItem.Level + defaultStatOffset];
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
@@ -175,6 +177,16 @@ namespace Sharlayan.Utilities {
 
                     if (statusEntry.IsValid()) {
                         entry.StatusItems.Add(statusEntry);
+                    }
+                }
+
+                // handle empty names
+                if (string.IsNullOrEmpty(entry.Name)) {
+                    if (entry.Type == Actor.Type.EventObject) {
+                        entry.Name = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                    }
+                    else {
+                        entry.Name = $"{nameof(entry.TypeID)}: {entry.TypeID}";
                     }
                 }
             }
