@@ -27,8 +27,8 @@ namespace Sharlayan.Utilities {
                 switch (MemoryHandler.Instance.GameLanguage) {
                     default:
                         entry.JobID = source[MemoryHandler.Instance.Structures.CurrentPlayer.JobID];
-                        if (Enum.TryParse(entry.JobID.ToString(), out Actor.Job job)) {
-                            entry.Job = job;
+                        if (Enum.IsDefined(typeof(Actor.Job), entry.JobID)) {
+                            entry.Job = (Actor.Job) entry.JobID;
                         }
 
                         #region Job Levels

@@ -39,13 +39,13 @@ namespace Sharlayan.Utilities {
                 entry.NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
                 entry.OwnerID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.OwnerID);
                 entry.TypeID = source[MemoryHandler.Instance.Structures.ActorItem.Type];
-                if (Enum.TryParse(entry.TypeID.ToString(), out Actor.Type type)) {
-                    entry.Type = type;
+                if (Enum.IsDefined(typeof(Actor.Type), entry.TypeID)) {
+                    entry.Type = (Actor.Type) entry.TypeID;
                 }
 
                 entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorItem.TargetType];
-                if (Enum.TryParse(entry.TargetTypeID.ToString(), out Actor.TargetType targetType)) {
-                    entry.TargetType = targetType;
+                if (Enum.IsDefined(typeof(Actor.TargetType), entry.TargetTypeID)) {
+                    entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
                 }
 
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorItem.GatheringStatus];
@@ -61,21 +61,20 @@ namespace Sharlayan.Utilities {
                 entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorItem.GatheringInvisible]; // ??
                 entry.ModelID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ModelID);
                 entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorItem.ActionStatus];
-                entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
-                if (Enum.TryParse(entry.ActionStatusID.ToString(), out Actor.ActionStatus actionStatus)) {
-                    entry.ActionStatus = actionStatus;
+                if (Enum.IsDefined(typeof(Actor.ActionStatus), entry.ActionStatusID)) {
+                    entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
                 }
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorItem.IsGM); // ?
                 entry.IconID = source[MemoryHandler.Instance.Structures.ActorItem.Icon];
-                if (Enum.TryParse(entry.IconID.ToString(), out Actor.Icon icon)) {
-                    entry.Icon = icon;
+                if (Enum.IsDefined(typeof(Actor.Icon), entry.IconID)) {
+                    entry.Icon = (Actor.Icon) entry.IconID;
                 }
 
                 entry.StatusID = source[MemoryHandler.Instance.Structures.ActorItem.Status];
-                if (Enum.TryParse(entry.StatusID.ToString(), out Actor.Status status)) {
-                    entry.Status = status;
+                if (Enum.IsDefined(typeof(Actor.Status), entry.StatusID)) {
+                    entry.Status = (Actor.Status) entry.StatusID;
                 }
 
                 entry.ClaimedByID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ClaimedByID);
@@ -83,8 +82,8 @@ namespace Sharlayan.Utilities {
                 var pcTargetID = targetID;
 
                 entry.JobID = source[MemoryHandler.Instance.Structures.ActorItem.Job + defaultStatOffset];
-                if (Enum.TryParse(entry.JobID.ToString(), out Actor.Job job)) {
-                    entry.Job = job;
+                if (Enum.IsDefined(typeof(Actor.Job), entry.JobID)) {
+                    entry.Job = (Actor.Job) entry.JobID;
                 }
 
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorItem.Level + defaultStatOffset];

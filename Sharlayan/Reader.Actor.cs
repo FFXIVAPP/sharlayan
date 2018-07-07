@@ -94,9 +94,10 @@ namespace Sharlayan {
                         // var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
                         var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
                         var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
+                        var TypeID = source[MemoryHandler.Instance.Structures.ActorItem.Type];
                         var Type = Actor.Type.Unknown;
-                        if (Enum.TryParse(source[MemoryHandler.Instance.Structures.ActorItem.Type].ToString(), out Actor.Type type)) {
-                            Type = type;
+                        if (Enum.IsDefined(typeof(Actor.Type), TypeID)) {
+                            Type = (Actor.Type) TypeID;
                         }
 
                         ActorItem existing = null;
