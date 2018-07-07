@@ -68,12 +68,10 @@ namespace Sharlayan {
         private static (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) GetEventObjectType(IntPtr address) {
             IntPtr eventObjectTypePointer = IntPtr.Add(address, MemoryHandler.Instance.Structures.ActorItem.EventObjectType);
             IntPtr eventObjectTypeAddress = MemoryHandler.Instance.ReadPointer(eventObjectTypePointer, 4);
-            var eventObjectTypeID = MemoryHandler.Instance.GetUInt16(eventObjectTypeAddress);
-            if (Enum.IsDefined(typeof(Actor.EventObjectType), eventObjectTypeID)) {
-                return (eventObjectTypeID, (Actor.EventObjectType) eventObjectTypeID);
-            }
 
-            return (0, Actor.EventObjectType.Unknown);
+            var eventObjectTypeID = MemoryHandler.Instance.GetUInt16(eventObjectTypeAddress);
+
+            return (eventObjectTypeID, (Actor.EventObjectType) eventObjectTypeID);
         }
     }
 }
