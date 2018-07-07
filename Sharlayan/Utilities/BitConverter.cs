@@ -17,7 +17,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToBoolean(value, index);
             }
             catch (Exception) {
-                return default(bool);
+                return default;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToChar(value, index);
             }
             catch (Exception) {
-                return default(char);
+                return default;
             }
         }
 
@@ -35,7 +35,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToDouble(value, index);
             }
             catch (Exception) {
-                return default(double);
+                return default;
             }
         }
 
@@ -44,7 +44,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.DoubleToInt64Bits(value);
             }
             catch (Exception) {
-                return default(long);
+                return default;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToInt16(value, index);
             }
             catch (Exception) {
-                return default(short);
+                return default;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToInt32(value, index);
             }
             catch (Exception) {
-                return default(int);
+                return default;
             }
         }
 
@@ -71,7 +71,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToInt64(value, index);
             }
             catch (Exception) {
-                return default(long);
+                return default;
             }
         }
 
@@ -80,7 +80,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.Int64BitsToDouble(value);
             }
             catch (Exception) {
-                return default(double);
+                return default;
             }
         }
 
@@ -89,7 +89,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToSingle(value, index);
             }
             catch (Exception) {
-                return default(float);
+                return default;
             }
         }
 
@@ -98,7 +98,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToString(value, index);
             }
             catch (Exception) {
-                return default(string);
+                return default;
             }
         }
 
@@ -107,7 +107,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToUInt16(value, index);
             }
             catch (Exception) {
-                return default(ushort);
+                return default;
             }
         }
 
@@ -116,7 +116,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToUInt32(value, index);
             }
             catch (Exception) {
-                return default(uint);
+                return default;
             }
         }
 
@@ -125,7 +125,7 @@ namespace Sharlayan.Utilities {
                 return System.BitConverter.ToUInt64(value, index);
             }
             catch (Exception) {
-                return default(ulong);
+                return default;
             }
         }
     }

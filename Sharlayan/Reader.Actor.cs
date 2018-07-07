@@ -88,12 +88,17 @@ namespace Sharlayan {
 
                 foreach (KeyValuePair<IntPtr, IntPtr> kvp in uniqueAddresses) {
                     try {
-                        byte[] source = MemoryHandler.Instance.GetByteArray(new IntPtr(kvp.Value.ToInt64()), sourceSize);
+                        var characterAddress = new IntPtr(kvp.Value.ToInt64());
+                        byte[] source = MemoryHandler.Instance.GetByteArray(characterAddress, sourceSize);
 
                         // var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
                         var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
                         var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
-                        var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorItem.Type];
+                        var Type = Actor.Type.Unknown;
+                        if (Enum.TryParse(source[MemoryHandler.Instance.Structures.ActorItem.Type].ToString(), out Actor.Type type)) {
+                            Type = type;
+                        }
+
                         ActorItem existing = null;
                         var newEntry = false;
 
@@ -120,7 +125,7 @@ namespace Sharlayan {
                                 break;
                             case Actor.Type.NPC:
                             case Actor.Type.Aetheryte:
-                            case Actor.Type.EObj:
+                            case Actor.Type.EventObject:
                                 if (result.RemovedNPCs.ContainsKey(NPCID2)) {
                                     result.RemovedNPCs.TryRemove(NPCID2, out ActorItem removedNPC);
                                     existing = NPCWorkerDelegate.GetActorItem(NPCID2);
@@ -145,6 +150,12 @@ namespace Sharlayan {
                         var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
                         ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
+
+                        if (entry.Type == Actor.Type.EventObject) {
+                            var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
+                            entry.EventObjectTypeID = EventObjectTypeID;
+                            entry.EventObjectType = EventObjectType;
+                        }
 
                         EnsureMapAndZone(entry);
 
@@ -183,7 +194,7 @@ namespace Sharlayan {
                                     result.NewPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.Aetheryte:
-                                case Actor.Type.EObj:
+                                case Actor.Type.EventObject:
                                 case Actor.Type.NPC:
                                     NPCWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
                                     result.NewNPCs.TryAdd(entry.NPCID2, entry.Clone());

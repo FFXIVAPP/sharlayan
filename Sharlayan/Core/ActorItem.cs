@@ -9,9 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Core {
-    using System;
-    using System.Linq;
-
     using Sharlayan.Core.Enums;
     using Sharlayan.Core.Interfaces;
     using Sharlayan.Delegates;
@@ -45,6 +42,10 @@ namespace Sharlayan.Core {
         public byte DifficultyRank { get; set; }
 
         public byte Distance { get; set; }
+
+        public Actor.EventObjectType EventObjectType { get; set; }
+
+        public ushort EventObjectTypeID { get; set; }
 
         public uint Fate { get; set; }
 
@@ -85,9 +86,9 @@ namespace Sharlayan.Core {
             get {
                 switch (this.Type) {
                     case Actor.Type.NPC:
-                        return !string.IsNullOrEmpty(this.Name) && this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
+                        return this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
                     default:
-                        return !string.IsNullOrEmpty(this.Name) && this.ID != 0;
+                        return this.ID != 0;
                 }
             }
         }

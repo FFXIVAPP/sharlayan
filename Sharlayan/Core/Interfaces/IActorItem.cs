@@ -40,6 +40,10 @@ namespace Sharlayan.Core.Interfaces {
 
         byte Distance { get; set; }
 
+        Actor.EventObjectType EventObjectType { get; set; }
+
+        ushort EventObjectTypeID { get; set; }
+
         uint Fate { get; set; }
 
         byte GatheringInvisible { get; set; }

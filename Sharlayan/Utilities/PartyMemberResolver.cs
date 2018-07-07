@@ -53,7 +53,10 @@ namespace Sharlayan.Utilities {
                     entry.UUID = Guid.NewGuid().ToString();
                     entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.PartyMember.Name);
                     entry.JobID = source[MemoryHandler.Instance.Structures.PartyMember.Job];
-                    entry.Job = (Actor.Job) entry.JobID;
+                    if (Enum.TryParse(entry.JobID.ToString(), out Actor.Job job)) {
+                        entry.Job = job;
+                    }
+
                     entry.Level = source[MemoryHandler.Instance.Structures.PartyMember.Level];
                     entry.HPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyMember.HPCurrent);
                     entry.HPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.PartyMember.HPMax);

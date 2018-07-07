@@ -39,9 +39,14 @@ namespace Sharlayan.Utilities {
                 entry.NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
                 entry.OwnerID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.OwnerID);
                 entry.TypeID = source[MemoryHandler.Instance.Structures.ActorItem.Type];
-                entry.Type = (Actor.Type) entry.TypeID;
+                if (Enum.TryParse(entry.TypeID.ToString(), out Actor.Type type)) {
+                    entry.Type = type;
+                }
+
                 entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorItem.TargetType];
-                entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
+                if (Enum.TryParse(entry.TargetTypeID.ToString(), out Actor.TargetType targetType)) {
+                    entry.TargetType = targetType;
+                }
 
                 entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorItem.GatheringStatus];
                 entry.Distance = source[MemoryHandler.Instance.Structures.ActorItem.Distance];
@@ -57,21 +62,31 @@ namespace Sharlayan.Utilities {
                 entry.ModelID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ModelID);
                 entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorItem.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
+                if (Enum.TryParse(entry.ActionStatusID.ToString(), out Actor.ActionStatus actionStatus)) {
+                    entry.ActionStatus = actionStatus;
+                }
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorItem.IsGM); // ?
                 entry.IconID = source[MemoryHandler.Instance.Structures.ActorItem.Icon];
-                entry.Icon = (Actor.Icon) entry.IconID;
+                if (Enum.TryParse(entry.IconID.ToString(), out Actor.Icon icon)) {
+                    entry.Icon = icon;
+                }
 
                 entry.StatusID = source[MemoryHandler.Instance.Structures.ActorItem.Status];
-                entry.Status = (Actor.Status) entry.StatusID;
+                if (Enum.TryParse(entry.StatusID.ToString(), out Actor.Status status)) {
+                    entry.Status = status;
+                }
 
                 entry.ClaimedByID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ClaimedByID);
                 var targetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.TargetID);
                 var pcTargetID = targetID;
 
                 entry.JobID = source[MemoryHandler.Instance.Structures.ActorItem.Job + defaultStatOffset];
-                entry.Job = (Actor.Job) entry.JobID;
+                if (Enum.TryParse(entry.JobID.ToString(), out Actor.Job job)) {
+                    entry.Job = job;
+                }
+
                 entry.Level = source[MemoryHandler.Instance.Structures.ActorItem.Level + defaultStatOffset];
                 entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompany + defaultStatOffset];
                 entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
@@ -175,6 +190,16 @@ namespace Sharlayan.Utilities {
 
                     if (statusEntry.IsValid()) {
                         entry.StatusItems.Add(statusEntry);
+                    }
+                }
+
+                // handle empty names
+                if (string.IsNullOrEmpty(entry.Name)) {
+                    if (entry.Type == Actor.Type.EventObject) {
+                        entry.Name = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                    }
+                    else {
+                        entry.Name = $"{nameof(entry.TypeID)}: {entry.TypeID}";
                     }
                 }
             }
