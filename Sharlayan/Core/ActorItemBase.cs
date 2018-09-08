@@ -31,7 +31,7 @@ namespace Sharlayan.Core {
 
         public string CPString => $"{this.CPCurrent}/{this.CPMax} [{this.CPPercent:P2}]";
 
-        public List<EnmityItem> EnmityItems { get; } = new List<EnmityItem>();
+        public List<EnmityItem> EnmityItems { get; set; } = new List<EnmityItem>();
 
         public short GPCurrent { get; set; }
 
@@ -79,7 +79,7 @@ namespace Sharlayan.Core {
             set => this._name = value.ToTitleCase();
         }
 
-        public List<StatusItem> StatusItems { get; } = new List<StatusItem>();
+        public List<StatusItem> StatusItems { get; set; } = new List<StatusItem>();
 
         public int TPCurrent { get; set; }
 

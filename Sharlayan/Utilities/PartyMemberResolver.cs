@@ -10,7 +10,8 @@
 
 namespace Sharlayan.Utilities {
     using System;
-
+    using System.Collections.Generic;
+    using System.Linq;
     using NLog;
 
     using Sharlayan.Core;
@@ -64,18 +65,40 @@ namespace Sharlayan.Utilities {
                     const int statusSize = 12;
                     byte[] statusesSource = new byte[limit * statusSize];
 
+                    List<StatusItem> foundStatuses = new List<StatusItem>();
+
                     Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * 12);
-                    for (var i = 0; i < limit; i++) {
+                    for (var i = 0; i < limit; i++)
+                    {
+                        bool isNewStatus = false;
+
                         byte[] statusSource = new byte[statusSize];
                         Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
-                        var statusEntry = new StatusItem {
-                            TargetName = entry.Name,
-                            StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusItem.StatusID),
-                            Stacks = statusSource[MemoryHandler.Instance.Structures.StatusItem.Stacks],
-                            Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusItem.Duration),
-                            CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusItem.CasterID)
-                        };
-                        try {
+
+                        short StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusItem.StatusID);
+                        uint CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusItem.CasterID);
+
+                        
+                        var statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
+
+                        if (statusEntry == null)
+                        {
+                            statusEntry = new StatusItem();
+                            isNewStatus = true;
+                        }
+
+                        statusEntry.TargetEntity = null;
+                        statusEntry.TargetName = entry.Name;
+                        statusEntry.StatusID = StatusID;
+                        statusEntry.Stacks = statusSource[MemoryHandler.Instance.Structures.StatusItem.Stacks];
+                        statusEntry.Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusItem.Duration);
+                        statusEntry.CasterID = CasterID;
+
+                        foundStatuses.Add(statusEntry);
+
+
+                        try
+                        {
                             ActorItem pc = PCWorkerDelegate.GetActorItem(statusEntry.CasterID);
                             ActorItem npc = NPCWorkerDelegate.GetActorItem(statusEntry.CasterID);
                             ActorItem monster = MonsterWorkerDelegate.GetActorItem(statusEntry.CasterID);
@@ -115,10 +138,18 @@ namespace Sharlayan.Utilities {
                             statusEntry.StatusName = "UNKNOWN";
                         }
 
-                        if (statusEntry.IsValid()) {
-                            entry.StatusItems.Add(statusEntry);
+                        if (statusEntry.IsValid())
+                        {
+                            if (isNewStatus)
+                            {
+                                entry.StatusItems.Add(statusEntry);
+                            }
+                            foundStatuses.Add(statusEntry);
                         }
                     }
+
+                    entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
+
                 }
                 catch (Exception ex) {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);
