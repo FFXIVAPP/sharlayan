@@ -164,5 +164,14 @@ namespace Sharlayan.Core {
 
             return cloned;
         }
+
+        public override float GetCastingDistanceTo(ActorItem compare)
+        {
+            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - HitBoxRadius;
+            return distance > 0
+                       ? distance
+                       : 0;
+        }
+
     }
 }

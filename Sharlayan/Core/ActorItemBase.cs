@@ -100,7 +100,7 @@ namespace Sharlayan.Core {
 
         public double Z { get; set; }
 
-        public float GetCastingDistanceTo(ActorItem compare) {
+        public virtual float GetCastingDistanceTo(ActorItem compare) {
             var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius;
             return distance > 0
                        ? distance
