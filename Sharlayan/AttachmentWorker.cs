@@ -12,6 +12,7 @@ namespace Sharlayan {
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Timers;
 
     using NLog;
@@ -70,7 +71,7 @@ namespace Sharlayan {
                 this._isScanning = false;
                 return true;
             };
-            scanner.BeginInvoke(delegate { }, scanner);
+            Task.Run(() => scanner());
         }
     }
 }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharlayan", "Sharlayan\Sharlayan.csproj", "{9510D5EF-208A-4897-A582-8EAE5C6E9406}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharlayan", "Sharlayan\Sharlayan.csproj", "{1C0EBCC7-5550-48C8-9492-27853C02B76B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bootstrapper", "Bootstrapper\Bootstrapper.csproj", "{FCAD4340-866B-4153-8A55-311224B764F6}"
 EndProject
@@ -19,12 +19,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9510D5EF-208A-4897-A582-8EAE5C6E9406}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{9510D5EF-208A-4897-A582-8EAE5C6E9406}.Release|Any CPU.ActiveCfg = Release|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.Build.0 = Debug|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.ActiveCfg = Release|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.Build.0 = Release|x86
+		{1C0EBCC7-5550-48C8-9492-27853C02B76B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C0EBCC7-5550-48C8-9492-27853C02B76B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C0EBCC7-5550-48C8-9492-27853C02B76B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C0EBCC7-5550-48C8-9492-27853C02B76B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

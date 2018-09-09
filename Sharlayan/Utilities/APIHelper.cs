@@ -13,6 +13,7 @@ namespace Sharlayan.Utilities {
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Runtime.InteropServices;
     using System.Text;
 
     using Newtonsoft.Json;
@@ -51,7 +52,15 @@ namespace Sharlayan.Utilities {
                 var json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{patchVersion}/{architecture}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
-                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
+                // TODO: How to handle missing 932 codepage on none-window?
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings));
+                }
+                else
+                {
+                    File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
+                }
 
                 return resolved;
             }

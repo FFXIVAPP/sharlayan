@@ -14,6 +14,7 @@ namespace Bootstrapper {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading;
     using System.Xml;
     using System.Xml.Linq;
@@ -43,7 +44,12 @@ namespace Bootstrapper {
             StatusItem status = StatusEffectLookup.GetStatusInfo(2);
             MapItem zone = ZoneLookup.GetZoneInfo(138);
 
-            Process process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
+            var processName = "ffxiv_dx11";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+                processName = "ffxiv_dx11.exe";
+            }
+
+            Process process = Process.GetProcessesByName(processName).FirstOrDefault();
 
             if (process != null) {
                 MemoryHandler.Instance.SetProcess(
@@ -52,16 +58,16 @@ namespace Bootstrapper {
                         Process = process
                     });
 
-                while (Scanner.Instance.IsScanning) {
-                    Thread.Sleep(1000);
-                    Console.WriteLine("Scanning...");
-                }
-
                 MemoryHandler.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e) {
                     foreach (KeyValuePair<string, Signature> kvp in e.Signatures) {
                         Console.WriteLine($"{kvp.Key} => {kvp.Value.GetAddress():X}");
                     }
                 };
+
+                while (Scanner.Instance.IsScanning) {
+                    Thread.Sleep(1000);
+                    Console.WriteLine("Scanning...");
+                }
             }
 
             Console.WriteLine("To exit this application press \"Enter\".");
