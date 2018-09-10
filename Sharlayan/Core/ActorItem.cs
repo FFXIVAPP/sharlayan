@@ -58,9 +58,7 @@ namespace Sharlayan.Core {
         public byte GrandCompanyRank { get; set; }
 
         public float Heading { get; set; }
-
-        public float HitBoxRadius { get; set; }
-
+        
         public Actor.Icon Icon { get; set; }
 
         public byte IconID { get; set; }
@@ -164,14 +162,6 @@ namespace Sharlayan.Core {
 
             return cloned;
         }
-
-        public override float GetCastingDistanceTo(ActorItem compare)
-        {
-            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - HitBoxRadius;
-            return distance > 0
-                       ? distance
-                       : 0;
-        }
-
+        
     }
 }

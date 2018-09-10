@@ -44,6 +44,8 @@ namespace Sharlayan.Core {
 
         public string GPString => $"{this.GPCurrent}/{this.GPMax} [{this.GPPercent:P2}]";
 
+        public float HitBoxRadius { get; set; }
+
         public int HPCurrent { get; set; }
 
         public int HPMax { get; set; }
@@ -100,8 +102,9 @@ namespace Sharlayan.Core {
 
         public double Z { get; set; }
 
-        public virtual float GetCastingDistanceTo(ActorItem compare) {
-            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius;
+        public float GetCastingDistanceTo(ActorItem compare)
+        {
+            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - HitBoxRadius;
             return distance > 0
                        ? distance
                        : 0;
