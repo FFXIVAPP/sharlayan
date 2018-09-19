@@ -24,10 +24,7 @@ namespace Sharlayan.Core {
 
         public short CPMax { get; set; }
 
-        public double CPPercent =>
-            (double) (this.CPMax == 0
-                          ? 0
-                          : decimal.Divide(this.CPCurrent, this.CPMax));
+        public double CPPercent => safeDivide(this.CPCurrent, this.CPMax);
 
         public string CPString => $"{this.CPCurrent}/{this.CPMax} [{this.CPPercent:P2}]";
 
@@ -37,10 +34,7 @@ namespace Sharlayan.Core {
 
         public short GPMax { get; set; }
 
-        public double GPPercent =>
-            (double) (this.GPMax == 0
-                          ? 0
-                          : decimal.Divide(this.GPCurrent, this.GPMax));
+        public double GPPercent => safeDivide(this.GPCurrent, this.GPMax);
 
         public string GPString => $"{this.GPCurrent}/{this.GPMax} [{this.GPPercent:P2}]";
 
@@ -50,10 +44,7 @@ namespace Sharlayan.Core {
 
         public int HPMax { get; set; }
 
-        public double HPPercent =>
-            (double) (this.HPMax == 0
-                          ? 0
-                          : decimal.Divide(this.HPCurrent, this.HPMax));
+        public double HPPercent => safeDivide(this.HPCurrent, this.HPMax);
 
         public string HPString => $"{this.HPCurrent}/{this.HPMax} [{this.HPPercent:P2}]";
 
@@ -69,10 +60,7 @@ namespace Sharlayan.Core {
 
         public int MPMax { get; set; }
 
-        public double MPPercent =>
-            (double) (this.MPMax == 0
-                          ? 0
-                          : decimal.Divide(this.MPCurrent, this.MPMax));
+        public double MPPercent => safeDivide(this.MPCurrent, this.MPMax);
 
         public string MPString => $"{this.MPCurrent}/{this.MPMax} [{this.MPPercent:P2}]";
 
@@ -87,10 +75,7 @@ namespace Sharlayan.Core {
 
         public int TPMax { get; set; }
 
-        public double TPPercent =>
-            (double) (this.TPMax == 0
-                          ? 0
-                          : decimal.Divide(this.TPCurrent, this.TPMax));
+        public double TPPercent => safeDivide(this.TPCurrent, this.TPMax);
 
         public string TPString => $"{this.TPCurrent}/{this.TPMax} [{this.TPPercent:P2}]";
 
@@ -101,6 +86,22 @@ namespace Sharlayan.Core {
         public double Y { get; set; }
 
         public double Z { get; set; }
+
+        private double safeDivide(double a, double b)
+        {
+            try
+            {
+                if (b == 0)
+                    return 0;
+
+                return a / b;
+            }
+            catch
+            {
+                // due to multithreading, sometimes b can be set to 0 between the check and the division
+                return 0;
+            }
+        }
 
         public float GetCastingDistanceTo(ActorItem compare)
         {

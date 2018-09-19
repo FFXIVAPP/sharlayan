@@ -123,7 +123,7 @@ namespace Sharlayan.Utilities {
                         break;
                 }
 
-                const int statusSize = 12;
+                int statusSize = MemoryHandler.Instance.Structures.StatusItem.SourceSize;
                 byte[] statusesSource = new byte[limit * statusSize];
 
                 List<StatusItem> foundStatuses = new List<StatusItem>();

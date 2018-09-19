@@ -64,12 +64,13 @@ namespace Sharlayan.Utilities {
                     entry.MPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PartyMember.MPCurrent);
                     entry.MPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.PartyMember.MPMax);
                     const int limit = 15;
-                    const int statusSize = 12;
+
+                    int statusSize = MemoryHandler.Instance.Structures.StatusItem.SourceSize;
                     byte[] statusesSource = new byte[limit * statusSize];
 
                     List<StatusItem> foundStatuses = new List<StatusItem>();
 
-                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * 12);
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
                     for (var i = 0; i < limit; i++)
                     {
                         bool isNewStatus = false;

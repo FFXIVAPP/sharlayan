@@ -17,6 +17,7 @@ namespace Sharlayan {
     using Sharlayan.Delegates;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
+    using System.Linq;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
@@ -30,6 +31,8 @@ namespace Sharlayan {
             return canRead;
         }
 
+        private static Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
+        
         public static ActorResult GetActors() {
             var result = new ActorResult();
 
@@ -49,6 +52,10 @@ namespace Sharlayan {
                 byte[] characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
                 Dictionary<IntPtr, IntPtr> uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
                 IntPtr firstAddress = IntPtr.Zero;
+
+                DateTime now = DateTime.Now;
+
+                TimeSpan staleActorRemovalTime = TimeSpan.FromSeconds(0.25);
 
                 var firstTime = true;
 
@@ -148,6 +155,14 @@ namespace Sharlayan {
 
                         ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
 
+                        if (entry != null && entry.IsValid)
+                        {
+                            if (expiringActors.ContainsKey(ID))
+                            {
+                                expiringActors.Remove(ID);
+                            }
+                        }
+
                         if (entry.Type == Actor.Type.EventObject) {
                             var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
                             entry.EventObjectTypeID = EventObjectTypeID;
@@ -209,20 +224,54 @@ namespace Sharlayan {
                 }
 
                 try {
-                    // REMOVE OLD MONSTERS FROM LIVE CURRENT DICTIONARY
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters) {
-                        MonsterWorkerDelegate.RemoveActorItem(kvp.Key);
+                    
+                    // add the "removed" actors to the expiring list
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters)
+                    {
+                        if (!expiringActors.ContainsKey(kvp.Key))
+                        {
+                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        }
                     }
 
-                    // REMOVE OLD NPC'S FROM LIVE CURRENT DICTIONARY
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs) {
-                        NPCWorkerDelegate.RemoveActorItem(kvp.Key);
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs)
+                    {
+                        if (!expiringActors.ContainsKey(kvp.Key))
+                        {
+                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        }
                     }
 
-                    // REMOVE OLD PC'S FROM LIVE CURRENT DICTIONARY
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs) {
-                        PCWorkerDelegate.RemoveActorItem(kvp.Key);
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs)
+                    {
+                        if (!expiringActors.ContainsKey(kvp.Key))
+                        {
+                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        }
                     }
+
+
+                    // check expiring list for stale actors
+                    foreach (var kvp in expiringActors.ToList())
+                    {
+                        if (now > kvp.Value)
+                        {
+                            // Stale actor. Remove it.
+                            MonsterWorkerDelegate.RemoveActorItem(kvp.Key);
+                            NPCWorkerDelegate.RemoveActorItem(kvp.Key);
+                            PCWorkerDelegate.RemoveActorItem(kvp.Key);
+
+                            expiringActors.Remove(kvp.Key);
+                        }
+                        else
+                        {
+                            // Not stale enough yet. We're not actually removing it.
+                            result.RemovedMonsters.TryRemove(kvp.Key, out ActorItem _);
+                            result.RemovedNPCs.TryRemove(kvp.Key, out ActorItem _);
+                            result.RemovedPCs.TryRemove(kvp.Key, out ActorItem _);
+                        }
+                    }
+
                 }
                 catch (Exception ex) {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);

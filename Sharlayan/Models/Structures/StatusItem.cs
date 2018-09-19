@@ -10,6 +10,9 @@
 
 namespace Sharlayan.Models.Structures {
     public class StatusItem {
+        
+        public int SourceSize { get; set; }
+        
         public int CasterID { get; set; }
 
         public int Duration { get; set; }
