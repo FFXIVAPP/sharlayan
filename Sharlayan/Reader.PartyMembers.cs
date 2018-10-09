@@ -86,7 +86,7 @@ namespace Sharlayan {
                     }
                 }
 
-                if (partyCount == 1) {
+                if (partyCount <= 1) {
                     PartyMember entry = PartyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), PCWorkerDelegate.CurrentUser);
                     if (result.RemovedPartyMembers.ContainsKey(entry.ID)) {
                         result.RemovedPartyMembers.TryRemove(entry.ID, out PartyMember removedPartyMember);

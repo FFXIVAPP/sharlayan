@@ -16,11 +16,14 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Delegates;
+    using System.Linq;
+    using System.Collections.Generic;
 
     internal static class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public static ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null) {
+        
+        public static ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null)
+        {
             entry = entry ?? new ActorItem();
             var defaultBaseOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultBaseOffset;
             var defaultStatOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultStatOffset;
@@ -120,21 +123,39 @@ namespace Sharlayan.Utilities {
                         break;
                 }
 
-                const int statusSize = 12;
+                int statusSize = MemoryHandler.Instance.Structures.StatusItem.SourceSize;
                 byte[] statusesSource = new byte[limit * statusSize];
+
+                List<StatusItem> foundStatuses = new List<StatusItem>();
 
                 Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
                 for (var i = 0; i < limit; i++) {
+
+                    bool isNewStatus = false;
+
                     byte[] statusSource = new byte[statusSize];
                     Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
-                    var statusEntry = new StatusItem {
-                        TargetEntity = entry,
-                        TargetName = entry.Name,
-                        StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusItem.StatusID),
-                        Stacks = statusSource[MemoryHandler.Instance.Structures.StatusItem.Stacks],
-                        Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusItem.Duration),
-                        CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusItem.CasterID)
-                    };
+
+                    short StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusItem.StatusID);
+                    uint CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusItem.CasterID);
+
+                    var statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
+
+                    if (statusEntry == null)
+                    {
+                        statusEntry = new StatusItem();
+                        isNewStatus = true;
+                    }
+
+                    statusEntry.TargetEntity = entry;
+                    statusEntry.TargetName = entry.Name;
+                    statusEntry.StatusID = StatusID;
+                    statusEntry.Stacks = statusSource[MemoryHandler.Instance.Structures.StatusItem.Stacks];
+                    statusEntry.Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusItem.Duration);
+                    statusEntry.CasterID = CasterID;
+
+
+
                     try {
                         ActorItem pc = PCWorkerDelegate.GetActorItem(statusEntry.CasterID);
                         ActorItem npc = NPCWorkerDelegate.GetActorItem(statusEntry.CasterID);
@@ -176,9 +197,15 @@ namespace Sharlayan.Utilities {
                     }
 
                     if (statusEntry.IsValid()) {
-                        entry.StatusItems.Add(statusEntry);
+                        if (isNewStatus)
+                        {
+                            entry.StatusItems.Add(statusEntry);
+                        }
+                        foundStatuses.Add(statusEntry);
                     }
                 }
+                
+                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
 
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {
