@@ -38,7 +38,19 @@ namespace Sharlayan {
                 return result;
             }
 
-            try {
+            try
+            {
+                byte[] source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, MemoryHandler.Instance.Structures.CurrentPlayer.SourceSize);
+
+                try
+                {
+                    result.CurrentPlayer = CurrentPlayerResolver.ResolvePlayerFromBytes(source);
+                }
+                catch (Exception ex)
+                {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                }
+
                 if (CanGetAgroEntities()) {
                     var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations[Signatures.AgroCountKey]);
                     var agroStructure = (IntPtr) Scanner.Instance.Locations[Signatures.AgroMapKey];
@@ -59,14 +71,6 @@ namespace Sharlayan {
                     }
                 }
 
-                byte[] source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, MemoryHandler.Instance.Structures.CurrentPlayer.SourceSize);
-
-                try {
-                    result.CurrentPlayer = CurrentPlayerResolver.ResolvePlayerFromBytes(source);
-                }
-                catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                }
             }
             catch (Exception ex) {
                 MemoryHandler.Instance.RaiseException(Logger, ex, true);

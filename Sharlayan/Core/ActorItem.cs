@@ -58,9 +58,7 @@ namespace Sharlayan.Core {
         public byte GrandCompanyRank { get; set; }
 
         public float Heading { get; set; }
-
-        public float HitBoxRadius { get; set; }
-
+        
         public Actor.Icon Icon { get; set; }
 
         public byte IconID { get; set; }
@@ -135,10 +133,10 @@ namespace Sharlayan.Core {
 
         public ActorItem Clone() {
             var cloned = (ActorItem) this.MemberwiseClone();
-
+            
             cloned.Coordinate = new Coordinate(this.Coordinate.X, this.Coordinate.Z, this.Coordinate.Y);
-            cloned.EnmityItems.Clear();
-            cloned.StatusItems.Clear();
+            cloned.EnmityItems = new System.Collections.Generic.List<EnmityItem>();
+            cloned.StatusItems = new System.Collections.Generic.List<StatusItem>();
 
             foreach (EnmityItem item in this.EnmityItems) {
                 cloned.EnmityItems.Add(
@@ -164,5 +162,6 @@ namespace Sharlayan.Core {
 
             return cloned;
         }
+        
     }
 }
