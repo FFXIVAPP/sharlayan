@@ -14,6 +14,7 @@ namespace Sharlayan.Utilities {
     using System.IO;
     using System.Net;
     using System.Text;
+    using System.Threading.Tasks;
 
     using Newtonsoft.Json;
 
@@ -28,17 +29,17 @@ namespace Sharlayan.Utilities {
             Encoding = Encoding.UTF8
         };
 
-        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest") {
+        public static async Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest") {
             var file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
             if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                APIResponseToDictionary(actions, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/actions.json");
+                await APIResponseToDictionary(actions, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/actions.json");
             }
         }
 
-        public static IEnumerable<Signature> GetSignatures(ProcessModel processModel, string patchVersion = "latest") {
+        public static async Task<IEnumerable<Signature>> GetSignatures(ProcessModel processModel, string patchVersion = "latest") {
             var architecture = processModel.IsWin64
                                    ? "x64"
                                    : "x86";
@@ -48,7 +49,7 @@ namespace Sharlayan.Utilities {
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
             }
             else {
-                var json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{patchVersion}/{architecture}.json");
+                var json = await APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{patchVersion}/{architecture}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
                 File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
@@ -57,17 +58,17 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion = "latest") {
+        public static async Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion = "latest") {
             var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
             if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                APIResponseToDictionary(statusEffects, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/statuses.json");
+                await APIResponseToDictionary(statusEffects, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/statuses.json");
             }
         }
 
-        public static StructuresContainer GetStructures(ProcessModel processModel, string patchVersion = "latest") {
+        public static async Task<StructuresContainer> GetStructures(ProcessModel processModel, string patchVersion = "latest") {
             var architecture = processModel.IsWin64
                                    ? "x64"
                                    : "x86";
@@ -76,10 +77,10 @@ namespace Sharlayan.Utilities {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            return APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{patchVersion}/{architecture}.json");
+            return await APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{patchVersion}/{architecture}.json");
         }
 
-        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest") {
+        public static async Task GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest") {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
@@ -89,12 +90,12 @@ namespace Sharlayan.Utilities {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                APIResponseToDictionary(mapInfos, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/zones.json");
+                await APIResponseToDictionary(mapInfos, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/zones.json");
             }
         }
 
-        private static T APIResponseToClass<T>(string file, string uri) {
-            var json = APIResponseToJSON(uri);
+        private static async Task<T> APIResponseToClass<T>(string file, string uri) {
+            var json = await APIResponseToJSON(uri);
             var resolved = JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
 
             File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -102,8 +103,8 @@ namespace Sharlayan.Utilities {
             return resolved;
         }
 
-        private static void APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string file, string uri) {
-            var json = APIResponseToJSON(uri);
+        private static async Task APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string file, string uri) {
+            var json = await APIResponseToJSON(uri);
             ConcurrentDictionary<uint, T> resolved = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, T>>(json, Constants.SerializerSettings);
 
             foreach (KeyValuePair<uint, T> kvp in resolved) {
@@ -113,8 +114,8 @@ namespace Sharlayan.Utilities {
             File.WriteAllText(file, JsonConvert.SerializeObject(dictionary, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
         }
 
-        private static string APIResponseToJSON(string uri) {
-            return _webClient.DownloadString(uri);
+        private static async Task<string> APIResponseToJSON(string uri) {
+            return await _webClient.DownloadStringTaskAsync(uri);
         }
 
         private static T EnsureClassValues<T>(string file) {

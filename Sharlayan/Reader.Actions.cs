@@ -13,7 +13,7 @@ namespace Sharlayan {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Models;
     using Sharlayan.Models.ReadResults;
@@ -31,7 +31,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static ActionResult GetActions() {
+        public static async Task<ActionResult> GetActions() {
             var result = new ActionResult();
 
             if (!CanGetActions() || !MemoryHandler.Instance.IsAttached) {

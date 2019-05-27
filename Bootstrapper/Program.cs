@@ -35,13 +35,13 @@ namespace Bootstrapper {
                 LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
             }
 
-            ActionLookup.GetActionInfo(2);
-            StatusEffectLookup.GetStatusInfo(2);
-            ZoneLookup.GetZoneInfo(138);
+            ActionLookup.GetActionInfo(2).GetAwaiter().GetResult();
+            StatusEffectLookup.GetStatusInfo(2).GetAwaiter().GetResult();
+            ZoneLookup.GetZoneInfo(138).GetAwaiter().GetResult();
 
-            ActionItem action = ActionLookup.GetActionInfo(2);
-            StatusItem status = StatusEffectLookup.GetStatusInfo(2);
-            MapItem zone = ZoneLookup.GetZoneInfo(138);
+            ActionItem action = ActionLookup.GetActionInfo(2).GetAwaiter().GetResult();
+            StatusItem status = StatusEffectLookup.GetStatusInfo(2).GetAwaiter().GetResult();
+            MapItem zone = ZoneLookup.GetZoneInfo(138).GetAwaiter().GetResult();
 
             Process process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
 
@@ -50,7 +50,7 @@ namespace Bootstrapper {
                     new ProcessModel {
                         IsWin64 = true,
                         Process = process
-                    });
+                    }).GetAwaiter().GetResult();
 
                 while (Scanner.Instance.IsScanning) {
                     Thread.Sleep(1000);

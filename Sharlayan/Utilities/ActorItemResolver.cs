@@ -18,11 +18,12 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Delegates;
     using System.Linq;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     internal static class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
-        public static ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null)
+        public static async Task<ActorItem> ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null)
         {
             entry = entry ?? new ActorItem();
             var defaultBaseOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultBaseOffset;
@@ -167,7 +168,7 @@ namespace Sharlayan.Utilities {
                     }
 
                     try {
-                        Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
+                        Models.XIVDatabase.StatusItem statusInfo = await StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
                         if (statusInfo != null) {
                             statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                             var statusKey = statusInfo.Name.English;

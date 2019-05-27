@@ -20,6 +20,7 @@ namespace Sharlayan {
     using System.Linq;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
+    using System.Threading.Tasks;
 
     public static partial class Reader {
         public static bool CanGetActors() {
@@ -33,7 +34,7 @@ namespace Sharlayan {
 
         private static Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
         
-        public static ActorResult GetActors() {
+        public static async Task<ActorResult> GetActors() {
             var result = new ActorResult();
 
             if (!CanGetActors() || !MemoryHandler.Instance.IsAttached) {
@@ -153,7 +154,7 @@ namespace Sharlayan {
 
                         var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
-                        ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
+                        ActorItem entry = await ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
 
                         if (entry != null && entry.IsValid)
                         {

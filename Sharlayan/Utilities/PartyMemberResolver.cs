@@ -12,6 +12,7 @@ namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using NLog;
 
     using Sharlayan.Core;
@@ -21,7 +22,7 @@ namespace Sharlayan.Utilities {
     internal static class PartyMemberResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static PartyMember ResolvePartyMemberFromBytes(byte[] source, ActorItem actorItem = null) {
+        public static async Task<PartyMember> ResolvePartyMemberFromBytes(byte[] source, ActorItem actorItem = null) {
             if (actorItem != null) {
                 var entry = new PartyMember {
                     X = actorItem.X,
@@ -113,7 +114,7 @@ namespace Sharlayan.Utilities {
 
                         try {
                             if (statusEntry.StatusID > 0) {
-                                Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
+                                Models.XIVDatabase.StatusItem statusInfo = await StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                                 var statusKey = statusInfo.Name.English;
                                 switch (MemoryHandler.Instance.GameLanguage) {

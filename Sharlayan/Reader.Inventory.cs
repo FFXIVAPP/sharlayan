@@ -10,7 +10,7 @@
 
 namespace Sharlayan {
     using System;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Models.ReadResults;
@@ -25,7 +25,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static InventoryResult GetInventory() {
+        public static async Task<InventoryResult> GetInventory() {
             var result = new InventoryResult();
 
             if (!CanGetInventory() || !MemoryHandler.Instance.IsAttached) {

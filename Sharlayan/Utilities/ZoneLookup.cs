@@ -11,6 +11,7 @@
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
@@ -33,30 +34,28 @@ namespace Sharlayan.Utilities {
 
         private static ConcurrentDictionary<uint, MapItem> Zones = new ConcurrentDictionary<uint, MapItem>();
 
-        public static MapItem GetZoneInfo(uint id, string patchVersion = "latest") {
+        public static async Task<MapItem> GetZoneInfo(uint id, string patchVersion = "latest") {
             if (Loading) {
                 return DefaultZoneInfo;
             }
 
-            lock (Zones) {
-                if (Zones.Any()) {
-                    return Zones.ContainsKey(id)
-                               ? Zones[id]
-                               : DefaultZoneInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultZoneInfo;
+            if (Zones.Any()) {
+                return Zones.ContainsKey(id)
+                           ? Zones[id]
+                           : DefaultZoneInfo;
             }
+
+            await Resolve(patchVersion);
+            return DefaultZoneInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
+        internal static async Task Resolve(string patchVersion = "latest") {
             if (Loading) {
                 return;
             }
 
             Loading = true;
-            APIHelper.GetZones(Zones, patchVersion);
+            await APIHelper.GetZones(Zones, patchVersion);
             Loading = false;
         }
     }

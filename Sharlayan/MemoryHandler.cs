@@ -14,6 +14,7 @@ namespace Sharlayan {
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Text;
+    using System.Threading.Tasks;
 
     using NLog;
 
@@ -237,7 +238,7 @@ namespace Sharlayan {
             return baseAddress;
         }
 
-        public void SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false) {
+        public async Task SetProcess(ProcessModel processModel, string gameLanguage = "English", string patchVersion = "latest", bool useLocalCache = true, bool scanAllMemoryRegions = false) {
             this.ProcessModel = processModel;
             this.GameLanguage = gameLanguage;
             this.UseLocalCache = useLocalCache;
@@ -258,11 +259,11 @@ namespace Sharlayan {
             if (this.IsNewInstance) {
                 this.IsNewInstance = false;
 
-                ActionLookup.Resolve();
-                StatusEffectLookup.Resolve();
-                ZoneLookup.Resolve();
+                await ActionLookup.Resolve();
+                await StatusEffectLookup.Resolve();
+                await ZoneLookup.Resolve();
 
-                this.ResolveMemoryStructures(processModel, patchVersion);
+                await this.ResolveMemoryStructures(processModel, patchVersion);
             }
 
             this.AttachmentWorker = new AttachmentWorker();
@@ -272,7 +273,8 @@ namespace Sharlayan {
             this.GetProcessModules();
 
             Scanner.Instance.Locations.Clear();
-            Scanner.Instance.LoadOffsets(Signatures.Resolve(processModel, patchVersion), scanAllMemoryRegions);
+            var signatures = await Signatures.Resolve(processModel, patchVersion);
+            Scanner.Instance.LoadOffsets(signatures, scanAllMemoryRegions);
         }
 
         public void UnsetProcess() {
@@ -327,8 +329,8 @@ namespace Sharlayan {
             return false;
         }
 
-        internal void ResolveMemoryStructures(ProcessModel processModel, string patchVersion = "latest") {
-            this.Structures = APIHelper.GetStructures(processModel, patchVersion);
+        internal async Task ResolveMemoryStructures(ProcessModel processModel, string patchVersion = "latest") {
+            this.Structures = await APIHelper.GetStructures(processModel, patchVersion);
         }
 
         protected internal virtual void RaiseException(Logger logger, Exception e, bool levelIsError = false) {
@@ -346,12 +348,6 @@ namespace Sharlayan {
                 ProcessModule module = modules[i];
                 this.SystemModules.Add(module);
             }
-        }
-
-        internal struct MemoryBlock {
-            public long Length;
-
-            public long Start;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Sharlayan {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Models;
     using Sharlayan.Models.ReadResults;
@@ -28,7 +28,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static ChatLogResult GetChatLog(int previousArrayIndex = 0, int previousOffset = 0) {
+        public static async Task<ChatLogResult> GetChatLog(int previousArrayIndex = 0, int previousOffset = 0) {
             var result = new ChatLogResult();
 
             if (!CanGetChatLog() || !MemoryHandler.Instance.IsAttached) {

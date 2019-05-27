@@ -11,7 +11,7 @@
 namespace Sharlayan {
     using System;
     using System.Collections.Generic;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Delegates;
     using Sharlayan.Models;
@@ -30,7 +30,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static PartyResult GetPartyMembers() {
+        public static async Task<PartyResult> GetPartyMembers() {
             var result = new PartyResult();
 
             if (!CanGetPartyMembers() || !MemoryHandler.Instance.IsAttached) {
@@ -70,7 +70,7 @@ namespace Sharlayan {
                             newEntry = true;
                         }
 
-                        PartyMember entry = PartyMemberResolver.ResolvePartyMemberFromBytes(source, existing);
+                        PartyMember entry = await PartyMemberResolver.ResolvePartyMemberFromBytes(source, existing);
                         if (!entry.IsValid) {
                             continue;
                         }
@@ -87,7 +87,7 @@ namespace Sharlayan {
                 }
 
                 if (partyCount <= 1) {
-                    PartyMember entry = PartyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), PCWorkerDelegate.CurrentUser);
+                    PartyMember entry = await PartyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), PCWorkerDelegate.CurrentUser);
                     if (result.RemovedPartyMembers.ContainsKey(entry.ID)) {
                         result.RemovedPartyMembers.TryRemove(entry.ID, out PartyMember removedPartyMember);
                     }

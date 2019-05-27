@@ -10,7 +10,7 @@
 
 namespace Sharlayan {
     using System;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
@@ -25,7 +25,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static CurrentPlayerResult GetCurrentPlayer() {
+        public static async Task<CurrentPlayerResult> GetCurrentPlayer() {
             var result = new CurrentPlayerResult();
 
             if (!CanGetPlayerInfo() || !MemoryHandler.Instance.IsAttached) {

@@ -10,7 +10,7 @@
 
 namespace Sharlayan {
     using System;
-
+    using System.Threading.Tasks;
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Delegates;
@@ -29,7 +29,7 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static TargetResult GetTargetInfo() {
+        public static async Task<TargetResult> GetTargetInfo() {
             var result = new TargetResult();
 
             if (!CanGetTargetInfo() || !MemoryHandler.Instance.IsAttached) {
@@ -51,7 +51,7 @@ namespace Sharlayan {
 
                     if (currentTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(currentTarget);
+                            ActorItem entry = await GetTargetActorItemFromSource(currentTarget);
                             currentTargetID = entry.ID;
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
@@ -65,7 +65,7 @@ namespace Sharlayan {
 
                     if (mouseOverTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(mouseOverTarget);
+                            ActorItem entry = await GetTargetActorItemFromSource(mouseOverTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.MouseOverTarget = entry;
@@ -78,7 +78,7 @@ namespace Sharlayan {
 
                     if (focusTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(focusTarget);
+                            ActorItem entry = await GetTargetActorItemFromSource(focusTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.FocusTarget = entry;
@@ -91,7 +91,7 @@ namespace Sharlayan {
 
                     if (previousTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(previousTarget);
+                            ActorItem entry = await GetTargetActorItemFromSource(previousTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.PreviousTarget = entry;
@@ -161,11 +161,11 @@ namespace Sharlayan {
             return result;
         }
 
-        private static ActorItem GetTargetActorItemFromSource(long address) {
+        private static async Task<ActorItem> GetTargetActorItemFromSource(long address) {
             var targetAddress = new IntPtr(address);
 
             byte[] source = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.Size);
-            ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source);
+            ActorItem entry = await ActorItemResolver.ResolveActorFromBytes(source);
 
             if (entry.Type == Actor.Type.EventObject) {
                 var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);

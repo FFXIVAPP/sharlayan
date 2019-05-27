@@ -11,6 +11,7 @@
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
@@ -32,30 +33,28 @@ namespace Sharlayan.Utilities {
 
         private static ConcurrentDictionary<uint, StatusItem> StatusEffects = new ConcurrentDictionary<uint, StatusItem>();
 
-        public static StatusItem GetStatusInfo(uint id, string patchVersion = "latest") {
+        public static async Task<StatusItem> GetStatusInfo(uint id, string patchVersion = "latest") {
             if (Loading) {
                 return DefaultStatusInfo;
             }
 
-            lock (StatusEffects) {
-                if (StatusEffects.Any()) {
-                    return StatusEffects.ContainsKey(id)
-                               ? StatusEffects[id]
-                               : DefaultStatusInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultStatusInfo;
+            if (StatusEffects.Any()) {
+                return StatusEffects.ContainsKey(id)
+                           ? StatusEffects[id]
+                           : DefaultStatusInfo;
             }
+
+            await Resolve(patchVersion);
+            return DefaultStatusInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
+        internal static async Task Resolve(string patchVersion = "latest") {
             if (Loading) {
                 return;
             }
 
             Loading = true;
-            APIHelper.GetStatusEffects(StatusEffects, patchVersion);
+            await APIHelper.GetStatusEffects(StatusEffects, patchVersion);
             Loading = false;
         }
     }

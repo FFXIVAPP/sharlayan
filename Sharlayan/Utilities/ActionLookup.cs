@@ -12,6 +12,7 @@ namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
@@ -32,80 +33,70 @@ namespace Sharlayan.Utilities {
 
         private static bool Loading;
 
-        public static List<ActionItem> DamageOverTimeActions(string patchVersion = "latest") {
+        public static async Task<List<ActionItem>> DamageOverTimeActions(string patchVersion = "latest") {
             List<ActionItem> results = new List<ActionItem>();
             if (Loading) {
                 return results;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion);
+            if (Actions.Any()) {
+                results.AddRange(Actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value));
                 return results;
             }
+
+            await Resolve(patchVersion);
+            return results;
         }
 
-        public static ActionItem GetActionInfo(string name, string patchVersion = "latest") {
+        public static async Task<ActionItem> GetActionInfo(string name, string patchVersion = "latest") {
             if (Loading) {
                 return DefaultActionInfo;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultActionInfo;
+            if (Actions.Any()) {
+                return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
             }
+
+            await Resolve(patchVersion);
+            return DefaultActionInfo;
         }
 
-        public static ActionItem GetActionInfo(uint id, string patchVersion = "latest") {
+        public static async Task<ActionItem> GetActionInfo(uint id, string patchVersion = "latest") {
             if (Loading) {
                 return DefaultActionInfo;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.ContainsKey(id)
-                               ? Actions[id]
-                               : DefaultActionInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultActionInfo;
+            if (Actions.Any()) {
+                return Actions.ContainsKey(id)
+                           ? Actions[id]
+                           : DefaultActionInfo;
             }
+
+            await Resolve(patchVersion);
+            return DefaultActionInfo;
         }
 
-        public static List<ActionItem> HealingOverTimeActions(string patchVersion = "latest") {
+        public static async Task<List<ActionItem>> HealingOverTimeActions(string patchVersion = "latest") {
             List<ActionItem> results = new List<ActionItem>();
             if (Loading) {
                 return results;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion);
+            if (Actions.Any()) {
+                results.AddRange(Actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value));
                 return results;
             }
+
+            await Resolve(patchVersion);
+            return results;
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
-            if (Loading) {
-                return;
+        internal static async Task Resolve(string patchVersion = "latest") {
+            if (Loading == false) {
+                Loading = true;
+                await APIHelper.GetActions(Actions, patchVersion);
+                Loading = false;
             }
-
-            Loading = true;
-            APIHelper.GetActions(Actions, patchVersion);
-            Loading = false;
         }
     }
 }
