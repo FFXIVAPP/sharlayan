@@ -183,7 +183,13 @@ namespace Sharlayan.Core.Enums {
 
             SAM = 0x22,
 
-            RDM = 0x23
+            RDM = 0x23,
+
+            BLU = 0x24,
+
+            GNB = 0x25,
+
+            DNC = 0x26
         }
 
         public enum Sex : byte {

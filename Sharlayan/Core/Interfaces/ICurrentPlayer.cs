@@ -48,7 +48,13 @@ namespace Sharlayan.Core.Interfaces {
 
         short BaseStrength { get; set; }
 
+        short BaseSubstat { get; set; }
+
         short BaseVitality { get; set; }
+
+        byte BLU { get; set; }
+
+        int BLU_CurrentEXP { get; set; }
 
         short BluntResistance { get; set; }
 
@@ -88,6 +94,10 @@ namespace Sharlayan.Core.Interfaces {
 
         short DirectHit { get; set; }
 
+        byte DNC { get; set; }
+
+        int DNC_CurrentEXP { get; set; }
+
         byte DRK { get; set; }
 
         int DRK_CurrentEXP { get; set; }
@@ -109,6 +119,10 @@ namespace Sharlayan.Core.Interfaces {
         byte GLD { get; set; }
 
         int GLD_CurrentEXP { get; set; }
+
+        byte GNB { get; set; }
+
+        int GNB_CurrentEXP { get; set; }
 
         int GPMax { get; set; }
 

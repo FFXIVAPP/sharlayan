@@ -101,7 +101,7 @@ namespace Sharlayan {
                     limit = 16;
                     break;
                 default:
-                    limit = 12;
+                    limit = 16;
                     canUseKeyBinds = true;
                     break;
             }

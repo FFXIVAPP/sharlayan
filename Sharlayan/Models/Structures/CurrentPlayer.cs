@@ -44,7 +44,13 @@ namespace Sharlayan.Models.Structures {
 
         public int BaseStrength { get; set; }
 
+        public int BaseSubstat { get; set; }
+
         public int BaseVitality { get; set; }
+
+        public int BLU { get; set; }
+
+        public int BLU_CurrentEXP { get; set; }
 
         public int BluntResistance { get; set; }
 
@@ -84,6 +90,10 @@ namespace Sharlayan.Models.Structures {
 
         public int DirectHit { get; set; }
 
+        public int DNC { get; set; }
+
+        public int DNC_CurrentEXP { get; set; }
+
         public int DRK { get; set; }
 
         public int DRK_CurrentEXP { get; set; }
@@ -103,6 +113,10 @@ namespace Sharlayan.Models.Structures {
         public int GLD_CurrentEXP { get; set; }
 
         public int GPMax { get; set; }
+
+        public int GNB { get; set; }
+
+        public int GNB_CurrentEXP { get; set; }
 
         public int GSM { get; set; }
 
