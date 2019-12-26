@@ -245,7 +245,7 @@ namespace Sharlayan {
             this.UnsetProcess();
 
             try {
-                this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.ProcessModel.ProcessID);
+                this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_READ, false, (uint) this.ProcessModel.ProcessID);
             }
             catch (Exception) {
                 this.ProcessHandle = processModel.Process.Handle;
