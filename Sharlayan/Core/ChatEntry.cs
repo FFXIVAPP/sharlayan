@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ChatEntry.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -25,12 +25,11 @@ namespace Sharlayan.Core {
                 chatLogEntry.Code = ByteArrayToString(raw.Skip(4).Take(2).Reverse().ToArray());
                 chatLogEntry.Raw = Encoding.UTF8.GetString(raw.ToArray());
                 byte[] cleanable = raw.Skip(8).ToArray();
-                var cleaned = new ChatCleaner(cleanable).Result;
+                var cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
                 var cut = cleaned.Substring(1, 1) == ":"
                               ? 2
                               : 1;
                 chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
-                chatLogEntry.Line = new ChatCleaner(chatLogEntry.Line).Result;
                 chatLogEntry.JP = IsJapanese(chatLogEntry.Line);
 
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Scanner.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -14,6 +14,7 @@ namespace Sharlayan {
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Threading.Tasks;
 
     using NLog;
 
@@ -90,7 +91,8 @@ namespace Sharlayan {
 
                 return true;
             };
-            scanningFunc.BeginInvoke(delegate { }, scanningFunc);
+
+            Task.Run(() => scanningFunc.Invoke());
         }
 
         private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
@@ -257,7 +259,7 @@ namespace Sharlayan {
                 0x0C,
                 0x0D,
                 0x0E,
-                0x0F
+                0x0F,
             };
             try {
                 for (int x = 0,

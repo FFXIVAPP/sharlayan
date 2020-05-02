@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{9510D5EF-208A-4897-A582-8EAE5C6E9406}</ProjectGuid>
+    <ProjectGuid>{49C85043-6646-46FD-A262-E2EA0ED1DF82}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sharlayan</RootNamespace>

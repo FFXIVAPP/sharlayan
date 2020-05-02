@@ -100,12 +100,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sharlayan\Sharlayan.csproj">
-      <Project>{9510d5ef-208a-4897-a582-8eae5c6e9406}</Project>
+      <Project>{49C85043-6646-46FD-A262-E2EA0ED1DF82}</Project>
       <Name>Sharlayan</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

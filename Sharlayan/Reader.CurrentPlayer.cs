@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.CurrentPlayer.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -38,16 +38,13 @@ namespace Sharlayan {
                 return result;
             }
 
-            try
-            {
+            try {
                 byte[] source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, MemoryHandler.Instance.Structures.CurrentPlayer.SourceSize);
 
-                try
-                {
+                try {
                     result.CurrentPlayer = CurrentPlayerResolver.ResolvePlayerFromBytes(source);
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
 
@@ -62,7 +59,7 @@ namespace Sharlayan {
                             var agroEntry = new EnmityItem {
                                 ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityItem.ID),
                                 Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityItem.Name),
-                                Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityItem.Enmity)
+                                Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityItem.Enmity),
                             };
                             if (agroEntry.ID > 0) {
                                 result.CurrentPlayer.EnmityItems.Add(agroEntry);
@@ -70,7 +67,6 @@ namespace Sharlayan {
                         }
                     }
                 }
-
             }
             catch (Exception ex) {
                 MemoryHandler.Instance.RaiseException(Logger, ex, true);

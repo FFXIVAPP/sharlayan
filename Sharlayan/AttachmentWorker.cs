@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AttachmentWorker.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -12,6 +12,7 @@ namespace Sharlayan {
     using System;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Timers;
 
     using NLog;
@@ -70,7 +71,8 @@ namespace Sharlayan {
                 this._isScanning = false;
                 return true;
             };
-            scanner.BeginInvoke(delegate { }, scanner);
+
+            Task.Run(() => scanner.Invoke());
         }
     }
 }

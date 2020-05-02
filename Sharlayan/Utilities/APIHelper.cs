@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="APIHelper.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -25,7 +25,7 @@ namespace Sharlayan.Utilities {
 
     internal static class APIHelper {
         private static WebClient _webClient = new WebClient {
-            Encoding = Encoding.UTF8
+            Encoding = Encoding.UTF8,
         };
 
         public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest") {
