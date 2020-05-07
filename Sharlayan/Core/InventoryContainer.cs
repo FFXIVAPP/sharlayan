@@ -21,6 +21,6 @@ namespace Sharlayan.Core {
 
         public List<InventoryItem> InventoryItems { get; } = new List<InventoryItem>();
 
-        public byte TypeID { get; set; }
+        public uint TypeID { get; set; }
     }
 }

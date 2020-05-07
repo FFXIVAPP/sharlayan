@@ -20,6 +20,6 @@ namespace Sharlayan.Core.Interfaces {
 
         List<InventoryItem> InventoryItems { get; }
 
-        byte TypeID { get; set; }
+        uint TypeID { get; set; }
     }
 }

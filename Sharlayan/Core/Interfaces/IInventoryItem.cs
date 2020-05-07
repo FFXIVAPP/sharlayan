@@ -9,21 +9,31 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Core.Interfaces {
+    using Sharlayan.Core.Enums;
+
     public interface IInventoryItem {
         uint Amount { get; set; }
 
-        uint Durability { get; set; }
+        uint Condition { get; set; }
 
-        double DurabilityPercent { get; }
+        double ConditionPercent { get; }
 
         uint GlamourID { get; set; }
 
         uint ID { get; set; }
 
-        uint SB { get; set; }
+        uint Spiritbond { get; set; }
 
-        double SBPercent { get; }
+        double SpiritbondPercent { get; }
+
+        bool IsHQ { get; set; }
+
+        Inventory.MateriaType[] MateriaTypes { get; set; }
+
+        byte[] MateriaRanks { get; set; }
 
         int Slot { get; set; }
+
+        uint DyeID { get; set; }
     }
 }

@@ -10,70 +10,121 @@
 
 namespace Sharlayan.Core.Enums {
     public class Inventory {
-        public enum Container : byte {
-            INVENTORY_1 = 0x0,
+        public enum Container : uint {
+            Inventory1 = 0,
+            Inventory2 = 1,
+            Inventory3 = 2,
+            Inventory4 = 3,
 
-            INVENTORY_2 = 0x1,
+            EquippedItems = 1000,
+            Currency = 2000,
+            Crystals = 2001,
 
-            INVENTORY_3 = 0x2,
+            //Unknown2002 = 2002,
+            //Unknown2003 = 2003,
 
-            INVENTORY_4 = 0x3,
+            KeyItems = 2004,
 
-            CURRENT_EQ = 0x4,
+            //Unknown2005 = 2005,
+            //Unknown2006 = 2006,
+            //Unknown2007 = 2007,
+            //Unknown2008 = 2008,
+            Examine = 2009,
+            //Unknown2010 = 2010,
+            //Unknown2011 = 2011,
+            //Unknown2012 = 2012,
+            //Unknown2013 = 2013,
 
-            EXTRA_EQ = 0x5,
+            ArmoryOffHand = 3200,
+            ArmoryHelmet = 3201,
+            ArmoryChest = 3202,
+            ArmoryGlove = 3203,
+            ArmoryBelt = 3204,
+            ArmoryPants = 3205,
+            ArmoryBoots = 3206,
+            ArmoryEarrings = 3207,
+            ArmoryNecklace = 3208,
+            ArmoryWrist = 3209,
+            ArmoryRings = 3300,
+            ArmorySouls = 3400,
+            ArmoryMainHand = 3500,
 
-            CRYSTALS = 0x6,
+            SaddleBag1 = 4000,
+            SaddleBag2 = 4001,
+            PremiumSaddleBag1 = 4100,
+            PremiumSaddleBag2 = 4101,
 
-            QUESTS_KI = 0x9,
+            RetainerPage1 = 10000,
+            RetainerPage2 = 10001,
+            RetainerPage3 = 10002,
+            RetainerPage4 = 10003,
+            RetainerPage5 = 10004,
+            RetainerPage6 = 10005,
+            RetainerPage7 = 10006,
+            RetainerEquippedItems = 11000,
+            RetainerGil = 12000,
+            RetainerCrystals = 12001,
+            RetainerMarket = 12002,
+            FreeCompanyPage1 = 20000,
+            FreeCompanyPage2 = 20001,
+            FreeCompanyPage3 = 20002,
 
-            HIRE_1 = 0x12,
+            //Unknown20003 = 20003,
+            //Unknown20004 = 20004,
 
-            HIRE_2 = 0x13,
+            FreeCompanyGil = 22000,
+            FreeCompanyCrystals = 22001,
 
-            HIRE_3 = 0x14,
+            //Unknown25000 = 25000,
+            //Unknown25001 = 25001,
+            //Unknown25002 = 25002,
+            //Unknown25003 = 25003,
+            //Unknown25004 = 25004,
+            //Unknown25005 = 25005,
+            //Unknown25006 = 25006,
+            //Unknown25007 = 25007,
+            //Unknown25008 = 25008,
+            //Unknown25009 = 25009,
+            //Unknown25010 = 25010,
 
-            HIRE_4 = 0x15,
+            //Unknown27000 = 27000,
+            //Unknown27001 = 27001,
+            //Unknown27002 = 27002,
+            //Unknown27003 = 27003,
+            //Unknown27004 = 27004,
+            //Unknown27005 = 27005,
+            //Unknown27006 = 27006,
+            //Unknown27007 = 27007,
+            //Unknown27008 = 27008,
+        }
 
-            HIRE_5 = 0x16,
-
-            HIRE_6 = 0x17,
-
-            HIRE_7 = 0x18,
-
-            AC_MH = 0x1D,
-
-            AC_OH = 0x1E,
-
-            AC_HEAD = 0x1F,
-
-            AC_BODY = 0x20,
-
-            AC_HANDS = 0x21,
-
-            AC_BELT = 0x22,
-
-            AC_LEGS = 0x23,
-
-            AC_FEET = 0x24,
-
-            AC_EARRINGS = 0x25,
-
-            AC_NECK = 0x26,
-
-            AC_WRISTS = 0x27,
-
-            AC_RINGS = 0x28,
-
-            AC_SOULS = 0x29,
-
-            COMPANY_1 = 0x2A,
-
-            COMPANY_2 = 0x2B,
-
-            COMPANY_3 = 0x2C,
-
-            COMPANY_CRYSTALS = 0x2D,
+        public enum MateriaType : byte {
+            None = 0,
+            Cracked,
+            Strength,
+            Vitality,
+            Dexterity,
+            Intelligence,
+            Mind,
+            Piety,
+            FireResistance,
+            IceResistance,
+            WindResistance,
+            EarthResistance,
+            LightningResistance,
+            WaterResistance,
+            DirectHitRate,
+            CriticalHit,
+            Determination,
+            Tenacity,
+            Gathering,
+            Perception,
+            GatheringPoints,
+            Craftsmanship,
+            CraftingPoints,
+            Control,
+            SkillSpeed,
+            SpellSpeed
         }
     }
 }

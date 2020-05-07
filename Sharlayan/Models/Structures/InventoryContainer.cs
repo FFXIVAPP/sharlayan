@@ -10,6 +10,8 @@
 
 namespace Sharlayan.Models.Structures {
     public class InventoryContainer {
+        public int ID { get; set; }
+
         public int Amount { get; set; }
     }
 }
