@@ -73,10 +73,10 @@ namespace Sharlayan {
                             },
                             MateriaRanks = new[] {
                                 bagSlotsBytes[slotOffset + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
-                                bagSlotsBytes[slotOffset + 1 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                bagSlotsBytes[slotOffset + 2 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                bagSlotsBytes[slotOffset + 3 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                bagSlotsBytes[slotOffset + 4 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType]
+                                bagSlotsBytes[slotOffset + 1 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
+                                bagSlotsBytes[slotOffset + 2 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
+                                bagSlotsBytes[slotOffset + 3 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
+                                bagSlotsBytes[slotOffset + 4 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank]
                             },
                             DyeID = bagSlotsBytes[slotOffset + MemoryHandler.Instance.Structures.InventoryItem.DyeID],
                             GlamourID = BitConverter.ToUInt32(bagSlotsBytes, slotOffset + MemoryHandler.Instance.Structures.InventoryItem.GlamourID)
