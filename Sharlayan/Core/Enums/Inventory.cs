@@ -12,12 +12,17 @@ namespace Sharlayan.Core.Enums {
     public class Inventory {
         public enum Container : uint {
             Inventory1 = 0,
+
             Inventory2 = 1,
+
             Inventory3 = 2,
+
             Inventory4 = 3,
 
             EquippedItems = 1000,
+
             Currency = 2000,
+
             Crystals = 2001,
 
             //Unknown2002 = 2002,
@@ -36,43 +41,72 @@ namespace Sharlayan.Core.Enums {
             //Unknown2013 = 2013,
 
             ArmoryOffHand = 3200,
+
             ArmoryHelmet = 3201,
+
             ArmoryChest = 3202,
+
             ArmoryGlove = 3203,
+
             ArmoryBelt = 3204,
+
             ArmoryPants = 3205,
+
             ArmoryBoots = 3206,
+
             ArmoryEarrings = 3207,
+
             ArmoryNecklace = 3208,
+
             ArmoryWrist = 3209,
+
             ArmoryRings = 3300,
+
             ArmorySouls = 3400,
+
             ArmoryMainHand = 3500,
 
             SaddleBag1 = 4000,
+
             SaddleBag2 = 4001,
+
             PremiumSaddleBag1 = 4100,
+
             PremiumSaddleBag2 = 4101,
 
             RetainerPage1 = 10000,
+
             RetainerPage2 = 10001,
+
             RetainerPage3 = 10002,
+
             RetainerPage4 = 10003,
+
             RetainerPage5 = 10004,
+
             RetainerPage6 = 10005,
+
             RetainerPage7 = 10006,
+
             RetainerEquippedItems = 11000,
+
             RetainerGil = 12000,
+
             RetainerCrystals = 12001,
+
             RetainerMarket = 12002,
+
             FreeCompanyPage1 = 20000,
+
             FreeCompanyPage2 = 20001,
+
             FreeCompanyPage3 = 20002,
 
             //Unknown20003 = 20003,
             //Unknown20004 = 20004,
 
             FreeCompanyGil = 22000,
+
             FreeCompanyCrystals = 22001,
 
             //Unknown25000 = 25000,
@@ -100,31 +134,56 @@ namespace Sharlayan.Core.Enums {
 
         public enum MateriaType : byte {
             None = 0,
+
             Cracked,
+
             Strength,
+
             Vitality,
+
             Dexterity,
+
             Intelligence,
+
             Mind,
+
             Piety,
+
             FireResistance,
+
             IceResistance,
+
             WindResistance,
+
             EarthResistance,
+
             LightningResistance,
+
             WaterResistance,
+
             DirectHitRate,
+
             CriticalHit,
+
             Determination,
+
             Tenacity,
+
             Gathering,
+
             Perception,
+
             GatheringPoints,
+
             Craftsmanship,
+
             CraftingPoints,
+
             Control,
+
             SkillSpeed,
-            SpellSpeed
+
+            SpellSpeed,
         }
     }
 }

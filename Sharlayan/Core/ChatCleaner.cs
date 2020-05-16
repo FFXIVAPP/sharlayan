@@ -74,10 +74,10 @@ namespace Sharlayan.Core {
                             //     newList.Add(31);
                             // }
                             newList.Add(58);
-                            if (PlayerChatCodesRegex.IsMatch(code))
-                            {
+                            if (PlayerChatCodesRegex.IsMatch(code)) {
                                 newList.Add(32);
                             }
+
                             break;
                         default:
                             newList.Add(bytes[x]);

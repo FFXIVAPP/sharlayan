@@ -18,22 +18,22 @@ namespace Sharlayan.Core.Interfaces {
 
         double ConditionPercent { get; }
 
+        uint DyeID { get; set; }
+
         uint GlamourID { get; set; }
 
         uint ID { get; set; }
 
-        uint Spiritbond { get; set; }
-
-        double SpiritbondPercent { get; }
-
         bool IsHQ { get; set; }
-
-        Inventory.MateriaType[] MateriaTypes { get; set; }
 
         byte[] MateriaRanks { get; set; }
 
+        Inventory.MateriaType[] MateriaTypes { get; set; }
+
         int Slot { get; set; }
 
-        uint DyeID { get; set; }
+        uint SB { get; set; }
+
+        double SBPercent { get; }
     }
 }

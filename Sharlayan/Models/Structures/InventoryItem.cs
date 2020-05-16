@@ -14,20 +14,20 @@ namespace Sharlayan.Models.Structures {
 
         public int Durability { get; set; }
 
+        public int DyeID { get; set; }
+
         public int GlamourID { get; set; }
 
         public int ID { get; set; }
 
         public int IsHQ { get; set; }
 
+        public int MateriaRank { get; set; }
+
+        public int MateriaType { get; set; }
+
         public int SB { get; set; }
 
         public int Slot { get; set; }
-
-        public int DyeID { get; set; }
-        
-        public int MateriaType { get; set; }
-
-        public int MateriaRank { get; set; }
     }
 }

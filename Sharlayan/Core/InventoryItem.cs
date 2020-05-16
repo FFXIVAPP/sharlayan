@@ -9,21 +9,21 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Core {
-    using Interfaces;
-    using Enums;
+    using Sharlayan.Core.Enums;
+    using Sharlayan.Core.Interfaces;
 
     public class InventoryItem : IInventoryItem {
-        public int Slot { get; set; }
-        public uint ID { get; set; }
         public uint Amount { get; set; }
         public uint Condition { get; set; }
-        public double ConditionPercent => (double)decimal.Divide(Condition, 30000);
-        public uint Spiritbond { get; set; }
-        public double SpiritbondPercent => (double)decimal.Divide(Spiritbond, 10000);
-        public bool IsHQ { get; set; }
-        public Inventory.MateriaType[] MateriaTypes { get; set; }
-        public byte[] MateriaRanks { get; set; }
+        public double ConditionPercent => (double) decimal.Divide(this.Condition, 30000);
         public uint DyeID { get; set; }
         public uint GlamourID { get; set; }
+        public uint ID { get; set; }
+        public bool IsHQ { get; set; }
+        public byte[] MateriaRanks { get; set; }
+        public Inventory.MateriaType[] MateriaTypes { get; set; }
+        public uint SB { get; set; }
+        public double SBPercent => (double) decimal.Divide(this.SB, 10000);
+        public int Slot { get; set; }
     }
 }

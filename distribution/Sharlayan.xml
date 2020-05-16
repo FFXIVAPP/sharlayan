@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sharlayan</name>
+    </assembly>
+    <members>
+        <member name="M:Sharlayan.AttachmentWorker.StartScanning(Sharlayan.Models.ProcessModel)">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Sharlayan.AttachmentWorker.StopScanning">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Sharlayan.AttachmentWorker.ScanTimerElapsed(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            </summary>
+            <param name="sender"> </param>
+            <param name="e"> </param>
+        </member>
+    </members>
+</doc>
