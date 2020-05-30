@@ -9,15 +9,18 @@ namespace Sharlayan {
 
         public static JobResourceResult GetJobResources() {
             if (!CanGetJobResources() || !MemoryHandler.Instance.IsAttached)
-                return JobResourceResult.Empty;
-            var manager = Scanner.Instance.Locations[Signatures.JobResourceKey].GetAddress();
-            if (manager == IntPtr.Zero)
-                return JobResourceResult.Empty;
-            manager = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(manager));
-            if (manager == IntPtr.Zero)
-                return JobResourceResult.Empty;
-            var jobStruct = MemoryHandler.Instance.GetStructure<JobResourceResult.JobResourceStruct>(manager);
-            return new JobResourceResult(jobStruct);
+                return new JobResourceResult(null);
+
+            var resourcePtr = Scanner.Instance.Locations[Signatures.JobResourceKey].GetAddress();
+            if (resourcePtr == IntPtr.Zero)
+                return new JobResourceResult(null);
+
+            var resource = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(resourcePtr));
+            if (resource == IntPtr.Zero)
+                return new JobResourceResult(null);
+
+            var bytes = MemoryHandler.Instance.GetByteArray(resource, MemoryHandler.Instance.Structures.JobResources.SourceSize);
+            return new JobResourceResult(bytes);
         }
     }
 }
