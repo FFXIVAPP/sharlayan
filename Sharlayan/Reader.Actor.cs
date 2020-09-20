@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actor.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -11,17 +11,19 @@
 namespace Sharlayan {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Delegates;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
-    using System.Linq;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
     public static partial class Reader {
+        private static Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
+
         public static bool CanGetActors() {
             var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey);
             if (canRead) {
@@ -31,8 +33,6 @@ namespace Sharlayan {
             return canRead;
         }
 
-        private static Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
-        
         public static ActorResult GetActors() {
             var result = new ActorResult();
 
@@ -155,10 +155,8 @@ namespace Sharlayan {
 
                         ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
 
-                        if (entry != null && entry.IsValid)
-                        {
-                            if (expiringActors.ContainsKey(ID))
-                            {
+                        if (entry != null && entry.IsValid) {
+                            if (expiringActors.ContainsKey(ID)) {
                                 expiringActors.Remove(ID);
                             }
                         }
@@ -224,38 +222,28 @@ namespace Sharlayan {
                 }
 
                 try {
-                    
                     // add the "removed" actors to the expiring list
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters)
-                    {
-                        if (!expiringActors.ContainsKey(kvp.Key))
-                        {
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters) {
+                        if (!expiringActors.ContainsKey(kvp.Key)) {
                             expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
 
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs)
-                    {
-                        if (!expiringActors.ContainsKey(kvp.Key))
-                        {
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs) {
+                        if (!expiringActors.ContainsKey(kvp.Key)) {
                             expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
 
-                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs)
-                    {
-                        if (!expiringActors.ContainsKey(kvp.Key))
-                        {
+                    foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs) {
+                        if (!expiringActors.ContainsKey(kvp.Key)) {
                             expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
-
 
                     // check expiring list for stale actors
-                    foreach (var kvp in expiringActors.ToList())
-                    {
-                        if (now > kvp.Value)
-                        {
+                    foreach (var kvp in expiringActors.ToList()) {
+                        if (now > kvp.Value) {
                             // Stale actor. Remove it.
                             MonsterWorkerDelegate.RemoveActorItem(kvp.Key);
                             NPCWorkerDelegate.RemoveActorItem(kvp.Key);
@@ -263,15 +251,13 @@ namespace Sharlayan {
 
                             expiringActors.Remove(kvp.Key);
                         }
-                        else
-                        {
+                        else {
                             // Not stale enough yet. We're not actually removing it.
                             result.RemovedMonsters.TryRemove(kvp.Key, out ActorItem _);
                             result.RemovedNPCs.TryRemove(kvp.Key, out ActorItem _);
                             result.RemovedPCs.TryRemove(kvp.Key, out ActorItem _);
                         }
                     }
-
                 }
                 catch (Exception ex) {
                     MemoryHandler.Instance.RaiseException(Logger, ex, true);

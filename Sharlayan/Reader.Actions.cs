@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actions.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -22,6 +22,8 @@ namespace Sharlayan {
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
     public static partial class Reader {
+        private static readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
+
         public static bool CanGetActions() {
             var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.HotBarKey) && Scanner.Instance.Locations.ContainsKey(Signatures.RecastKey);
             if (canRead) {
@@ -78,7 +80,7 @@ namespace Sharlayan {
             IntPtr recastContainerAddress = IntPtr.Add(RecastMap, (int) type * recastContainerSize);
 
             var container = new ActionContainer {
-                ContainerType = type
+                ContainerType = type,
             };
 
             var canUseKeyBinds = false;
@@ -127,18 +129,17 @@ namespace Sharlayan {
                     Name = name,
                     ID = BitConverter.TryToInt16(hotbarSource, MemoryHandler.Instance.Structures.HotBarItem.ID),
                     KeyBinds = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarItem.KeyBinds),
-                    Slot = slot
+                    Slot = slot,
                 };
 
                 if (canUseKeyBinds) {
                     if (!string.IsNullOrWhiteSpace(item.KeyBinds)) {
                         item.Name = item.Name.Replace($" {item.KeyBinds}", string.Empty);
-                        item.KeyBinds = Regex.Replace(item.KeyBinds, @"[\[\]]", string.Empty);
+                        item.KeyBinds = KeyBindsRegex.Replace(item.KeyBinds, string.Empty);
                         List<string> buttons = item.KeyBinds.Split(
                             new[] {
-                                '+'
-                            },
-                            StringSplitOptions.RemoveEmptyEntries).ToList();
+                                '+',
+                            }, StringSplitOptions.RemoveEmptyEntries).ToList();
                         if (buttons.Count > 0) {
                             item.ActionKey = buttons.Last();
                         }

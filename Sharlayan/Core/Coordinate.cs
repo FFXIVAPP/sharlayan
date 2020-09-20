@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Coordinate.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -30,7 +30,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = this.X + coordinate.X,
                 Y = this.Y + coordinate.Y,
-                Z = this.Z + coordinate.Z
+                Z = this.Z + coordinate.Z,
             };
         }
 
@@ -38,7 +38,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = this.X + x,
                 Y = this.Y + y,
-                Z = this.Z + z
+                Z = this.Z + z,
             };
         }
 
@@ -60,7 +60,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = this.X / length,
                 Y = this.Y / length,
-                Z = this.Z / length
+                Z = this.Z / length,
             };
         }
 
@@ -73,7 +73,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = (float) (this.X * Math.Cos(angle) - this.Y * Math.Sin(angle)),
                 Y = (float) (this.Y * Math.Cos(angle) + this.X * Math.Sin(angle)),
-                Z = this.Z
+                Z = this.Z,
             };
         }
 
@@ -81,7 +81,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = this.X * scale,
                 Y = this.Y * scale,
-                Z = this.Z * scale
+                Z = this.Z * scale,
             };
         }
 
@@ -89,7 +89,7 @@ namespace Sharlayan.Core {
             return new Coordinate {
                 X = this.X - coordinate.X,
                 Y = this.Y - coordinate.Y,
-                Z = this.Z - coordinate.Z
+                Z = this.Z - coordinate.Z,
             };
         }
 

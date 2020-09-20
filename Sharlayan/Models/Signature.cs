@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Signature.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -30,7 +30,7 @@ namespace Sharlayan.Models {
 
         public string Key { get; set; }
 
-        [JsonIgnore]
+        [JsonIgnore,]
         public int Offset {
             get {
                 return this.Value.Length / 2;
@@ -51,7 +51,7 @@ namespace Sharlayan.Models {
             }
         }
 
-        [JsonIgnore]
+        [JsonIgnore,]
         public IntPtr SigScanAddress { get; set; }
 
         public string Value { get; set; }

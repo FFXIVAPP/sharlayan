@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CurrentPlayer.cs" company="SyndicatedLife">
-//   Copyright(c) 2018 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (http://syndicated.life/)
+//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -112,11 +112,11 @@ namespace Sharlayan.Models.Structures {
 
         public int GLD_CurrentEXP { get; set; }
 
-        public int GPMax { get; set; }
-
         public int GNB { get; set; }
 
         public int GNB_CurrentEXP { get; set; }
+
+        public int GPMax { get; set; }
 
         public int GSM { get; set; }
 
