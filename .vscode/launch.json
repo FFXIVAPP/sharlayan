@@ -13,7 +13,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/Bootstrapper/bin/Debug/netcoreapp2.1",
             "console": "internalConsole",
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "internalConsoleOptions": "openOnSessionStart"
         },
         {

@@ -4,7 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharlayan", "Sharlayan\Sharlayan.csproj", "{1C0EBCC7-5550-48C8-9492-27853C02B76B}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharlayan", "Sharlayan\Sharlayan.csproj", "{49C85043-6646-46FD-A262-E2EA0ED1DF82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bootstrapper", "Bootstrapper\Bootstrapper.csproj", "{FCAD4340-866B-4153-8A55-311224B764F6}"
 EndProject
@@ -29,17 +28,6 @@ Global
 		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.Debug|Any CPU.Build.0 = Debug|x86
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.Release|Any CPU.ActiveCfg = Release|x86
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.Release|Any CPU.Build.0 = Release|x86
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.ReleaseDeploy|Any CPU.ActiveCfg = ReleaseDeploy|x86
-		{49C85043-6646-46FD-A262-E2EA0ED1DF82}.ReleaseDeploy|Any CPU.Build.0 = ReleaseDeploy|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Debug|Any CPU.Build.0 = Debug|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.ActiveCfg = Release|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.Release|Any CPU.Build.0 = Release|x86
-		{FCAD4340-866B-4153-8A55-311224B764F6}.ReleaseDeploy|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
