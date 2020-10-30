@@ -52,15 +52,8 @@ namespace Sharlayan.Utilities {
                 var json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{patchVersion}/{architecture}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
-                // TODO: How to handle missing 932 codepage on none-window?
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings));
-                }
-                else
-                {
-                    File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
-                }
+                // TODO: Original FFXIVAPP used "Encoding.GetEncoding(932)" and that do not work on .net core...
+                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings));
 
                 return resolved;
             }
