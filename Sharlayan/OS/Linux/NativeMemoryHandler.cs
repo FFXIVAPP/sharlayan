@@ -113,7 +113,7 @@ namespace Sharlayan.OS.Linux
 
             if (count > maxIoVcnt)
             {
-                throw new Exception("Trying to read too much!");
+                throw new Exception($"Trying to read too much! (max io vector: {maxIoVcnt}, wanted size: {size}, total io vectors requested: {count})");
             }
 
             var bytes = new byte[count,iov_size];
