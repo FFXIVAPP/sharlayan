@@ -15,35 +15,20 @@ namespace Sharlayan {
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
-
     using NLog;
 
     using Sharlayan.Models;
+    using Sharlayan.OS;
 
     public sealed class Scanner {
-        private const int MemCommit = 0x1000;
-
-        private const int PageExecuteReadwrite = 0x40;
-
-        private const int PageExecuteWritecopy = 0x80;
-
-        private const int PageGuard = 0x100;
-
-        private const int PageNoAccess = 0x01;
-
-        private const int PageReadwrite = 0x04;
-
-        private const int PageWritecopy = 0x08;
 
         private const int WildCardChar = 63;
-
-        private const int Writable = PageReadwrite | PageWritecopy | PageExecuteReadwrite | PageExecuteWritecopy | PageGuard;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static Lazy<Scanner> _instance = new Lazy<Scanner>(() => new Scanner());
 
-        private List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION> _regions;
+        private IList<NativeMemoryRegionInfo> _regions;
 
         public static Scanner Instance => _instance.Value;
 
@@ -62,8 +47,11 @@ namespace Sharlayan {
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (scanAllMemoryRegions) {
-                    this.LoadRegions();
+                try {
+                    this._regions = NativeMemoryHandler.Instance.LoadRegions(MemoryHandler.Instance.ProcessHandle, MemoryHandler.Instance.ProcessModel, MemoryHandler.Instance.SystemModules, scanAllMemoryRegions);
+                }
+                catch (Exception ex) {
+                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
                 }
 
                 List<Signature> scanable = signatures as List<Signature> ?? signatures.ToList();
@@ -80,7 +68,7 @@ namespace Sharlayan {
 
                     scanable.RemoveAll(a => this.Locations.ContainsKey(a.Key));
 
-                    this.FindExtendedSignatures(scanable, scanAllMemoryRegions);
+                    this.FindExtendedSignatures(scanable);
                 }
 
                 sw.Stop();
@@ -95,23 +83,15 @@ namespace Sharlayan {
             Task.Run(() => scanningFunc.Invoke());
         }
 
-        private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
+        private void FindExtendedSignatures(IEnumerable<Signature> signatures) {
             List<Signature> notFound = new List<Signature>(signatures);
 
-            IntPtr baseAddress = MemoryHandler.Instance.ProcessModel.Process.MainModule.BaseAddress;
-            IntPtr searchEnd = IntPtr.Add(baseAddress, MemoryHandler.Instance.ProcessModel.Process.MainModule.ModuleMemorySize);
-            IntPtr searchStart = baseAddress;
+            foreach (var region in (this._regions ?? new List<NativeMemoryRegionInfo>())) {
+                var baseAddress = region.BaseAddress;
+                var searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize.ToInt64());
+                var searchStart = baseAddress;
 
-            this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
-
-            if (scanAllMemoryRegions) {
-                foreach (UnsafeNativeMethods.MEMORY_BASIC_INFORMATION region in this._regions) {
-                    baseAddress = region.BaseAddress;
-                    searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize.ToInt64());
-                    searchStart = baseAddress;
-
-                    this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
-                }
+                this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
             }
         }
 
@@ -152,41 +132,6 @@ namespace Sharlayan {
             return result;
         }
 
-        private void LoadRegions() {
-            try {
-                this._regions = new List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION>();
-                IntPtr address = IntPtr.Zero;
-                while (true) {
-                    var info = new UnsafeNativeMethods.MEMORY_BASIC_INFORMATION();
-                    var result = UnsafeNativeMethods.VirtualQueryEx(MemoryHandler.Instance.ProcessHandle, address, out info, (uint) Marshal.SizeOf(info));
-                    if (result == 0) {
-                        break;
-                    }
-
-                    if (!MemoryHandler.Instance.IsSystemModule(info.BaseAddress) && (info.State & MemCommit) != 0 && (info.Protect & Writable) != 0 && (info.Protect & PageGuard) == 0) {
-                        this._regions.Add(info);
-                    }
-                    else {
-                        MemoryHandler.Instance.RaiseException(Logger, new Exception(info.ToString()));
-                    }
-
-                    unchecked {
-                        switch (IntPtr.Size) {
-                            case sizeof(int):
-                                address = new IntPtr(info.BaseAddress.ToInt32() + info.RegionSize.ToInt32());
-                                break;
-                            default:
-                                address = new IntPtr(info.BaseAddress.ToInt64() + info.RegionSize.ToInt64());
-                                break;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
-            }
-        }
-
         private void ResolveLocations(IntPtr baseAddress, IntPtr searchStart, IntPtr searchEnd, ref List<Signature> notFound) {
             const int bufferSize = 0x1200;
             const int regionIncrement = 0x1000;
@@ -197,13 +142,12 @@ namespace Sharlayan {
 
             while (searchStart.ToInt64() < searchEnd.ToInt64()) {
                 try {
-                    IntPtr lpNumberOfBytesRead;
                     var regionSize = new IntPtr(bufferSize);
                     if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64()) {
                         regionSize = (IntPtr) (searchEnd.ToInt64() - searchStart.ToInt64());
                     }
 
-                    if (UnsafeNativeMethods.ReadProcessMemory(MemoryHandler.Instance.ProcessHandle, searchStart, buffer, regionSize, out lpNumberOfBytesRead)) {
+                    if (NativeMemoryHandler.Instance.ReadMemory(MemoryHandler.Instance.ProcessHandle, searchStart, buffer, regionSize)) {
                         foreach (Signature signature in notFound) {
                             var index = this.FindSuperSignature(buffer, this.SignatureToByte(signature.Value, WildCardChar));
                             if (index < 0) {

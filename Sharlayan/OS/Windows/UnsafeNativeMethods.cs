@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sharlayan {
+namespace Sharlayan.OS.Windows {
     using System;
     using System.Runtime.InteropServices;
     using System.Text;

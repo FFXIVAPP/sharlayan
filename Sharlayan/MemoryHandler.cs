@@ -20,6 +20,7 @@ namespace Sharlayan {
     using Sharlayan.Events;
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
+    using Sharlayan.OS;
     using Sharlayan.Utilities;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
@@ -61,7 +62,7 @@ namespace Sharlayan {
 
         internal bool UseLocalCache { get; set; }
 
-        private List<ProcessModule> SystemModules { get; set; } = new List<ProcessModule>();
+        internal List<ProcessModule> SystemModules { get; private set; } = new List<ProcessModule>();
 
         public byte GetByte(IntPtr address, long offset = 0) {
             byte[] data = new byte[1];
@@ -169,9 +170,8 @@ namespace Sharlayan {
         }
 
         public T GetStructure<T>(IntPtr address, int offset = 0) {
-            IntPtr lpNumberOfBytesRead;
             IntPtr buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            UnsafeNativeMethods.ReadProcessMemory(this.ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out lpNumberOfBytesRead);
+            NativeMemoryHandler.Instance.ReadMemory(this.ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))));
             var retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
             Marshal.FreeCoTaskMem(buffer);
             return retValue;
@@ -196,8 +196,7 @@ namespace Sharlayan {
         }
 
         public bool Peek(IntPtr address, byte[] buffer) {
-            IntPtr lpNumberOfBytesRead;
-            return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
+            return NativeMemoryHandler.Instance.ReadMemory(Instance.ProcessHandle, address, buffer);
         }
 
         public IntPtr ReadPointer(IntPtr address, long offset = 0) {
@@ -245,7 +244,7 @@ namespace Sharlayan {
             this.UnsetProcess();
 
             try {
-                this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.ProcessModel.ProcessID);
+                this.ProcessHandle = NativeMemoryHandler.Instance.OpenProcess(this.ProcessModel.ProcessID);
             }
             catch (Exception) {
                 this.ProcessHandle = processModel.Process.Handle;
@@ -283,7 +282,7 @@ namespace Sharlayan {
 
             try {
                 if (this.IsAttached) {
-                    UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
+                    NativeMemoryHandler.Instance.CloseHandle(Instance.ProcessHandle);
                 }
             }
             catch (Exception) {
@@ -293,38 +292,6 @@ namespace Sharlayan {
                 Constants.ProcessHandle = this.ProcessHandle = IntPtr.Zero;
                 this.IsAttached = false;
             }
-        }
-
-        internal ProcessModule GetModuleByAddress(IntPtr address) {
-            try {
-                for (var i = 0; i < this.SystemModules.Count; i++) {
-                    ProcessModule module = this.SystemModules[i];
-                    var baseAddress = this.ProcessModel.IsWin64
-                                          ? module.BaseAddress.ToInt64()
-                                          : module.BaseAddress.ToInt32();
-                    if (baseAddress <= (long) address && baseAddress + module.ModuleMemorySize >= (long) address) {
-                        return module;
-                    }
-                }
-
-                return null;
-            }
-            catch (Exception) {
-                return null;
-            }
-        }
-
-        internal bool IsSystemModule(IntPtr address) {
-            ProcessModule moduleByAddress = this.GetModuleByAddress(address);
-            if (moduleByAddress != null) {
-                foreach (ProcessModule module in this.SystemModules) {
-                    if (module.ModuleName == moduleByAddress.ModuleName) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         internal void ResolveMemoryStructures(ProcessModel processModel, string patchVersion = "latest") {
