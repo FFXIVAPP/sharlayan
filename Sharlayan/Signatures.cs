@@ -47,6 +47,8 @@ namespace Sharlayan {
 
         public const string ZoneInformationKey = "ZONEINFO";
 
+        public const string JobResourceKey = "JOBRESOURCES";
+
         public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest") {
             return APIHelper.GetSignatures(processModel, patchVersion);
         }
