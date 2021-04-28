@@ -13,7 +13,7 @@
 [Bb]uild*/
 [Tt]est[Rr]esult
 [Bb]uild[Ll]og.*
-# packages/
+packages/
 
 *_i.c
 *_p.c
