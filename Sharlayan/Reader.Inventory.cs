@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Inventory.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -42,7 +42,7 @@ namespace Sharlayan {
                 for (var i = 0; i < inventoryCount; i++) {
                     var bagIndex = i * inventoryByteCount;
                     var bagID = BitConverter.ToUInt32(inventoryBytes, bagIndex + MemoryHandler.Instance.Structures.InventoryContainer.ID);
-                    
+
                     if (!Enum.IsDefined(typeof(Inventory.Container), bagID)) {
                         continue;
                     }

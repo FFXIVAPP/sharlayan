@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Actor.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2020 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -51,65 +51,99 @@ namespace Sharlayan.Core.Enums {
         public enum Icon : byte {
             None = 0x0,
 
-            Yoshida = 0x1,
+            Producer = 0x1,
 
             GM = 0x2,
 
             SGM = 0x3,
 
-            Clover = 0x4,
+            LGM = 0x4,
 
-            DC = 0x5,
+            Disconnected = 0x5,
 
-            Smiley = 0x6,
+            WaitingforFriendListApproval = 0x6,
 
-            RedCross = 0x9,
+            WaitingforLinkshellApproval = 0x7,
 
-            GreyDC = 0xA,
+            WaitingforFreeCompanyApproval = 0x8,
 
-            Processing = 0xB,
+            NotFound = 0x9,
+
+            Offline = 0xA,
+
+            BattleMentor = 0xB,
 
             Busy = 0xC,
 
-            Duty = 0xD,
+            PvP = 0xD,
 
-            ProcessingYellow = 0xE,
+            PlayingTripleTriad = 0xE,
 
-            ProcessingGrey = 0xF,
+            ViewingCutscene = 0xF,
 
-            Cutscene = 0x10,
+            UsingaChocoboPorter = 0x10,
 
-            Away = 0x12,
+            AwayfromKeyboard = 0x11,
 
-            Sitting = 0x13,
+            CameraMode = 0x12,
 
-            WrenchYellow = 0x14,
+            LookingforRepairs = 0x13,
 
-            Wrench = 0x15,
+            LookingtoRepair = 0x14,
 
-            Dice = 0x16,
+            LookingtoMeldMateria = 0x15,
 
-            ProcessingGreen = 0x17,
+            RolePlaying = 0x16,
 
-            Sword = 0x18,
+            LookingforParty = 0x17,
 
-            AllianceLeader = 0x1A,
+            SwordforHire = 0x18,
 
-            AllianceBlueLeader = 0x1B,
+            WaitingforDutyFinder = 0x19,
 
-            AllianceBlue = 0x1C,
+            RecruitingPartyMembers = 0x1A,
 
-            PartyLeader = 0x1D,
+            Mentor = 0x1B,
 
-            PartyMember = 0x1E,
+            PvEMentor = 0x1C,
 
-            DutyFinder = 0x18,
+            TradeMentor = 0x1D,
 
-            Recruiting = 0x19,
+            PvPMentor = 0x1E,
 
-            Sprout = 0x1F,
+            Returner = 0x1F,
 
-            Gil = 0x20,
+            NewAdventurer = 0x20,
+
+            AllianceLeader = 0x21,
+
+            AlliancePartyLeader = 0x22,
+
+            AlliancePartyMember = 0x23,
+
+            PartyLeader = 0x24,
+
+            PartyMember = 0x25,
+
+            PartyLeaderCrossWorld = 0x26,
+
+            PartyMemberCrossWorld = 0x27,
+
+            AnotherWorld = 0x28,
+
+            SharingDuty = 0x29,
+
+            SimilarDuty = 0x2A,
+
+            InDuty = 0x2B,
+
+            TrialAdventurer = 0x2C,
+
+            FreeCompany = 0x2D,
+
+            GrandCompany = 0x2E,
+
+            Online = 0x2F,
         }
 
         public enum Job : byte {
