@@ -33,6 +33,8 @@ namespace Sharlayan {
 
         public const string InventoryKey = "INVENTORY";
 
+        public const string JobResourceKey = "JOBRESOURCES";
+
         public const string MapInformationKey = "MAPINFO";
 
         public const string PartyCountKey = "PARTYCOUNT";
@@ -46,8 +48,6 @@ namespace Sharlayan {
         public const string TargetKey = "TARGET";
 
         public const string ZoneInformationKey = "ZONEINFO";
-
-        public const string JobResourceKey = "JOBRESOURCES";
 
         public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest") {
             return APIHelper.GetSignatures(processModel, patchVersion);

@@ -24,6 +24,8 @@ namespace Sharlayan.Models.Structures {
 
         public InventoryItem InventoryItem { get; set; } = new InventoryItem();
 
+        public JobResources JobResources { get; set; } = new JobResources();
+
         public PartyMember PartyMember { get; set; } = new PartyMember();
 
         public RecastItem RecastItem { get; set; } = new RecastItem();
@@ -31,7 +33,5 @@ namespace Sharlayan.Models.Structures {
         public StatusItem StatusItem { get; set; } = new StatusItem();
 
         public TargetInfo TargetInfo { get; set; } = new TargetInfo();
-
-        public JobResources JobResources { get; set; } = new JobResources();
     }
 }
