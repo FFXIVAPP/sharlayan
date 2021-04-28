@@ -31,5 +31,7 @@ namespace Sharlayan.Models.Structures {
         public StatusItem StatusItem { get; set; } = new StatusItem();
 
         public TargetInfo TargetInfo { get; set; } = new TargetInfo();
+
+        public JobResources JobResources { get; set; } = new JobResources();
     }
 }

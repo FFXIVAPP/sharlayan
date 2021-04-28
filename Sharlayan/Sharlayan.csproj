@@ -80,6 +80,8 @@
     <Compile Include="Events\SignaturesFoundEvent.cs" />
     <Compile Include="Events\ExceptionEvent.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\ReadResults\JobResourceResult.cs" />
+    <Compile Include="Models\Structures\JobResources.cs" />
     <Compile Include="Models\XIVDatabase\ActionItem.cs" />
     <Compile Include="Models\XIVDatabase\MapItem.cs" />
     <Compile Include="Models\ReadResults\ActionResult.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Reader.Inventory.cs" />
     <Compile Include="Reader.PartyMembers.cs" />
     <Compile Include="Reader.Target.cs" />
+    <Compile Include="Reader.JobResource.cs" />
     <Compile Include="Signatures.cs" />
     <Compile Include="Scanner.cs" />
     <Compile Include="UnsafeNativeMethods.cs" />
