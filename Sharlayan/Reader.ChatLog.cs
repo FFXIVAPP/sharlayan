@@ -112,11 +112,13 @@ namespace Sharlayan {
 
             public static int PreviousOffset;
 
+            private static int BUFFER_SIZE = 4000;
+
             public static void EnsureArrayIndexes() {
                 Indexes.Clear();
-                var indexes = _memoryHandler.GetByteArray(new IntPtr(ChatLogPointers.OffsetArrayStart), 4000);
-                for (var i = 0; i < 1000; i++) {
-                    Indexes.Add(BitConverter.ToInt32(indexes, i*4));
+                var indexes = MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.OffsetArrayStart), BUFFER_SIZE);
+                for (var i = 0; i < BUFFER_SIZE; i += 4) {
+                    Indexes.Add(BitConverter.ToInt32(indexes, i));
                 }
             }
 
