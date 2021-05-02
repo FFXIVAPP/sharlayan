@@ -47,7 +47,6 @@ namespace Sharlayan {
             List<List<byte>> buffered = new List<List<byte>>();
 
             try {
-                ChatLogReader.Indexes.Clear();
                 ChatLogReader.ChatLogPointers = new ChatLogPointers {
                     LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
                     OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
@@ -113,10 +112,13 @@ namespace Sharlayan {
 
             public static int PreviousOffset;
 
+            private static int BUFFER_SIZE = 4000;
+
             public static void EnsureArrayIndexes() {
                 Indexes.Clear();
-                for (var i = 0; i < 1000; i++) {
-                    Indexes.Add((int) MemoryHandler.Instance.GetPlatformUInt(new IntPtr(ChatLogPointers.OffsetArrayStart + i * 4)));
+                var indexes = MemoryHandler.Instance.GetByteArray(new IntPtr(ChatLogPointers.OffsetArrayStart), BUFFER_SIZE);
+                for (var i = 0; i < BUFFER_SIZE; i += 4) {
+                    Indexes.Add(BitConverter.ToInt32(indexes, i));
                 }
             }
 
