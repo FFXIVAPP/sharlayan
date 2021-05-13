@@ -52,7 +52,7 @@ namespace Sharlayan {
                 StatusEffectLookup.Resolve();
                 ZoneLookup.Resolve();
 
-                this.ResolveMemoryStructures(this.Configuration.ProcessModel, this.Configuration.PatchVersion);
+                this.ResolveMemoryStructures();
             }
 
             this._attachmentWorker = new AttachmentWorker(this);
@@ -294,8 +294,8 @@ namespace Sharlayan {
             return false;
         }
 
-        internal void ResolveMemoryStructures(ProcessModel processModel, string patchVersion = "latest") {
-            this.Structures = APIHelper.GetStructures(processModel, patchVersion);
+        internal void ResolveMemoryStructures() {
+            this.Structures = APIHelper.GetStructures(this.Configuration);
         }
 
         protected internal virtual void RaiseException(Logger logger, Exception e, bool levelIsError = false) {

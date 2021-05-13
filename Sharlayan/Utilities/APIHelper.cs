@@ -39,14 +39,15 @@ namespace Sharlayan.Utilities {
         }
 
         public static IEnumerable<Signature> GetSignatures(MemoryHandlerConfiguration memoryHandlerConfiguration) {
-            string architecture = "x64";
-            string file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{architecture}.json");
+            string region = memoryHandlerConfiguration.GameRegion.ToString().ToLowerInvariant();
+            string patchVersion = memoryHandlerConfiguration.PatchVersion;
+            string file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{region}-{patchVersion}.json");
             if (File.Exists(file) && memoryHandlerConfiguration.UseLocalCache) {
                 string json = FileResponseToJSON(file);
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
             }
             else {
-                string json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{memoryHandlerConfiguration.PatchVersion}/{architecture}.json");
+                string json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{region}/{patchVersion}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
                 File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -65,14 +66,15 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static StructuresContainer GetStructures(ProcessModel processModel, string patchVersion = "latest", bool useLocalCache = true) {
-            string architecture = "x64";
-            string file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{architecture}.json");
-            if (File.Exists(file) && useLocalCache) {
+        public static StructuresContainer GetStructures(MemoryHandlerConfiguration memoryHandlerConfiguration) {
+            string region = memoryHandlerConfiguration.GameRegion.ToString().ToLowerInvariant();
+            string patchVersion = memoryHandlerConfiguration.PatchVersion;
+            string file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{region}-{patchVersion}.json");
+            if (File.Exists(file) && memoryHandlerConfiguration.UseLocalCache) {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            return APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{patchVersion}/{architecture}.json");
+            return APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{region}/{patchVersion}.json");
         }
 
         public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest", bool useLocalCache = true) {
