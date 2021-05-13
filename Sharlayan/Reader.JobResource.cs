@@ -28,7 +28,7 @@ namespace Sharlayan {
                 return new JobResourceResult(null);
             }
 
-            var resource = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(resourcePtr));
+            var resource = new IntPtr(MemoryHandler.Instance.GetInt64(resourcePtr));
             if (resource == IntPtr.Zero) {
                 return new JobResourceResult(null);
             }

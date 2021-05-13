@@ -96,26 +96,26 @@ namespace Sharlayan {
         }
 
         private static int[] BuildBadShiftTable(byte[] pattern) {
-            int idx;
-            var last = pattern.Length - 1;
-            var badShift = new int[256];
+            int i;
+            var length = pattern.Length - 1;
+            var badShiftTable = new int[256];
 
-            for (idx = last; idx > 0 && pattern[idx] != WildCardChar; --idx) { }
+            for (i = length; i > 0 && pattern[i] != WildCardChar; --i) { }
 
-            var diff = last - idx;
-            if (diff == 0) {
-                diff = 1;
+            var difference = length - i;
+            if (difference == 0) {
+                difference = 1;
             }
 
-            for (idx = 0; idx <= 255; ++idx) {
-                badShift[idx] = diff;
+            for (i = 0; i <= 255; ++i) {
+                badShiftTable[i] = difference;
             }
 
-            for (idx = last - diff; idx < last; ++idx) {
-                badShift[pattern[idx]] = last - idx;
+            for (i = length - difference; i < length; ++i) {
+                badShiftTable[pattern[i]] = length - i;
             }
 
-            return badShift;
+            return badShiftTable;
         }
 
         private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {

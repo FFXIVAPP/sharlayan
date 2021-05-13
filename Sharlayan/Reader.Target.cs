@@ -42,10 +42,10 @@ namespace Sharlayan {
                 if (targetAddress.ToInt64() > 0) {
                     byte[] targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
 
-                    var currentTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                    var mouseOverTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                    var focusTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                    var previousTarget = MemoryHandler.Instance.GetPlatformIntFromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                    var currentTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
+                    var mouseOverTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
+                    var focusTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
+                    var previousTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
 
                     var currentTargetID = BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
 
@@ -120,7 +120,7 @@ namespace Sharlayan {
                                     try {
                                         var address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
                                         var enmityEntry = new EnmityItem {
-                                            ID = (uint) MemoryHandler.Instance.GetPlatformInt(address, MemoryHandler.Instance.Structures.EnmityItem.ID),
+                                            ID = MemoryHandler.Instance.GetUInt32(address, MemoryHandler.Instance.Structures.EnmityItem.ID),
                                             // Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityItem.Name),
                                             Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityItem.Enmity),
                                         };

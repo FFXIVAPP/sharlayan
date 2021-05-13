@@ -39,9 +39,7 @@ namespace Sharlayan.Utilities {
         }
 
         public static IEnumerable<Signature> GetSignatures(ProcessModel processModel, string patchVersion = "latest") {
-            var architecture = processModel.IsWin64
-                                   ? "x64"
-                                   : "x86";
+            var architecture = "x64";
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{architecture}.json");
             if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
                 var json = FileResponseToJSON(file);
@@ -68,9 +66,7 @@ namespace Sharlayan.Utilities {
         }
 
         public static StructuresContainer GetStructures(ProcessModel processModel, string patchVersion = "latest") {
-            var architecture = processModel.IsWin64
-                                   ? "x64"
-                                   : "x86";
+            var architecture = "x64";
             var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{architecture}.json");
             if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
                 return EnsureClassValues<StructuresContainer>(file);

@@ -36,7 +36,7 @@ namespace Sharlayan {
                 const int inventoryCount = 74;
                 const int inventoryByteCount = 24;
 
-                var inventoryMap = new IntPtr(MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.InventoryKey]));
+                var inventoryMap = new IntPtr(MemoryHandler.Instance.GetInt64(Scanner.Instance.Locations[Signatures.InventoryKey]));
                 var inventoryBytes = MemoryHandler.Instance.GetByteArray(inventoryMap, inventoryCount * 24);
 
                 for (var i = 0; i < inventoryCount; i++) {
@@ -55,7 +55,7 @@ namespace Sharlayan {
 
                     var itemByteCount = 56;
 
-                    var slotMap = new IntPtr(MemoryHandler.Instance.GetPlatformUIntFromBytes(inventoryBytes, bagIndex));
+                    var slotMap = new IntPtr(MemoryHandler.Instance.GetInt64FromBytes(inventoryBytes, bagIndex));
                     var slotBytes = MemoryHandler.Instance.GetByteArray(slotMap, (int) container.Amount * itemByteCount);
 
                     for (var j = 0; j < container.Amount; j++) {

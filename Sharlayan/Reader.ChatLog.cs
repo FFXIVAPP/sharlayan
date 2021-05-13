@@ -48,19 +48,18 @@ namespace Sharlayan {
 
             try {
                 ChatLogReader.ChatLogPointers = new ChatLogPointers {
-                    LineCount = (uint) MemoryHandler.Instance.GetPlatformUInt(chatPointerMap),
-                    OffsetArrayStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
-                    OffsetArrayPos = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
-                    OffsetArrayEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
-                    LogStart = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
-                    LogNext = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
-                    LogEnd = MemoryHandler.Instance.GetPlatformUInt(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd),
+                    LineCount = MemoryHandler.Instance.GetUInt32(chatPointerMap),
+                    OffsetArrayStart = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayStart),
+                    OffsetArrayPos = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayPos),
+                    OffsetArrayEnd = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.OffsetArrayEnd),
+                    LogStart = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogStart),
+                    LogNext = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogNext),
+                    LogEnd = MemoryHandler.Instance.GetInt64(chatPointerMap, MemoryHandler.Instance.Structures.ChatLogPointers.LogEnd),
                 };
-
-                ChatLogReader.EnsureArrayIndexes();
 
                 var currentArrayIndex = (ChatLogReader.ChatLogPointers.OffsetArrayPos - ChatLogReader.ChatLogPointers.OffsetArrayStart) / 4;
                 if (ChatLogReader.ChatLogFirstRun) {
+                    ChatLogReader.EnsureArrayIndexes();
                     ChatLogReader.ChatLogFirstRun = false;
                     ChatLogReader.PreviousOffset = ChatLogReader.Indexes[(int) currentArrayIndex - 1];
                     ChatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
@@ -124,8 +123,8 @@ namespace Sharlayan {
 
             public static IEnumerable<List<byte>> ResolveEntries(int offset, int length) {
                 List<List<byte>> entries = new List<List<byte>>();
+                EnsureArrayIndexes();
                 for (var i = offset; i < length; i++) {
-                    EnsureArrayIndexes();
                     var currentOffset = Indexes[i];
                     entries.Add(ResolveEntry(PreviousOffset, currentOffset));
                     PreviousOffset = currentOffset;

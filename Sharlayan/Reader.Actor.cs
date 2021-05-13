@@ -43,13 +43,9 @@ namespace Sharlayan {
             try {
                 IntPtr targetAddress = IntPtr.Zero;
 
-                var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64
-                                     ? 8
-                                     : 4;
-
                 var sourceSize = MemoryHandler.Instance.Structures.ActorItem.SourceSize;
                 var limit = MemoryHandler.Instance.Structures.ActorItem.EntityCount;
-                byte[] characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
+                byte[] characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], 8 * limit);
                 Dictionary<IntPtr, IntPtr> uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
                 IntPtr firstAddress = IntPtr.Zero;
 
@@ -62,12 +58,7 @@ namespace Sharlayan {
                 for (var i = 0; i < limit; i++) {
                     IntPtr characterAddress;
 
-                    if (MemoryHandler.Instance.ProcessModel.IsWin64) {
-                        characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
-                    }
-                    else {
-                        characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
-                    }
+                    characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * 8));
 
                     if (characterAddress == IntPtr.Zero) {
                         continue;

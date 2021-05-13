@@ -24,7 +24,7 @@ namespace Sharlayan {
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
-    public class MemoryHandler {
+    public class MemoryHandler : IDisposable {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static Lazy<MemoryHandler> _instance = new Lazy<MemoryHandler>(() => new MemoryHandler());
@@ -34,18 +34,13 @@ namespace Sharlayan {
         private bool IsNewInstance = true;
 
         ~MemoryHandler() {
-            this.UnsetProcess();
+            this.Dispose();
         }
 
         public event EventHandler<ExceptionEvent> ExceptionEvent = (sender, args) => { };
 
         public event EventHandler<SignaturesFoundEvent> SignaturesFoundEvent = (sender, args) => { };
-
-        public static MemoryHandler Instance {
-            get {
-                return _instance.Value;
-            }
-        }
+        public static MemoryHandler Instance => _instance.Value;
 
         public bool IsAttached { get; set; }
 
@@ -62,6 +57,10 @@ namespace Sharlayan {
         internal bool UseLocalCache { get; set; }
 
         private List<ProcessModule> SystemModules { get; set; } = new List<ProcessModule>();
+
+        public void Dispose() {
+            this.UnsetProcess();
+        }
 
         public byte GetByte(IntPtr address, long offset = 0) {
             byte[] data = new byte[1];
@@ -93,40 +92,12 @@ namespace Sharlayan {
             return BitConverter.TryToInt64(value, 0);
         }
 
-        public long GetPlatformInt(IntPtr address, long offset = 0) {
-            byte[] bytes = new byte[this.ProcessModel.IsWin64
-                                        ? 8
-                                        : 4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), bytes);
-            return this.GetPlatformIntFromBytes(bytes);
-        }
-
-        public long GetPlatformIntFromBytes(byte[] source, int index = 0) {
-            if (this.ProcessModel.IsWin64) {
-                return BitConverter.TryToInt64(source, index);
-            }
-
-            return BitConverter.TryToInt32(source, index);
-        }
-
-        public long GetPlatformUInt(IntPtr address, long offset = 0) {
-            byte[] bytes = new byte[this.ProcessModel.IsWin64
-                                        ? 8
-                                        : 4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), bytes);
-            return this.GetPlatformUIntFromBytes(bytes);
-        }
-
-        public long GetPlatformUIntFromBytes(byte[] source, int index = 0) {
-            if (this.ProcessModel.IsWin64) {
-                return (long) BitConverter.TryToUInt64(source, index);
-            }
-
-            return BitConverter.TryToUInt32(source, index);
+        public long GetInt64FromBytes(byte[] source, int index = 0) {
+            return BitConverter.TryToInt64(source, index);
         }
 
         public IntPtr GetStaticAddress(long offset) {
-            return new IntPtr(Instance.ProcessModel.Process.MainModule.BaseAddress.ToInt64() + offset);
+            return new IntPtr(this.ProcessModel.Process.MainModule.BaseAddress.ToInt64() + offset);
         }
 
         public string GetString(IntPtr address, long offset = 0, int size = 256) {
@@ -195,21 +166,19 @@ namespace Sharlayan {
             return BitConverter.TryToUInt32(value, 0);
         }
 
+        public ulong GetUInt64FromBytes(byte[] source, int index = 0) {
+            return BitConverter.TryToUInt64(source, index);
+        }
+
         public bool Peek(IntPtr address, byte[] buffer) {
             IntPtr lpNumberOfBytesRead;
-            return UnsafeNativeMethods.ReadProcessMemory(Instance.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
+            return UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out lpNumberOfBytesRead);
         }
 
         public IntPtr ReadPointer(IntPtr address, long offset = 0) {
-            if (this.ProcessModel.IsWin64) {
-                byte[] win64 = new byte[8];
-                this.Peek(new IntPtr(address.ToInt64() + offset), win64);
-                return new IntPtr(BitConverter.TryToInt64(win64, 0));
-            }
-
-            byte[] win32 = new byte[4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), win32);
-            return IntPtr.Add(IntPtr.Zero, BitConverter.TryToInt32(win32, 0));
+            byte[] win64 = new byte[8];
+            this.Peek(new IntPtr(address.ToInt64() + offset), win64);
+            return new IntPtr(BitConverter.TryToInt64(win64, 0));
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false) {
@@ -222,11 +191,11 @@ namespace Sharlayan {
                     }
 
                     if (IsASMSignature) {
-                        nextAddress = baseAddress + Instance.GetInt32(new IntPtr(baseAddress.ToInt64())) + 4;
+                        nextAddress = baseAddress + this.GetInt32(new IntPtr(baseAddress.ToInt64())) + 4;
                         IsASMSignature = false;
                     }
                     else {
-                        nextAddress = Instance.ReadPointer(baseAddress);
+                        nextAddress = this.ReadPointer(baseAddress);
                     }
                 }
                 catch {
@@ -283,7 +252,7 @@ namespace Sharlayan {
 
             try {
                 if (this.IsAttached) {
-                    UnsafeNativeMethods.CloseHandle(Instance.ProcessHandle);
+                    UnsafeNativeMethods.CloseHandle(this.ProcessHandle);
                 }
             }
             catch (Exception) {
@@ -299,9 +268,7 @@ namespace Sharlayan {
             try {
                 for (var i = 0; i < this.SystemModules.Count; i++) {
                     ProcessModule module = this.SystemModules[i];
-                    var baseAddress = this.ProcessModel.IsWin64
-                                          ? module.BaseAddress.ToInt64()
-                                          : module.BaseAddress.ToInt32();
+                    var baseAddress = module.BaseAddress.ToInt64();
                     if (baseAddress <= (long) address && baseAddress + module.ModuleMemorySize >= (long) address) {
                         return module;
                     }

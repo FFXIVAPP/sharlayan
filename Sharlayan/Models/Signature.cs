@@ -31,18 +31,12 @@ namespace Sharlayan.Models {
         public string Key { get; set; }
 
         [JsonIgnore,]
-        public int Offset {
-            get {
-                return this.Value.Length / 2;
-            }
-        }
+        public int Offset => this.Value.Length / 2;
 
         public List<long> PointerPath { get; set; }
 
         public Regex RegularExpress {
-            get {
-                return this._regularExpress;
-            }
+            get => this._regularExpress;
 
             set {
                 if (value != null) {
@@ -65,7 +59,7 @@ namespace Sharlayan.Models {
             var IsASMSignature = false;
             if (this.SigScanAddress != IntPtr.Zero) {
                 baseAddress = this.SigScanAddress; // Scanner should have already applied the base offset
-                if (MemoryHandler.Instance.ProcessModel.IsWin64 && this.ASMSignature) {
+                if (this.ASMSignature) {
                     IsASMSignature = true;
                 }
             }

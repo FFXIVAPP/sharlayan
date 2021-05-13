@@ -8,8 +8,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Bootstrapper {
-    using System;
+using System;
+
+namespace Bootstrapped {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -29,7 +30,7 @@ namespace Bootstrapper {
 
     class Program {
         static void Main(string[] args) {
-            var stringReader = new StringReader(XElement.Load("./Bootstrapper.exe.nlog").ToString());
+            var stringReader = new StringReader(XElement.Load("./Bootstrapped.exe.nlog").ToString());
 
             using (XmlReader xmlReader = XmlReader.Create(stringReader)) {
                 LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
@@ -48,7 +49,6 @@ namespace Bootstrapper {
             if (process != null) {
                 MemoryHandler.Instance.SetProcess(
                     new ProcessModel {
-                        IsWin64 = true,
                         Process = process,
                     });
 

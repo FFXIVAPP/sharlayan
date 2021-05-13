@@ -12,8 +12,6 @@ namespace Sharlayan.Models {
     using System.Diagnostics;
 
     public class ProcessModel {
-        public bool IsWin64 { get; set; }
-
         public Process Process { get; set; }
 
         public int ProcessID => this.Process?.Id ?? -1;

@@ -32,13 +32,9 @@ namespace Sharlayan.Core {
         public ActorItem TargetEntity { get; set; }
 
         public string TargetName {
-            get {
-                return this._targetName;
-            }
+            get => this._targetName;
 
-            set {
-                this._targetName = value.ToTitleCase();
-            }
+            set => this._targetName = value.ToTitleCase();
         }
 
         public bool IsValid() {
