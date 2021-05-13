@@ -13,22 +13,22 @@ namespace Sharlayan.Delegates {
 
     using Sharlayan.Core;
 
-    internal static class PartyWorkerDelegate {
-        public static ConcurrentDictionary<uint, PartyMember> PartyMembers = new ConcurrentDictionary<uint, PartyMember>();
+    internal class PartyWorkerDelegate {
+        public ConcurrentDictionary<uint, PartyMember> PartyMembers = new ConcurrentDictionary<uint, PartyMember>();
 
-        public static void EnsurePartyMember(uint key, PartyMember entity) {
-            PartyMembers.AddOrUpdate(key, entity, (k, v) => entity);
+        public void EnsurePartyMember(uint key, PartyMember entity) {
+            this.PartyMembers.AddOrUpdate(key, entity, (k, v) => entity);
         }
 
-        public static PartyMember GetPartyMember(uint key) {
+        public PartyMember GetPartyMember(uint key) {
             PartyMember entity;
-            PartyMembers.TryGetValue(key, out entity);
+            this.PartyMembers.TryGetValue(key, out entity);
             return entity;
         }
 
-        public static bool RemovePartyMember(uint key) {
+        public bool RemovePartyMember(uint key) {
             PartyMember entity;
-            return PartyMembers.TryRemove(key, out entity);
+            return this.PartyMembers.TryRemove(key, out entity);
         }
     }
 }

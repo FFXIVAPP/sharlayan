@@ -1,10 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SignaturesFoundEvent.cs" company="SyndicatedLife">
+// <copyright file="MemoryLocationsFoundEvent.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   SignaturesFoundEvent.cs Implementation
+//   MemoryLocationsFoundEvent.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -14,22 +14,20 @@ namespace Sharlayan.Events {
 
     using NLog;
 
-    using Sharlayan.Models;
-
-    public class SignaturesFoundEvent : EventArgs {
-        public SignaturesFoundEvent(object sender, Logger logger, Dictionary<string, Signature> signatures, long processingTime) {
+    public class MemoryLocationsFoundEvent : EventArgs {
+        public MemoryLocationsFoundEvent(object sender, Logger logger, Dictionary<string, MemoryLocation> memoryLocations, long processingTime) {
             this.Sender = sender;
             this.Logger = logger;
-            this.Signatures = signatures;
+            this.MemoryLocations = memoryLocations;
             this.ProcessingTime = processingTime;
         }
 
         public Logger Logger { get; set; }
 
+        public Dictionary<string, MemoryLocation> MemoryLocations { get; }
+
         public long ProcessingTime { get; set; }
 
         public object Sender { get; set; }
-
-        public Dictionary<string, Signature> Signatures { get; }
     }
 }

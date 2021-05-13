@@ -11,11 +11,8 @@
 namespace Sharlayan.Core {
     using Sharlayan.Core.Enums;
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Delegates;
 
     public class ActorItem : ActorItemBase, IActorItem {
-        public static ActorItem CurrentUser => PCWorkerDelegate.CurrentUser;
-
         public Actor.ActionStatus ActionStatus { get; set; }
 
         public byte ActionStatusID { get; set; }
@@ -132,7 +129,7 @@ namespace Sharlayan.Core {
         public bool WeaponUnsheathed => (this.CombatFlags & (1 << 3)) != 0;
 
         public ActorItem Clone() {
-            var cloned = (ActorItem) this.MemberwiseClone();
+            ActorItem cloned = (ActorItem) this.MemberwiseClone();
 
             cloned.Coordinate = new Coordinate(this.Coordinate.X, this.Coordinate.Z, this.Coordinate.Y);
             cloned.EnmityItems = new System.Collections.Generic.List<EnmityItem>();

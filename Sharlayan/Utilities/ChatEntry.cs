@@ -8,25 +8,25 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sharlayan.Core {
+namespace Sharlayan.Utilities {
     using System;
     using System.Globalization;
     using System.Linq;
     using System.Text;
 
-    using Sharlayan.Utilities;
+    using Sharlayan.Core;
 
-    public static class ChatEntry {
+    public class ChatEntry {
         public static ChatLogItem Process(byte[] raw) {
-            var chatLogEntry = new ChatLogItem();
+            ChatLogItem chatLogEntry = new ChatLogItem();
             try {
                 chatLogEntry.Bytes = raw;
                 chatLogEntry.TimeStamp = UnixTimeStampToDateTime(int.Parse(ByteArrayToString(raw.Take(4).Reverse().ToArray()), NumberStyles.HexNumber));
                 chatLogEntry.Code = ByteArrayToString(raw.Skip(4).Take(2).Reverse().ToArray());
                 chatLogEntry.Raw = Encoding.UTF8.GetString(raw.ToArray());
                 byte[] cleanable = raw.Skip(8).ToArray();
-                var cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
-                var cut = cleaned.Substring(1, 1) == ":"
+                string cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
+                int cut = cleaned.Substring(1, 1) == ":"
                               ? 2
                               : 1;
                 chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
@@ -45,15 +45,9 @@ namespace Sharlayan.Core {
             return chatLogEntry;
         }
 
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp) {
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
         private static string ByteArrayToString(byte[] raw) {
-            var hex = new StringBuilder(raw.Length * 2);
-            foreach (var b in raw) {
+            StringBuilder hex = new StringBuilder(raw.Length * 2);
+            foreach (byte b in raw) {
                 hex.AppendFormat($"{b:X2}");
             }
 
@@ -65,6 +59,12 @@ namespace Sharlayan.Core {
             // 0x30A0 -> 0x30FF === Katakana
             // 0x4E00 -> 0x9FBF === Kanji
             return line.Any(c => c >= 0x3040 && c <= 0x309F) || line.Any(c => c >= 0x30A0 && c <= 0x30FF) || line.Any(c => c >= 0x4E00 && c <= 0x9FBF);
+        }
+
+        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp) {
+            DateTime time = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            time = time.AddSeconds(unixTimeStamp).ToLocalTime();
+            return time;
         }
     }
 }

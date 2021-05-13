@@ -164,8 +164,6 @@ namespace Sharlayan.Core.Interfaces {
 
         short Mind { get; set; }
 
-        int MPMax { get; set; }
-
         byte MRD { get; set; }
 
         int MRD_CurrentEXP { get; set; }
@@ -207,8 +205,6 @@ namespace Sharlayan.Core.Interfaces {
         byte THM { get; set; }
 
         int THM_CurrentEXP { get; set; }
-
-        int TPMax { get; set; }
 
         short Vitality { get; set; }
 

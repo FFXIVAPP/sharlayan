@@ -215,8 +215,6 @@ namespace Sharlayan.Core {
 
         public int THM_CurrentEXP { get; set; }
 
-        public int TPMax { get; set; }
-
         public short Vitality { get; set; }
 
         public short WaterResistance { get; set; }

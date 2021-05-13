@@ -24,8 +24,8 @@ namespace Sharlayan.Extensions {
         private static readonly Regex CleanSpaces = new Regex(@"[ ]+", RegexOptions.Compiled);
 
         public static string FromHex(this string source) {
-            var builder = new StringBuilder();
-            for (var i = 0; i <= source.Length - 2; i += 2) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i <= source.Length - 2; i += 2) {
                 builder.Append(Convert.ToChar(int.Parse(source.Substring(i, 2), NumberStyles.HexNumber)));
             }
 
@@ -37,22 +37,22 @@ namespace Sharlayan.Extensions {
                 return string.Empty;
             }
 
-            var cleaned = source.TrimAndCleanSpaces();
-            var result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+            string cleaned = source.TrimAndCleanSpaces();
+            string result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
                 all
                     ? cleaned.ToLower()
                     : cleaned);
             Match reg = Romans.Match(cleaned);
             if (reg.Success) {
-                var replace = Convert.ToString(reg.Groups["roman"].Value);
-                var original = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(replace.ToLower());
+                string replace = Convert.ToString(reg.Groups["roman"].Value);
+                string original = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(replace.ToLower());
                 result = result.Replace(original, replace.ToUpper());
             }
 
             MatchCollection titles = Titles.Matches(result);
             foreach (Match title in titles) {
-                var num = Convert.ToString(title.Groups["num"].Value);
-                var designator = Convert.ToString(title.Groups["designator"].Value);
+                string num = Convert.ToString(title.Groups["num"].Value);
+                string designator = Convert.ToString(title.Groups["designator"].Value);
                 result = result.Replace($"{num}{designator}", $"{num}{designator.ToLower()}");
             }
 

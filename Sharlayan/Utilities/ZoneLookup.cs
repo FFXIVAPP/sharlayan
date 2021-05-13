@@ -33,7 +33,7 @@ namespace Sharlayan.Utilities {
 
         private static ConcurrentDictionary<uint, MapItem> Zones = new ConcurrentDictionary<uint, MapItem>();
 
-        public static MapItem GetZoneInfo(uint id, string patchVersion = "latest") {
+        public static MapItem GetZoneInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return DefaultZoneInfo;
             }
@@ -45,18 +45,18 @@ namespace Sharlayan.Utilities {
                                : DefaultZoneInfo;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return DefaultZoneInfo;
             }
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
+        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return;
             }
 
             Loading = true;
-            APIHelper.GetZones(Zones, patchVersion);
+            APIHelper.GetZones(Zones, patchVersion, useLocalCache);
             Loading = false;
         }
     }

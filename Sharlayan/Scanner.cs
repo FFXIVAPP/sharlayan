@@ -41,25 +41,27 @@ namespace Sharlayan {
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static Lazy<Scanner> _instance = new Lazy<Scanner>(() => new Scanner());
-
         private List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION> _regions;
 
-        public static Scanner Instance => _instance.Value;
+        public Scanner(MemoryHandler memoryHandler) {
+            this._memoryHandler = memoryHandler;
+        }
 
         public bool IsScanning { get; private set; }
 
-        public Dictionary<string, Signature> Locations { get; } = new Dictionary<string, Signature>();
+        public Dictionary<string, MemoryLocation> Locations { get; } = new Dictionary<string, MemoryLocation>();
+
+        private MemoryHandler _memoryHandler { get; }
 
         public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
-            if (MemoryHandler.Instance.ProcessModel?.Process == null) {
+            if (this._memoryHandler.Configuration.ProcessModel?.Process == null) {
                 return;
             }
 
             this.IsScanning = true;
 
             Func<bool> scanningFunc = delegate {
-                var sw = new Stopwatch();
+                Stopwatch sw = new Stopwatch();
                 sw.Start();
 
                 if (scanAllMemoryRegions) {
@@ -71,7 +73,7 @@ namespace Sharlayan {
                     foreach (Signature signature in scanable) {
                         if (signature.Value == string.Empty) {
                             // doesn't need a signature scan
-                            this.Locations[signature.Key] = signature;
+                            this.Locations[signature.Key] = new MemoryLocation(signature, this._memoryHandler);
                             continue;
                         }
 
@@ -85,7 +87,7 @@ namespace Sharlayan {
 
                 sw.Stop();
 
-                MemoryHandler.Instance.RaiseSignaturesFound(Logger, this.Locations, sw.ElapsedMilliseconds);
+                this._memoryHandler.RaiseMemoryLocationsFound(Logger, this.Locations, sw.ElapsedMilliseconds);
 
                 this.IsScanning = false;
 
@@ -97,12 +99,12 @@ namespace Sharlayan {
 
         private static int[] BuildBadShiftTable(byte[] pattern) {
             int i;
-            var length = pattern.Length - 1;
-            var badShiftTable = new int[256];
+            int length = pattern.Length - 1;
+            int[] badShiftTable = new int[256];
 
             for (i = length; i > 0 && pattern[i] != WildCardChar; --i) { }
 
-            var difference = length - i;
+            int difference = length - i;
             if (difference == 0) {
                 difference = 1;
             }
@@ -121,9 +123,9 @@ namespace Sharlayan {
         private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
             List<Signature> notFound = new List<Signature>(signatures);
 
-            if (MemoryHandler.Instance.ProcessModel.Process.MainModule != null) {
-                IntPtr baseAddress = MemoryHandler.Instance.ProcessModel.Process.MainModule.BaseAddress;
-                IntPtr searchEnd = IntPtr.Add(baseAddress, MemoryHandler.Instance.ProcessModel.Process.MainModule.ModuleMemorySize);
+            if (this._memoryHandler.Configuration.ProcessModel.Process.MainModule != null) {
+                IntPtr baseAddress = this._memoryHandler.Configuration.ProcessModel.Process.MainModule.BaseAddress;
+                IntPtr searchEnd = IntPtr.Add(baseAddress, this._memoryHandler.Configuration.ProcessModel.Process.MainModule.ModuleMemorySize);
                 IntPtr searchStart = baseAddress;
 
                 this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
@@ -145,10 +147,10 @@ namespace Sharlayan {
                 return -1;
             }
 
-            var badShift = BuildBadShiftTable(pattern);
-            var offset = 0;
-            var last = pattern.Length - 1;
-            var maxoffset = buffer.Length - pattern.Length;
+            int[] badShift = BuildBadShiftTable(pattern);
+            int offset = 0;
+            int last = pattern.Length - 1;
+            int maxoffset = buffer.Length - pattern.Length;
             while (offset <= maxoffset) {
                 int position;
                 for (position = last; pattern[position] == buffer[position + offset] || pattern[position] == WildCardChar; position--) {
@@ -168,17 +170,17 @@ namespace Sharlayan {
                 this._regions = new List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION>();
                 IntPtr address = IntPtr.Zero;
                 while (true) {
-                    var info = new UnsafeNativeMethods.MEMORY_BASIC_INFORMATION();
-                    var result = UnsafeNativeMethods.VirtualQueryEx(MemoryHandler.Instance.ProcessHandle, address, out info, (uint) Marshal.SizeOf(info));
+                    UnsafeNativeMethods.MEMORY_BASIC_INFORMATION info = new UnsafeNativeMethods.MEMORY_BASIC_INFORMATION();
+                    int result = UnsafeNativeMethods.VirtualQueryEx(this._memoryHandler.ProcessHandle, address, out info, (uint) Marshal.SizeOf(info));
                     if (result == 0) {
                         break;
                     }
 
-                    if (!MemoryHandler.Instance.IsSystemModule(info.BaseAddress) && (info.State & MemCommit) != 0 && (info.Protect & Writable) != 0 && (info.Protect & PageGuard) == 0) {
+                    if (!this._memoryHandler.IsSystemModule(info.BaseAddress) && (info.State & MemCommit) != 0 && (info.Protect & Writable) != 0 && (info.Protect & PageGuard) == 0) {
                         this._regions.Add(info);
                     }
                     else {
-                        MemoryHandler.Instance.RaiseException(Logger, new Exception(info.ToString()));
+                        this._memoryHandler.RaiseException(Logger, new Exception(info.ToString()));
                     }
 
                     unchecked {
@@ -194,7 +196,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
         }
 
@@ -204,31 +206,31 @@ namespace Sharlayan {
 
             byte[] buffer = new byte[bufferSize];
             List<Signature> temp = new List<Signature>();
-            var regionCount = 0;
+            int regionCount = 0;
 
             while (searchStart.ToInt64() < searchEnd.ToInt64()) {
                 try {
                     IntPtr lpNumberOfBytesRead;
-                    var regionSize = new IntPtr(bufferSize);
+                    IntPtr regionSize = new IntPtr(bufferSize);
                     if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64()) {
                         regionSize = (IntPtr) (searchEnd.ToInt64() - searchStart.ToInt64());
                     }
 
-                    if (UnsafeNativeMethods.ReadProcessMemory(MemoryHandler.Instance.ProcessHandle, searchStart, buffer, regionSize, out lpNumberOfBytesRead)) {
+                    if (UnsafeNativeMethods.ReadProcessMemory(this._memoryHandler.ProcessHandle, searchStart, buffer, regionSize, out lpNumberOfBytesRead)) {
                         foreach (Signature signature in notFound) {
-                            var index = this.FindSuperSignature(buffer, this.SignatureToByte(signature.Value, WildCardChar));
+                            int index = this.FindSuperSignature(buffer, this.SignatureToByte(signature.Value, WildCardChar));
                             if (index < 0) {
                                 temp.Add(signature);
                                 continue;
                             }
 
-                            var baseResult = new IntPtr((long) (baseAddress + regionCount * regionIncrement));
+                            IntPtr baseResult = new IntPtr((long) (baseAddress + regionCount * regionIncrement));
                             IntPtr searchResult = IntPtr.Add(baseResult, index + signature.Offset);
 
                             signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
 
                             if (!this.Locations.ContainsKey(signature.Key)) {
-                                this.Locations.Add(signature.Key, signature);
+                                this.Locations.Add(signature.Key, new MemoryLocation(signature, this._memoryHandler));
                             }
                         }
 
@@ -240,7 +242,7 @@ namespace Sharlayan {
                     searchStart = IntPtr.Add(searchStart, regionIncrement);
                 }
                 catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(Logger, ex, true);
                 }
             }
         }

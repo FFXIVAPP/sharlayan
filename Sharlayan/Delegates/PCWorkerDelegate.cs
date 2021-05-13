@@ -13,22 +13,22 @@ namespace Sharlayan.Delegates {
 
     using Sharlayan.Core;
 
-    internal static class PCWorkerDelegate {
-        public static ConcurrentDictionary<uint, ActorItem> ActorItems = new ConcurrentDictionary<uint, ActorItem>();
+    internal class PCWorkerDelegate {
+        public ConcurrentDictionary<uint, ActorItem> ActorItems = new ConcurrentDictionary<uint, ActorItem>();
 
-        public static ActorItem CurrentUser { get; set; }
+        public ActorItem CurrentUser { get; set; } = null;
 
-        public static void EnsureActorItem(uint key, ActorItem entity) {
-            ActorItems.AddOrUpdate(key, entity, (k, v) => entity);
+        public void EnsureActorItem(uint key, ActorItem entity) {
+            this.ActorItems.AddOrUpdate(key, entity, (k, v) => entity);
         }
 
-        public static ActorItem GetActorItem(uint key) {
-            ActorItems.TryGetValue(key, out ActorItem entity);
+        public ActorItem GetActorItem(uint key) {
+            this.ActorItems.TryGetValue(key, out ActorItem entity);
             return entity;
         }
 
-        public static bool RemoveActorItem(uint key) {
-            return ActorItems.TryRemove(key, out ActorItem entity);
+        public bool RemoveActorItem(uint key) {
+            return this.ActorItems.TryRemove(key, out ActorItem entity);
         }
     }
 }

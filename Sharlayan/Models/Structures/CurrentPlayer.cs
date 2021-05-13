@@ -154,8 +154,6 @@ namespace Sharlayan.Models.Structures {
 
         public int Mind { get; set; }
 
-        public int MPMax { get; set; }
-
         public int MRD { get; set; }
 
         public int MRD_CurrentEXP { get; set; }
@@ -197,8 +195,6 @@ namespace Sharlayan.Models.Structures {
         public int THM { get; set; }
 
         public int THM_CurrentEXP { get; set; }
-
-        public int TPMax { get; set; }
 
         public int Vitality { get; set; }
 

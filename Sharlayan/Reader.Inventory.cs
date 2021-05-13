@@ -15,9 +15,9 @@ namespace Sharlayan {
     using Sharlayan.Core.Enums;
     using Sharlayan.Models.ReadResults;
 
-    public static partial class Reader {
-        public static bool CanGetInventory() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.InventoryKey);
+    public partial class Reader {
+        public bool CanGetInventory() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.InventoryKey);
             if (canRead) {
                 // OTHER STUFF?
             }
@@ -25,10 +25,10 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static InventoryResult GetInventory() {
-            var result = new InventoryResult();
+        public InventoryResult GetInventory() {
+            InventoryResult result = new InventoryResult();
 
-            if (!CanGetInventory() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetInventory() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
@@ -36,31 +36,31 @@ namespace Sharlayan {
                 const int inventoryCount = 74;
                 const int inventoryByteCount = 24;
 
-                var inventoryMap = new IntPtr(MemoryHandler.Instance.GetInt64(Scanner.Instance.Locations[Signatures.InventoryKey]));
-                var inventoryBytes = MemoryHandler.Instance.GetByteArray(inventoryMap, inventoryCount * 24);
+                IntPtr inventoryMap = new IntPtr(this._memoryHandler.GetInt64(this._memoryHandler.Scanner.Locations[Signatures.InventoryKey]));
+                byte[] inventoryBytes = this._memoryHandler.GetByteArray(inventoryMap, inventoryCount * 24);
 
-                for (var i = 0; i < inventoryCount; i++) {
-                    var bagIndex = i * inventoryByteCount;
-                    var bagID = BitConverter.ToUInt32(inventoryBytes, bagIndex + MemoryHandler.Instance.Structures.InventoryContainer.ID);
+                for (int i = 0; i < inventoryCount; i++) {
+                    int bagIndex = i * inventoryByteCount;
+                    uint bagID = BitConverter.ToUInt32(inventoryBytes, bagIndex + this._memoryHandler.Structures.InventoryContainer.ID);
 
                     if (!Enum.IsDefined(typeof(Inventory.Container), bagID)) {
                         continue;
                     }
 
-                    var container = new InventoryContainer {
-                        Amount = BitConverter.ToUInt32(inventoryBytes, bagIndex + MemoryHandler.Instance.Structures.InventoryContainer.Amount),
+                    InventoryContainer container = new InventoryContainer {
+                        Amount = BitConverter.ToUInt32(inventoryBytes, bagIndex + this._memoryHandler.Structures.InventoryContainer.Amount),
                         TypeID = bagID,
                         ContainerType = (Inventory.Container) bagID,
                     };
 
-                    var itemByteCount = 56;
+                    int itemByteCount = 56;
 
-                    var slotMap = new IntPtr(MemoryHandler.Instance.GetInt64FromBytes(inventoryBytes, bagIndex));
-                    var slotBytes = MemoryHandler.Instance.GetByteArray(slotMap, (int) container.Amount * itemByteCount);
+                    IntPtr slotMap = new IntPtr(this._memoryHandler.GetInt64FromBytes(inventoryBytes, bagIndex));
+                    byte[] slotBytes = this._memoryHandler.GetByteArray(slotMap, (int) container.Amount * itemByteCount);
 
-                    for (var j = 0; j < container.Amount; j++) {
-                        var slotIndex = j * itemByteCount;
-                        var itemId = BitConverter.ToUInt32(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.ID);
+                    for (int j = 0; j < container.Amount; j++) {
+                        int slotIndex = j * itemByteCount;
+                        uint itemId = BitConverter.ToUInt32(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.ID);
 
                         if (itemId <= 0) {
                             container.InventoryItems.Add(new InventoryItem());
@@ -69,28 +69,28 @@ namespace Sharlayan {
 
                         container.InventoryItems.Add(
                             new InventoryItem {
-                                Slot = BitConverter.ToUInt16(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.Slot),
+                                Slot = BitConverter.ToUInt16(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.Slot),
                                 ID = itemId,
-                                Amount = BitConverter.ToUInt32(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.Amount),
-                                SB = BitConverter.ToUInt16(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.SB),
-                                Condition = BitConverter.ToUInt16(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.Durability),
-                                IsHQ = (slotBytes[slotIndex + MemoryHandler.Instance.Structures.InventoryItem.IsHQ] & 1) == 1,
+                                Amount = BitConverter.ToUInt32(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.Amount),
+                                SB = BitConverter.ToUInt16(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.SB),
+                                Condition = BitConverter.ToUInt16(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.Durability),
+                                IsHQ = (slotBytes[slotIndex + this._memoryHandler.Structures.InventoryItem.IsHQ] & 1) == 1,
                                 MateriaTypes = new[] {
-                                    (Inventory.MateriaType) slotBytes[slotIndex + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                    (Inventory.MateriaType) slotBytes[slotIndex + 2 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                    (Inventory.MateriaType) slotBytes[slotIndex + 4 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                    (Inventory.MateriaType) slotBytes[slotIndex + 6 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
-                                    (Inventory.MateriaType) slotBytes[slotIndex + 8 + MemoryHandler.Instance.Structures.InventoryItem.MateriaType],
+                                    (Inventory.MateriaType) slotBytes[slotIndex + this._memoryHandler.Structures.InventoryItem.MateriaType],
+                                    (Inventory.MateriaType) slotBytes[slotIndex + 2 + this._memoryHandler.Structures.InventoryItem.MateriaType],
+                                    (Inventory.MateriaType) slotBytes[slotIndex + 4 + this._memoryHandler.Structures.InventoryItem.MateriaType],
+                                    (Inventory.MateriaType) slotBytes[slotIndex + 6 + this._memoryHandler.Structures.InventoryItem.MateriaType],
+                                    (Inventory.MateriaType) slotBytes[slotIndex + 8 + this._memoryHandler.Structures.InventoryItem.MateriaType],
                                 },
                                 MateriaRanks = new[] {
-                                    slotBytes[slotIndex + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
-                                    slotBytes[slotIndex + 1 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
-                                    slotBytes[slotIndex + 2 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
-                                    slotBytes[slotIndex + 3 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
-                                    slotBytes[slotIndex + 4 + MemoryHandler.Instance.Structures.InventoryItem.MateriaRank],
+                                    slotBytes[slotIndex + this._memoryHandler.Structures.InventoryItem.MateriaRank],
+                                    slotBytes[slotIndex + 1 + this._memoryHandler.Structures.InventoryItem.MateriaRank],
+                                    slotBytes[slotIndex + 2 + this._memoryHandler.Structures.InventoryItem.MateriaRank],
+                                    slotBytes[slotIndex + 3 + this._memoryHandler.Structures.InventoryItem.MateriaRank],
+                                    slotBytes[slotIndex + 4 + this._memoryHandler.Structures.InventoryItem.MateriaRank],
                                 },
-                                DyeID = slotBytes[slotIndex + MemoryHandler.Instance.Structures.InventoryItem.DyeID],
-                                GlamourID = BitConverter.ToUInt32(slotBytes, slotIndex + MemoryHandler.Instance.Structures.InventoryItem.GlamourID),
+                                DyeID = slotBytes[slotIndex + this._memoryHandler.Structures.InventoryItem.DyeID],
+                                GlamourID = BitConverter.ToUInt32(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.GlamourID),
                             });
                     }
 
@@ -98,7 +98,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
 
             return result;

@@ -26,9 +26,12 @@ namespace Sharlayan {
 
         private bool _isScanning;
 
+        private MemoryHandler _memoryHandler;
+
         private ProcessModel _processModel;
 
-        public AttachmentWorker() {
+        public AttachmentWorker(MemoryHandler memoryHandler) {
+            this._memoryHandler = memoryHandler;
             this._scanTimer = new Timer(1000);
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
@@ -55,7 +58,7 @@ namespace Sharlayan {
         /// <param name="sender"> </param>
         /// <param name="e"> </param>
         private void ScanTimerElapsed(object sender, ElapsedEventArgs e) {
-            if (this._isScanning || !MemoryHandler.Instance.IsAttached) {
+            if (this._isScanning || !this._memoryHandler.IsAttached) {
                 return;
             }
 
@@ -64,8 +67,9 @@ namespace Sharlayan {
             Func<bool> scanner = delegate {
                 Process[] processes = Process.GetProcesses();
                 if (!processes.Any(process => process.Id == this._processModel.ProcessID && process.ProcessName == this._processModel.ProcessName)) {
-                    MemoryHandler.Instance.IsAttached = false;
-                    MemoryHandler.Instance.UnsetProcess();
+                    if (!SharlayanMemoryManager.Instance.RemoveHandler(this._memoryHandler.Configuration.ProcessModel)) {
+                        this._memoryHandler.Dispose();
+                    }
                 }
 
                 this._isScanning = false;

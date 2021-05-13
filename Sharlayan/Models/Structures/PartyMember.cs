@@ -24,8 +24,6 @@ namespace Sharlayan.Models.Structures {
 
         public int MPCurrent { get; set; }
 
-        public int MPMax { get; set; }
-
         public int Name { get; set; }
 
         public int SourceSize { get; set; }

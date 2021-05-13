@@ -71,14 +71,6 @@ namespace Sharlayan.Core {
 
         public List<StatusItem> StatusItems { get; protected set; } = new List<StatusItem>();
 
-        public int TPCurrent { get; set; }
-
-        public int TPMax { get; set; }
-
-        public double TPPercent => this.safeDivide(this.TPCurrent, this.TPMax);
-
-        public string TPString => $"{this.TPCurrent}/{this.TPMax} [{this.TPPercent:P2}]";
-
         public string UUID { get; set; }
 
         public double X { get; set; }
@@ -88,22 +80,22 @@ namespace Sharlayan.Core {
         public double Z { get; set; }
 
         public float GetCastingDistanceTo(ActorItem compare) {
-            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - this.HitBoxRadius;
+            float distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - this.HitBoxRadius;
             return distance > 0
                        ? distance
                        : 0;
         }
 
         public float GetDistanceTo(ActorItem compare) {
-            var distanceX = (float) Math.Abs(compare.X - this.X);
-            var distanceY = (float) Math.Abs(compare.Y - this.Y);
-            var distanceZ = (float) Math.Abs(compare.Z - this.Z);
+            float distanceX = (float) Math.Abs(compare.X - this.X);
+            float distanceY = (float) Math.Abs(compare.Y - this.Y);
+            float distanceZ = (float) Math.Abs(compare.Z - this.Z);
             return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2) + Math.Pow(distanceZ, 2));
         }
 
         public float GetHorizontalDistanceTo(ActorItem compare) {
-            var distanceX = (float) Math.Abs(compare.X - this.X);
-            var distanceY = (float) Math.Abs(compare.Y - this.Y);
+            float distanceX = (float) Math.Abs(compare.X - this.X);
+            float distanceY = (float) Math.Abs(compare.Y - this.Y);
             return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2));
         }
 

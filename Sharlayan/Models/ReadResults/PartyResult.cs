@@ -12,12 +12,11 @@ namespace Sharlayan.Models.ReadResults {
     using System.Collections.Concurrent;
 
     using Sharlayan.Core;
-    using Sharlayan.Delegates;
 
     public class PartyResult {
         public ConcurrentDictionary<uint, PartyMember> NewPartyMembers { get; } = new ConcurrentDictionary<uint, PartyMember>();
 
-        public ConcurrentDictionary<uint, PartyMember> PartyMembers => PartyWorkerDelegate.PartyMembers;
+        public ConcurrentDictionary<uint, PartyMember> PartyMembers { get; internal set; } = new ConcurrentDictionary<uint, PartyMember>();
 
         public ConcurrentDictionary<uint, PartyMember> RemovedPartyMembers { get; } = new ConcurrentDictionary<uint, PartyMember>();
     }

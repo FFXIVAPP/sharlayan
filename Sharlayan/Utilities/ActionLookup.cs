@@ -32,7 +32,7 @@ namespace Sharlayan.Utilities {
 
         private static bool Loading;
 
-        public static List<ActionItem> DamageOverTimeActions(string patchVersion = "latest") {
+        public static List<ActionItem> DamageOverTimeActions(string patchVersion = "latest", bool useLocalCache = true) {
             List<ActionItem> results = new List<ActionItem>();
             if (Loading) {
                 return results;
@@ -44,12 +44,12 @@ namespace Sharlayan.Utilities {
                     return results;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return results;
             }
         }
 
-        public static ActionItem GetActionInfo(string name, string patchVersion = "latest") {
+        public static ActionItem GetActionInfo(string name, string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return DefaultActionInfo;
             }
@@ -59,12 +59,12 @@ namespace Sharlayan.Utilities {
                     return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return DefaultActionInfo;
             }
         }
 
-        public static ActionItem GetActionInfo(uint id, string patchVersion = "latest") {
+        public static ActionItem GetActionInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return DefaultActionInfo;
             }
@@ -76,12 +76,12 @@ namespace Sharlayan.Utilities {
                                : DefaultActionInfo;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return DefaultActionInfo;
             }
         }
 
-        public static List<ActionItem> HealingOverTimeActions(string patchVersion = "latest") {
+        public static List<ActionItem> HealingOverTimeActions(string patchVersion = "latest", bool useLocalCache = true) {
             List<ActionItem> results = new List<ActionItem>();
             if (Loading) {
                 return results;
@@ -93,18 +93,18 @@ namespace Sharlayan.Utilities {
                     return results;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return results;
             }
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
+        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return;
             }
 
             Loading = true;
-            APIHelper.GetActions(Actions, patchVersion);
+            APIHelper.GetActions(Actions, patchVersion, useLocalCache);
             Loading = false;
         }
     }

@@ -13,11 +13,10 @@ namespace Sharlayan {
 
     using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
-    using Sharlayan.Utilities;
 
-    public static partial class Reader {
-        public static bool CanGetPlayerInfo() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PlayerInformationKey);
+    public partial class Reader {
+        public bool CanGetPlayerInfo() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PlayerInformationKey);
             if (canRead) {
                 // OTHER STUFF?
             }
@@ -25,41 +24,41 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static CurrentPlayerResult GetCurrentPlayer() {
-            var result = new CurrentPlayerResult();
+        public CurrentPlayerResult GetCurrentPlayer() {
+            CurrentPlayerResult result = new CurrentPlayerResult();
 
-            if (!CanGetPlayerInfo() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetPlayerInfo() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
-            var PlayerInfoMap = (IntPtr) Scanner.Instance.Locations[Signatures.PlayerInformationKey];
+            IntPtr PlayerInfoMap = this._memoryHandler.Scanner.Locations[Signatures.PlayerInformationKey];
 
             if (PlayerInfoMap.ToInt64() <= 6496) {
                 return result;
             }
 
             try {
-                byte[] source = MemoryHandler.Instance.GetByteArray(PlayerInfoMap, MemoryHandler.Instance.Structures.CurrentPlayer.SourceSize);
+                byte[] source = this._memoryHandler.GetByteArray(PlayerInfoMap, this._memoryHandler.Structures.CurrentPlayer.SourceSize);
 
                 try {
-                    result.CurrentPlayer = CurrentPlayerResolver.ResolvePlayerFromBytes(source);
+                    result.CurrentPlayer = this._currentPlayerResolver.ResolvePlayerFromBytes(source);
                 }
                 catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(Logger, ex, true);
                 }
 
-                if (CanGetAgroEntities()) {
-                    var agroCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations[Signatures.AgroCountKey]);
-                    var agroStructure = (IntPtr) Scanner.Instance.Locations[Signatures.AgroMapKey];
+                if (this.CanGetAgroEntities()) {
+                    short agroCount = this._memoryHandler.GetInt16(this._memoryHandler.Scanner.Locations[Signatures.AgroCountKey]);
+                    IntPtr agroStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.AgroMapKey];
 
                     if (agroCount > 0 && agroCount < 32 && agroStructure.ToInt64() > 0) {
-                        var agroSourceSize = MemoryHandler.Instance.Structures.EnmityItem.SourceSize;
+                        int agroSourceSize = this._memoryHandler.Structures.EnmityItem.SourceSize;
                         for (uint i = 0; i < agroCount; i++) {
-                            var address = new IntPtr(agroStructure.ToInt64() + i * agroSourceSize);
-                            var agroEntry = new EnmityItem {
-                                ID = MemoryHandler.Instance.GetUInt32(address, MemoryHandler.Instance.Structures.EnmityItem.ID),
-                                Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityItem.Name),
-                                Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityItem.Enmity),
+                            IntPtr address = new IntPtr(agroStructure.ToInt64() + i * agroSourceSize);
+                            EnmityItem agroEntry = new EnmityItem {
+                                ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.EnmityItem.ID),
+                                Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
+                                Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
                             };
                             if (agroEntry.ID > 0) {
                                 result.CurrentPlayer.EnmityItems.Add(agroEntry);
@@ -69,7 +68,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
 
             return result;

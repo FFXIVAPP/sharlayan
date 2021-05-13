@@ -27,8 +27,6 @@ namespace Sharlayan {
 
         public const string EnmityMapKey = "ENMITYMAP";
 
-        public const string GameMainKey = "GAMEMAIN";
-
         public const string HotBarKey = "HOTBAR";
 
         public const string InventoryKey = "INVENTORY";
@@ -49,8 +47,8 @@ namespace Sharlayan {
 
         public const string ZoneInformationKey = "ZONEINFO";
 
-        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest") {
-            return APIHelper.GetSignatures(processModel, patchVersion);
+        public static IEnumerable<Signature> Resolve(MemoryHandlerConfiguration memoryHandlerConfiguration) {
+            return APIHelper.GetSignatures(memoryHandlerConfiguration);
         }
     }
 }

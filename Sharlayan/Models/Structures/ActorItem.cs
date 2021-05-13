@@ -84,8 +84,6 @@ namespace Sharlayan.Models.Structures {
 
         public int MPCurrent { get; set; }
 
-        public int MPMax { get; set; }
-
         public int Name { get; set; }
 
         public int NPCID1 { get; set; }
@@ -105,8 +103,6 @@ namespace Sharlayan.Models.Structures {
         public int TargetType { get; set; }
 
         public int Title { get; set; }
-
-        public int TPCurrent { get; set; }
 
         public int Type { get; set; }
 

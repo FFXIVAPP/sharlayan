@@ -13,15 +13,13 @@ namespace Sharlayan {
 
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
-    using Sharlayan.Delegates;
     using Sharlayan.Models.ReadResults;
-    using Sharlayan.Utilities;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
-    public static partial class Reader {
-        public static bool CanGetTargetInfo() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.TargetKey);
+    public partial class Reader {
+        public bool CanGetTargetInfo() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.TargetKey);
             if (canRead) {
                 // OTHER STUFF?
             }
@@ -29,29 +27,29 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static TargetResult GetTargetInfo() {
-            var result = new TargetResult();
+        public TargetResult GetTargetInfo() {
+            TargetResult result = new TargetResult();
 
-            if (!CanGetTargetInfo() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetTargetInfo() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
             try {
-                var targetAddress = (IntPtr) Scanner.Instance.Locations[Signatures.TargetKey];
+                IntPtr targetAddress = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.TargetKey];
 
                 if (targetAddress.ToInt64() > 0) {
-                    byte[] targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.SourceSize);
+                    byte[] targetInfoSource = this._memoryHandler.GetByteArray(targetAddress, this._memoryHandler.Structures.TargetInfo.SourceSize);
 
-                    var currentTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Current);
-                    var mouseOverTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.MouseOver);
-                    var focusTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Focus);
-                    var previousTarget = MemoryHandler.Instance.GetInt64FromBytes(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.Previous);
+                    long currentTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Current);
+                    long mouseOverTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.MouseOver);
+                    long focusTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Focus);
+                    long previousTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Previous);
 
-                    var currentTargetID = BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.TargetInfo.CurrentID);
+                    uint currentTargetID = BitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.TargetInfo.CurrentID);
 
                     if (currentTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(currentTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(currentTarget);
                             currentTargetID = entry.ID;
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
@@ -59,46 +57,46 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                            this._memoryHandler.RaiseException(Logger, ex, true);
                         }
                     }
 
                     if (mouseOverTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(mouseOverTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(mouseOverTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.MouseOverTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                            this._memoryHandler.RaiseException(Logger, ex, true);
                         }
                     }
 
                     if (focusTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(focusTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(focusTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.FocusTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                            this._memoryHandler.RaiseException(Logger, ex, true);
                         }
                     }
 
                     if (previousTarget > 0) {
                         try {
-                            ActorItem entry = GetTargetActorItemFromSource(previousTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(previousTarget);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.PreviousTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                            this._memoryHandler.RaiseException(Logger, ex, true);
                         }
                     }
 
@@ -110,70 +108,70 @@ namespace Sharlayan {
 
                 if (result.TargetInfo.CurrentTargetID > 0) {
                     try {
-                        if (CanGetEnmityEntities()) {
-                            var enmityCount = MemoryHandler.Instance.GetInt16(Scanner.Instance.Locations[Signatures.EnmityCountKey]);
-                            var enmityStructure = (IntPtr) Scanner.Instance.Locations[Signatures.EnmityMapKey];
+                        if (this.CanGetEnmityEntities()) {
+                            short enmityCount = this._memoryHandler.GetInt16(this._memoryHandler.Scanner.Locations[Signatures.EnmityCountKey]);
+                            IntPtr enmityStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.EnmityMapKey];
 
                             if (enmityCount > 0 && enmityCount < 16 && enmityStructure.ToInt64() > 0) {
-                                var enmitySourceSize = MemoryHandler.Instance.Structures.EnmityItem.SourceSize;
+                                int enmitySourceSize = this._memoryHandler.Structures.EnmityItem.SourceSize;
                                 for (uint i = 0; i < enmityCount; i++) {
                                     try {
-                                        var address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
-                                        var enmityEntry = new EnmityItem {
-                                            ID = MemoryHandler.Instance.GetUInt32(address, MemoryHandler.Instance.Structures.EnmityItem.ID),
-                                            // Name = MemoryHandler.Instance.GetString(address + MemoryHandler.Instance.Structures.EnmityItem.Name),
-                                            Enmity = MemoryHandler.Instance.GetUInt32(address + MemoryHandler.Instance.Structures.EnmityItem.Enmity),
+                                        IntPtr address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
+                                        EnmityItem enmityEntry = new EnmityItem {
+                                            ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.EnmityItem.ID),
+                                            // Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
+                                            Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
                                         };
                                         if (enmityEntry.ID <= 0) {
                                             continue;
                                         }
 
                                         if (string.IsNullOrWhiteSpace(enmityEntry.Name)) {
-                                            ActorItem pc = PCWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            ActorItem npc = NPCWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            ActorItem monster = MonsterWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                            ActorItem pc = this._pcWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                            ActorItem npc = this._npcWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                            ActorItem monster = this._monsterWorkerDelegate.GetActorItem(enmityEntry.ID);
                                             try {
                                                 enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
                                             }
                                             catch (Exception ex) {
-                                                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                                this._memoryHandler.RaiseException(Logger, ex, true);
                                             }
                                         }
 
                                         result.TargetInfo.EnmityItems.Add(enmityEntry);
                                     }
                                     catch (Exception ex) {
-                                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                                        this._memoryHandler.RaiseException(Logger, ex, true);
                                     }
                                 }
                             }
                         }
                     }
                     catch (Exception ex) {
-                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        this._memoryHandler.RaiseException(Logger, ex, true);
                     }
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
 
             return result;
         }
 
-        private static ActorItem GetTargetActorItemFromSource(long address) {
-            var targetAddress = new IntPtr(address);
+        private ActorItem GetTargetActorItemFromSource(long address) {
+            IntPtr targetAddress = new IntPtr(address);
 
-            byte[] source = MemoryHandler.Instance.GetByteArray(targetAddress, MemoryHandler.Instance.Structures.TargetInfo.Size);
-            ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source);
+            byte[] source = this._memoryHandler.GetByteArray(targetAddress, this._memoryHandler.Structures.TargetInfo.Size);
+            ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(source);
 
             if (entry.Type == Actor.Type.EventObject) {
-                var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
+                (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);
                 entry.EventObjectTypeID = EventObjectTypeID;
                 entry.EventObjectType = EventObjectType;
             }
 
-            EnsureMapAndZone(entry);
+            this.EnsureMapAndZone(entry);
 
             return entry;
         }

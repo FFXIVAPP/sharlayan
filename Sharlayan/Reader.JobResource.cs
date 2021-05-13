@@ -8,33 +8,46 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
-using Sharlayan.Models.ReadResults;
-
 namespace Sharlayan {
-    public static partial class Reader {
-        public static bool CanGetJobResources() {
-            return Scanner.Instance.Locations.ContainsKey(Signatures.JobResourceKey);
+    using System;
+
+    using Sharlayan.Models.ReadResults;
+
+    public partial class Reader {
+        public bool CanGetJobResources() {
+            return this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.JobResourceKey);
         }
 
-        public static JobResourceResult GetJobResources() {
-            if (!CanGetJobResources() || !MemoryHandler.Instance.IsAttached) {
-                return new JobResourceResult(null);
+        public JobResourceResult GetJobResources() {
+            byte[] sourceBytes = new byte[this._memoryHandler.Structures.JobResources.SourceSize];
+            if (!this.CanGetJobResources() || !this._memoryHandler.IsAttached) {
+                return new JobResourceResult {
+                    Data = sourceBytes,
+                    Offsets = this._memoryHandler.Structures.JobResources,
+                };
             }
 
-            var resourcePtr = Scanner.Instance.Locations[Signatures.JobResourceKey].GetAddress();
+            IntPtr resourcePtr = this._memoryHandler.Scanner.Locations[Signatures.JobResourceKey];
             if (resourcePtr == IntPtr.Zero) {
-                return new JobResourceResult(null);
+                return new JobResourceResult {
+                    Data = sourceBytes,
+                    Offsets = this._memoryHandler.Structures.JobResources,
+                };
             }
 
-            var resource = new IntPtr(MemoryHandler.Instance.GetInt64(resourcePtr));
+            IntPtr resource = new IntPtr(this._memoryHandler.GetInt64(resourcePtr));
             if (resource == IntPtr.Zero) {
-                return new JobResourceResult(null);
+                return new JobResourceResult {
+                    Data = sourceBytes,
+                    Offsets = this._memoryHandler.Structures.JobResources,
+                };
             }
 
-            var bytes = MemoryHandler.Instance.GetByteArray(resource, MemoryHandler.Instance.Structures.JobResources.SourceSize);
-            return new JobResourceResult(bytes);
+            sourceBytes = this._memoryHandler.GetByteArray(resource, this._memoryHandler.Structures.JobResources.SourceSize);
+            return new JobResourceResult {
+                Data = sourceBytes,
+                Offsets = this._memoryHandler.Structures.JobResources,
+            };
         }
     }
 }

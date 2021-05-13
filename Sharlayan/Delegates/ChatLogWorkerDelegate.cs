@@ -9,7 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Delegates {
-    internal static class ChatLogWorkerDelegate {
-        public static bool IsPaused { get; set; }
+    internal class ChatLogWorkerDelegate {
+        public bool IsPaused { get; set; }
     }
 }

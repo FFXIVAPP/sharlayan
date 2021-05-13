@@ -4,12 +4,12 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Bootstrapped.exe.nlog" />
+		<None Remove="Bootstrapped.exe.nlog" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="Bootstrapped.exe.nlog">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="Bootstrapped.exe.nlog">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -19,6 +19,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Sharlayan\Sharlayan.csproj" />
+		<ProjectReference Include="..\Sharlayan\Sharlayan.csproj" />
 	</ItemGroup>
 </Project>

@@ -13,16 +13,13 @@ namespace Sharlayan {
     using System.Collections.Generic;
 
     using Sharlayan.Core;
-    using Sharlayan.Delegates;
-    using Sharlayan.Models;
     using Sharlayan.Models.ReadResults;
-    using Sharlayan.Utilities;
 
     using BitConverter = Sharlayan.Utilities.BitConverter;
 
-    public static partial class Reader {
-        public static bool CanGetPartyMembers() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PartyMapKey) && Scanner.Instance.Locations.ContainsKey(Signatures.PartyCountKey);
+    public partial class Reader {
+        public bool CanGetPartyMembers() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyCountKey);
             if (canRead) {
                 // OTHER STUFF?
             }
@@ -30,47 +27,47 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static PartyResult GetPartyMembers() {
-            var result = new PartyResult();
+        public PartyResult GetPartyMembers() {
+            PartyResult result = new PartyResult();
 
-            if (!CanGetPartyMembers() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetPartyMembers() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
-            var PartyInfoMap = (IntPtr) Scanner.Instance.Locations[Signatures.PartyMapKey];
-            Signature PartyCountMap = Scanner.Instance.Locations[Signatures.PartyCountKey];
+            IntPtr PartyInfoMap = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.PartyMapKey];
+            MemoryLocation PartyCountMap = this._memoryHandler.Scanner.Locations[Signatures.PartyCountKey];
 
-            foreach (KeyValuePair<uint, PartyMember> kvp in PartyWorkerDelegate.PartyMembers) {
+            foreach (KeyValuePair<uint, PartyMember> kvp in this._partyWorkerDelegate.PartyMembers) {
                 result.RemovedPartyMembers.TryAdd(kvp.Key, kvp.Value.Clone());
             }
 
             try {
-                var partyCount = MemoryHandler.Instance.GetByte(PartyCountMap);
-                var sourceSize = MemoryHandler.Instance.Structures.PartyMember.SourceSize;
+                byte partyCount = this._memoryHandler.GetByte(PartyCountMap);
+                int sourceSize = this._memoryHandler.Structures.PartyMember.SourceSize;
 
                 if (partyCount > 1 && partyCount < 9) {
                     for (uint i = 0; i < partyCount; i++) {
-                        var address = PartyInfoMap.ToInt64() + i * (uint) sourceSize;
-                        byte[] source = MemoryHandler.Instance.GetByteArray(new IntPtr(address), sourceSize);
-                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.PartyMember.ID);
+                        long address = PartyInfoMap.ToInt64() + i * (uint) sourceSize;
+                        byte[] source = this._memoryHandler.GetByteArray(new IntPtr(address), sourceSize);
+                        uint ID = BitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
                         ActorItem existing = null;
-                        var newEntry = false;
+                        bool newEntry = false;
 
                         if (result.RemovedPartyMembers.ContainsKey(ID)) {
                             result.RemovedPartyMembers.TryRemove(ID, out PartyMember removedPartyMember);
-                            if (MonsterWorkerDelegate.ActorItems.ContainsKey(ID)) {
-                                existing = MonsterWorkerDelegate.GetActorItem(ID);
+                            if (this._monsterWorkerDelegate.ActorItems.ContainsKey(ID)) {
+                                existing = this._monsterWorkerDelegate.GetActorItem(ID);
                             }
 
-                            if (PCWorkerDelegate.ActorItems.ContainsKey(ID)) {
-                                existing = PCWorkerDelegate.GetActorItem(ID);
+                            if (this._pcWorkerDelegate.ActorItems.ContainsKey(ID)) {
+                                existing = this._pcWorkerDelegate.GetActorItem(ID);
                             }
                         }
                         else {
                             newEntry = true;
                         }
 
-                        PartyMember entry = PartyMemberResolver.ResolvePartyMemberFromBytes(source, existing);
+                        PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(source, existing);
                         if (!entry.IsValid) {
                             continue;
                         }
@@ -80,34 +77,36 @@ namespace Sharlayan {
                         }
 
                         if (newEntry) {
-                            PartyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
+                            this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
                             result.NewPartyMembers.TryAdd(entry.ID, entry.Clone());
                         }
                     }
                 }
 
-                if (partyCount <= 1) {
-                    PartyMember entry = PartyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), PCWorkerDelegate.CurrentUser);
+                if (partyCount <= 1 && this._pcWorkerDelegate.CurrentUser != null) {
+                    PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), this._pcWorkerDelegate.CurrentUser);
                     if (result.RemovedPartyMembers.ContainsKey(entry.ID)) {
                         result.RemovedPartyMembers.TryRemove(entry.ID, out PartyMember removedPartyMember);
                     }
 
-                    PartyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
+                    this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
 
             try {
                 // REMOVE OLD PARTY MEMBERS FROM LIVE CURRENT DICTIONARY
                 foreach (KeyValuePair<uint, PartyMember> kvp in result.RemovedPartyMembers) {
-                    PartyWorkerDelegate.RemovePartyMember(kvp.Key);
+                    this._partyWorkerDelegate.RemovePartyMember(kvp.Key);
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex, true);
             }
+
+            result.PartyMembers = this._partyWorkerDelegate.PartyMembers;
 
             return result;
         }

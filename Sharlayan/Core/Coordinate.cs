@@ -56,7 +56,7 @@ namespace Sharlayan.Core {
         }
 
         public Coordinate Normalize() {
-            var length = (float) Math.Sqrt(Math.Pow(this.X, 2) + Math.Pow(this.Y, 2) + Math.Pow(this.Z, 2));
+            float length = (float) Math.Sqrt(Math.Pow(this.X, 2) + Math.Pow(this.Y, 2) + Math.Pow(this.Z, 2));
             return new Coordinate {
                 X = this.X / length,
                 Y = this.Y / length,

@@ -8,7 +8,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sharlayan.Core {
+namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -42,18 +42,18 @@ namespace Sharlayan.Core {
         private static readonly Regex SpecialReplacementRegex = new Regex(@"[�]", RegexOptions.Compiled);
 
         public static string ProcessFullLine(string code, byte[] bytes) {
-            var line = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(bytes.ToArray())).Replace("  ", " ");
+            string line = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(bytes.ToArray())).Replace("  ", " ");
             try {
                 List<byte> newList = new List<byte>();
-                for (var x = 0; x < bytes.Count(); x++) {
+                for (int x = 0; x < bytes.Count(); x++) {
                     switch (bytes[x]) {
                         case 2:
                             // special in-game replacements/wrappers
                             // 2 46 5 7 242 2 210 3
                             // 2 29 1 3
                             // remove them
-                            var length = bytes[x + 2];
-                            var limit = length - 1;
+                            byte length = bytes[x + 2];
+                            int limit = length - 1;
                             if (length > 1) {
                                 x = x + 3 + limit;
                             }
@@ -85,7 +85,7 @@ namespace Sharlayan.Core {
                     }
                 }
 
-                var cleaned = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(newList.ToArray())).Replace("  ", " ");
+                string cleaned = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(newList.ToArray())).Replace("  ", " ");
 
                 newList.Clear();
 
@@ -105,22 +105,22 @@ namespace Sharlayan.Core {
                 line = cleaned;
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                // TODO: figure out how to raise exception
             }
 
             return ProcessName(line);
         }
 
         private static string ProcessName(string cleaned) {
-            var line = cleaned;
+            string line = cleaned;
             try {
                 // cleanup name if using other settings
                 Match playerMatch = PlayerRegEx.Match(line);
                 if (playerMatch.Success) {
-                    var fullName = playerMatch.Groups[1].Value;
-                    var firstName = playerMatch.Groups[2].Value.FromHex();
-                    var lastName = playerMatch.Groups[3].Value.FromHex();
-                    var player = $"{firstName} {lastName}";
+                    string fullName = playerMatch.Groups[1].Value;
+                    string firstName = playerMatch.Groups[2].Value.FromHex();
+                    string lastName = playerMatch.Groups[3].Value.FromHex();
+                    string player = $"{firstName} {lastName}";
 
                     // remove double placement
                     cleaned = line.Replace($"{fullName}:{fullName}", "•name•");
@@ -142,7 +142,7 @@ namespace Sharlayan.Core {
                 line = cleaned;
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                // TODO: figure out how to raise exception
             }
 
             return line;

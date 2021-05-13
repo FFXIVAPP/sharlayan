@@ -32,7 +32,7 @@ namespace Sharlayan.Utilities {
 
         private static ConcurrentDictionary<uint, StatusItem> StatusEffects = new ConcurrentDictionary<uint, StatusItem>();
 
-        public static StatusItem GetStatusInfo(uint id, string patchVersion = "latest") {
+        public static StatusItem GetStatusInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return DefaultStatusInfo;
             }
@@ -44,18 +44,18 @@ namespace Sharlayan.Utilities {
                                : DefaultStatusInfo;
                 }
 
-                Resolve(patchVersion);
+                Resolve(patchVersion, useLocalCache);
                 return DefaultStatusInfo;
             }
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
+        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
             if (Loading) {
                 return;
             }
 
             Loading = true;
-            APIHelper.GetStatusEffects(StatusEffects, patchVersion);
+            APIHelper.GetStatusEffects(StatusEffects, patchVersion, useLocalCache);
             Loading = false;
         }
     }

@@ -8,9 +8,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
 namespace Bootstrapped {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
@@ -30,7 +29,7 @@ namespace Bootstrapped {
 
     class Program {
         static void Main(string[] args) {
-            var stringReader = new StringReader(XElement.Load("./Bootstrapped.exe.nlog").ToString());
+            StringReader stringReader = new StringReader(XElement.Load("./Bootstrapped.exe.nlog").ToString());
 
             using (XmlReader xmlReader = XmlReader.Create(stringReader)) {
                 LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
@@ -47,25 +46,44 @@ namespace Bootstrapped {
             Process process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
 
             if (process != null) {
-                MemoryHandler.Instance.SetProcess(
-                    new ProcessModel {
+                Console.WriteLine("setting up memory handler...");
+
+                MemoryHandlerConfiguration memoryHandlerConfiguration = new MemoryHandlerConfiguration {
+                    ProcessModel = new ProcessModel {
                         Process = process,
-                    });
+                    },
+                };
+                MemoryHandler memoryHandler = new MemoryHandler(memoryHandlerConfiguration);
 
-                while (Scanner.Instance.IsScanning) {
-                    Thread.Sleep(1000);
-                    Console.WriteLine("Scanning...");
-                }
+                Console.WriteLine("scanning for memory locations...");
 
-                MemoryHandler.Instance.SignaturesFoundEvent += delegate(object sender, SignaturesFoundEvent e) {
-                    foreach (KeyValuePair<string, Signature> kvp in e.Signatures) {
+                memoryHandler.ExceptionEvent += delegate(object? sender, ExceptionEvent e) {
+                    Console.WriteLine(e.Exception.Message);
+                };
+                memoryHandler.MemoryLocationsFoundEvent += delegate(object sender, MemoryLocationsFoundEvent e) {
+                    Console.WriteLine("memory locations found...");
+                    foreach (KeyValuePair<string, MemoryLocation> kvp in e.MemoryLocations) {
                         Console.WriteLine($"{kvp.Key} => {kvp.Value.GetAddress():X}");
                     }
                 };
-            }
 
-            Console.WriteLine("To exit this application press \"Enter\".");
-            Console.ReadLine();
+                while (memoryHandler.Scanner.IsScanning) {
+                    Thread.Sleep(100);
+                }
+
+                Console.WriteLine("completed...");
+
+                memoryHandler.Reader.GetPartyMembers();
+                memoryHandler.Reader.GetActions();
+                memoryHandler.Reader.GetActors();
+                memoryHandler.Reader.GetChatLog();
+                memoryHandler.Reader.GetCurrentPlayer();
+                memoryHandler.Reader.GetInventory();
+                memoryHandler.Reader.GetJobResources();
+                memoryHandler.Reader.GetTargetInfo();
+
+                Console.WriteLine("To exit this application press \"Enter\".");
+            }
         }
     }
 }

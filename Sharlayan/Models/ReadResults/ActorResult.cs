@@ -12,14 +12,14 @@ namespace Sharlayan.Models.ReadResults {
     using System.Collections.Concurrent;
 
     using Sharlayan.Core;
-    using Sharlayan.Delegates;
 
     public class ActorResult {
-        public ConcurrentDictionary<uint, ActorItem> CurrentMonsters => MonsterWorkerDelegate.ActorItems;
+        public ConcurrentDictionary<uint, ActorItem> CurrentMonsters { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> CurrentNPCs => NPCWorkerDelegate.ActorItems;
+        public ConcurrentDictionary<uint, ActorItem> CurrentNPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> CurrentPCs => PCWorkerDelegate.ActorItems;
+        public ConcurrentDictionary<uint, ActorItem> CurrentPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ActorItem CurrentUser { get; internal set; }
 
         public ConcurrentDictionary<uint, ActorItem> NewMonsters { get; } = new ConcurrentDictionary<uint, ActorItem>();
 

@@ -18,8 +18,8 @@ namespace Sharlayan.Utilities {
                 return string.Empty;
             }
 
-            var buffer = new StringBuilder(xValue.Length);
-            foreach (var xChar in xValue.Where(xChar => IsLegalXmlChar(xChar))) {
+            StringBuilder buffer = new StringBuilder(xValue.Length);
+            foreach (char xChar in xValue.Where(xChar => IsLegalXmlChar(xChar))) {
                 buffer.Append(xChar);
             }
 

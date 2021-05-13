@@ -15,7 +15,7 @@ namespace Sharlayan.Core {
         public bool IsValid => this.ID > 0 && !string.IsNullOrWhiteSpace(this.Name);
 
         public PartyMember Clone() {
-            var cloned = (PartyMember) this.MemberwiseClone();
+            PartyMember cloned = (PartyMember) this.MemberwiseClone();
 
             cloned.Coordinate = new Coordinate(this.Coordinate.X, this.Coordinate.Z, this.Coordinate.Y);
             cloned.EnmityItems = new System.Collections.Generic.List<EnmityItem>();

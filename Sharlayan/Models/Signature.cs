@@ -49,33 +49,5 @@ namespace Sharlayan.Models {
         public IntPtr SigScanAddress { get; set; }
 
         public string Value { get; set; }
-
-        public static implicit operator IntPtr(Signature signature) {
-            return signature.GetAddress();
-        }
-
-        public IntPtr GetAddress() {
-            IntPtr baseAddress = IntPtr.Zero;
-            var IsASMSignature = false;
-            if (this.SigScanAddress != IntPtr.Zero) {
-                baseAddress = this.SigScanAddress; // Scanner should have already applied the base offset
-                if (this.ASMSignature) {
-                    IsASMSignature = true;
-                }
-            }
-            else {
-                if (this.PointerPath == null || this.PointerPath.Count == 0) {
-                    return IntPtr.Zero;
-                }
-
-                baseAddress = MemoryHandler.Instance.GetStaticAddress(0);
-            }
-
-            if (this.PointerPath == null || this.PointerPath.Count == 0) {
-                return baseAddress;
-            }
-
-            return MemoryHandler.Instance.ResolvePointerPath(this.PointerPath, baseAddress, IsASMSignature);
-        }
     }
 }

@@ -50,7 +50,7 @@ namespace Sharlayan {
             public uint Type;
 
             public override string ToString() {
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
                 sb.AppendFormat($"BaseAddress:{this.BaseAddress}{Environment.NewLine}");
                 sb.AppendFormat($"AllocationBase:{this.AllocationBase}{Environment.NewLine}");

@@ -28,9 +28,9 @@ namespace Sharlayan.Utilities {
             Encoding = Encoding.UTF8,
         };
 
-        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest") {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
-            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
+        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest", bool useLocalCache = true) {
+            string file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
+            if (File.Exists(file) && useLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
@@ -38,26 +38,26 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static IEnumerable<Signature> GetSignatures(ProcessModel processModel, string patchVersion = "latest") {
-            var architecture = "x64";
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{architecture}.json");
-            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
-                var json = FileResponseToJSON(file);
+        public static IEnumerable<Signature> GetSignatures(MemoryHandlerConfiguration memoryHandlerConfiguration) {
+            string architecture = "x64";
+            string file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{architecture}.json");
+            if (File.Exists(file) && memoryHandlerConfiguration.UseLocalCache) {
+                string json = FileResponseToJSON(file);
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
             }
             else {
-                var json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{patchVersion}/{architecture}.json");
+                string json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{memoryHandlerConfiguration.PatchVersion}/{architecture}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
-                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.GetEncoding(932));
+                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
 
                 return resolved;
             }
         }
 
-        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion = "latest") {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
-            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
+        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion = "latest", bool useLocalCache = true) {
+            string file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
+            if (File.Exists(file) && useLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
@@ -65,23 +65,23 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static StructuresContainer GetStructures(ProcessModel processModel, string patchVersion = "latest") {
-            var architecture = "x64";
-            var file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{architecture}.json");
-            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
+        public static StructuresContainer GetStructures(ProcessModel processModel, string patchVersion = "latest", bool useLocalCache = true) {
+            string architecture = "x64";
+            string file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{architecture}.json");
+            if (File.Exists(file) && useLocalCache) {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
             return APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{patchVersion}/{architecture}.json");
         }
 
-        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest") {
+        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest", bool useLocalCache = true) {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
             // - It maps directly to SaintCoins map.csv against TerritoryType ID
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
-            if (File.Exists(file) && MemoryHandler.Instance.UseLocalCache) {
+            string file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
+            if (File.Exists(file) && useLocalCache) {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
@@ -90,8 +90,8 @@ namespace Sharlayan.Utilities {
         }
 
         private static T APIResponseToClass<T>(string file, string uri) {
-            var json = APIResponseToJSON(uri);
-            var resolved = JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
+            string json = APIResponseToJSON(uri);
+            T resolved = JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
 
             File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
 
@@ -99,7 +99,7 @@ namespace Sharlayan.Utilities {
         }
 
         private static void APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string file, string uri) {
-            var json = APIResponseToJSON(uri);
+            string json = APIResponseToJSON(uri);
             ConcurrentDictionary<uint, T> resolved = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, T>>(json, Constants.SerializerSettings);
 
             foreach (KeyValuePair<uint, T> kvp in resolved) {
@@ -114,12 +114,12 @@ namespace Sharlayan.Utilities {
         }
 
         private static T EnsureClassValues<T>(string file) {
-            var json = FileResponseToJSON(file);
+            string json = FileResponseToJSON(file);
             return JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
         }
 
         private static void EnsureDictionaryValues<T>(ConcurrentDictionary<uint, T> dictionary, string file) {
-            var json = FileResponseToJSON(file);
+            string json = FileResponseToJSON(file);
             ConcurrentDictionary<uint, T> resolved = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, T>>(json, Constants.SerializerSettings);
 
             foreach (KeyValuePair<uint, T> kvp in resolved) {
@@ -128,7 +128,7 @@ namespace Sharlayan.Utilities {
         }
 
         private static string FileResponseToJSON(string file) {
-            using (var streamReader = new StreamReader(file)) {
+            using (StreamReader streamReader = new StreamReader(file)) {
                 return streamReader.ReadToEnd();
             }
         }

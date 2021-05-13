@@ -128,8 +128,6 @@ namespace Sharlayan.Core.Interfaces {
 
         byte Title { get; set; }
 
-        int TPCurrent { get; set; }
-
         Actor.Type Type { get; set; }
 
         byte TypeID { get; set; }
