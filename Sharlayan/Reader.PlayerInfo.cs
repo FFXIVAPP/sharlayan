@@ -1,10 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Reader.CurrentPlayer.cs" company="SyndicatedLife">
+// <copyright file="Reader.PlayerInfo.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   Reader.CurrentPlayer.cs Implementation
+//   Reader.PlayerInfo.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -38,10 +38,10 @@ namespace Sharlayan {
             }
 
             try {
-                byte[] source = this._memoryHandler.GetByteArray(PlayerInfoMap, this._memoryHandler.Structures.CurrentPlayer.SourceSize);
+                byte[] source = this._memoryHandler.GetByteArray(PlayerInfoMap, this._memoryHandler.Structures.PlayerInfo.SourceSize);
 
                 try {
-                    result.CurrentPlayer = this._currentPlayerResolver.ResolvePlayerFromBytes(source);
+                    result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(source);
                 }
                 catch (Exception ex) {
                     this._memoryHandler.RaiseException(Logger, ex, true);
@@ -61,11 +61,13 @@ namespace Sharlayan {
                                 Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
                             };
                             if (agroEntry.ID > 0) {
-                                result.CurrentPlayer.EnmityItems.Add(agroEntry);
+                                result.PlayerInfo.EnmityItems.Add(agroEntry);
                             }
                         }
                     }
                 }
+
+                result.Entity = this._pcWorkerDelegate.CurrentUser;
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex, true);

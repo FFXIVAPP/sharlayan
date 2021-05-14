@@ -18,7 +18,6 @@ namespace Sharlayan {
     using NLog;
 
     using Sharlayan.Events;
-    using Sharlayan.Models;
     using Sharlayan.Models.Structures;
     using Sharlayan.Utilities;
 

@@ -12,6 +12,7 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class CurrentPlayerResult {
-        public CurrentPlayer CurrentPlayer { get; set; } = new CurrentPlayer();
+        public ActorItem Entity { get; internal set; }
+        public PlayerInfo PlayerInfo { get; internal set; } = new PlayerInfo();
     }
 }

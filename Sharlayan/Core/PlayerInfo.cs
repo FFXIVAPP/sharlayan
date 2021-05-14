@@ -1,10 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CurrentPlayer.cs" company="SyndicatedLife">
+// <copyright file="PlayerInfo.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   CurrentPlayer.cs Implementation
+//   PlayerInfo.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,11 +13,8 @@ namespace Sharlayan.Core {
 
     using Sharlayan.Core.Enums;
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Extensions;
 
-    public class CurrentPlayer : ICurrentPlayer {
-        private string _name;
-
+    public class PlayerInfo : IPlayerInfo {
         public byte ACN { get; set; }
 
         public int ACN_CurrentEXP { get; set; }
@@ -173,11 +170,6 @@ namespace Sharlayan.Core {
         public byte MRD { get; set; }
 
         public int MRD_CurrentEXP { get; set; }
-
-        public string Name {
-            get => this._name;
-            set => this._name = value.ToTitleCase();
-        }
 
         public short Perception { get; set; }
 

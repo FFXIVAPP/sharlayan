@@ -11,6 +11,8 @@
 namespace Sharlayan {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Sharlayan.Models;
 
@@ -20,6 +22,8 @@ namespace Sharlayan {
         internal ConcurrentDictionary<int, MemoryHandler> _memoryHandlers = new ConcurrentDictionary<int, MemoryHandler>();
 
         public static SharlayanMemoryManager Instance => _instance.Value;
+
+        public List<MemoryHandler> GetHandlers() => Instance._memoryHandlers.Values.ToList();
 
         public MemoryHandler AddHandler(MemoryHandlerConfiguration configuration) {
             MemoryHandler memoryHandler = new MemoryHandler(configuration);

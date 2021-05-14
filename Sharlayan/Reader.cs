@@ -39,14 +39,14 @@ namespace Sharlayan {
             this._pcWorkerDelegate = new PCWorkerDelegate();
 
             this._actorItemResolver = new ActorItemResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
-            this._currentPlayerResolver = new CurrentPlayerResolver(this._memoryHandler);
+            this._playerInfoResolver = new PlayerInfoResolver(this._memoryHandler);
             this._partyMemberResolver = new PartyMemberResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
         }
-
-        private CurrentPlayerResolver _currentPlayerResolver { get; }
 
         private MemoryHandler _memoryHandler { get; }
 
         private PartyMemberResolver _partyMemberResolver { get; }
+
+        private PlayerInfoResolver _playerInfoResolver { get; }
     }
 }

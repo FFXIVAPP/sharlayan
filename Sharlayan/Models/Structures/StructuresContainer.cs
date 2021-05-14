@@ -14,8 +14,6 @@ namespace Sharlayan.Models.Structures {
 
         public ChatLogPointers ChatLogPointers { get; set; } = new ChatLogPointers();
 
-        public CurrentPlayer CurrentPlayer { get; set; } = new CurrentPlayer();
-
         public EnmityItem EnmityItem { get; set; } = new EnmityItem();
 
         public HotBarItem HotBarItem { get; set; } = new HotBarItem();
@@ -27,6 +25,8 @@ namespace Sharlayan.Models.Structures {
         public JobResources JobResources { get; set; } = new JobResources();
 
         public PartyMember PartyMember { get; set; } = new PartyMember();
+
+        public PlayerInfo PlayerInfo { get; set; } = new PlayerInfo();
 
         public RecastItem RecastItem { get; set; } = new RecastItem();
 

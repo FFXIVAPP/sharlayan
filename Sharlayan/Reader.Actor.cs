@@ -258,7 +258,6 @@ namespace Sharlayan {
                 this._memoryHandler.RaiseException(Logger, ex, true);
             }
 
-            result.CurrentUser = this._pcWorkerDelegate.CurrentUser;
             result.CurrentMonsters = this._monsterWorkerDelegate.ActorItems;
             result.CurrentNPCs = this._npcWorkerDelegate.ActorItems;
             result.CurrentPCs = this._pcWorkerDelegate.ActorItems;

@@ -19,7 +19,6 @@ namespace Sharlayan.Models.ReadResults {
         public ConcurrentDictionary<uint, ActorItem> CurrentNPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
         public ConcurrentDictionary<uint, ActorItem> CurrentPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
-        public ActorItem CurrentUser { get; internal set; }
 
         public ConcurrentDictionary<uint, ActorItem> NewMonsters { get; } = new ConcurrentDictionary<uint, ActorItem>();
 

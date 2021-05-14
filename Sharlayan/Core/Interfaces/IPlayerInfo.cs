@@ -1,10 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ICurrentPlayer.cs" company="SyndicatedLife">
+// <copyright file="IPlayerInfo.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   ICurrentPlayer.cs Implementation
+//   IPlayerInfo.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ namespace Sharlayan.Core.Interfaces {
 
     using Sharlayan.Core.Enums;
 
-    public interface ICurrentPlayer {
+    public interface IPlayerInfo {
         byte ACN { get; set; }
 
         int ACN_CurrentEXP { get; set; }
@@ -167,8 +167,6 @@ namespace Sharlayan.Core.Interfaces {
         byte MRD { get; set; }
 
         int MRD_CurrentEXP { get; set; }
-
-        string Name { get; set; }
 
         short Perception { get; set; }
 
