@@ -17,7 +17,9 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Models.XIVDatabase;
 
     public static class ActionLookup {
-        private static ConcurrentDictionary<uint, ActionItem> Actions = new ConcurrentDictionary<uint, ActionItem>();
+        private static ConcurrentDictionary<uint, ActionItem> _actions = new ConcurrentDictionary<uint, ActionItem>();
+
+        private static bool _loading;
 
         private static ActionItem DefaultActionInfo = new ActionItem {
             Name = new Localization {
@@ -30,82 +32,32 @@ namespace Sharlayan.Utilities {
             },
         };
 
-        private static bool Loading;
-
-        public static List<ActionItem> DamageOverTimeActions(string patchVersion = "latest", bool useLocalCache = true) {
-            List<ActionItem> results = new List<ActionItem>();
-            if (Loading) {
-                return results;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return results;
-            }
+        public static List<ActionItem> DamageOverTimeActions() {
+            return _actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value).ToList();
         }
 
-        public static ActionItem GetActionInfo(string name, string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
-                return DefaultActionInfo;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return DefaultActionInfo;
-            }
+        public static ActionItem GetActionInfo(string name) {
+            return _actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
         }
 
-        public static ActionItem GetActionInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
-                return DefaultActionInfo;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.ContainsKey(id)
-                               ? Actions[id]
-                               : DefaultActionInfo;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return DefaultActionInfo;
-            }
+        public static ActionItem GetActionInfo(uint id) {
+            return _actions.ContainsKey(id)
+                       ? _actions[id]
+                       : DefaultActionInfo;
         }
 
-        public static List<ActionItem> HealingOverTimeActions(string patchVersion = "latest", bool useLocalCache = true) {
-            List<ActionItem> results = new List<ActionItem>();
-            if (Loading) {
-                return results;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return results;
-            }
+        public static List<ActionItem> HealingOverTimeActions() {
+            return _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
         }
 
-        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
+        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+            if (_loading) {
                 return;
             }
 
-            Loading = true;
-            APIHelper.GetActions(Actions, patchVersion, useLocalCache);
-            Loading = false;
+            _loading = true;
+            APIHelper.GetActions(_actions, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            _loading = false;
         }
     }
 }

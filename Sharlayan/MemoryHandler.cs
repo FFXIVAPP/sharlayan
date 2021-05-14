@@ -21,8 +21,6 @@ namespace Sharlayan {
     using Sharlayan.Models.Structures;
     using Sharlayan.Utilities;
 
-    using BitConverter = Sharlayan.Utilities.BitConverter;
-
     public class MemoryHandler : IDisposable {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -47,9 +45,9 @@ namespace Sharlayan {
             if (this._isNewInstance) {
                 this._isNewInstance = false;
 
-                ActionLookup.Resolve();
-                StatusEffectLookup.Resolve();
-                ZoneLookup.Resolve();
+                ActionLookup.Resolve(this.Configuration);
+                StatusEffectLookup.Resolve(this.Configuration);
+                ZoneLookup.Resolve(this.Configuration);
 
                 this.ResolveMemoryStructures();
             }
@@ -127,23 +125,23 @@ namespace Sharlayan {
         public short GetInt16(IntPtr address, long offset = 0) {
             byte[] value = new byte[2];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt16(value, 0);
+            return SharlayanBitConverter.TryToInt16(value, 0);
         }
 
         public int GetInt32(IntPtr address, long offset = 0) {
             byte[] value = new byte[4];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt32(value, 0);
+            return SharlayanBitConverter.TryToInt32(value, 0);
         }
 
         public long GetInt64(IntPtr address, long offset = 0) {
             byte[] value = new byte[8];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToInt64(value, 0);
+            return SharlayanBitConverter.TryToInt64(value, 0);
         }
 
         public long GetInt64FromBytes(byte[] source, int index = 0) {
-            return BitConverter.TryToInt64(source, index);
+            return SharlayanBitConverter.TryToInt64(source, index);
         }
 
         public IntPtr GetStaticAddress(long offset) {
@@ -209,23 +207,23 @@ namespace Sharlayan {
         public ushort GetUInt16(IntPtr address, long offset = 0) {
             byte[] value = new byte[4];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToUInt16(value, 0);
+            return SharlayanBitConverter.TryToUInt16(value, 0);
         }
 
         public uint GetUInt32(IntPtr address, long offset = 0) {
             byte[] value = new byte[4];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToUInt32(value, 0);
+            return SharlayanBitConverter.TryToUInt32(value, 0);
         }
 
         public ulong GetUInt64(IntPtr address, long offset = 0) {
             byte[] value = new byte[8];
             this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return BitConverter.TryToUInt32(value, 0);
+            return SharlayanBitConverter.TryToUInt32(value, 0);
         }
 
         public ulong GetUInt64FromBytes(byte[] source, int index = 0) {
-            return BitConverter.TryToUInt64(source, index);
+            return SharlayanBitConverter.TryToUInt64(source, index);
         }
 
         public bool Peek(IntPtr address, byte[] buffer) {
@@ -235,7 +233,7 @@ namespace Sharlayan {
         public IntPtr ReadPointer(IntPtr address, long offset = 0) {
             byte[] win64 = new byte[8];
             this.Peek(new IntPtr(address.ToInt64() + offset), win64);
-            return new IntPtr(BitConverter.TryToInt64(win64, 0));
+            return new IntPtr(SharlayanBitConverter.TryToInt64(win64, 0));
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false) {

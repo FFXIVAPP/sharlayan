@@ -28,13 +28,13 @@ namespace Sharlayan.Utilities {
             Encoding = Encoding.UTF8,
         };
 
-        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion = "latest", bool useLocalCache = true) {
+        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion, bool useLocalCache, string baseURL) {
             string file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
             if (File.Exists(file) && useLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                APIResponseToDictionary(actions, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/actions.json");
+                APIResponseToDictionary(actions, file, $"{baseURL}/xivdatabase/{patchVersion}/actions.json");
             }
         }
 
@@ -47,7 +47,7 @@ namespace Sharlayan.Utilities {
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
             }
             else {
-                string json = APIResponseToJSON($"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/signatures/{region}/{patchVersion}.json");
+                string json = APIResponseToJSON($"{memoryHandlerConfiguration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
                 File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -56,13 +56,13 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion = "latest", bool useLocalCache = true) {
+        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion, bool useLocalCache, string baseURL) {
             string file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
             if (File.Exists(file) && useLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                APIResponseToDictionary(statusEffects, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/statuses.json");
+                APIResponseToDictionary(statusEffects, file, $"{baseURL}/xivdatabase/{patchVersion}/statuses.json");
             }
         }
 
@@ -74,10 +74,10 @@ namespace Sharlayan.Utilities {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            return APIResponseToClass<StructuresContainer>(file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/structures/{region}/{patchVersion}.json");
+            return APIResponseToClass<StructuresContainer>(file, $"{memoryHandlerConfiguration.APIBaseURL}/structures/{region}/{patchVersion}.json");
         }
 
-        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion = "latest", bool useLocalCache = true) {
+        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion, bool useLocalCache, string baseURL) {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
@@ -87,7 +87,7 @@ namespace Sharlayan.Utilities {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                APIResponseToDictionary(mapInfos, file, $"https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master/xivdatabase/{patchVersion}/zones.json");
+                APIResponseToDictionary(mapInfos, file, $"{baseURL}/xivdatabase/{patchVersion}/zones.json");
             }
         }
 

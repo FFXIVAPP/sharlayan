@@ -75,136 +75,136 @@ namespace Sharlayan.Utilities {
 
                         #region Current Experience
 
-                        entry.PGL_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.PGL_CurrentEXP);
-                        entry.GLD_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GLD_CurrentEXP);
-                        entry.MRD_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MRD_CurrentEXP);
-                        entry.ARC_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ARC_CurrentEXP);
-                        entry.LNC_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.LNC_CurrentEXP);
-                        entry.THM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.THM_CurrentEXP);
-                        entry.CNJ_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CNJ_CurrentEXP);
+                        entry.PGL_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.PGL_CurrentEXP);
+                        entry.GLD_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GLD_CurrentEXP);
+                        entry.MRD_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MRD_CurrentEXP);
+                        entry.ARC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ARC_CurrentEXP);
+                        entry.LNC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.LNC_CurrentEXP);
+                        entry.THM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.THM_CurrentEXP);
+                        entry.CNJ_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CNJ_CurrentEXP);
 
-                        entry.CPT_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CPT_CurrentEXP);
-                        entry.BSM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BSM_CurrentEXP);
-                        entry.ARM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ARM_CurrentEXP);
-                        entry.GSM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GSM_CurrentEXP);
-                        entry.LTW_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.LTW_CurrentEXP);
-                        entry.WVR_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.WVR_CurrentEXP);
-                        entry.ALC_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ALC_CurrentEXP);
-                        entry.CUL_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CUL_CurrentEXP);
+                        entry.CPT_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CPT_CurrentEXP);
+                        entry.BSM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BSM_CurrentEXP);
+                        entry.ARM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ARM_CurrentEXP);
+                        entry.GSM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GSM_CurrentEXP);
+                        entry.LTW_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.LTW_CurrentEXP);
+                        entry.WVR_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.WVR_CurrentEXP);
+                        entry.ALC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ALC_CurrentEXP);
+                        entry.CUL_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CUL_CurrentEXP);
 
-                        entry.MIN_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MIN_CurrentEXP);
-                        entry.BTN_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BTN_CurrentEXP);
-                        entry.FSH_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.FSH_CurrentEXP);
+                        entry.MIN_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MIN_CurrentEXP);
+                        entry.BTN_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BTN_CurrentEXP);
+                        entry.FSH_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.FSH_CurrentEXP);
 
-                        entry.ACN_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ACN_CurrentEXP);
-                        entry.ROG_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ROG_CurrentEXP);
+                        entry.ACN_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ACN_CurrentEXP);
+                        entry.ROG_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.ROG_CurrentEXP);
 
-                        entry.MCH_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MCH_CurrentEXP);
-                        entry.DRK_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DRK_CurrentEXP);
-                        entry.AST_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.AST_CurrentEXP);
+                        entry.MCH_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.MCH_CurrentEXP);
+                        entry.DRK_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DRK_CurrentEXP);
+                        entry.AST_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.AST_CurrentEXP);
 
-                        entry.SAM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.SAM_CurrentEXP);
-                        entry.RDM_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.RDM_CurrentEXP);
+                        entry.SAM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.SAM_CurrentEXP);
+                        entry.RDM_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.RDM_CurrentEXP);
 
-                        entry.BLU_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BLU_CurrentEXP);
+                        entry.BLU_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BLU_CurrentEXP);
 
-                        entry.DNC_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DNC_CurrentEXP);
-                        entry.GNB_CurrentEXP = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GNB_CurrentEXP);
+                        entry.DNC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DNC_CurrentEXP);
+                        entry.GNB_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GNB_CurrentEXP);
 
                         #endregion
 
                         #region Base Stats
 
-                        entry.BaseStrength = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseStrength);
-                        entry.BaseDexterity = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseDexterity);
-                        entry.BaseVitality = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseVitality);
-                        entry.BaseIntelligence = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseIntelligence);
-                        entry.BaseMind = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseMind);
-                        entry.BasePiety = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BasePiety);
-                        entry.BaseSubstat = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseSubstat);
+                        entry.BaseStrength = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseStrength);
+                        entry.BaseDexterity = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseDexterity);
+                        entry.BaseVitality = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseVitality);
+                        entry.BaseIntelligence = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseIntelligence);
+                        entry.BaseMind = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseMind);
+                        entry.BasePiety = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BasePiety);
+                        entry.BaseSubstat = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BaseSubstat);
 
                         #endregion
 
                         #region Base Stats (base+gear+bonus)
 
-                        entry.Strength = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Strength);
-                        entry.Dexterity = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Dexterity);
-                        entry.Vitality = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Vitality);
-                        entry.Intelligence = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Intelligence);
-                        entry.Mind = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Mind);
-                        entry.Piety = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Piety);
+                        entry.Strength = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Strength);
+                        entry.Dexterity = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Dexterity);
+                        entry.Vitality = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Vitality);
+                        entry.Intelligence = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Intelligence);
+                        entry.Mind = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Mind);
+                        entry.Piety = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Piety);
 
                         #endregion
 
                         #region Basic Info
 
-                        entry.HPMax = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.HPMax);
-                        entry.GPMax = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.GPMax);
-                        entry.CPMax = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.CPMax);
+                        entry.HPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.HPMax);
+                        entry.GPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.GPMax);
+                        entry.CPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.CPMax);
 
                         #endregion
 
                         #region Offensive Properties
 
-                        entry.DirectHit = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.DirectHit);
-                        entry.CriticalHitRate = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.CriticalHitRate);
-                        entry.Determination = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Determination);
+                        entry.DirectHit = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.DirectHit);
+                        entry.CriticalHitRate = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.CriticalHitRate);
+                        entry.Determination = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Determination);
 
                         #endregion
 
                         #region Defensive Properties
 
-                        entry.Tenacity = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Tenacity);
-                        entry.Defense = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Defense);
-                        entry.MagicDefense = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.MagicDefense);
+                        entry.Tenacity = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Tenacity);
+                        entry.Defense = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Defense);
+                        entry.MagicDefense = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.MagicDefense);
 
                         #endregion
 
                         #region Phyiscal Properties
 
-                        entry.AttackPower = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.AttackPower);
-                        entry.SkillSpeed = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SkillSpeed);
+                        entry.AttackPower = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.AttackPower);
+                        entry.SkillSpeed = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SkillSpeed);
 
                         #endregion
 
                         #region Mental Properties
 
-                        entry.SpellSpeed = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SpellSpeed);
-                        entry.AttackMagicPotency = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.AttackMagicPotency);
-                        entry.HealingMagicPotency = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.HealingMagicPotency);
+                        entry.SpellSpeed = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SpellSpeed);
+                        entry.AttackMagicPotency = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.AttackMagicPotency);
+                        entry.HealingMagicPotency = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.HealingMagicPotency);
 
                         #endregion
 
                         #region Elemental Resistances
 
-                        entry.FireResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.FireResistance);
-                        entry.IceResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.IceResistance);
-                        entry.WindResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.WindResistance);
-                        entry.EarthResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.EarthResistance);
-                        entry.LightningResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.LightningResistance);
-                        entry.WaterResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.WaterResistance);
+                        entry.FireResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.FireResistance);
+                        entry.IceResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.IceResistance);
+                        entry.WindResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.WindResistance);
+                        entry.EarthResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.EarthResistance);
+                        entry.LightningResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.LightningResistance);
+                        entry.WaterResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.WaterResistance);
 
                         #endregion
 
                         #region Physical Resistances
 
-                        entry.SlashingResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SlashingResistance);
-                        entry.PiercingResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.PiercingResistance);
-                        entry.BluntResistance = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BluntResistance);
+                        entry.SlashingResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.SlashingResistance);
+                        entry.PiercingResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.PiercingResistance);
+                        entry.BluntResistance = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.BluntResistance);
 
                         #endregion
 
                         #region Crafting
 
-                        entry.Craftmanship = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Craftmanship);
-                        entry.Control = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Control);
+                        entry.Craftmanship = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Craftmanship);
+                        entry.Control = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Control);
 
                         #endregion
 
                         #region Gathering
 
-                        entry.Gathering = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Gathering);
-                        entry.Perception = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Perception);
+                        entry.Gathering = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Gathering);
+                        entry.Perception = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.Perception);
 
                         #endregion
 

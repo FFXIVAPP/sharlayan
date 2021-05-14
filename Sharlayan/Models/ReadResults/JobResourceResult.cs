@@ -9,28 +9,25 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Models.ReadResults {
-    using Sharlayan.Models.Structures;
+    using Sharlayan.Core.JobResources;
 
-    public partial class JobResourceResult {
-        public AstrologianResources Astrologian => new AstrologianResources(this);
-        public BardResources Bard => new BardResources(this);
-        public BlackMageResources BlackMage => new BlackMageResources(this);
-        public DancerResources Dancer => new DancerResources(this);
-        public DarkKnightResources DarkKnight => new DarkKnightResources(this);
-        public DragoonResources Dragoon => new DragoonResources(this);
-        public GunBreakerResources GunBreaker => new GunBreakerResources(this);
-        public MachinistResources Machinist => new MachinistResources(this);
-        public MonkResources Monk => new MonkResources(this);
-        public NinjaResources Ninja => new NinjaResources(this);
-
-        public PaladinResources Paladin => new PaladinResources(this);
-        public RedMageResources RedMage => new RedMageResources(this);
-        public SamuraiResources Samurai => new SamuraiResources(this);
-        public ScholarResources Scholar => new ScholarResources(this);
-        public SummonerResources Summoner => new SummonerResources(this);
-        public WarriorResources Warrior => new WarriorResources(this);
-        public WhiteMageResources WhiteMage => new WhiteMageResources(this);
-        internal byte[] Data { get; set; }
-        internal JobResources Offsets { get; set; }
+    public class JobResourceResult {
+        public AstrologianResources Astrologian { get; set; } = new AstrologianResources();
+        public BardResources Bard { get; set; } = new BardResources();
+        public BlackMageResources BlackMage { get; set; } = new BlackMageResources();
+        public DancerResources Dancer { get; set; } = new DancerResources();
+        public DarkKnightResources DarkKnight { get; set; } = new DarkKnightResources();
+        public DragoonResources Dragoon { get; set; } = new DragoonResources();
+        public GunBreakerResources GunBreaker { get; set; } = new GunBreakerResources();
+        public MachinistResources Machinist { get; set; } = new MachinistResources();
+        public MonkResources Monk { get; set; } = new MonkResources();
+        public NinjaResources Ninja { get; set; } = new NinjaResources();
+        public PaladinResources Paladin { get; set; } = new PaladinResources();
+        public RedMageResources RedMage { get; set; } = new RedMageResources();
+        public SamuraiResources Samurai { get; set; } = new SamuraiResources();
+        public ScholarResources Scholar { get; set; } = new ScholarResources();
+        public SummonerResources Summoner { get; set; } = new SummonerResources();
+        public WarriorResources Warrior { get; set; } = new WarriorResources();
+        public WhiteMageResources WhiteMage { get; set; } = new WhiteMageResources();
     }
 }

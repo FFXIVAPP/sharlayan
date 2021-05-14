@@ -19,8 +19,6 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
 
-    using BitConverter = System.BitConverter;
-
     public partial class Reader {
         public bool CanGetChatLog() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.ChatLogKey);

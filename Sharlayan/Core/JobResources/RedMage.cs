@@ -1,21 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JobResourceResult.Paladin.cs" company="SyndicatedLife">
+// <copyright file="RedMage.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   JobResourceResult.Paladin.cs Implementation
+//   RedMage.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sharlayan.Models.ReadResults {
-    public partial class JobResourceResult {
-        public sealed class PaladinResources {
-            internal PaladinResources(JobResourceResult result) {
-                this.OathGauge = result.Data[result.Offsets.Paladin.OathGauge];
-            }
+namespace Sharlayan.Core.JobResources {
+    using System;
 
-            public int OathGauge { get; }
-        }
+    using Sharlayan.Core.Interfaces;
+
+    public sealed class RedMageResources : IJobResource {
+        public int BlackMana { get; set; }
+        public TimeSpan Timer { get; set; }
+        public int WhiteMana { get; set; }
     }
 }

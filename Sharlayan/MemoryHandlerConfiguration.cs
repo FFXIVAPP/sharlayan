@@ -9,12 +9,16 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
+    using System.IO;
+
     using Sharlayan.Enums;
     using Sharlayan.Models;
 
     public class MemoryHandlerConfiguration {
+        public string APIBaseURL { get; set; } = Constants.DefaultAPIBaseURL;
         public GameLanguage GameLanguage { get; set; } = GameLanguage.English;
         public GameRegion GameRegion { get; set; } = GameRegion.Global;
+        public string JSONCacheDirectory { get; set; } = Directory.GetCurrentDirectory();
         public string PatchVersion { get; set; } = "latest";
         public ProcessModel ProcessModel { get; set; }
         public bool ScanAlMemoryRegions { get; set; } = false;

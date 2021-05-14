@@ -16,9 +16,9 @@ namespace Sharlayan {
 
     using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
+    using Sharlayan.Utilities;
 
     using Action = Sharlayan.Core.Enums.Action;
-    using BitConverter = Sharlayan.Utilities.BitConverter;
 
     public partial class Reader {
         private readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
@@ -126,7 +126,7 @@ namespace Sharlayan {
 
                 ActionItem item = new ActionItem {
                     Name = name,
-                    ID = BitConverter.TryToInt16(hotbarSource, this._memoryHandler.Structures.HotBarItem.ID),
+                    ID = SharlayanBitConverter.TryToInt16(hotbarSource, this._memoryHandler.Structures.HotBarItem.ID),
                     KeyBinds = this._memoryHandler.GetStringFromBytes(hotbarSource, this._memoryHandler.Structures.HotBarItem.KeyBinds),
                     Slot = slot,
                 };
@@ -151,19 +151,19 @@ namespace Sharlayan {
                     }
                 }
 
-                item.Category = BitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Category);
-                item.Type = BitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Type);
-                item.Icon = BitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Icon);
+                item.Category = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Category);
+                item.Type = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Type);
+                item.Icon = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Icon);
                 item.CoolDownPercent = recastSource[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
-                item.IsAvailable = BitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.IsAvailable);
+                item.IsAvailable = SharlayanBitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.IsAvailable);
 
-                int remainingCost = BitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.RemainingCost);
+                int remainingCost = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.RemainingCost);
 
                 item.RemainingCost = remainingCost != -1
                                          ? remainingCost
                                          : 0;
-                item.Amount = BitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Amount);
-                item.InRange = BitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.InRange);
+                item.Amount = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Amount);
+                item.InRange = SharlayanBitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.InRange);
                 item.IsProcOrCombo = recastSource[this._memoryHandler.Structures.RecastItem.ActionProc] > 0;
 
                 container.ActionItems.Add(item);

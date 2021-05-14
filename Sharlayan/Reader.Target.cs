@@ -14,8 +14,7 @@ namespace Sharlayan {
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Models.ReadResults;
-
-    using BitConverter = Sharlayan.Utilities.BitConverter;
+    using Sharlayan.Utilities;
 
     public partial class Reader {
         public bool CanGetTargetInfo() {
@@ -45,7 +44,7 @@ namespace Sharlayan {
                     long focusTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Focus);
                     long previousTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Previous);
 
-                    uint currentTargetID = BitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.TargetInfo.CurrentID);
+                    uint currentTargetID = SharlayanBitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.TargetInfo.CurrentID);
 
                     if (currentTarget > 0) {
                         try {

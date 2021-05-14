@@ -10,12 +10,15 @@
 
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
-    using System.Linq;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
 
     public static class ZoneLookup {
+        private static bool _loading;
+
+        private static ConcurrentDictionary<uint, MapItem> _zones = new ConcurrentDictionary<uint, MapItem>();
+
         private static MapItem DefaultZoneInfo = new MapItem {
             Name = new Localization {
                 Chinese = "???",
@@ -29,35 +32,20 @@ namespace Sharlayan.Utilities {
             IsDungeonInstance = false,
         };
 
-        private static bool Loading;
-
-        private static ConcurrentDictionary<uint, MapItem> Zones = new ConcurrentDictionary<uint, MapItem>();
-
-        public static MapItem GetZoneInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
-                return DefaultZoneInfo;
-            }
-
-            lock (Zones) {
-                if (Zones.Any()) {
-                    return Zones.ContainsKey(id)
-                               ? Zones[id]
-                               : DefaultZoneInfo;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return DefaultZoneInfo;
-            }
+        public static MapItem GetZoneInfo(uint id) {
+            return _zones.ContainsKey(id)
+                       ? _zones[id]
+                       : DefaultZoneInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
+        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+            if (_loading) {
                 return;
             }
 
-            Loading = true;
-            APIHelper.GetZones(Zones, patchVersion, useLocalCache);
-            Loading = false;
+            _loading = true;
+            APIHelper.GetZones(_zones, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            _loading = false;
         }
     }
 }

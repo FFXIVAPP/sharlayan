@@ -63,11 +63,11 @@ namespace Sharlayan.Utilities {
                 int defaultStatusEffectOffset = this._memoryHandler.Structures.PartyMember.DefaultStatusEffectOffset;
                 PartyMember entry = new PartyMember();
                 try {
-                    entry.X = BitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
-                    entry.Z = BitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
-                    entry.Y = BitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Y);
+                    entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
+                    entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
+                    entry.Y = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Y);
                     entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
-                    entry.ID = BitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
+                    entry.ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
                     entry.UUID = Guid.NewGuid().ToString();
                     entry.Name = this._memoryHandler.GetStringFromBytes(source, this._memoryHandler.Structures.PartyMember.Name);
                     entry.JobID = source[this._memoryHandler.Structures.PartyMember.Job];
@@ -75,9 +75,9 @@ namespace Sharlayan.Utilities {
                     entry.HitBoxRadius = 0.5f;
 
                     entry.Level = source[this._memoryHandler.Structures.PartyMember.Level];
-                    entry.HPCurrent = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPCurrent);
-                    entry.HPMax = BitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPMax);
-                    entry.MPCurrent = BitConverter.TryToInt16(source, this._memoryHandler.Structures.PartyMember.MPCurrent);
+                    entry.HPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPCurrent);
+                    entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPMax);
+                    entry.MPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PartyMember.MPCurrent);
                     const int limit = 15;
 
                     int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
@@ -92,8 +92,8 @@ namespace Sharlayan.Utilities {
                         byte[] statusSource = new byte[statusSize];
                         Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
 
-                        short StatusID = BitConverter.TryToInt16(statusSource, this._memoryHandler.Structures.StatusItem.StatusID);
-                        uint CasterID = BitConverter.TryToUInt32(statusSource, this._memoryHandler.Structures.StatusItem.CasterID);
+                        short StatusID = SharlayanBitConverter.TryToInt16(statusSource, this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint CasterID = SharlayanBitConverter.TryToUInt32(statusSource, this._memoryHandler.Structures.StatusItem.CasterID);
 
                         StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
 
@@ -106,7 +106,7 @@ namespace Sharlayan.Utilities {
                         statusEntry.TargetName = entry.Name;
                         statusEntry.StatusID = StatusID;
                         statusEntry.Stacks = statusSource[this._memoryHandler.Structures.StatusItem.Stacks];
-                        statusEntry.Duration = BitConverter.TryToSingle(statusSource, this._memoryHandler.Structures.StatusItem.Duration);
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusSource, this._memoryHandler.Structures.StatusItem.Duration);
                         statusEntry.CasterID = CasterID;
 
                         foundStatuses.Add(statusEntry);

@@ -14,6 +14,8 @@ namespace Sharlayan {
     using Newtonsoft.Json;
 
     internal static class Constants {
+        public const string DefaultAPIBaseURL = "https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master";
+
         public static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings {
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Populate,

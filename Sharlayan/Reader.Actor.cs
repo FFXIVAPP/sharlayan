@@ -16,8 +16,7 @@ namespace Sharlayan {
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Models.ReadResults;
-
-    using BitConverter = Sharlayan.Utilities.BitConverter;
+    using Sharlayan.Utilities;
 
     public partial class Reader {
         private Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
@@ -56,7 +55,7 @@ namespace Sharlayan {
                 for (int i = 0; i < limit; i++) {
                     IntPtr characterAddress;
 
-                    characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * 8));
+                    characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(characterAddressMap, i * 8));
 
                     if (characterAddress == IntPtr.Zero) {
                         continue;
@@ -88,8 +87,8 @@ namespace Sharlayan {
                         byte[] source = this._memoryHandler.GetByteArray(characterAddress, sourceSize);
 
                         // var source = this._memoryHandler.GetByteArray(characterAddress, 0x3F40);
-                        uint ID = BitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ID);
-                        uint NPCID2 = BitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID2);
+                        uint ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ID);
+                        uint NPCID2 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID2);
                         Actor.Type Type = (Actor.Type) source[this._memoryHandler.Structures.ActorItem.Type];
 
                         ActorItem existing = null;
@@ -161,7 +160,7 @@ namespace Sharlayan {
                         if (isFirstEntry) {
                             if (targetAddress.ToInt64() > 0) {
                                 byte[] targetInfoSource = this._memoryHandler.GetByteArray(targetAddress, 128);
-                                entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.ActorItem.ID);
+                                entry.TargetID = (int) SharlayanBitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.ActorItem.ID);
                             }
                         }
 

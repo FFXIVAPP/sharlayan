@@ -19,6 +19,8 @@ namespace Sharlayan {
 
         private ChatLogWorkerDelegate _chatLogWorkerDelegate = new ChatLogWorkerDelegate();
 
+        private JobResourceResolver _jobResourceResolver;
+
         private MonsterWorkerDelegate _monsterWorkerDelegate = new MonsterWorkerDelegate();
 
         private NPCWorkerDelegate _npcWorkerDelegate = new NPCWorkerDelegate();
@@ -41,6 +43,7 @@ namespace Sharlayan {
             this._actorItemResolver = new ActorItemResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
             this._playerInfoResolver = new PlayerInfoResolver(this._memoryHandler);
             this._partyMemberResolver = new PartyMemberResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
+            this._jobResourceResolver = new JobResourceResolver(this._memoryHandler);
         }
 
         private MemoryHandler _memoryHandler { get; }

@@ -14,8 +14,7 @@ namespace Sharlayan {
 
     using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
-
-    using BitConverter = Sharlayan.Utilities.BitConverter;
+    using Sharlayan.Utilities;
 
     public partial class Reader {
         public bool CanGetPartyMembers() {
@@ -49,7 +48,7 @@ namespace Sharlayan {
                     for (uint i = 0; i < partyCount; i++) {
                         long address = PartyInfoMap.ToInt64() + i * (uint) sourceSize;
                         byte[] source = this._memoryHandler.GetByteArray(new IntPtr(address), sourceSize);
-                        uint ID = BitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
+                        uint ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
                         ActorItem existing = null;
                         bool newEntry = false;
 

@@ -12,6 +12,7 @@ namespace Sharlayan {
     using System;
 
     using Sharlayan.Models.ReadResults;
+    using Sharlayan.Models.Structures;
 
     public partial class Reader {
         public bool CanGetJobResources() {
@@ -19,35 +20,44 @@ namespace Sharlayan {
         }
 
         public JobResourceResult GetJobResources() {
-            byte[] sourceBytes = new byte[this._memoryHandler.Structures.JobResources.SourceSize];
+            JobResources structure = this._memoryHandler.Structures.JobResources;
+            JobResourceResult result = new JobResourceResult();
+
             if (!this.CanGetJobResources() || !this._memoryHandler.IsAttached) {
-                return new JobResourceResult {
-                    Data = sourceBytes,
-                    Offsets = this._memoryHandler.Structures.JobResources,
-                };
+                return result;
             }
 
             IntPtr resourcePtr = this._memoryHandler.Scanner.Locations[Signatures.JobResourceKey];
             if (resourcePtr == IntPtr.Zero) {
-                return new JobResourceResult {
-                    Data = sourceBytes,
-                    Offsets = this._memoryHandler.Structures.JobResources,
-                };
+                return result;
             }
 
             IntPtr resource = new IntPtr(this._memoryHandler.GetInt64(resourcePtr));
             if (resource == IntPtr.Zero) {
-                return new JobResourceResult {
-                    Data = sourceBytes,
-                    Offsets = this._memoryHandler.Structures.JobResources,
-                };
+                return result;
             }
 
-            sourceBytes = this._memoryHandler.GetByteArray(resource, this._memoryHandler.Structures.JobResources.SourceSize);
-            return new JobResourceResult {
-                Data = sourceBytes,
-                Offsets = this._memoryHandler.Structures.JobResources,
-            };
+            byte[] sourceBytes = this._memoryHandler.GetByteArray(resource, this._memoryHandler.Structures.JobResources.SourceSize);
+
+            result.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(sourceBytes);
+            result.Bard = this._jobResourceResolver.ResolveBardFromBytes(sourceBytes);
+            result.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(sourceBytes);
+            result.Dancer = this._jobResourceResolver.ResolveDancerFromBytes(sourceBytes);
+            result.DarkKnight = this._jobResourceResolver.ResolveDarkKnightFromBytes(sourceBytes);
+            result.Dragoon = this._jobResourceResolver.ResolveDragoonFromBytes(sourceBytes);
+            result.GunBreaker = this._jobResourceResolver.ResolveGunBreakerFromBytes(sourceBytes);
+            result.Machinist = this._jobResourceResolver.ResolveMachinistFromBytes(sourceBytes);
+            result.Monk = this._jobResourceResolver.ResolveMonkFromBytes(sourceBytes);
+            result.Ninja = this._jobResourceResolver.ResolveNinjaFromBytes(sourceBytes);
+            result.Paladin = this._jobResourceResolver.ResolvePaladinFromBytes(sourceBytes);
+            result.RedMage = this._jobResourceResolver.ResolveRedMageFromBytes(sourceBytes);
+            result.Samurai = this._jobResourceResolver.ResolveSamuraiFromBytes(sourceBytes);
+            result.Scholar = this._jobResourceResolver.ResolveScholarFromBytes(sourceBytes);
+            result.Summoner = this._jobResourceResolver.ResolveSummonerFromBytes(sourceBytes);
+            result.Warrior = this._jobResourceResolver.ResolveWarriorFromBytes(sourceBytes);
+            result.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(sourceBytes);
+
+            return result;
         }
     }
 }

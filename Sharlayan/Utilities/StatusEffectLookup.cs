@@ -10,12 +10,15 @@
 
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
-    using System.Linq;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
 
     public static class StatusEffectLookup {
+        private static bool _loading;
+
+        private static ConcurrentDictionary<uint, StatusItem> _statusEffects = new ConcurrentDictionary<uint, StatusItem>();
+
         private static StatusItem DefaultStatusInfo = new StatusItem {
             Name = new Localization {
                 Chinese = "???",
@@ -28,35 +31,20 @@ namespace Sharlayan.Utilities {
             CompanyAction = false,
         };
 
-        private static bool Loading;
-
-        private static ConcurrentDictionary<uint, StatusItem> StatusEffects = new ConcurrentDictionary<uint, StatusItem>();
-
-        public static StatusItem GetStatusInfo(uint id, string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
-                return DefaultStatusInfo;
-            }
-
-            lock (StatusEffects) {
-                if (StatusEffects.Any()) {
-                    return StatusEffects.ContainsKey(id)
-                               ? StatusEffects[id]
-                               : DefaultStatusInfo;
-                }
-
-                Resolve(patchVersion, useLocalCache);
-                return DefaultStatusInfo;
-            }
+        public static StatusItem GetStatusInfo(uint id) {
+            return _statusEffects.ContainsKey(id)
+                       ? _statusEffects[id]
+                       : DefaultStatusInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest", bool useLocalCache = true) {
-            if (Loading) {
+        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+            if (_loading) {
                 return;
             }
 
-            Loading = true;
-            APIHelper.GetStatusEffects(StatusEffects, patchVersion, useLocalCache);
-            Loading = false;
+            _loading = true;
+            APIHelper.GetStatusEffects(_statusEffects, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            _loading = false;
         }
     }
 }
