@@ -34,14 +34,14 @@ if (processes.length)
     ProcessModel processModel = new ProcessModel {
         Process = process
     }
-    MemoryHandlerConfiguration memoryHandlerConfiguration = new MemoryHandlerConfiguration {
+    SharlayanConfiguration configuration = new SharlayanConfiguration {
         ProcessModel = processModel,
         GameLanguage = gameLanguage,
         GameRegion = gameRegion,
         PatchVersion = patchVersion,
         UseLocalCache = Settings.Default.UseLocalMemoryJSONDataCache
     };
-    MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.AddHandler(memoryHandlerConfiguration);
+    MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.AddHandler(configuration);
 }
 ```
 
@@ -223,12 +223,12 @@ If you want to add your own signatures to scan for you can modify the json file 
 You can also override the built in like so:
 
 ```csharp
-MemoryHandlerConfiguration memoryHandlerConfiguration = new MemoryHandlerConfiguration {
+SharlayanConfiguration configuration = new SharlayanConfiguration {
     ProcessModel = new ProcessModel {
         Process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault(),
     },
 };
-MemoryHandler memoryHandler = new MemoryHandler(memoryHandlerConfiguration);
+MemoryHandler memoryHandler = new MemoryHandler(configuration);
 // it be default will pull in the memory signatures from the local file, backup from API (GitHub)
 memoryHandler.Scanner.Locations.Clear(); // these are resolved MemoryLocation
 

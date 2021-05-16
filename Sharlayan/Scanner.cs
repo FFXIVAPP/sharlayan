@@ -53,7 +53,7 @@ namespace Sharlayan {
 
         private MemoryHandler _memoryHandler { get; }
 
-        public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
+        public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllRegions = false) {
             if (this._memoryHandler.Configuration.ProcessModel?.Process == null) {
                 return;
             }
@@ -64,7 +64,7 @@ namespace Sharlayan {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                if (scanAllMemoryRegions) {
+                if (scanAllRegions) {
                     this.LoadRegions();
                 }
 
@@ -82,7 +82,7 @@ namespace Sharlayan {
 
                     scanable.RemoveAll(a => this.Locations.ContainsKey(a.Key));
 
-                    this.FindExtendedSignatures(scanable, scanAllMemoryRegions);
+                    this.FindExtendedSignatures(scanable, scanAllRegions);
                 }
 
                 sw.Stop();
@@ -120,7 +120,7 @@ namespace Sharlayan {
             return badShiftTable;
         }
 
-        private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllMemoryRegions = false) {
+        private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllRegions) {
             List<Signature> notFound = new List<Signature>(signatures);
 
             if (this._memoryHandler.Configuration.ProcessModel.Process.MainModule != null) {
@@ -130,7 +130,7 @@ namespace Sharlayan {
 
                 this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
 
-                if (scanAllMemoryRegions) {
+                if (scanAllRegions) {
                     foreach (UnsafeNativeMethods.MEMORY_BASIC_INFORMATION region in this._regions) {
                         baseAddress = region.BaseAddress;
                         searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize.ToInt64());

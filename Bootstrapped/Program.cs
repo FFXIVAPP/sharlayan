@@ -48,12 +48,12 @@ namespace Bootstrapped {
             if (process != null) {
                 Console.WriteLine("setting up memory handler...");
 
-                MemoryHandlerConfiguration memoryHandlerConfiguration = new MemoryHandlerConfiguration {
+                SharlayanConfiguration configuration = new SharlayanConfiguration {
                     ProcessModel = new ProcessModel {
                         Process = process,
                     },
                 };
-                MemoryHandler memoryHandler = new MemoryHandler(memoryHandlerConfiguration);
+                MemoryHandler memoryHandler = new MemoryHandler(configuration);
 
                 Console.WriteLine("scanning for memory locations...");
 

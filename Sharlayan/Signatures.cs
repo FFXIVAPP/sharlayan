@@ -47,8 +47,8 @@ namespace Sharlayan {
 
         public const string ZoneInformationKey = "ZONEINFO";
 
-        public static IEnumerable<Signature> Resolve(MemoryHandlerConfiguration memoryHandlerConfiguration) {
-            return APIHelper.GetSignatures(memoryHandlerConfiguration);
+        public static IEnumerable<Signature> Resolve(SharlayanConfiguration configuration) {
+            return APIHelper.GetSignatures(configuration);
         }
     }
 }

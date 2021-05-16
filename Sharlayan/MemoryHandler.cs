@@ -28,7 +28,7 @@ namespace Sharlayan {
 
         private bool _isNewInstance = true;
 
-        public MemoryHandler(MemoryHandlerConfiguration configuration) {
+        public MemoryHandler(SharlayanConfiguration configuration) {
             this.Configuration = configuration;
 
             try {
@@ -63,7 +63,7 @@ namespace Sharlayan {
             this.Reader = new Reader(this);
 
             this.Scanner.Locations.Clear();
-            this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAlMemoryRegions);
+            this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAllRegions);
         }
 
         ~MemoryHandler() {
@@ -74,7 +74,7 @@ namespace Sharlayan {
 
         public event EventHandler<MemoryLocationsFoundEvent> MemoryLocationsFoundEvent = (sender, args) => { };
 
-        public MemoryHandlerConfiguration Configuration { get; set; }
+        public SharlayanConfiguration Configuration { get; set; }
 
         public bool IsAttached { get; set; }
 

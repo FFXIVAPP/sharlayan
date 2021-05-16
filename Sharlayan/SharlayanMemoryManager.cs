@@ -23,7 +23,7 @@ namespace Sharlayan {
 
         public static SharlayanMemoryManager Instance => _instance.Value;
 
-        public MemoryHandler AddHandler(MemoryHandlerConfiguration configuration) {
+        public MemoryHandler AddHandler(SharlayanConfiguration configuration) {
             MemoryHandler memoryHandler = new MemoryHandler(configuration);
             return this._memoryHandlers.AddOrUpdate(configuration.ProcessModel.ProcessID, memoryHandler, (k, v) => memoryHandler);
         }
@@ -43,5 +43,3 @@ namespace Sharlayan {
         public bool RemoveHandler(ProcessModel processModel) {
             return this._memoryHandlers.TryRemove(processModel.ProcessID, out MemoryHandler removedHandler);
         }
-    }
-}

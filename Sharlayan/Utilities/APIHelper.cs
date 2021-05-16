@@ -28,26 +28,26 @@ namespace Sharlayan.Utilities {
             Encoding = Encoding.UTF8,
         };
 
-        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, string patchVersion, bool useLocalCache, string baseURL) {
-            string file = Path.Combine(Directory.GetCurrentDirectory(), "actions.json");
-            if (File.Exists(file) && useLocalCache) {
+        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "actions.json");
+            if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                APIResponseToDictionary(actions, file, $"{baseURL}/xivdatabase/{patchVersion}/actions.json");
+                APIResponseToDictionary(actions, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/actions.json");
             }
         }
 
-        public static IEnumerable<Signature> GetSignatures(MemoryHandlerConfiguration memoryHandlerConfiguration) {
-            string region = memoryHandlerConfiguration.GameRegion.ToString().ToLowerInvariant();
-            string patchVersion = memoryHandlerConfiguration.PatchVersion;
-            string file = Path.Combine(Directory.GetCurrentDirectory(), $"signatures-{region}-{patchVersion}.json");
-            if (File.Exists(file) && memoryHandlerConfiguration.UseLocalCache) {
+        public static IEnumerable<Signature> GetSignatures(SharlayanConfiguration configuration) {
+            string region = configuration.GameRegion.ToString().ToLowerInvariant();
+            string patchVersion = configuration.PatchVersion;
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-{patchVersion}.json");
+            if (File.Exists(file) && configuration.UseLocalCache) {
                 string json = FileResponseToJSON(file);
                 return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
             }
             else {
-                string json = APIResponseToJSON($"{memoryHandlerConfiguration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
+                string json = APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
                 IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
                 File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -56,38 +56,38 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, string patchVersion, bool useLocalCache, string baseURL) {
-            string file = Path.Combine(Directory.GetCurrentDirectory(), "statuses.json");
-            if (File.Exists(file) && useLocalCache) {
+        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "statuses.json");
+            if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                APIResponseToDictionary(statusEffects, file, $"{baseURL}/xivdatabase/{patchVersion}/statuses.json");
+                APIResponseToDictionary(statusEffects, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/statuses.json");
             }
         }
 
-        public static StructuresContainer GetStructures(MemoryHandlerConfiguration memoryHandlerConfiguration) {
-            string region = memoryHandlerConfiguration.GameRegion.ToString().ToLowerInvariant();
-            string patchVersion = memoryHandlerConfiguration.PatchVersion;
-            string file = Path.Combine(Directory.GetCurrentDirectory(), $"structures-{region}-{patchVersion}.json");
-            if (File.Exists(file) && memoryHandlerConfiguration.UseLocalCache) {
+        public static StructuresContainer GetStructures(SharlayanConfiguration configuration) {
+            string region = configuration.GameRegion.ToString().ToLowerInvariant();
+            string patchVersion = configuration.PatchVersion;
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"structures-{region}-{patchVersion}.json");
+            if (File.Exists(file) && configuration.UseLocalCache) {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            return APIResponseToClass<StructuresContainer>(file, $"{memoryHandlerConfiguration.APIBaseURL}/structures/{region}/{patchVersion}.json");
+            return APIResponseToClass<StructuresContainer>(file, $"{configuration.APIBaseURL}/structures/{region}/{patchVersion}.json");
         }
 
-        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, string patchVersion, bool useLocalCache, string baseURL) {
+        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
             // - It maps directly to SaintCoins map.csv against TerritoryType ID
-            string file = Path.Combine(Directory.GetCurrentDirectory(), "zones.json");
-            if (File.Exists(file) && useLocalCache) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "zones.json");
+            if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                APIResponseToDictionary(mapInfos, file, $"{baseURL}/xivdatabase/{patchVersion}/zones.json");
+                APIResponseToDictionary(mapInfos, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/zones.json");
             }
         }
 

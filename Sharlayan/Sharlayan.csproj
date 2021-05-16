@@ -28,16 +28,16 @@
 	<ItemGroup>
 		<PackageReference Include="Costura.Fody" Version="4.1.0" />
 		<PackageReference Include="Fody" Version="6.1.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="NLog" Version="4.7.0" />
 		<PackageReference Include="NLog.Config" Version="4.7.0" />
 		<PackageReference Include="NLog.Schema" Version="4.7.0" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
@@ -53,11 +53,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <Content Include="*">
-      <Pack>true</Pack>
-      <PackagePath>\src</PackagePath>
-    </Content>
-  </ItemGroup>
+		<Content Include="*">
+			<Pack>true</Pack>
+			<PackagePath>\src</PackagePath>
+		</Content>
+	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<OutputPath>..\build\Debug</OutputPath>
@@ -112,20 +112,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Logo.png">
-	    <Pack>True</Pack>
-	    <PackagePath></PackagePath>
-	  </None>
+		<None Include="Logo.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
 	</ItemGroup>
 
-  <Target Name="CopyPackages" AfterTargets="Pack">
-	  <ItemGroup>
-		  <PACKAGES Include="$(OutputPath)*.nupkg" />
-	  </ItemGroup>
-	  <Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(SolutionDir)published\" />
-  </Target>
+	<Target Name="CopyPackages" AfterTargets="Pack">
+		<ItemGroup>
+			<PACKAGES Include="$(OutputPath)*.nupkg" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(SolutionDir)published\" />
+	</Target>
 
-  <Target Name="PostBuild" AfterTargets="CopyPackages">
-	  <Exec Command="%25SYSTEMROOT%25\System32\WindowsPowerShell\v1.0\powershell.exe –NonInteractive –ExecutionPolicy Unrestricted –command &quot;&amp; { &amp;'$(SolutionDir)RenameSymbolsToPackage.ps1' '$(TargetName)' }&quot;" />
+	<Target Name="PostBuild" AfterTargets="CopyPackages">
+		<Exec
+			Command="%25SYSTEMROOT%25\System32\WindowsPowerShell\v1.0\powershell.exe –NonInteractive –ExecutionPolicy Unrestricted –command &quot;&amp; { &amp;'$(SolutionDir)RenameSymbolsToPackage.ps1' '$(TargetName)' }&quot;" />
 	</Target>
 </Project>

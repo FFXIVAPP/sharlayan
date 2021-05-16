@@ -38,13 +38,13 @@ namespace Sharlayan.Utilities {
                        : DefaultZoneInfo;
         }
 
-        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+        internal static void Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            APIHelper.GetZones(_zones, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            APIHelper.GetZones(_zones, configuration);
             _loading = false;
         }
     }

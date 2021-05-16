@@ -50,13 +50,13 @@ namespace Sharlayan.Utilities {
             return _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
         }
 
-        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+        internal static void Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            APIHelper.GetActions(_actions, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            APIHelper.GetActions(_actions, configuration);
             _loading = false;
         }
     }

@@ -37,13 +37,13 @@ namespace Sharlayan.Utilities {
                        : DefaultStatusInfo;
         }
 
-        internal static void Resolve(MemoryHandlerConfiguration configuration) {
+        internal static void Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            APIHelper.GetStatusEffects(_statusEffects, configuration.PatchVersion, configuration.UseLocalCache, configuration.APIBaseURL);
+            APIHelper.GetStatusEffects(_statusEffects, configuration);
             _loading = false;
         }
     }
