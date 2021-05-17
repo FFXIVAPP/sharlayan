@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net462;net472;net48</TargetFrameworks>
 		<IncludeSymbols>true</IncludeSymbols>
+		<IncludeSource>true</IncludeSource>
 		<Authors>Ryan Wilson</Authors>
 		<PackageLicenseUrl></PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/FFXIVAPP/sharlayan</PackageProjectUrl>
@@ -44,19 +45,6 @@
 
 	<ItemGroup>
 		<AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="..\distribution\**" />
-		<EmbeddedResource Remove="..\distribution\**" />
-		<None Remove="..\distribution\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="*">
-			<Pack>true</Pack>
-			<PackagePath>\src</PackagePath>
-		</Content>
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -126,7 +114,6 @@
 	</Target>
 
 	<Target Name="PostBuild" AfterTargets="CopyPackages">
-		<Exec
-			Command="%25SYSTEMROOT%25\System32\WindowsPowerShell\v1.0\powershell.exe –NonInteractive –ExecutionPolicy Unrestricted –command &quot;&amp; { &amp;'$(SolutionDir)RenameSymbolsToPackage.ps1' '$(TargetName)' }&quot;" />
+		<Exec Command="%25SYSTEMROOT%25\System32\WindowsPowerShell\v1.0\powershell.exe –NonInteractive –ExecutionPolicy Unrestricted –command &quot;&amp; { &amp;'$(SolutionDir)RenameSymbolsToPackage.ps1' '$(TargetName)' }&quot;" />
 	</Target>
 </Project>
