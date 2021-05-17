@@ -43,3 +43,5 @@ namespace Sharlayan {
         public bool RemoveHandler(ProcessModel processModel) {
             return this._memoryHandlers.TryRemove(processModel.ProcessID, out MemoryHandler removedHandler);
         }
+    }
+}

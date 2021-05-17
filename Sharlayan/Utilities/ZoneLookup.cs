@@ -10,6 +10,7 @@
 
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
@@ -44,8 +45,11 @@ namespace Sharlayan.Utilities {
             }
 
             _loading = true;
-            APIHelper.GetZones(_zones, configuration);
-            _loading = false;
+            Task.Run(
+                () => {
+                    APIHelper.GetZones(_zones, configuration);
+                    _loading = false;
+                });
         }
     }
 }

@@ -9,10 +9,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Utilities {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Net.Cache;
     using System.Text;
 
     using Newtonsoft.Json;
@@ -24,17 +26,17 @@ namespace Sharlayan.Utilities {
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
     internal static class APIHelper {
-        private static WebClient _webClient = new WebClient {
-            Encoding = Encoding.UTF8,
-        };
+        private static Encoding _webClientEncoding = Encoding.UTF8;
+
+        private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
         public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
-            string file = Path.Combine(configuration.JSONCacheDirectory, "actions.json");
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-{configuration.PatchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                APIResponseToDictionary(actions, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/actions.json");
+                APIResponseToDictionary(actions, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json");
             }
         }
 
@@ -57,12 +59,12 @@ namespace Sharlayan.Utilities {
         }
 
         public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
-            string file = Path.Combine(configuration.JSONCacheDirectory, "statuses.json");
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-{configuration.PatchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                APIResponseToDictionary(statusEffects, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/statuses.json");
+                APIResponseToDictionary(statusEffects, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json");
             }
         }
 
@@ -82,12 +84,12 @@ namespace Sharlayan.Utilities {
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
             // - It maps directly to SaintCoins map.csv against TerritoryType ID
-            string file = Path.Combine(configuration.JSONCacheDirectory, "zones.json");
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"zones-{configuration.PatchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                APIResponseToDictionary(mapInfos, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration}/zones.json");
+                APIResponseToDictionary(mapInfos, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json");
             }
         }
 
@@ -112,7 +114,12 @@ namespace Sharlayan.Utilities {
         }
 
         private static string APIResponseToJSON(string uri) {
-            return _webClient.DownloadString(uri);
+            using (WebClient webClient = new WebClient {
+                Encoding = _webClientEncoding,
+                CachePolicy = _webClientRequestCachePolicy,
+            }) {
+                return webClient.DownloadString(uri);
+            }
         }
 
         private static T EnsureClassValues<T>(string file) {

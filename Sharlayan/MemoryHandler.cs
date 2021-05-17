@@ -14,6 +14,7 @@ namespace Sharlayan {
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Text;
+    using System.Threading.Tasks;
 
     using NLog;
 
@@ -49,7 +50,10 @@ namespace Sharlayan {
                 StatusEffectLookup.Resolve(this.Configuration);
                 ZoneLookup.Resolve(this.Configuration);
 
-                this.ResolveMemoryStructures();
+                Task.Run(
+                    () => {
+                        this.ResolveMemoryStructures();
+                    });
             }
 
             this._attachmentWorker = new AttachmentWorker(this);
@@ -63,7 +67,8 @@ namespace Sharlayan {
             this.Reader = new Reader(this);
 
             this.Scanner.Locations.Clear();
-            this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAllRegions);
+
+            Task.Run(() => this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAllRegions));
         }
 
         ~MemoryHandler() {
