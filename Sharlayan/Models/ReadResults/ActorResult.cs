@@ -20,16 +20,16 @@ namespace Sharlayan.Models.ReadResults {
 
         public ConcurrentDictionary<uint, ActorItem> CurrentPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> NewMonsters { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> NewMonsters { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> NewNPCs { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> NewNPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> NewPCs { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> NewPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> RemovedMonsters { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> RemovedMonsters { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> RemovedNPCs { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> RemovedNPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
 
-        public ConcurrentDictionary<uint, ActorItem> RemovedPCs { get; } = new ConcurrentDictionary<uint, ActorItem>();
+        public ConcurrentDictionary<uint, ActorItem> RemovedPCs { get; internal set; } = new ConcurrentDictionary<uint, ActorItem>();
     }
 }

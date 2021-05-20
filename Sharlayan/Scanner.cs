@@ -54,7 +54,7 @@ namespace Sharlayan {
         private MemoryHandler _memoryHandler { get; }
 
         public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllRegions = false) {
-            if (this._memoryHandler.Configuration.ProcessModel?.Process == null) {
+            if (this._memoryHandler.Configuration.ProcessModel.Process == null) {
                 return;
             }
 

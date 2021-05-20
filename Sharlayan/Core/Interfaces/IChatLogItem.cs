@@ -13,17 +13,13 @@ namespace Sharlayan.Core.Interfaces {
 
     public interface IChatLogItem {
         byte[] Bytes { get; set; }
-
         string Code { get; set; }
-
         string Combined { get; set; }
-
-        bool JP { get; set; }
-
+        bool IsInternational { get; set; }
         string Line { get; set; }
-
+        string Message { get; set; }
+        string PlayerName { get; set; }
         string Raw { get; set; }
-
         DateTime TimeStamp { get; set; }
     }
 }

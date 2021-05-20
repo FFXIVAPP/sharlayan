@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="BootstrappedWPF.exe.nlog" />
+		<None Remove="Resources\ChatCodes.xml" />
+		<None Remove="Resources\ChatColors.xml" />
+		<None Remove="Resources\DE.png" />
+		<None Remove="Resources\EN.png" />
+		<None Remove="Resources\FR.png" />
+		<None Remove="Resources\JA.png" />
+		<None Remove="Resources\KO.png" />
+		<None Remove="Resources\ZH.png" />
+		<None Remove="XIVAPP.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="BootstrappedWPF.exe.nlog">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
+		<PackageReference Include="NLog" Version="4.7.0" />
+		<PackageReference Include="NLog.Config" Version="4.7.0" />
+		<PackageReference Include="NLog.Schema" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Sharlayan\Sharlayan.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Resources\ChatColors.xml" />
+	  <Resource Include="XIVAPP.ico" />
+	  <Resource Include="Resources\EN.png" />
+	  <Resource Include="Resources\ChatCodes.xml" />
+	  <Resource Include="Resources\ZH.png" />
+	  <Resource Include="Resources\DE.png" />
+	  <Resource Include="Resources\FR.png" />
+	  <Resource Include="Resources\JA.png" />
+	  <Resource Include="Resources\KO.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	  <Compile Update="Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	  <None Update="Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+</Project>

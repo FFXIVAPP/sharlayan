@@ -26,20 +26,25 @@ namespace Sharlayan.Utilities {
                 chatLogEntry.Raw = Encoding.UTF8.GetString(raw.ToArray());
                 byte[] cleanable = raw.Skip(8).ToArray();
                 string cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
-                int cut = cleaned.Substring(1, 1) == ":"
+                if (cleaned.StartsWith("::")) {
+                    cleaned = cleaned.Substring(1);
+                }
+
+                int cut = cleaned.Substring(0, 2) == ": "
                               ? 2
                               : 1;
-                chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
-                chatLogEntry.JP = IsJapanese(chatLogEntry.Line);
+                chatLogEntry.Message = chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
+                chatLogEntry.IsInternational = IsInternational(chatLogEntry.Line);
 
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
+
+                if (Constants.ChatPublic.Contains(chatLogEntry.Code)) {
+                    chatLogEntry.PlayerName = chatLogEntry.Line.Substring(0, chatLogEntry.Line.IndexOf(":", StringComparison.OrdinalIgnoreCase));
+                    chatLogEntry.Message = chatLogEntry.Message.Replace($"{chatLogEntry.PlayerName}: ", string.Empty);
+                }
             }
             catch (Exception) {
-                chatLogEntry.Bytes = Array.Empty<byte>();
-                chatLogEntry.Raw = string.Empty;
-                chatLogEntry.Line = string.Empty;
-                chatLogEntry.Code = string.Empty;
-                chatLogEntry.Combined = string.Empty;
+                // IGNORED
             }
 
             return chatLogEntry;
@@ -54,7 +59,7 @@ namespace Sharlayan.Utilities {
             return hex.ToString();
         }
 
-        private static bool IsJapanese(string line) {
+        private static bool IsInternational(string line) {
             // 0x3040 -> 0x309F === Hirigana
             // 0x30A0 -> 0x30FF === Katakana
             // 0x4E00 -> 0x9FBF === Kanji

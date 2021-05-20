@@ -14,6 +14,6 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class InventoryResult {
-        public List<InventoryContainer> InventoryContainers { get; } = new List<InventoryContainer>();
+        public List<InventoryContainer> InventoryContainers { get; internal set; } = new List<InventoryContainer>();
     }
 }

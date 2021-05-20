@@ -14,10 +14,10 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class PartyResult {
-        public ConcurrentDictionary<uint, PartyMember> NewPartyMembers { get; } = new ConcurrentDictionary<uint, PartyMember>();
+        public ConcurrentDictionary<uint, PartyMember> NewPartyMembers { get; internal set; } = new ConcurrentDictionary<uint, PartyMember>();
 
         public ConcurrentDictionary<uint, PartyMember> PartyMembers { get; internal set; } = new ConcurrentDictionary<uint, PartyMember>();
 
-        public ConcurrentDictionary<uint, PartyMember> RemovedPartyMembers { get; } = new ConcurrentDictionary<uint, PartyMember>();
+        public ConcurrentDictionary<uint, PartyMember> RemovedPartyMembers { get; internal set; } = new ConcurrentDictionary<uint, PartyMember>();
     }
 }

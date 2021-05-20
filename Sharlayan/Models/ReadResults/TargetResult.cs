@@ -12,8 +12,8 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class TargetResult {
-        public TargetInfo TargetInfo { get; set; } = new TargetInfo();
+        public TargetInfo TargetInfo { get; internal set; } = new TargetInfo();
 
-        public bool TargetsFound { get; set; }
+        public bool TargetsFound { get; internal set; }
     }
 }

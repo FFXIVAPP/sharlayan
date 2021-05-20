@@ -1,0 +1,32 @@
+﻿<UserControl
+    x:Class="BootstrappedWPF.Controls.ChatCodes"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:BootstrappedWPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:BootstrappedWPF.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <DataGrid
+            x:Name="ChatCodesDataGrid"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CellEditEnding="ChatCodesDataGrid_OnCellEditEnding"
+            ItemsSource="{Binding Source={x:Static app:Constants.Instance}, Path=ChatCodes, Mode=TwoWay}"
+            SelectionMode="Extended"
+            SelectionUnit="Cell" />
+    </Grid>
+</UserControl>

@@ -14,6 +14,6 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class ActionResult {
-        public List<ActionContainer> ActionContainers { get; } = new List<ActionContainer>();
+        public List<ActionContainer> ActionContainers { get; internal set; } = new List<ActionContainer>();
     }
 }

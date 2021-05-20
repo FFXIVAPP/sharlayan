@@ -25,8 +25,6 @@ namespace Sharlayan {
     public class MemoryHandler : IDisposable {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private AttachmentWorker _attachmentWorker;
-
         private bool _isNewInstance = true;
 
         public MemoryHandler(SharlayanConfiguration configuration) {
@@ -50,14 +48,11 @@ namespace Sharlayan {
                 StatusEffectLookup.Resolve(this.Configuration);
                 ZoneLookup.Resolve(this.Configuration);
 
-                Task.Run(
-                    () => {
-                        this.ResolveMemoryStructures();
-                    });
+                Task.Run(this.ResolveMemoryStructures);
             }
 
-            this._attachmentWorker = new AttachmentWorker(this);
-            this._attachmentWorker.StartScanning(this.Configuration.ProcessModel);
+            this.Configuration.ProcessModel.Process.EnableRaisingEvents = true;
+            this.Configuration.ProcessModel.Process.Exited += this.Process_OnExited;
 
             this._systemModules.Clear();
 
@@ -77,6 +72,8 @@ namespace Sharlayan {
 
         public event EventHandler<ExceptionEvent> ExceptionEvent = (sender, args) => { };
 
+        public event EventHandler<MemoryHandlerDisposedEvent> MemoryHandlerDisposedEvent = (sender, args) => { };
+
         public event EventHandler<MemoryLocationsFoundEvent> MemoryLocationsFoundEvent = (sender, args) => { };
 
         public SharlayanConfiguration Configuration { get; set; }
@@ -91,16 +88,11 @@ namespace Sharlayan {
 
         internal IntPtr ProcessHandle { get; set; }
 
-        internal StructuresContainer Structures { get; set; }
+        internal StructuresContainer Structures { get; set; } = new StructuresContainer();
 
         private List<ProcessModule> _systemModules { get; } = new List<ProcessModule>();
 
         public void Dispose() {
-            if (this._attachmentWorker != null) {
-                this._attachmentWorker.StopScanning();
-                this._attachmentWorker.Dispose();
-            }
-
             try {
                 if (this.IsAttached) {
                     UnsafeNativeMethods.CloseHandle(this.ProcessHandle);
@@ -112,6 +104,7 @@ namespace Sharlayan {
             finally {
                 Constants.ProcessHandle = this.ProcessHandle = IntPtr.Zero;
                 this.IsAttached = false;
+                this.RaiseMemoryHandlerDisposed(Logger);
             }
         }
 
@@ -304,6 +297,10 @@ namespace Sharlayan {
             this.ExceptionEvent?.Invoke(this, new ExceptionEvent(this, logger, e, levelIsError));
         }
 
+        protected internal virtual void RaiseMemoryHandlerDisposed(Logger logger) {
+            this.MemoryHandlerDisposedEvent?.Invoke(this, new MemoryHandlerDisposedEvent(this, logger));
+        }
+
         protected internal virtual void RaiseMemoryLocationsFound(Logger logger, Dictionary<string, MemoryLocation> memoryLocations, long processingTime) {
             this.MemoryLocationsFoundEvent?.Invoke(this, new MemoryLocationsFoundEvent(this, logger, memoryLocations, processingTime));
         }
@@ -315,6 +312,14 @@ namespace Sharlayan {
                 ProcessModule module = modules[i];
                 this._systemModules.Add(module);
             }
+        }
+
+        private void Process_OnExited(object sender, EventArgs e) {
+            if (!SharlayanMemoryManager.Instance.RemoveHandler(this.Configuration.ProcessModel.ProcessID)) {
+                this.Dispose();
+            }
+
+            this.Configuration.ProcessModel.Process.Exited -= this.Process_OnExited;
         }
     }
 }

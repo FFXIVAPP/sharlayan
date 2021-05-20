@@ -14,18 +14,49 @@ namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
 
     public class ChatLogItem : IChatLogItem {
+        /// <summary>
+        /// raw bytes from memory
+        /// </summary>
         public byte[] Bytes { get; set; }
 
+        /// <summary>
+        /// alphanumeric chat code
+        /// </summary>
         public string Code { get; set; }
 
+        /// <summary>
+        /// [Code]:[Line] combination string
+        /// </summary>
         public string Combined { get; set; }
 
-        public bool JP { get; set; }
+        /// <summary>
+        /// does the text contain non-roman text
+        /// </summary>
+        public bool IsInternational { get; set; }
 
+        /// <summary>
+        /// "(playerName )?messsage" combination string
+        /// </summary>
         public string Line { get; set; }
 
+        /// <summary>
+        /// message without name of player
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// player name from message
+        /// </summary>
+        public string PlayerName { get; set; }
+
+        /// <summary>
+        /// raw bytes decoded to string
+        /// </summary>
         public string Raw { get; set; }
 
+        /// <summary>
+        /// message timestamp
+        /// </summary>
         public DateTime TimeStamp { get; set; }
     }
 }

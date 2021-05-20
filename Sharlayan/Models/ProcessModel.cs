@@ -13,9 +13,7 @@ namespace Sharlayan.Models {
 
     public class ProcessModel {
         public Process Process { get; set; }
-
         public int ProcessID => this.Process?.Id ?? -1;
-
         public string ProcessName => this.Process?.ProcessName ?? string.Empty;
     }
 }

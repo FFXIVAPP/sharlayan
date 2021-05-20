@@ -1,0 +1,31 @@
+﻿<UserControl
+    x:Class="BootstrappedWPF.Controls.ChatColors"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:BootstrappedWPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <DataGrid
+            x:Name="ChatColorsDataGrid"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            ItemsSource="{Binding Source={x:Static app:Constants.Instance}, Path=ChatColors, Mode=TwoWay}"
+            SelectionMode="Extended"
+            SelectionUnit="Cell" />
+    </Grid>
+</UserControl>

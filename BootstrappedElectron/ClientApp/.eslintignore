@@ -1,0 +1,12 @@
+.storybook/*
+storybook-static/*
+coverage/*
+docs/*
+node_modules/*
+lib/*
+types/*
+
+*.json
+
+src/stories/*
+*.stories.tsx

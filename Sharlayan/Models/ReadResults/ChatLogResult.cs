@@ -14,10 +14,10 @@ namespace Sharlayan.Models.ReadResults {
     using Sharlayan.Core;
 
     public class ChatLogResult {
-        public List<ChatLogItem> ChatLogItems { get; } = new List<ChatLogItem>();
+        public List<ChatLogItem> ChatLogItems { get; internal set; } = new List<ChatLogItem>();
 
-        public int PreviousArrayIndex { get; set; }
+        public int PreviousArrayIndex { get; internal set; }
 
-        public int PreviousOffset { get; set; }
+        public int PreviousOffset { get; internal set; }
     }
 }

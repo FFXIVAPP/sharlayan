@@ -16,6 +16,7 @@ namespace Sharlayan {
 
     public class SharlayanConfiguration {
         public string APIBaseURL { get; set; } = Constants.DefaultAPIBaseURL;
+        public string CharacterName { get; set; }
         public GameLanguage GameLanguage { get; set; } = GameLanguage.English;
         public GameRegion GameRegion { get; set; } = GameRegion.Global;
         public string JSONCacheDirectory { get; set; } = Directory.GetCurrentDirectory();
