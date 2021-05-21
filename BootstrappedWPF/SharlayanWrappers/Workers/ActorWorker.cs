@@ -10,13 +10,14 @@
 
 namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Timers;
 
+    using BootstrappedWPF.Properties;
+
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class ActorWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -35,6 +36,12 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
             this.Dispose();
         }
 
+        private bool _monsterReferencesSet { get; set; }
+
+        private bool _npcReferencesSet { get; set; }
+
+        private bool _pcReferencesSet { get; set; }
+
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
         }
@@ -52,24 +59,51 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.ActorWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
                 () => {
                     ActorResult result = this._memoryHandler.Reader.GetActors();
 
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.CurrentMonsters = result.CurrentMonsters;
-                        resultSet.CurrentNPCs = result.CurrentNPCs;
-                        resultSet.CurrentPCs = result.CurrentPCs;
+                    if (!this._monsterReferencesSet) {
+                        this._monsterReferencesSet = true;
+                        EventHost.Instance.RaiseNewMonsterActorItemsEvent(this._memoryHandler, result.CurrentMonsters);
+                    }
 
-                        resultSet.NewMonsters = result.NewMonsters;
-                        resultSet.NewNPCs = result.NewNPCs;
-                        resultSet.NewPCs = result.NewPCs;
+                    if (!this._npcReferencesSet) {
+                        this._npcReferencesSet = true;
+                        EventHost.Instance.RaiseNewNPCActorItemsEvent(this._memoryHandler, result.CurrentNPCs);
+                    }
 
-                        resultSet.RemovedMonsters = result.RemovedMonsters;
-                        resultSet.RemovedNPCs = result.RemovedNPCs;
-                        resultSet.RemovedPCs = result.RemovedPCs;
+                    if (!this._pcReferencesSet) {
+                        this._pcReferencesSet = true;
+                        EventHost.Instance.RaiseNewPCActorItemsEvent(this._memoryHandler, result.CurrentPCs);
+                    }
+
+                    if (result.NewMonsters.Any()) {
+                        EventHost.Instance.RaiseMonsterActorItemsAddedEvent(this._memoryHandler, result.NewMonsters);
+                    }
+
+                    if (result.NewNPCs.Any()) {
+                        EventHost.Instance.RaiseNPCActorItemsAddedEvent(this._memoryHandler, result.NewNPCs);
+                    }
+
+                    if (result.NewPCs.Any()) {
+                        EventHost.Instance.RaisePCActorItemsAddedEvent(this._memoryHandler, result.NewPCs);
+                    }
+
+                    if (result.RemovedMonsters.Any()) {
+                        EventHost.Instance.RaiseMonsterActorItemsRemovedEvent(this._memoryHandler, result.RemovedMonsters);
+                    }
+
+                    if (result.RemovedNPCs.Any()) {
+                        EventHost.Instance.RaiseNPCActorItemsRemovedEvent(this._memoryHandler, result.RemovedNPCs);
+                    }
+
+                    if (result.RemovedPCs.Any()) {
+                        EventHost.Instance.RaisePCActorItemsRemovedEvent(this._memoryHandler, result.RemovedPCs);
                     }
 
                     this._isScanning = false;

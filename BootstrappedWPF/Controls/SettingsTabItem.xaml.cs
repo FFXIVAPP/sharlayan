@@ -22,7 +22,5 @@ namespace BootstrappedWPF.Controls {
 
             this.DataContext = new SettingsTabItemViewModel();
         }
-
-        private void ChatColors_OnSelectionChanged(object sender, SelectionChangedEventArgs e) { }
     }
 }

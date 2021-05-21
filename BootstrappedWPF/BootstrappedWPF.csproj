@@ -4,17 +4,19 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>XIVAPP.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="BootstrappedWPF.exe.nlog" />
 		<None Remove="Resources\ChatCodes.xml" />
-		<None Remove="Resources\ChatColors.xml" />
+		<None Remove="Resources\Contact.png" />
 		<None Remove="Resources\DE.png" />
 		<None Remove="Resources\EN.png" />
 		<None Remove="Resources\FR.png" />
 		<None Remove="Resources\JA.png" />
 		<None Remove="Resources\KO.png" />
+		<None Remove="Resources\XIVAPP.png" />
 		<None Remove="Resources\ZH.png" />
 		<None Remove="XIVAPP.ico" />
 	</ItemGroup>
@@ -32,9 +34,6 @@
 	<ItemGroup>
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
-		<PackageReference Include="NLog" Version="4.7.0" />
-		<PackageReference Include="NLog.Config" Version="4.7.0" />
-		<PackageReference Include="NLog.Schema" Version="4.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,7 +41,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Resources\ChatColors.xml" />
+	  <Resource Include="Resources\Contact.png" />
+	  <Resource Include="Resources\XIVAPP.png" />
 	  <Resource Include="XIVAPP.ico" />
 	  <Resource Include="Resources\EN.png" />
 	  <Resource Include="Resources\ChatCodes.xml" />

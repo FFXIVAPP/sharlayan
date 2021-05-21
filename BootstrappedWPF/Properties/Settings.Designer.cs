@@ -49,7 +49,7 @@ namespace BootstrappedWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("800")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1050")]
         public int Width {
             get {
                 return ((int)(this["Width"]));
@@ -61,7 +61,7 @@ namespace BootstrappedWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        [global::System.Configuration.DefaultSettingValueAttribute("660")]
         public int Height {
             get {
                 return ((int)(this["Height"]));
@@ -114,7 +114,7 @@ namespace BootstrappedWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool DarkMode {
             get {
                 return ((bool)(this["DarkMode"]));
@@ -138,13 +138,133 @@ namespace BootstrappedWPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("orange")]
+        [global::System.Configuration.DefaultSettingValueAttribute("purple")]
         public string UserThemeAccent {
             get {
                 return ((string)(this["UserThemeAccent"]));
             }
             set {
                 this["UserThemeAccent"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double ActionWorkerTiming {
+            get {
+                return ((double)(this["ActionWorkerTiming"]));
+            }
+            set {
+                this["ActionWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public double ActorWorkerTiming {
+            get {
+                return ((double)(this["ActorWorkerTiming"]));
+            }
+            set {
+                this["ActorWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public double ChatLogWorkerTiming {
+            get {
+                return ((double)(this["ChatLogWorkerTiming"]));
+            }
+            set {
+                this["ChatLogWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public double CurrentPlayerWorkerTiming {
+            get {
+                return ((double)(this["CurrentPlayerWorkerTiming"]));
+            }
+            set {
+                this["CurrentPlayerWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public double InventoryWorkerTiming {
+            get {
+                return ((double)(this["InventoryWorkerTiming"]));
+            }
+            set {
+                this["InventoryWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public double JobResourceWorkerTiming {
+            get {
+                return ((double)(this["JobResourceWorkerTiming"]));
+            }
+            set {
+                this["JobResourceWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public double PartyWorkerTiming {
+            get {
+                return ((double)(this["PartyWorkerTiming"]));
+            }
+            set {
+                this["PartyWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public double TargetWorkerTiming {
+            get {
+                return ((double)(this["TargetWorkerTiming"]));
+            }
+            set {
+                this["TargetWorkerTiming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("(Default)")]
+        public global::System.Globalization.CultureInfo Culture {
+            get {
+                return ((global::System.Globalization.CultureInfo)(this["Culture"]));
+            }
+            set {
+                this["Culture"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CultureSet {
+            get {
+                return ((bool)(this["CultureSet"]));
+            }
+            set {
+                this["CultureSet"] = value;
             }
         }
     }

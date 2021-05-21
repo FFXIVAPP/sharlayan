@@ -13,10 +13,10 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System.Threading.Tasks;
     using System.Timers;
 
+    using BootstrappedWPF.Properties;
+
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class CurrentPlayerWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -52,16 +52,13 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.CurrentPlayerWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
                 () => {
                     CurrentPlayerResult result = this._memoryHandler.Reader.GetCurrentPlayer();
-
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.Entity = result.Entity;
-                        resultSet.PlayerInfo = result.PlayerInfo;
-                    }
 
                     this._isScanning = false;
                 });

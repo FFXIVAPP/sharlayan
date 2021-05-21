@@ -11,6 +11,7 @@
 namespace BootstrappedWPF {
     using System;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.IO;
     using System.Xml.Linq;
 
@@ -24,7 +25,7 @@ namespace BootstrappedWPF {
 
         private ObservableCollection<ChatCode> _chatCodes;
 
-        private ObservableCollection<ChatColor> _chatColors;
+        private CultureInfo _cultureInfo;
 
         private XDocument _xChatCodes;
 
@@ -49,12 +50,12 @@ namespace BootstrappedWPF {
             set => this.SetProperty(ref this._chatCodes, value);
         }
 
-        public ObservableCollection<ChatColor> ChatColors {
-            get => this._chatColors ??= new ObservableCollection<ChatColor>();
-            set => this.SetProperty(ref this._chatColors, value);
-        }
-
         public string ConfigurationsPath => Path.Combine(this.CachePath, "Configurations");
+
+        public CultureInfo CultureInfo {
+            get => this._cultureInfo ??= new CultureInfo("en");
+            set => this.SetProperty(ref this._cultureInfo, value);
+        }
 
         public string LogsPath => Path.Combine(this.CachePath, "Logs");
 

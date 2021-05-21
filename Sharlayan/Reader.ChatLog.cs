@@ -87,7 +87,7 @@ namespace Sharlayan {
                 try {
                     ChatLogItem chatLogEntry = ChatEntry.Process(bytes.ToArray());
                     if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+")) {
-                        result.ChatLogItems.Add(chatLogEntry);
+                        result.ChatLogItems.Enqueue(chatLogEntry);
                     }
                 }
                 catch (Exception ex) {

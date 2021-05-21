@@ -13,10 +13,10 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System.Threading.Tasks;
     using System.Timers;
 
+    using BootstrappedWPF.Properties;
+
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class JobResourceWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -52,31 +52,13 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.JobResourceWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
                 () => {
                     JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
-
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.Astrologian = result.Astrologian;
-                        resultSet.Bard = result.Bard;
-                        resultSet.BlackMage = result.BlackMage;
-                        resultSet.Dancer = result.Dancer;
-                        resultSet.DarkKnight = result.DarkKnight;
-                        resultSet.Dragoon = result.Dragoon;
-                        resultSet.GunBreaker = result.GunBreaker;
-                        resultSet.Machinist = result.Machinist;
-                        resultSet.Monk = result.Monk;
-                        resultSet.Ninja = result.Ninja;
-                        resultSet.Paladin = result.Paladin;
-                        resultSet.RedMage = result.RedMage;
-                        resultSet.Samurai = result.Samurai;
-                        resultSet.Scholar = result.Scholar;
-                        resultSet.Summoner = result.Summoner;
-                        resultSet.Warrior = result.Warrior;
-                        resultSet.WhiteMage = result.WhiteMage;
-                    }
 
                     this._isScanning = false;
                 });

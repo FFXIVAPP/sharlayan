@@ -24,7 +24,6 @@
             x:Name="ChatCodesDataGrid"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
-            CellEditEnding="ChatCodesDataGrid_OnCellEditEnding"
             ItemsSource="{Binding Source={x:Static app:Constants.Instance}, Path=ChatCodes, Mode=TwoWay}"
             SelectionMode="Extended"
             SelectionUnit="Cell" />

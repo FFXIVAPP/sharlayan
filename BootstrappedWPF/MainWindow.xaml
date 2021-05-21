@@ -47,7 +47,7 @@
         <materialDesign:ColorZone
             Padding="8"
             DockPanel.Dock="Top"
-            Mode="PrimaryMid">
+            Mode="PrimaryDark">
             <DockPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button
@@ -93,7 +93,7 @@
                     PlacementMode="BottomAndAlignRightEdges"
                     StaysOpen="False">
                     <StackPanel Cursor="Hand" Orientation="Vertical">
-                        <ItemsControl ItemsSource="{Binding InterfaceLanguages}">
+                        <ItemsControl ItemsSource="{Binding InterfaceLanguages, Mode=OneTime}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel />
@@ -123,20 +123,6 @@
         </materialDesign:ColorZone>
 
         <Grid>
-            <!--
-            <ScrollViewer
-                x:Name="MainWindowScrollViewer"
-                materialDesign:ScrollViewerAssist.IsAutoHideEnabled="True"
-                HorizontalScrollBarVisibility="{Binding SelectedItem.HorizontalScrollBarVisibilityRequirement, FallbackValue=Disabled}"
-                VerticalScrollBarVisibility="{Binding SelectedItem.VerticalScrollBarVisibilityRequirement, FallbackValue=Disabled}">
-                <ContentControl
-                    x:Name="MainWindowContentControl"
-                    Margin="{Binding MarginRequirement, FallbackValue=16}"
-                    Content="{Binding Content, UpdateSourceTrigger=PropertyChanged, FallbackValue={x:Null}}"
-                    DataContext="{Binding SelectedItem}"
-                    DataContextChanged="MainWindowContentControl_OnDataContextChanged" />
-            </ScrollViewer>
-            -->
             <materialDesign:Transitioner AutoApplyTransitionOrigins="True" SelectedIndex="{Binding SelectedIndex}">
                 <materialDesign:TransitionerSlide>
                     <materialDesign:TransitionerSlide.BackwardWipe>

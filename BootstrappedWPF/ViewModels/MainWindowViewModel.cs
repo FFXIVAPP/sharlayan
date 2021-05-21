@@ -81,7 +81,6 @@ namespace BootstrappedWPF.ViewModels {
             this.ChatView = new ViewItem("Chat", typeof(ChatTabItem));
             this.DebugView = new ViewItem("Debug", typeof(DebugTabItem));
 
-            this.SelectedIndex = 0;
             this.SelectedItem = this.HomeView;
             this.SelectedInterfaceLanguage = this.InterfaceLanguages.FirstOrDefault(item => string.Equals(item.Language, Settings.Default.InterfaceLanguage, StringComparison.OrdinalIgnoreCase));
 
@@ -111,6 +110,7 @@ namespace BootstrappedWPF.ViewModels {
                     if (value is LanguageItem item) {
                         this.SelectedInterfaceLanguage = item;
                         Settings.Default.InterfaceLanguage = item.Language;
+                        Settings.Default.Culture = item.CultureInfo;
                     }
                 });
         }

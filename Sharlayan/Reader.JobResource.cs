@@ -11,6 +11,7 @@
 namespace Sharlayan {
     using System;
 
+    using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Models.Structures;
 
@@ -37,25 +38,32 @@ namespace Sharlayan {
                 return result;
             }
 
-            byte[] sourceBytes = this._memoryHandler.GetByteArray(resource, this._memoryHandler.Structures.JobResources.SourceSize);
+            result.JobResourcesContainer = new JobResourcesContainer();
 
-            result.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(sourceBytes);
-            result.Bard = this._jobResourceResolver.ResolveBardFromBytes(sourceBytes);
-            result.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(sourceBytes);
-            result.Dancer = this._jobResourceResolver.ResolveDancerFromBytes(sourceBytes);
-            result.DarkKnight = this._jobResourceResolver.ResolveDarkKnightFromBytes(sourceBytes);
-            result.Dragoon = this._jobResourceResolver.ResolveDragoonFromBytes(sourceBytes);
-            result.GunBreaker = this._jobResourceResolver.ResolveGunBreakerFromBytes(sourceBytes);
-            result.Machinist = this._jobResourceResolver.ResolveMachinistFromBytes(sourceBytes);
-            result.Monk = this._jobResourceResolver.ResolveMonkFromBytes(sourceBytes);
-            result.Ninja = this._jobResourceResolver.ResolveNinjaFromBytes(sourceBytes);
-            result.Paladin = this._jobResourceResolver.ResolvePaladinFromBytes(sourceBytes);
-            result.RedMage = this._jobResourceResolver.ResolveRedMageFromBytes(sourceBytes);
-            result.Samurai = this._jobResourceResolver.ResolveSamuraiFromBytes(sourceBytes);
-            result.Scholar = this._jobResourceResolver.ResolveScholarFromBytes(sourceBytes);
-            result.Summoner = this._jobResourceResolver.ResolveSummonerFromBytes(sourceBytes);
-            result.Warrior = this._jobResourceResolver.ResolveWarriorFromBytes(sourceBytes);
-            result.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(sourceBytes);
+            try {
+                byte[] sourceBytes = this._memoryHandler.GetByteArray(resource, this._memoryHandler.Structures.JobResources.SourceSize);
+
+                result.JobResourcesContainer.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(sourceBytes);
+                result.JobResourcesContainer.Bard = this._jobResourceResolver.ResolveBardFromBytes(sourceBytes);
+                result.JobResourcesContainer.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(sourceBytes);
+                result.JobResourcesContainer.Dancer = this._jobResourceResolver.ResolveDancerFromBytes(sourceBytes);
+                result.JobResourcesContainer.DarkKnight = this._jobResourceResolver.ResolveDarkKnightFromBytes(sourceBytes);
+                result.JobResourcesContainer.Dragoon = this._jobResourceResolver.ResolveDragoonFromBytes(sourceBytes);
+                result.JobResourcesContainer.GunBreaker = this._jobResourceResolver.ResolveGunBreakerFromBytes(sourceBytes);
+                result.JobResourcesContainer.Machinist = this._jobResourceResolver.ResolveMachinistFromBytes(sourceBytes);
+                result.JobResourcesContainer.Monk = this._jobResourceResolver.ResolveMonkFromBytes(sourceBytes);
+                result.JobResourcesContainer.Ninja = this._jobResourceResolver.ResolveNinjaFromBytes(sourceBytes);
+                result.JobResourcesContainer.Paladin = this._jobResourceResolver.ResolvePaladinFromBytes(sourceBytes);
+                result.JobResourcesContainer.RedMage = this._jobResourceResolver.ResolveRedMageFromBytes(sourceBytes);
+                result.JobResourcesContainer.Samurai = this._jobResourceResolver.ResolveSamuraiFromBytes(sourceBytes);
+                result.JobResourcesContainer.Scholar = this._jobResourceResolver.ResolveScholarFromBytes(sourceBytes);
+                result.JobResourcesContainer.Summoner = this._jobResourceResolver.ResolveSummonerFromBytes(sourceBytes);
+                result.JobResourcesContainer.Warrior = this._jobResourceResolver.ResolveWarriorFromBytes(sourceBytes);
+                result.JobResourcesContainer.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(sourceBytes);
+            }
+            catch (Exception ex) {
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
 
             return result;
         }

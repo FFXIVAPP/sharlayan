@@ -16,7 +16,9 @@ namespace BootstrappedWPF.Localization {
 
         public static ResourceDictionary Translations() {
             _translations.Clear();
+
             _translations.Add("home", "Home");
+            _translations.Add("HomeTabItem_WelcomeText", "Welcome to Sharlayan's WPF Example");
 
             return _translations;
         }

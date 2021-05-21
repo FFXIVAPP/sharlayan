@@ -1,0 +1,107 @@
+﻿<UserControl
+    x:Class="BootstrappedWPF.Controls.UserSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:BootstrappedWPF.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:BootstrappedWPF.Properties"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}">
+            <Setter Property="Margin" Value="8,0,8,16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel HorizontalAlignment="Stretch">
+            <materialDesign:Card
+                Margin="0,8"
+                Padding="8"
+                Background="{DynamicResource PrimaryHueMidBrush}"
+                Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                <StackPanel>
+                    <TextBlock
+                        Margin="8"
+                        FontSize="16"
+                        Text="Data Settings" />
+                </StackPanel>
+            </materialDesign:Card>
+            <CheckBox
+                Margin="8"
+                Content="Use locally cached JSON for Sharlayan resources"
+                Foreground="{DynamicResource MaterialDesignBody}"
+                IsChecked="{Binding UseLocalJSONCache, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                Style="{StaticResource MaterialDesignDarkCheckBox}" />
+            <StackPanel Margin="0,8" HorizontalAlignment="Left">
+                <Button
+                    x:Name="ResetSettingsButton"
+                    Click="ResetSettingsButton_OnClick"
+                    Content="Reset Settings" />
+            </StackPanel>
+            <materialDesign:Card
+                Margin="0,8"
+                Padding="8"
+                Background="{DynamicResource PrimaryHueMidBrush}"
+                Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
+                <StackPanel>
+                    <TextBlock
+                        Margin="8"
+                        FontSize="16"
+                        Text="Memory Timings" />
+                </StackPanel>
+            </materialDesign:Card>
+            <StackPanel HorizontalAlignment="Stretch">
+                <TextBlock
+                    Margin="8"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="Adjust these timings to increase or decrease data latency. Faster timings may increase CPU usage." />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Actions"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding ActionWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Actor"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding ActorWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="ChatLog"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding ChatLogWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Current Player"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding CurrentPlayerWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Inventory"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding InventoryWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Job Resources"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding JobResourceWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Party Members"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding PartyWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBox
+                    materialDesign:HintAssist.HelperText="Target"
+                    materialDesign:HintAssist.HelperTextFontSize="12"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding TargetWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

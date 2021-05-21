@@ -9,10 +9,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace BootstrappedWPF.Controls {
-    using System.Linq;
     using System.Windows.Controls;
 
-    using BootstrappedWPF.Models;
     using BootstrappedWPF.ViewModels;
 
     /// <summary>
@@ -23,13 +21,6 @@ namespace BootstrappedWPF.Controls {
             this.InitializeComponent();
 
             this.DataContext = new ChatCodesViewModel();
-        }
-
-        private void ChatCodesDataGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e) {
-            if (e.Row.DataContext is ChatCode chatCode) {
-                // why doesn't this update the collection as expected???
-                Constants.Instance.ChatColors.FirstOrDefault(color => color.Code == chatCode.Code)?.SetDescription(chatCode.Description);
-            }
         }
     }
 }

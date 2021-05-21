@@ -13,6 +13,7 @@ namespace BootstrappedWPF {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Xml.Linq;
@@ -36,8 +37,6 @@ namespace BootstrappedWPF {
     public class AppContext {
         private static Lazy<AppContext> _instance = new Lazy<AppContext>(() => new AppContext());
 
-        public readonly ConcurrentDictionary<int, ResultSet> ResultSets = new ConcurrentDictionary<int, ResultSet>();
-
         private readonly ConcurrentDictionary<int, WorkerSet> _workerSets = new ConcurrentDictionary<int, WorkerSet>();
 
         private Process[] _gameInstances;
@@ -45,14 +44,13 @@ namespace BootstrappedWPF {
         public static AppContext Instance => _instance.Value;
 
         public void Initialize() {
+            this.SetupCurrentUICulture();
             this.SetupDirectories();
             this.ApplyTheme();
             this.LoadChatCodes();
-            this.LoadChatColors();
             this.FindGameInstances();
             this.SetupSharlayanManager();
             this.SetupWorkerSets();
-            this.SetupResultSets();
             this.StartAllSharlayanWorkers();
         }
 
@@ -81,36 +79,14 @@ namespace BootstrappedWPF {
         private void LoadChatCodes() {
             foreach (XElement xElement in Constants.Instance.XChatCodes.Descendants().Elements("Code")) {
                 string xKey = xElement.Attribute("Key")?.Value;
-                string xDescription = xElement.Element("Description")?.Value;
-                if (string.IsNullOrWhiteSpace(xKey) || string.IsNullOrWhiteSpace(xDescription)) {
+                string xColor = xElement.Element("Color")?.Value ?? "FFFFFF";
+                string xDescription = xElement.Element("Description")?.Value ?? "Unknown";
+
+                if (string.IsNullOrWhiteSpace(xKey)) {
                     continue;
                 }
 
-                Constants.Instance.ChatCodes.Add(new ChatCode(xKey, xDescription));
-            }
-        }
-
-        private void LoadChatColors() {
-            foreach (XElement xElement in Constants.Instance.XChatColors.Descendants().Elements("Color")) {
-                string xKey = xElement.Attribute("Key")?.Value;
-                string xValue = xElement.Element("Value")?.Value;
-                string xDescription = xElement.Element("Description")?.Value;
-                if (string.IsNullOrWhiteSpace(xKey) || string.IsNullOrWhiteSpace(xValue)) {
-                    continue;
-                }
-
-                ChatCode existingCode = Constants.Instance.ChatCodes.FirstOrDefault(chat => chat.Code == xKey);
-                if (existingCode is not null) {
-                    if (xDescription != null && (xDescription.ToLower().Contains("unknown") || string.IsNullOrWhiteSpace(xDescription))) {
-                        xDescription = existingCode.Description;
-                    }
-                }
-
-                Constants.Instance.ChatColors.Add(new ChatColor(xKey, xValue, xDescription));
-            }
-
-            foreach (ChatCode chatCode in Constants.Instance.ChatCodes.Where(chat => Constants.Instance.ChatColors.All(color => color.Code != chat.Code))) {
-                Constants.Instance.ChatColors.Add(new ChatColor(chatCode.Code, "FFFFFF", chatCode.Description));
+                Constants.Instance.ChatCodes.Add(new ChatCode(xKey, xColor, xDescription));
             }
         }
 
@@ -152,8 +128,6 @@ namespace BootstrappedWPF {
             if (this._workerSets.TryRemove(memoryHandler.Configuration.ProcessModel.ProcessID, out WorkerSet workerSet)) {
                 workerSet.StopMemoryWorkers();
             }
-
-            this.ResultSets.TryRemove(memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet);
         }
 
         private void MemoryHandler_OnMemoryLocationsFoundEvent(object? sender, MemoryLocationsFoundEvent e) {
@@ -166,18 +140,20 @@ namespace BootstrappedWPF {
             }
         }
 
+        private void SetupCurrentUICulture() {
+            string cultureInfo = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            CultureInfo currentCulture = new CultureInfo(cultureInfo);
+            Constants.Instance.CultureInfo = Settings.Default.CultureSet
+                                                 ? Settings.Default.Culture
+                                                 : currentCulture;
+            Settings.Default.CultureSet = true;
+        }
+
         private void SetupDirectories() {
             AppViewModel.Instance.CachePath = Constants.Instance.CachePath;
             AppViewModel.Instance.ConfigurationsPath = Constants.Instance.ConfigurationsPath;
             AppViewModel.Instance.LogsPath = Constants.Instance.LogsPath;
             AppViewModel.Instance.SettingsPath = Constants.Instance.SettingsPath;
-        }
-
-        private void SetupResultSets() {
-            foreach (MemoryHandler memoryHandler in SharlayanMemoryManager.Instance.GetHandlers()) {
-                ResultSet resultSet = new ResultSet();
-                this.ResultSets.AddOrUpdate(memoryHandler.Configuration.ProcessModel.ProcessID, resultSet, (k, v) => resultSet);
-            }
         }
 
         private void SetupSharlayanManager() {

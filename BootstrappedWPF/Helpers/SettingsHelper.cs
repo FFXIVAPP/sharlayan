@@ -12,8 +12,6 @@ namespace BootstrappedWPF.Helpers {
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Windows.Documents;
-    using System.Windows.Media;
     using System.Xml.Linq;
 
     using BootstrappedWPF.Models;
@@ -28,59 +26,37 @@ namespace BootstrappedWPF.Helpers {
                 XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == chatCode.Code);
 
                 string xKey = chatCode.Code;
+                string xColor = chatCode.Color;
                 string xDescription = chatCode.Description;
 
                 List<KeyValuePair<string, string>> keyValuePairs = new List<KeyValuePair<string, string>>();
 
+                keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xColor));
                 keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xDescription));
 
                 if (element is null) {
-                    SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "code", xKey, keyValuePairs);
+                    SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
                 }
                 else {
+                    XElement xColorElement = element.Element("Color");
+                    if (xColorElement != null) {
+                        xColorElement.Value = xColor;
+                    }
+                    else {
+                        element.Add(new XElement("Color", xColor));
+                    }
+
                     XElement xDescriptionElement = element.Element("Description");
                     if (xDescriptionElement != null) {
                         xDescriptionElement.Value = xDescription;
+                    }
+                    else {
+                        element.Add(new XElement("Description", xDescription));
                     }
                 }
             }
 
             Constants.Instance.XChatCodes.Save(Path.Combine(AppViewModel.Instance.ConfigurationsPath, "ChatCodes.xml"));
-        }
-
-        public static void SaveChatColors() {
-            IEnumerable<XElement> xElements = Constants.Instance.XChatColors.Descendants().Elements("Color");
-            XElement[] enumerable = xElements as XElement[] ?? xElements.ToArray();
-
-            foreach (ChatColor chatColor in Constants.Instance.ChatColors) {
-                XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == chatColor.Code);
-
-                string xKey = chatColor.Code;
-                string xValue = chatColor.Color;
-                string xDescription = chatColor.Description;
-
-                List<KeyValuePair<string, string>> keyValuePairs = new List<KeyValuePair<string, string>>();
-
-                keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xValue));
-                keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xDescription));
-
-                if (element is null) {
-                    SaveXMLNode(Constants.Instance.XChatColors, "Colors", "Color", xKey, keyValuePairs);
-                }
-                else {
-                    XElement xValueElement = element.Element("Value");
-                    if (xValueElement != null) {
-                        xValueElement.Value = xValue;
-                    }
-
-                    XElement xDescriptionElement = element.Element("Description");
-                    if (xDescriptionElement != null) {
-                        xDescriptionElement.Value = xDescription;
-                    }
-                }
-            }
-
-            Constants.Instance.XChatColors.Save(Path.Combine(AppViewModel.Instance.ConfigurationsPath, "ChatColors.xml"));
         }
 
         private static void SaveXMLNode(XDocument xDoc, string xRoot, string xNode, string xKey, IEnumerable<KeyValuePair<string, string>> xValuePairs) {
@@ -89,7 +65,7 @@ namespace BootstrappedWPF.Helpers {
                 return;
             }
 
-            var newElement = new XElement(xNode, new XAttribute("Key", xKey));
+            XElement newElement = new XElement(xNode, new XAttribute("Key", xKey));
             foreach (KeyValuePair<string, string> s in xValuePairs) {
                 newElement.Add(new XElement(s.Key, s.Value));
             }

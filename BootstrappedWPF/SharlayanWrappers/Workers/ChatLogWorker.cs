@@ -13,14 +13,11 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System.Threading.Tasks;
     using System.Timers;
 
-    using BootstrappedWPF.Controls;
-    using BootstrappedWPF.Helpers;
+    using BootstrappedWPF.Properties;
 
     using Sharlayan;
     using Sharlayan.Core;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class ChatLogWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -65,6 +62,8 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.ChatLogWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
@@ -74,12 +73,10 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                     this._previousArrayIndex = result.PreviousArrayIndex;
                     this._previousOffset = result.PreviousOffset;
 
-                    foreach (ChatLogItem chatLogItem in result.ChatLogItems) {
-                        FlowDocHelper.AppendChatLogItem(this._memoryHandler, chatLogItem, ChatTabItem.TabItem.ChatLogReader._FDR);
-                    }
-
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.ChatLogItems.AddRange(result.ChatLogItems);
+                    while (!result.ChatLogItems.IsEmpty) {
+                        if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem)) {
+                            EventHost.Instance.RaiseNewChatLogItemEvent(this._memoryHandler, chatLogItem);
+                        }
                     }
 
                     this._isScanning = false;

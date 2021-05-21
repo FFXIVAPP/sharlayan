@@ -30,7 +30,7 @@
                 <FlowDocument
                     x:Name="_FD"
                     x:FieldModifier="public"
-                    Background="White"
+                    Background="{DynamicResource MaterialDesignPaper}"
                     ColumnWidth="9000"
                     FontFamily="Segoe UI"
                     FontSize="12"

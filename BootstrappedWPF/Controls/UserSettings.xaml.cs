@@ -1,26 +1,29 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ChatColors.xaml.cs" company="SyndicatedLife">
+// <copyright file="UserSettings.xaml.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   ChatColors.xaml.cs Implementation
+//   UserSettings.xaml.cs Implementation
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace BootstrappedWPF.Controls {
+    using System.Windows;
     using System.Windows.Controls;
 
-    using BootstrappedWPF.ViewModels;
+    using BootstrappedWPF.Properties;
 
     /// <summary>
-    /// Interaction logic for ChatColors.xaml
+    /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class ChatColors : UserControl {
-        public ChatColors() {
+    public partial class UserSettings : UserControl {
+        public UserSettings() {
             this.InitializeComponent();
+        }
 
-            this.DataContext = new ChatColorsViewModel();
+        private void ResetSettingsButton_OnClick(object sender, RoutedEventArgs e) {
+            Settings.Default.Reset();
         }
     }
 }

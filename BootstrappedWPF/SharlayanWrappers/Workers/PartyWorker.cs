@@ -13,10 +13,10 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System.Threading.Tasks;
     using System.Timers;
 
+    using BootstrappedWPF.Properties;
+
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class PartyWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -52,17 +52,13 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.PartyWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
                 () => {
                     PartyResult result = this._memoryHandler.Reader.GetPartyMembers();
-
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.NewPartyMembers = result.NewPartyMembers;
-                        resultSet.PartyMembers = result.PartyMembers;
-                        resultSet.RemovedPartyMembers = result.RemovedPartyMembers;
-                    }
 
                     this._isScanning = false;
                 });

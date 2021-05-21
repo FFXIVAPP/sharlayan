@@ -38,7 +38,6 @@ namespace BootstrappedWPF {
             }
 
             Settings.Default.Save();
-            SettingsHelper.SaveChatColors();
             SettingsHelper.SaveChatCodes();
             Environment.Exit(0);
         }
@@ -48,7 +47,9 @@ namespace BootstrappedWPF {
             DispatcherHelper.Invoke(this.CloseApplication, DispatcherPriority.Send);
         }
 
-        private void MainWindow_OnContentRendered(object? sender, EventArgs e) { }
+        private void MainWindow_OnContentRendered(object? sender, EventArgs e) {
+            LocaleHelper.UpdateLocale(Settings.Default.Culture);
+        }
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e) {
             AppContext.Instance.Initialize();

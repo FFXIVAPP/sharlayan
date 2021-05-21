@@ -13,10 +13,10 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System.Threading.Tasks;
     using System.Timers;
 
+    using BootstrappedWPF.Properties;
+
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
-
-    using AppContext = BootstrappedWPF.AppContext;
 
     internal class ActionWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
@@ -52,15 +52,15 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 return;
             }
 
+            this._scanTimer.Interval = Settings.Default.ActionWorkerTiming;
+
             this._isScanning = true;
 
             Task.Run(
                 () => {
                     ActionResult result = this._memoryHandler.Reader.GetActions();
 
-                    if (AppContext.Instance.ResultSets.TryGetValue(this._memoryHandler.Configuration.ProcessModel.ProcessID, out ResultSet resultSet)) {
-                        resultSet.ActionContainers = result.ActionContainers;
-                    }
+                    EventHost.Instance.RaiseNewActionContainersEvent(this._memoryHandler, result.ActionContainers);
 
                     this._isScanning = false;
                 });

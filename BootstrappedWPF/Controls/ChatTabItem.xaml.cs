@@ -9,14 +9,18 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace BootstrappedWPF.Controls {
+    using System;
     using System.Windows.Controls;
 
+    using BootstrappedWPF.Helpers;
+    using BootstrappedWPF.SharlayanWrappers;
+    using BootstrappedWPF.SharlayanWrappers.Events;
     using BootstrappedWPF.ViewModels;
 
     /// <summary>
     /// Interaction logic for ChatTabItem.xaml
     /// </summary>
-    public partial class ChatTabItem : UserControl {
+    public partial class ChatTabItem : UserControl, IDisposable {
         public static ChatTabItem TabItem;
 
         public ChatTabItem() {
@@ -25,6 +29,20 @@ namespace BootstrappedWPF.Controls {
             this.DataContext = new ChatTabItemViewModel();
 
             TabItem = this;
+
+            EventHost.Instance.OnNewChatLogItem += this.OnOnNewChatLogItem;
+        }
+
+        ~ChatTabItem() {
+            this.Dispose();
+        }
+
+        public void Dispose() {
+            EventHost.Instance.OnNewChatLogItem -= this.OnOnNewChatLogItem;
+        }
+
+        private void OnOnNewChatLogItem(object? sender, NewChatLogItemEvent e) {
+            FlowDocHelper.AppendChatLogItem(e.MemoryHandler, e.EventData, this.ChatLogReader._FDR);
         }
     }
 }

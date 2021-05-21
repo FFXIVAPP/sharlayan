@@ -14,11 +14,11 @@
 
     <Grid>
         <TabControl Style="{StaticResource MaterialDesignTabControl}">
+            <TabItem Cursor="Hand" Header="Application">
+                <controls:UserSettings />
+            </TabItem>
             <TabItem Cursor="Hand" Header="Chat Codes">
                 <controls:ChatCodes />
-            </TabItem>
-            <TabItem Cursor="Hand" Header="Chat Colors">
-                <controls:ChatColors />
             </TabItem>
             <TabItem Cursor="Hand" Header="Theme">
                 <controls:PaletteSelector />

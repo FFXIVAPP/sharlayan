@@ -53,9 +53,7 @@ namespace Sharlayan {
                 bool firstTime = true;
 
                 for (int i = 0; i < limit; i++) {
-                    IntPtr characterAddress;
-
-                    characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(characterAddressMap, i * 8));
+                    IntPtr characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(characterAddressMap, i * 8));
 
                     if (characterAddress == IntPtr.Zero) {
                         continue;
@@ -164,16 +162,13 @@ namespace Sharlayan {
                             }
                         }
 
-                        // it doesn't matter what this is set to; it won't be used in code below
-                        ActorItem removed;
-
                         if (!entry.IsValid) {
-                            result.NewMonsters.TryRemove(entry.ID, out removed);
-                            result.NewMonsters.TryRemove(entry.NPCID2, out removed);
-                            result.NewNPCs.TryRemove(entry.ID, out removed);
-                            result.NewNPCs.TryRemove(entry.NPCID2, out removed);
-                            result.NewPCs.TryRemove(entry.ID, out removed);
-                            result.NewPCs.TryRemove(entry.NPCID2, out removed);
+                            result.NewMonsters.TryRemove(entry.ID, out ActorItem _);
+                            result.NewMonsters.TryRemove(entry.NPCID2, out ActorItem _);
+                            result.NewNPCs.TryRemove(entry.ID, out ActorItem _);
+                            result.NewNPCs.TryRemove(entry.NPCID2, out ActorItem _);
+                            result.NewPCs.TryRemove(entry.ID, out ActorItem _);
+                            result.NewPCs.TryRemove(entry.NPCID2, out ActorItem _);
                             continue;
                         }
 
