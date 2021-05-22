@@ -40,20 +40,22 @@
     </mah:MetroWindow.LeftWindowCommands>
 
     <Window.Resources>
-        <DataTemplate DataType="{x:Type models:LanguageItem}">
-            <Button
-                Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.UpdateInterfaceLanguage}"
-                CommandParameter="{Binding}"
-                DataContext="{Binding}">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <Image
-                        Width="20"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="{Binding ImageURI}" />
-                    <TextBlock Margin="5,0" Text="{Binding Title}" />
-                </StackPanel>
-            </Button>
-        </DataTemplate>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type models:LanguageItem}">
+                <Button
+                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.UpdateInterfaceLanguage}"
+                    CommandParameter="{Binding}"
+                    DataContext="{Binding}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <Image
+                            Width="20"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding ImageURI}" />
+                        <TextBlock Margin="5,0" Text="{Binding Title}" />
+                    </StackPanel>
+                </Button>
+            </DataTemplate>
+        </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel>
