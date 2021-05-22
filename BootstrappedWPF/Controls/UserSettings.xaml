@@ -29,12 +29,12 @@
                     <TextBlock
                         Margin="8"
                         FontSize="16"
-                        Text="Data Settings" />
+                        Text="{Binding Locale[UserSettings_DataSettingsText], Source={StaticResource AppViewModel}}" />
                 </StackPanel>
             </materialDesign:Card>
             <CheckBox
                 Margin="8"
-                Content="Use locally cached JSON for Sharlayan resources"
+                Content="{Binding Locale[UserSettings_UseCachedDataText], Source={StaticResource AppViewModel}}"
                 Foreground="{DynamicResource MaterialDesignBody}"
                 IsChecked="{Binding UseLocalJSONCache, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
                 Style="{StaticResource MaterialDesignDarkCheckBox}" />
@@ -42,7 +42,7 @@
                 <Button
                     x:Name="ResetSettingsButton"
                     Click="ResetSettingsButton_OnClick"
-                    Content="Reset Settings" />
+                    Content="{Binding Locale[UserSettings_ResetSettingsText], Source={StaticResource AppViewModel}}" />
             </StackPanel>
             <materialDesign:Card
                 Margin="0,8"
@@ -53,51 +53,51 @@
                     <TextBlock
                         Margin="8"
                         FontSize="16"
-                        Text="Memory Timings" />
+                        Text="{Binding Locale[UserSettings_MemoryTimingsText], Source={StaticResource AppViewModel}}" />
                 </StackPanel>
             </materialDesign:Card>
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock
                     Margin="8"
                     Foreground="{DynamicResource MaterialDesignBody}"
-                    Text="Adjust these timings to increase or decrease data latency. Faster timings may increase CPU usage." />
+                    Text="{Binding Locale[UserSettings_AdjustmentText], Source={StaticResource AppViewModel}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Actions"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_ActionsHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding ActionWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Actor"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_ActorHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding ActorWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="ChatLog"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_ChatLogHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding ChatLogWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Current Player"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_CurrentPlayerHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding CurrentPlayerWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Inventory"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_InventoryHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding InventoryWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Job Resources"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_JobResourcesHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding JobResourceWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Party Members"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_PartyMembersHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding PartyWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
                 <TextBox
-                    materialDesign:HintAssist.HelperText="Target"
+                    materialDesign:HintAssist.HelperText="{Binding Locale[UserSettings_TargetHelperText], Source={StaticResource AppViewModel}}"
                     materialDesign:HintAssist.HelperTextFontSize="12"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding TargetWorkerTiming, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />

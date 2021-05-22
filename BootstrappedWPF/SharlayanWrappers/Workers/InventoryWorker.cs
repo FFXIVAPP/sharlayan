@@ -60,6 +60,8 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 () => {
                     InventoryResult result = this._memoryHandler.Reader.GetInventory();
 
+                    EventHost.Instance.RaiseNewInventoryContainersEvent(this._memoryHandler, result.InventoryContainers);
+
                     this._isScanning = false;
                 });
         }

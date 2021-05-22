@@ -12,8 +12,7 @@
     <UserControl.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="Margin" Value="4" />
+            <Setter Property="Margin" Value="5" />
         </Style>
     </UserControl.Resources>
 
@@ -31,31 +30,32 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.ColumnSpan="3" Background="{DynamicResource PrimaryHueMidBrush}">
-            <TextBlock Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Text="Primary - Mid" />
+            <TextBlock Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+                       Text="{Binding Locale[Palette_PrimaryMidText], Source={StaticResource AppViewModel}}" />
         </Border>
 
         <Border
             Grid.Row="1"
             Grid.Column="0"
             Background="{DynamicResource PrimaryHueLightBrush}">
-            <TextBlock
-                FontWeight="Bold"
-                Foreground="{DynamicResource PrimaryHueLightForegroundBrush}"
-                Text="Light" />
+            <TextBlock Foreground="{DynamicResource PrimaryHueLightForegroundBrush}"
+                       Text="{Binding Locale[Palette_LightText], Source={StaticResource AppViewModel}}" />
         </Border>
 
         <Border
             Grid.Row="1"
             Grid.Column="1"
             Background="{DynamicResource PrimaryHueMidBrush}">
-            <TextBlock Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Text="Mid" />
+            <TextBlock Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
+                       Text="{Binding Locale[Palette_MidText], Source={StaticResource AppViewModel}}" />
         </Border>
 
         <Border
             Grid.Row="1"
             Grid.Column="2"
             Background="{DynamicResource PrimaryHueDarkBrush}">
-            <TextBlock Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}" Text="Dark" />
+            <TextBlock Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                       Text="{Binding Locale[Palette_DarkText], Source={StaticResource AppViewModel}}" />
         </Border>
 
         <Border
@@ -63,7 +63,8 @@
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Background="{DynamicResource SecondaryHueMidBrush}">
-            <TextBlock Foreground="{DynamicResource SecondaryHueMidForegroundBrush}" Text="Accent" />
+            <TextBlock Foreground="{DynamicResource SecondaryHueMidForegroundBrush}"
+                       Text="{Binding Locale[Palette_AccentText], Source={StaticResource AppViewModel}}" />
         </Border>
     </Grid>
 </UserControl>

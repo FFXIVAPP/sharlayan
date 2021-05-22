@@ -65,7 +65,8 @@
                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:PaletteSelector}}, Path=DataContext.ApplyPrimaryCommand, Mode=OneTime}"
                             CommandParameter="{Binding}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Primary" />
+                                <TextBlock
+                                    Text="{Binding Locale[PaletteSelector_PrimaryText], Source={StaticResource AppViewModel}}" />
                                 <Viewbox Width="16" Height="16">
                                     <Canvas Width="24" Height="24">
                                         <Path Style="{StaticResource PalettePath}" />
@@ -88,7 +89,8 @@
                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:PaletteSelector}}, Path=DataContext.ApplyAccentCommand, Mode=OneTime}"
                             CommandParameter="{Binding}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Accent" />
+                                <TextBlock
+                                    Text="{Binding Locale[PaletteSelector_AccentText], Source={StaticResource AppViewModel}}" />
                                 <Viewbox Width="16" Height="16">
                                     <Canvas Width="24" Height="24">
                                         <Path Style="{StaticResource PalettePath}" />
@@ -110,7 +112,7 @@
                     Margin="16"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource MaterialDesignBody}"
-                    Text="This is your current palette."
+                    Text="{Binding Locale[PaletteSelector_DescriptionText], Source={StaticResource AppViewModel}}"
                     TextWrapping="Wrap" />
             </DockPanel>
         </materialDesign:Card>
@@ -125,7 +127,7 @@
                 <TextBlock
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource MaterialDesignBody}"
-                    Text="Light" />
+                    Text="{Binding Locale[PaletteSelector_LightText], Source={StaticResource AppViewModel}}" />
 
                 <ToggleButton
                     Margin="8,0,16,0"
@@ -135,7 +137,7 @@
                 <TextBlock
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource MaterialDesignBody}"
-                    Text="Dark" />
+                    Text="{Binding Locale[PaletteSelector_DarkText], Source={StaticResource AppViewModel}}" />
             </StackPanel>
 
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

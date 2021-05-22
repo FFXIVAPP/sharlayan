@@ -60,6 +60,8 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 () => {
                     JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
 
+                    EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
+
                     this._isScanning = false;
                 });
         }

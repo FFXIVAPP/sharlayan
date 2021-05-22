@@ -56,7 +56,11 @@ namespace BootstrappedElectron {
                 });
 
             // Open the Electron-Window here
-            Task.Run(async () => await Electron.WindowManager.CreateWindowAsync());
+            Task.Run(
+                async () => {
+                    await Electron.WindowManager.CreateWindowAsync();
+                    AppContext.Instance.Initialize();
+                });
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

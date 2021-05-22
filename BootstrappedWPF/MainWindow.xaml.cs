@@ -18,12 +18,14 @@ namespace BootstrappedWPF {
     using BootstrappedWPF.Properties;
     using BootstrappedWPF.ViewModels;
 
+    using MahApps.Metro.Controls;
+
     using MaterialDesignThemes.Wpf;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : MetroWindow {
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
 
         public MainWindow() {

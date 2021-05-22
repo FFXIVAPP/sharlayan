@@ -15,6 +15,7 @@ namespace BootstrappedWPF.ViewModels {
     using System.Linq;
 
     using BootstrappedWPF.Controls;
+    using BootstrappedWPF.Helpers;
     using BootstrappedWPF.Models;
     using BootstrappedWPF.Properties;
 
@@ -111,6 +112,7 @@ namespace BootstrappedWPF.ViewModels {
                         this.SelectedInterfaceLanguage = item;
                         Settings.Default.InterfaceLanguage = item.Language;
                         Settings.Default.Culture = item.CultureInfo;
+                        LocaleHelper.UpdateLocale(Settings.Default.Culture);
                     }
                 });
         }

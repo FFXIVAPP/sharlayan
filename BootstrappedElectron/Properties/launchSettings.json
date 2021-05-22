@@ -11,7 +11,7 @@
     "Electron.NET App": {
       "commandName": "Executable",
       "executablePath": "electronize",
-      "commandLineArgs": "start",
+      "commandLineArgs": "start /watch",
       "workingDirectory": "."
     },
     "IIS Express": {

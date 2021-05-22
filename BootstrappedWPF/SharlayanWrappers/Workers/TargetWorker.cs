@@ -60,6 +60,8 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
                 () => {
                     TargetResult result = this._memoryHandler.Reader.GetTargetInfo();
 
+                    EventHost.Instance.RaiseNewTargetInfoEvent(this._memoryHandler, result.TargetInfo);
+
                     this._isScanning = false;
                 });
         }

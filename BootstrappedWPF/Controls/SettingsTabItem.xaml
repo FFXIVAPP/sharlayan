@@ -14,13 +14,16 @@
 
     <Grid>
         <TabControl Style="{StaticResource MaterialDesignTabControl}">
-            <TabItem Cursor="Hand" Header="Application">
+            <TabItem Cursor="Hand"
+                     Header="{Binding Locale[SettingsTabItem_ApplicationTabHeaderText], Source={StaticResource AppViewModel}}">
                 <controls:UserSettings />
             </TabItem>
-            <TabItem Cursor="Hand" Header="Chat Codes">
+            <TabItem Cursor="Hand"
+                     Header="{Binding Locale[SettingsTabItem_ChatCodesTabHeaderText], Source={StaticResource AppViewModel}}">
                 <controls:ChatCodes />
             </TabItem>
-            <TabItem Cursor="Hand" Header="Theme">
+            <TabItem Cursor="Hand"
+                     Header="{Binding Locale[SettingsTabItem_ThemeTabHeaderText], Source={StaticResource AppViewModel}}">
                 <controls:PaletteSelector />
             </TabItem>
         </TabControl>

@@ -4,11 +4,12 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<ApplicationIcon>XIVAPP.ico</ApplicationIcon>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="BootstrappedWPF.exe.nlog" />
+		<None Remove="Resources\blackcat.svg" />
 		<None Remove="Resources\ChatCodes.xml" />
 		<None Remove="Resources\Contact.png" />
 		<None Remove="Resources\DE.png" />
@@ -16,9 +17,11 @@
 		<None Remove="Resources\FR.png" />
 		<None Remove="Resources\JA.png" />
 		<None Remove="Resources\KO.png" />
+		<None Remove="Resources\logo.ico" />
+		<None Remove="Resources\logo.png" />
+		<None Remove="Resources\logo.svg" />
 		<None Remove="Resources\XIVAPP.png" />
 		<None Remove="Resources\ZH.png" />
-		<None Remove="XIVAPP.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -32,8 +35,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MahApps.Metro" Version="2.4.5" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.6" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,8 +47,9 @@
 
 	<ItemGroup>
 	  <Resource Include="Resources\Contact.png" />
-	  <Resource Include="Resources\XIVAPP.png" />
-	  <Resource Include="XIVAPP.ico" />
+	  <Resource Include="Resources\logo.ico" />
+	  <Resource Include="Resources\logo.png" />
+	  <Resource Include="Resources\logo.svg" />
 	  <Resource Include="Resources\EN.png" />
 	  <Resource Include="Resources\ChatCodes.xml" />
 	  <Resource Include="Resources\ZH.png" />

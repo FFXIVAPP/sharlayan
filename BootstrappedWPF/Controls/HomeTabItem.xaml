@@ -12,15 +12,11 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary
-                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
-                <ResourceDictionary
-                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
-                <ResourceDictionary
-                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml" />
                 <!--  throw in some extra colour for our floating action button  -->
-                <ResourceDictionary
-                    Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/MaterialDesignColor.Green.Named.Primary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -43,7 +39,7 @@
             <Image
                 Width="100"
                 Height="100"
-                Source="pack://application:,,,/Resources/XIVAPP.png"
+                Source="pack://application:,,,/Resources/logo.png"
                 Stretch="Uniform" />
 
             <StackPanel
@@ -95,7 +91,7 @@
                                 Grid.Column="1"
                                 Margin="16,16,16,2"
                                 Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                                Text="Get In Touch" />
+                                Text="{Binding Locale[HomeTabItem_GetInTouchText], Source={StaticResource AppViewModel}}" />
 
                             <TextBlock
                                 Grid.Row="1"
@@ -103,7 +99,7 @@
                                 Margin="16,0,16,8"
                                 VerticalAlignment="Center"
                                 Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                Text="Say hello, make a feature request, or raise a bug through one of these channels:"
+                                Text="{Binding Locale[HomeTabItem_GetInTouchExtendedText], Source={StaticResource AppViewModel}}"
                                 TextWrapping="Wrap" />
 
                             <Border
@@ -133,11 +129,11 @@
                                         Click="ChatButton_OnClick"
                                         Style="{DynamicResource MaterialDesignFlatButton}">
                                         <StackPanel Orientation="Horizontal">
-                                            <materialDesign:PackIcon Kind="Message" />
+                                            <materialDesign:PackIcon Kind="Discord" />
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
-                                                Text="Chat" />
+                                                Text="Discord" />
                                         </StackPanel>
                                     </Button>
                                 </Grid>
@@ -171,13 +167,13 @@
                                 <TextBlock
                                     Margin="16,16,16,8"
                                     Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                                    Text="Open Source" />
+                                    Text="{Binding Locale[HomeTabItem_OpenSourceText], Source={StaticResource AppViewModel}}" />
 
                                 <TextBlock
                                     Margin="16,0,16,8"
                                     VerticalAlignment="Top"
                                     Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                    Text="This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, tweet or post about it, or tell your mum about it!"
+                                    Text="{Binding Locale[HomeTabItem_OpenSourceExtendedText], Source={StaticResource AppViewModel}}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
 
@@ -206,7 +202,7 @@
                                         Margin="16"
                                         VerticalAlignment="Center"
                                         Foreground="{DynamicResource MaterialDesignBodyLight}"
-                                        Text="Feel like you want to make a donation?  It would be gratefully received.  Click the button to donate via GitHub sponsors."
+                                        Text="{Binding Locale[HomeTabItem_DonationText], Source={StaticResource AppViewModel}}"
                                         TextWrapping="Wrap" />
                                 </DockPanel>
                             </Border>
@@ -231,9 +227,9 @@
 
                 <Button
                     Click="ChatButton_OnClick"
-                    Content="{materialDesign:PackIcon Kind=Message,
+                    Content="{materialDesign:PackIcon Kind=Discord,
                                                       Size=20}"
-                    ToolTip="Chat">
+                    ToolTip="Discord">
                     <!--  mix up the colours by bringing in a named palette (see merged dictionaries at top)  -->
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource GreenPrimary500}" />
@@ -248,7 +244,7 @@
                     Click="DonateButton_OnClick"
                     Content="{materialDesign:PackIcon Kind=Gift,
                                                       Size=20}"
-                    ToolTip="Feel like you want to make a donation?  It would be gratefully received.  Click the button to donate via GitHub sponsors.">
+                    ToolTip="{Binding Locale[HomeTabItem_DonationText], Source={StaticResource AppViewModel}}">
                     <Button.Background>
                         <SolidColorBrush Color="{StaticResource GreenPrimary200}" />
                     </Button.Background>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
@@ -22,10 +22,14 @@
 
 	<ItemGroup>
 		<None Remove="BootstrappedElectron.exe.nlog" />
+		<None Remove="Resources\ChatCodes.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="BootstrappedElectron.exe.nlog">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Resources\ChatCodes.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

@@ -29,8 +29,6 @@ namespace BootstrappedWPF {
 
         private XDocument _xChatCodes;
 
-        private XDocument _xChatColors;
-
         public static Constants Instance => _instance.Value;
 
         public string CachePath {
@@ -80,27 +78,6 @@ namespace BootstrappedWPF {
                 return this._xChatCodes;
             }
             set => this.SetProperty(ref this._xChatCodes, value);
-        }
-
-        public XDocument XChatColors {
-            get {
-                if (this._xChatColors is not null) {
-                    return this._xChatColors;
-                }
-
-                string path = Path.Combine(this.CachePath, "Configurations", "ChatColors.xml");
-                try {
-                    this._xChatColors = File.Exists(path)
-                                            ? XDocument.Load(path)
-                                            : ResourceHelper.LoadXML($"{AppPack}Resources/ChatColors.xml");
-                }
-                catch (Exception) {
-                    this._xChatColors = ResourceHelper.LoadXML($"{AppPack}Resources/ChatColors.xml");
-                }
-
-                return this._xChatColors;
-            }
-            set => this.SetProperty(ref this._xChatColors, value);
         }
     }
 }

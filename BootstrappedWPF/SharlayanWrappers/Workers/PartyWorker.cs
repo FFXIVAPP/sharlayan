@@ -10,6 +10,7 @@
 
 namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Timers;
 
@@ -35,6 +36,8 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
             this.Dispose();
         }
 
+        private bool _partyReferencesSet { get; set; }
+
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
         }
@@ -59,6 +62,19 @@ namespace BootstrappedWPF.SharlayanWrappers.Workers {
             Task.Run(
                 () => {
                     PartyResult result = this._memoryHandler.Reader.GetPartyMembers();
+
+                    if (!this._partyReferencesSet) {
+                        this._partyReferencesSet = true;
+                        EventHost.Instance.RaiseNewPartyMembersEvent(this._memoryHandler, result.PartyMembers);
+                    }
+
+                    if (result.NewPartyMembers.Any()) {
+                        EventHost.Instance.RaisePartyMembersAddedEvent(this._memoryHandler, result.NewPartyMembers);
+                    }
+
+                    if (result.RemovedPartyMembers.Any()) {
+                        EventHost.Instance.RaisePartyMembersRemovedEvent(this._memoryHandler, result.RemovedPartyMembers);
+                    }
 
                     this._isScanning = false;
                 });
