@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Chinese.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   Chinese.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF.Localization {
+﻿namespace BootstrappedWPF.Localization {
     using System.Windows;
 
     public class Chinese {
@@ -22,11 +12,11 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("MainWindow_ChatLogButtonToolTip", "聊天记录");
             _translations.Add("MainWindow_DebugButtonToolTip", "除错");
             _translations.Add("HomeTabItem_WelcomeText", "欢迎来到Sharlayan的WPF示例");
-            _translations.Add("HomeTabItem_GetInTouchText", "保持联系");
-            _translations.Add("HomeTabItem_GetInTouchExtendedText", "打个招呼，提出功能请求，或通过以下其中一种渠道引发错误：");
-            _translations.Add("HomeTabItem_OpenSourceText", "开源的");
-            _translations.Add("HomeTabItem_OpenSourceExtendedText", "该项目是完全开源的。 如果您喜欢它并想说谢谢，您可以点击GitHub Star按钮，发布或发布有关它的信息，或者告诉您的妈妈有关它的信息！");
-            _translations.Add("HomeTabItem_DonationText", "感觉要捐款吗？ 我们将不胜感激。 单击该按钮以通过GitHub赞助者进行捐赠。");
+            _translations.Add("AboutTabItem_GetInTouchText", "保持联系");
+            _translations.Add("AboutTabItem_GetInTouchExtendedText", "打个招呼，提出功能请求，或通过以下其中一种渠道引发错误：");
+            _translations.Add("AboutTabItem_OpenSourceText", "开源的");
+            _translations.Add("AboutTabItem_OpenSourceExtendedText", "该项目是完全开源的。 如果您喜欢它并想说谢谢，您可以点击GitHub Star按钮，发布或发布有关它的信息，或者告诉您的妈妈有关它的信息！");
+            _translations.Add("AboutTabItem_DonationText", "感觉要捐款吗？ 我们将不胜感激。 单击该按钮以通过GitHub赞助者进行捐赠。");
             _translations.Add("Palette_PrimaryMidText", "小学-中");
             _translations.Add("Palette_LightText", "光");
             _translations.Add("Palette_MidText", "中");
@@ -37,7 +27,7 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("PaletteSelector_DarkText", "黑暗的");
             _translations.Add("PaletteSelector_PrimaryText", "基本的");
             _translations.Add("PaletteSelector_AccentText", "口音");
-            _translations.Add("SettingsTabItem_ApplicationTabHeaderText", "应用");
+            _translations.Add("SettingsTabItem_SharlayanTabHeaderText", "Sharlayan");
             _translations.Add("SettingsTabItem_ChatCodesTabHeaderText", "聊天码");
             _translations.Add("SettingsTabItem_ThemeTabHeaderText", "主题");
             _translations.Add("UserSettings_DataSettingsText", "资料设定");

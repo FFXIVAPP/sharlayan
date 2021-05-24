@@ -1,14 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PaletteSelectorViewModel.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   PaletteSelectorViewModel.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF.ViewModels {
+﻿namespace BootstrappedWPF.ViewModels {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
 
@@ -20,6 +11,8 @@ namespace BootstrappedWPF.ViewModels {
     using MaterialDesignThemes.Wpf;
 
     public class PaletteSelectorViewModel : PropertyChangedBase {
+        private static Lazy<PaletteSelectorViewModel> _instance = new Lazy<PaletteSelectorViewModel>(() => new PaletteSelectorViewModel());
+
         private bool _isDarkTheme;
 
         public PaletteSelectorViewModel() {
@@ -35,6 +28,8 @@ namespace BootstrappedWPF.ViewModels {
                 };
             }
         }
+
+        public static PaletteSelectorViewModel Instance => _instance.Value;
 
         public ICommand ApplyAccentCommand { get; } = new DelegatedCommand(o => ApplyAccent((Swatch) o));
 

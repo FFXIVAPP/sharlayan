@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainWindow.xaml.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   MainWindow.xaml.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF {
+﻿namespace BootstrappedWPF {
     using System;
     using System.ComponentModel;
     using System.Windows;
@@ -18,14 +8,12 @@ namespace BootstrappedWPF {
     using BootstrappedWPF.Properties;
     using BootstrappedWPF.ViewModels;
 
-    using MahApps.Metro.Controls;
-
     using MaterialDesignThemes.Wpf;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow {
+    public partial class MainWindow : Window {
         private readonly PaletteHelper _paletteHelper = new PaletteHelper();
 
         public MainWindow() {

@@ -1,26 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MainWindowViewModel.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   MainWindowViewModel.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF.ViewModels {
+﻿namespace BootstrappedWPF.ViewModels {
     using System;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
     using System.Linq;
 
     using BootstrappedWPF.Controls;
-    using BootstrappedWPF.Helpers;
     using BootstrappedWPF.Models;
     using BootstrappedWPF.Properties;
 
     public class MainWindowViewModel : PropertyChangedBase {
-        private ObservableCollection<LanguageItem> _interfaceLanguages;
+        private static Lazy<MainWindowViewModel> _instance = new Lazy<MainWindowViewModel>(() => new MainWindowViewModel());
 
         private int _selectedIndex;
 
@@ -29,61 +16,14 @@ namespace BootstrappedWPF.ViewModels {
         private ViewItem? _selectedItem;
 
         public MainWindowViewModel() {
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "English",
-                    ImageURI = "pack://application:,,,/Resources/EN.png",
-                    Title = "English",
-                    CultureInfo = new CultureInfo("en"),
-                });
-
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "Japanese",
-                    ImageURI = "pack://application:,,,/Resources/JA.png",
-                    Title = "日本語",
-                    CultureInfo = new CultureInfo("ja"),
-                });
-
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "French",
-                    ImageURI = "pack://application:,,,/Resources/FR.png",
-                    Title = "Français",
-                    CultureInfo = new CultureInfo("fr"),
-                });
-
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "German",
-                    ImageURI = "pack://application:,,,/Resources/DE.png",
-                    Title = "Deutsch",
-                    CultureInfo = new CultureInfo("de"),
-                });
-
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "Chinese",
-                    ImageURI = "pack://application:,,,/Resources/ZH.png",
-                    Title = "中國",
-                    CultureInfo = new CultureInfo("zh"),
-                });
-
-            this.InterfaceLanguages.Add(
-                new LanguageItem {
-                    Language = "Korean",
-                    ImageURI = "pack://application:,,,/Resources/KO.png",
-                    Title = "한국어",
-                    CultureInfo = new CultureInfo("ko"),
-                });
-
             this.HomeView = new ViewItem("Home", typeof(HomeTabItem));
             this.SettingsView = new ViewItem("Settings", typeof(SettingsTabItem));
             this.ChatView = new ViewItem("Chat", typeof(ChatTabItem));
             this.DebugView = new ViewItem("Debug", typeof(DebugTabItem));
+            this.AboutView = new ViewItem("About", typeof(AboutTabItem));
 
             this.SelectedItem = this.HomeView;
-            this.SelectedInterfaceLanguage = this.InterfaceLanguages.FirstOrDefault(item => string.Equals(item.Language, Settings.Default.InterfaceLanguage, StringComparison.OrdinalIgnoreCase));
+            this.SelectedInterfaceLanguage = AppViewModel.Instance.InterfaceLanguages.FirstOrDefault(item => string.Equals(item.Language, Settings.Default.InterfaceLanguage, StringComparison.OrdinalIgnoreCase));
 
             this.HomeCommand = new DelegatedCommand(
                 _ => {
@@ -105,17 +45,28 @@ namespace BootstrappedWPF.ViewModels {
                     this.SelectedIndex = 3;
                     this.SelectedItem = this.DebugView;
                 });
+            this.AboutCommand = new DelegatedCommand(
+                _ => {
+                    this.SelectedIndex = 4;
+                    this.SelectedItem = this.AboutView;
+                });
 
             this.UpdateInterfaceLanguage = new DelegatedCommand(
                 value => {
-                    if (value is LanguageItem item) {
-                        this.SelectedInterfaceLanguage = item;
-                        Settings.Default.InterfaceLanguage = item.Language;
-                        Settings.Default.Culture = item.CultureInfo;
-                        LocaleHelper.UpdateLocale(Settings.Default.Culture);
+                    if (value is not LanguageItem item) {
+                        return;
                     }
+
+                    this.SelectedInterfaceLanguage = item;
+                    Settings.Default.InterfaceLanguage = item.Language;
                 });
         }
+
+        public static MainWindowViewModel Instance => _instance.Value;
+
+        public DelegatedCommand AboutCommand { get; }
+
+        public ViewItem AboutView { get; }
 
         public DelegatedCommand ChatCommand { get; }
         public ViewItem ChatView { get; set; }
@@ -126,11 +77,6 @@ namespace BootstrappedWPF.ViewModels {
         public DelegatedCommand HomeCommand { get; }
 
         public ViewItem HomeView { get; set; }
-
-        public ObservableCollection<LanguageItem> InterfaceLanguages {
-            get => this._interfaceLanguages ??= new ObservableCollection<LanguageItem>();
-            set => this.SetProperty(ref this._interfaceLanguages, value);
-        }
 
         public int SelectedIndex {
             get => this._selectedIndex;

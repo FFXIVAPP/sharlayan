@@ -15,6 +15,7 @@ namespace BootstrappedConsole {
 
     using Sharlayan;
     using Sharlayan.Events;
+    using Sharlayan.Models;
 
     public class AppContext {
         private static Lazy<AppContext> _instance = new Lazy<AppContext>(() => new AppContext());
@@ -35,13 +36,15 @@ namespace BootstrappedConsole {
         private void SetupSharlayanManager() {
             foreach (Process process in this._gameInstances) {
                 SharlayanConfiguration sharlayanConfiguration = new SharlayanConfiguration {
-                    Process = process,
+                    ProcessModel = new ProcessModel {
+                        Process = process,
+                    }
                 };
                 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(sharlayanConfiguration);
                 handler.ExceptionEvent += delegate { };
                 handler.MemoryLocationsFoundEvent += delegate(object? sender, MemoryLocationsFoundEvent e) {
                     foreach (KeyValuePair<string, MemoryLocation> kvp in e.MemoryLocations) {
-                        Console.WriteLine($"Process[{handler.Configuration.ProcessID}] -> {kvp.Key} => {kvp.Value.GetAddress():X}");
+                        Console.WriteLine($"Process[{handler.Configuration.ProcessModel.ProcessID}] -> {kvp.Key} => {kvp.Value.GetAddress():X}");
                     }
                 };
             }

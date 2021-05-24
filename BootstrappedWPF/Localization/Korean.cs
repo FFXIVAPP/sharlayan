@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Korean.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   Korean.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF.Localization {
+﻿namespace BootstrappedWPF.Localization {
     using System.Windows;
 
     public class Korean {
@@ -22,11 +12,11 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("MainWindow_ChatLogButtonToolTip", "ChatLog");
             _translations.Add("MainWindow_DebugButtonToolTip", "디버그");
             _translations.Add("HomeTabItem_WelcomeText", "Sharlayan의 WPF 예제에 오신 것을 환영합니다.");
-            _translations.Add("HomeTabItem_GetInTouchText", "연락하기");
-            _translations.Add("HomeTabItem_GetInTouchExtendedText", "다음 채널 중 하나를 통해 인사, 기능 요청 또는 버그 제기 :");
-            _translations.Add("HomeTabItem_OpenSourceText", "오픈 소스");
-            _translations.Add("HomeTabItem_OpenSourceExtendedText", "이 프로젝트는 완전히 오픈 소스입니다. 당신이 그것을 좋아하고 감사의 말을 전하고 싶다면 GitHub Star 버튼을 누르거나, 그것에 대해 트윗하거나 게시하거나, 엄마에게 그것에 대해 말할 수 있습니다!");
-            _translations.Add("HomeTabItem_DonationText", "기부하고 싶으신가요? 고맙게 받아 들일 것입니다. 버튼을 클릭하여 GitHub 스폰서를 통해 기부하세요.");
+            _translations.Add("AboutTabItem_GetInTouchText", "연락하기");
+            _translations.Add("AboutTabItem_GetInTouchExtendedText", "다음 채널 중 하나를 통해 인사, 기능 요청 또는 버그 제기 :");
+            _translations.Add("AboutTabItem_OpenSourceText", "오픈 소스");
+            _translations.Add("AboutTabItem_OpenSourceExtendedText", "이 프로젝트는 완전히 오픈 소스입니다. 당신이 그것을 좋아하고 감사의 말을 전하고 싶다면 GitHub Star 버튼을 누르거나, 그것에 대해 트윗하거나 게시하거나, 엄마에게 그것에 대해 말할 수 있습니다!");
+            _translations.Add("AboutTabItem_DonationText", "기부하고 싶으신가요? 고맙게 받아 들일 것입니다. 버튼을 클릭하여 GitHub 스폰서를 통해 기부하세요.");
             _translations.Add("Palette_PrimaryMidText", "기본-중간");
             _translations.Add("Palette_LightText", "빛");
             _translations.Add("Palette_MidText", "중간");
@@ -37,7 +27,7 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("PaletteSelector_DarkText", "어두운");
             _translations.Add("PaletteSelector_PrimaryText", "일 순위");
             _translations.Add("PaletteSelector_AccentText", "악센트");
-            _translations.Add("SettingsTabItem_ApplicationTabHeaderText", "신청");
+            _translations.Add("SettingsTabItem_SharlayanTabHeaderText", "Sharlayan");
             _translations.Add("SettingsTabItem_ChatCodesTabHeaderText", "채팅 코드");
             _translations.Add("SettingsTabItem_ThemeTabHeaderText", "테마");
             _translations.Add("UserSettings_DataSettingsText", "데이터 설정");

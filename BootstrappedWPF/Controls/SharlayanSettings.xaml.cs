@@ -4,13 +4,13 @@
     using BootstrappedWPF.ViewModels;
 
     /// <summary>
-    /// Interaction logic for PaletteSelector.xaml
+    /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class PaletteSelector : UserControl {
-        public PaletteSelector() {
+    public partial class SharlayanSettings : UserControl {
+        public SharlayanSettings() {
             this.InitializeComponent();
 
-            this.DataContext = PaletteSelectorViewModel.Instance;
+            this.DataContext = SharlayanSettingsViewModel.Instance;
         }
     }
 }

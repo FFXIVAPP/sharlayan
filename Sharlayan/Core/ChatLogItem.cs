@@ -13,7 +13,7 @@ namespace Sharlayan.Core {
 
     using Sharlayan.Core.Interfaces;
 
-    public class ChatLogItem : IChatLogItem {
+    public class ChatLogItem : IChatLogItem, ICloneable {
         /// <summary>
         /// raw bytes from memory
         /// </summary>
@@ -58,5 +58,21 @@ namespace Sharlayan.Core {
         /// message timestamp
         /// </summary>
         public DateTime TimeStamp { get; set; }
+
+        public object Clone() {
+            byte[] bytes = new byte[this.Bytes.Length];
+            this.Bytes.CopyTo(bytes, 0);
+            return new ChatLogItem {
+                Bytes = bytes,
+                Code = this.Code,
+                Combined = this.Combined,
+                IsInternational = this.IsInternational,
+                Line = this.Line,
+                Message = this.Message,
+                PlayerName = this.PlayerName,
+                Raw = this.Raw,
+                TimeStamp = this.TimeStamp,
+            };
+        }
     }
 }

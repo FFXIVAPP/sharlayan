@@ -15,8 +15,8 @@
     <Grid>
         <TabControl Style="{StaticResource MaterialDesignTabControl}">
             <TabItem Cursor="Hand"
-                     Header="{Binding Locale[SettingsTabItem_ApplicationTabHeaderText], Source={StaticResource AppViewModel}}">
-                <controls:UserSettings />
+                     Header="{Binding Locale[SettingsTabItem_SharlayanTabHeaderText], Source={StaticResource AppViewModel}}">
+                <controls:SharlayanSettings />
             </TabItem>
             <TabItem Cursor="Hand"
                      Header="{Binding Locale[SettingsTabItem_ChatCodesTabHeaderText], Source={StaticResource AppViewModel}}">

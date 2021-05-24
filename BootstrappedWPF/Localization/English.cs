@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="English.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   English.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF.Localization {
+﻿namespace BootstrappedWPF.Localization {
     using System.Windows;
 
     public class English {
@@ -22,11 +12,11 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("MainWindow_ChatLogButtonToolTip", "ChatLog");
             _translations.Add("MainWindow_DebugButtonToolTip", "Debug");
             _translations.Add("HomeTabItem_WelcomeText", "Welcome to Sharlayan's WPF Example");
-            _translations.Add("HomeTabItem_GetInTouchText", "Get In Touch");
-            _translations.Add("HomeTabItem_GetInTouchExtendedText", "Say hello, make a feature request, or raise a bug through one of these channels:");
-            _translations.Add("HomeTabItem_OpenSourceText", "Open Source");
-            _translations.Add("HomeTabItem_OpenSourceExtendedText", "This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, tweet or post about it, or tell your mum about it!");
-            _translations.Add("HomeTabItem_DonationText", "Feel like you want to make a donation?  It would be gratefully received.  Click the button to donate via GitHub sponsors.");
+            _translations.Add("AboutTabItem_GetInTouchText", "Get In Touch");
+            _translations.Add("AboutTabItem_GetInTouchExtendedText", "Say hello, make a feature request, or raise a bug through one of these channels:");
+            _translations.Add("AboutTabItem_OpenSourceText", "Open Source");
+            _translations.Add("AboutTabItem_OpenSourceExtendedText", "This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, tweet or post about it, or tell your mum about it!");
+            _translations.Add("AboutTabItem_DonationText", "Feel like you want to make a donation?  It would be gratefully received.  Click the button to donate via GitHub sponsors.");
             _translations.Add("Palette_PrimaryMidText", "Primary - Mid");
             _translations.Add("Palette_LightText", "Light");
             _translations.Add("Palette_MidText", "Mid");
@@ -37,7 +27,7 @@ namespace BootstrappedWPF.Localization {
             _translations.Add("PaletteSelector_DarkText", "Dark");
             _translations.Add("PaletteSelector_PrimaryText", "Primary");
             _translations.Add("PaletteSelector_AccentText", "Accent");
-            _translations.Add("SettingsTabItem_ApplicationTabHeaderText", "Application");
+            _translations.Add("SettingsTabItem_SharlayanTabHeaderText", "Sharlayan");
             _translations.Add("SettingsTabItem_ChatCodesTabHeaderText", "Chat Codes");
             _translations.Add("SettingsTabItem_ThemeTabHeaderText", "Theme");
             _translations.Add("UserSettings_DataSettingsText", "Data Settings");

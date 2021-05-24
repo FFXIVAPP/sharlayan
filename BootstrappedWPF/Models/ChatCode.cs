@@ -1,15 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ChatCode.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   ChatCode.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿namespace BootstrappedWPF.Models {
+    public class ChatCode : PropertyChangedBase {
+        private string _color;
 
-namespace BootstrappedWPF.Models {
-    public class ChatCode {
+        private string _description;
+
+        public ChatCode(string code) {
+            this.Code = code;
+            this.Color = "FFFFFF";
+            this.Description = "Unknown";
+        }
+
         public ChatCode(string code, string color, string description) {
             this.Code = code;
             this.Color = color;
@@ -17,7 +17,15 @@ namespace BootstrappedWPF.Models {
         }
 
         public string Code { get; }
-        public string Color { get; set; }
-        public string Description { get; set; }
+
+        public string Color {
+            get => this._color;
+            set => this.SetProperty(ref this._color, value);
+        }
+
+        public string Description {
+            get => this._description;
+            set => this.SetProperty(ref this._description, value);
+        }
     }
 }

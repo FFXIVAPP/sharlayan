@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AppContext.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   AppContext.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedWPF {
+﻿namespace BootstrappedWPF {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -136,7 +126,7 @@ namespace BootstrappedWPF {
             }
 
             foreach (KeyValuePair<string, MemoryLocation> kvp in e.MemoryLocations) {
-                FlowDocHelper.AppendMessage(memoryHandler, $"Process[{memoryHandler.Configuration.ProcessModel.ProcessID}] -> {kvp.Key} => {kvp.Value.GetAddress():X}", DebugTabItem.TabItem.DebugLogReader._FDR);
+                FlowDocHelper.AppendMessage(memoryHandler, $"MemoryLocation Found -> {kvp.Key} => {kvp.Value.GetAddress():X}", DebugTabItem.Instance.DebugLogReader._FDR);
             }
         }
 
