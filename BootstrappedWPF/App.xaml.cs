@@ -51,12 +51,14 @@
         }
 
         private void ConfigureNLog() {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "BootstrappedWPF.exe.nlog");
-            if (File.Exists(path)) {
-                StringReader stringReader = new StringReader(XElement.Load(path).ToString());
-                using XmlReader xmlReader = XmlReader.Create(stringReader);
-                LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
-            }
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Bootstrapped.exe.nlog");
+            StringReader stringReader;
+            stringReader = File.Exists(path)
+                               ? new StringReader(XElement.Load(path).ToString())
+                               : new StringReader(ResourceHelper.LoadXML($"{Constants.AppPack}Resources/Bootstrapped.exe.nlog").ToString());
+
+            using XmlReader xmlReader = XmlReader.Create(stringReader);
+            LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
         }
 
         private void Default_OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

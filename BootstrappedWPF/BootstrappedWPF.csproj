@@ -5,10 +5,14 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="BootstrappedWPF.exe.nlog" />
+		<None Remove="Resources\ChatHistory.xml" />
+		<None Remove="Resources\ChatTabs.xml" />
+		<None Remove="Resources\BootstrappedWPF.exe.nlog" />
 		<None Remove="Resources\blackcat.svg" />
 		<None Remove="Resources\ChatCodes.xml" />
 		<None Remove="Resources\Contact.png" />
@@ -22,6 +26,7 @@
 		<None Remove="Resources\logo.svg" />
 		<None Remove="Resources\XIVAPP.png" />
 		<None Remove="Resources\ZH.png" />
+		<None Remove="BootstrappedWPF.exe.nlog" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,14 +41,17 @@
 
 	<ItemGroup>
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Sharlayan\Sharlayan.csproj" />
+		<ProjectReference Include="..\..\sharlayan\Sharlayan\Sharlayan.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Resources\ChatHistory.xml" />
+		<Resource Include="Resources\ChatTabs.xml" />
+		<Resource Include="Resources\BootstrappedWPF.exe.nlog" />
 		<Resource Include="Resources\Contact.png" />
 		<Resource Include="Resources\logo.ico" />
 		<Resource Include="Resources\logo.png" />
