@@ -1,9 +1,11 @@
 ﻿namespace BootstrappedWPF.ViewModels {
+    using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
-    using System;
+
     using BootstrappedWPF.Models;
 
     using Sharlayan.Core;
@@ -31,49 +33,49 @@
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "English",
-                        ImageURI = "pack://application:,,,/Resources/EN.png",
-                        Title = "English",
-                        CultureInfo = new CultureInfo("en"),
+                    ImageURI = "pack://application:,,,/Resources/EN.png",
+                    Title = "English",
+                    CultureInfo = new CultureInfo("en"),
                 });
 
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "Japanese",
-                        ImageURI = "pack://application:,,,/Resources/JA.png",
-                        Title = "日本語",
-                        CultureInfo = new CultureInfo("ja"),
+                    ImageURI = "pack://application:,,,/Resources/JA.png",
+                    Title = "日本語",
+                    CultureInfo = new CultureInfo("ja"),
                 });
 
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "French",
-                        ImageURI = "pack://application:,,,/Resources/FR.png",
-                        Title = "Français",
-                        CultureInfo = new CultureInfo("fr"),
+                    ImageURI = "pack://application:,,,/Resources/FR.png",
+                    Title = "Français",
+                    CultureInfo = new CultureInfo("fr"),
                 });
 
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "German",
-                        ImageURI = "pack://application:,,,/Resources/DE.png",
-                        Title = "Deutsch",
-                        CultureInfo = new CultureInfo("de"),
+                    ImageURI = "pack://application:,,,/Resources/DE.png",
+                    Title = "Deutsch",
+                    CultureInfo = new CultureInfo("de"),
                 });
 
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "Chinese",
-                        ImageURI = "pack://application:,,,/Resources/ZH.png",
-                        Title = "中國",
-                        CultureInfo = new CultureInfo("zh"),
+                    ImageURI = "pack://application:,,,/Resources/ZH.png",
+                    Title = "中國",
+                    CultureInfo = new CultureInfo("zh"),
                 });
 
             this.InterfaceLanguages.Add(
                 new LanguageItem {
                     Language = "Korean",
-                        ImageURI = "pack://application:,,,/Resources/KO.png",
-                        Title = "한국어",
-                        CultureInfo = new CultureInfo("ko"),
+                    ImageURI = "pack://application:,,,/Resources/KO.png",
+                    Title = "한국어",
+                    CultureInfo = new CultureInfo("ko"),
                 });
         }
 
@@ -83,9 +85,9 @@
             get => this._appTitle;
             set {
                 string appTitle = "XIVLOG";
-                string title = string.IsNullOrWhiteSpace(value) ?
-                    appTitle :
-                    $"{appTitle}: {value}";
+                string title = string.IsNullOrWhiteSpace(value)
+                                   ? appTitle
+                                   : $"{appTitle}: {value}";
                 this.SetProperty(ref this._appTitle, title.ToUpperInvariant());
             }
         }
@@ -100,6 +102,8 @@
                 this.SetProperty(ref this._cachePath, value);
             }
         }
+
+        public ConcurrentDictionary<string, List<ChatLogItem>> ChatHistory { get; } = new ConcurrentDictionary<string, List<ChatLogItem>>();
 
         public string ConfigurationsPath {
             get => this._configurationsPath;
@@ -158,7 +162,5 @@
                 this.SetProperty(ref this._settingsPath, value);
             }
         }
-
-        public List<ChatLogItem> ChatHistory { get; set; } = new List<ChatLogItem>();
     }
 }

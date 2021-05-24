@@ -86,6 +86,10 @@ namespace Sharlayan {
             foreach (List<byte> bytes in buffered.Where(b => b.Count > 0)) {
                 try {
                     ChatLogItem chatLogEntry = ChatEntry.Process(bytes.ToArray());
+
+                    // assign logged user for this instance to chatLogEntry
+                    chatLogEntry.PlayerCharacterName = this._pcWorkerDelegate.CurrentUser.Name;
+
                     if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+")) {
                         result.ChatLogItems.Enqueue(chatLogEntry);
                     }

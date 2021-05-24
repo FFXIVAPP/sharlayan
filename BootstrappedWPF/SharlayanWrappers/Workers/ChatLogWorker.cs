@@ -1,9 +1,11 @@
 ﻿namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Timers;
 
     using BootstrappedWPF.Properties;
+    using BootstrappedWPF.ViewModels;
 
     using Sharlayan;
     using Sharlayan.Core;
@@ -66,6 +68,15 @@
                     while (!result.ChatLogItems.IsEmpty) {
                         if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem)) {
                             EventHost.Instance.RaiseNewChatLogItemEvent(this._memoryHandler, chatLogItem);
+                            if (AppViewModel.Instance.ChatHistory.TryGetValue(chatLogItem.PlayerCharacterName, out List<ChatLogItem> chatLogItems)) {
+                                chatLogItems.Add(chatLogItem);
+                            }
+                            else {
+                                AppViewModel.Instance.ChatHistory.TryAdd(
+                                    chatLogItem.PlayerCharacterName, new List<ChatLogItem> {
+                                        chatLogItem,
+                                    });
+                            }
                         }
                     }
 

@@ -45,6 +45,11 @@ namespace Sharlayan.Core {
         public string Message { get; set; }
 
         /// <summary>
+        /// character name of player that was loaded when log was detected
+        /// </summary>
+        public string PlayerCharacterName { get; set; }
+
+        /// <summary>
         /// player name from message
         /// </summary>
         public string PlayerName { get; set; }
@@ -63,6 +68,7 @@ namespace Sharlayan.Core {
             byte[] bytes = new byte[this.Bytes.Length];
             this.Bytes.CopyTo(bytes, 0);
             return new ChatLogItem {
+                PlayerCharacterName = this.PlayerCharacterName,
                 Bytes = bytes,
                 Code = this.Code,
                 Combined = this.Combined,

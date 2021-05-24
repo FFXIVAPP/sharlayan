@@ -6,13 +6,13 @@
     using System.Text;
     using System.Xml.Linq;
 
-    using NLog;
-
-    using Sharlayan.Core;
-
     using BootstrappedWPF.Models;
     using BootstrappedWPF.Utilities;
     using BootstrappedWPF.ViewModels;
+
+    using NLog;
+
+    using Sharlayan.Core;
 
     public static class SavedLogsHelper {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -81,70 +81,49 @@
                         textLogBuilder.Value.Clear();
                     }
 
-                    // setup full chatlog xml file
+                    // setup full xml log file
                     XDocument xChatHistory = ResourceHelper.LoadXML($"{Constants.AppPack}Resources/ChatHistory.xml");
 
-                    foreach (ChatLogItem chatLogItem in AppViewModel.Instance.ChatHistory) {
-                        // process text logging
-                        try {
-                            switch (chatLogItem.Code) {
-                                case "000A":
-                                case "000B":
-                                case "000E":
-                                case "000C":
-                                case "000D":
-                                case "0010":
-                                case "0011":
-                                case "0012":
-                                case "0013":
-                                case "0014":
-                                case "0015":
-                                case "0016":
-                                case "0017":
-                                case "0018":
-                                case "001E":
-                                case "0025":
-                                case "0026":
-                                case "0027":
-                                case "0028":
-                                case "0029":
-                                case "002A":
-                                case "002B":
-                                case "002C":
-                                    string prefix = string.Empty;
+                    foreach ((string playerName, List<ChatLogItem> chatLogItems) in AppViewModel.Instance.ChatHistory) {
+                        foreach (ChatLogItem chatLogItem in chatLogItems) {
+                            // process text logging
+                            try {
+                                if (_textLogBuilders.ContainsKey(chatLogItem.Code)) {
+                                    string prefix = $"[{playerName}]";
                                     if (Constants.ChatLS.Contains(chatLogItem.Code)) {
-                                        prefix = $"[LS{Array.IndexOf(Constants.ChatCWLS, chatLogItem.Code) + 1}] ";
+                                        prefix = $"{prefix}[LS{Array.IndexOf(Constants.ChatCWLS, chatLogItem.Code) + 1}] ";
                                     }
 
                                     if (Constants.ChatCWLS.Contains(chatLogItem.Code)) {
-                                        prefix = $"[CWLS{Array.IndexOf(Constants.ChatCWLS, chatLogItem.Code) + 1}] ";
+                                        prefix = $"{prefix}[CWLS{Array.IndexOf(Constants.ChatCWLS, chatLogItem.Code) + 1}] ";
                                     }
 
-                                    _textLogBuilders[chatLogItem.Code].AppendLine($"{chatLogItem.TimeStamp} {prefix}{chatLogItem.Line}");
-                                    break;
+                                    _textLogBuilders[chatLogItem.Code].AppendLine($"{prefix} {chatLogItem.TimeStamp} {chatLogItem.Line}");
+                                }
                             }
-                        }
-                        catch (Exception ex) {
-                            Logging.Log(Logger, new LogItem(ex, true));
-                        }
+                            catch (Exception ex) {
+                                Logging.Log(Logger, new LogItem(ex, true));
+                            }
 
-                        // process xml log
-                        try {
-                            string xTimeStamp = chatLogItem.TimeStamp.ToString("[HH:mm:ss]");
-                            string xCode = chatLogItem.Code;
-                            string xBytes = chatLogItem.Bytes.Aggregate(string.Empty, (current, bytes) => current + bytes + " ").Trim();
-                            string xLine = chatLogItem.Line;
+                            // process xml log
+                            try {
+                                string xTimeStamp = chatLogItem.TimeStamp.ToString("[HH:mm:ss]");
+                                string xCode = chatLogItem.Code;
+                                string xBytes = chatLogItem.Bytes.Aggregate(string.Empty, (current, bytes) => current + bytes + " ").Trim();
+                                string xLine = chatLogItem.Line;
 
-                            List<KeyValuePair<string, string>> keyPairList = new List<KeyValuePair<string, string>>();
+                                List<KeyValuePair<string, string>> keyPairList = new List<KeyValuePair<string, string>>();
 
-                            keyPairList.Add(new KeyValuePair<string, string>("Bytes", xBytes));
-                            keyPairList.Add(new KeyValuePair<string, string>("Line", xLine));
-                            keyPairList.Add(new KeyValuePair<string, string>("TimeStamp", xTimeStamp));
+                                keyPairList.Add(new KeyValuePair<string, string>("PlayerCharacterName", playerName));
+                                keyPairList.Add(new KeyValuePair<string, string>("Bytes", xBytes));
+                                keyPairList.Add(new KeyValuePair<string, string>("Line", xLine));
+                                keyPairList.Add(new KeyValuePair<string, string>("TimeStamp", xTimeStamp));
 
-                            XMLHelper.SaveXMLNode(xChatHistory, "History", "Entry", xCode, keyPairList);
-                        }
-                        catch (Exception ex) {
-                            Logging.Log(Logger, new LogItem(ex, true));
+                                XMLHelper.SaveXMLNode(xChatHistory, "History", "Entry", xCode, keyPairList);
+                            }
+                            catch (Exception ex) {
+                                Logging.Log(Logger, new LogItem(ex, true));
+                            }
                         }
                     }
 

@@ -50,7 +50,6 @@
 
 	<ItemGroup>
 		<Resource Include="Resources\ChatHistory.xml" />
-		<Resource Include="Resources\ChatTabs.xml" />
 		<Resource Include="Resources\BootstrappedWPF.exe.nlog" />
 		<Resource Include="Resources\Contact.png" />
 		<Resource Include="Resources\logo.ico" />
