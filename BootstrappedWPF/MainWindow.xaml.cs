@@ -28,7 +28,10 @@
             }
 
             Settings.Default.Save();
+
             SettingsHelper.SaveChatCodes();
+            SavedLogsHelper.SaveCurrentLog();
+
             Environment.Exit(0);
         }
 

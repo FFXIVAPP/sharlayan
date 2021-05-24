@@ -25,7 +25,7 @@
                 keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xDescription));
 
                 if (element is null) {
-                    SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
+                    XMLHelper.SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
                 }
                 else {
                     XElement xColorElement = element.Element("Color");
@@ -47,20 +47,6 @@
             }
 
             Constants.Instance.XChatCodes.Save(Path.Combine(AppViewModel.Instance.ConfigurationsPath, "ChatCodes.xml"));
-        }
-
-        private static void SaveXMLNode(XDocument xDoc, string xRoot, string xNode, string xKey, IEnumerable<KeyValuePair<string, string>> xValuePairs) {
-            XElement element = xDoc.Element(xRoot);
-            if (element == null) {
-                return;
-            }
-
-            XElement newElement = new XElement(xNode, new XAttribute("Key", xKey));
-            foreach (KeyValuePair<string, string> s in xValuePairs) {
-                newElement.Add(new XElement(s.Key, s.Value));
-            }
-
-            element.Add(newElement);
         }
     }
 }

@@ -67,7 +67,6 @@
                     if (File.Exists("BootstrappedWPF.exe.nlog") && entry.FileName.Contains("BootstrappedWPF.exe.nlog")) {
                         continue;
                     }
-
                     entry.Extract(Directory.GetCurrentDirectory(), ExtractExistingFileAction.OverwriteSilently);
                 }
                 catch (Exception) {

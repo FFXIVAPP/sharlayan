@@ -144,6 +144,16 @@
             AppViewModel.Instance.ConfigurationsPath = Constants.Instance.ConfigurationsPath;
             AppViewModel.Instance.LogsPath = Constants.Instance.LogsPath;
             AppViewModel.Instance.SettingsPath = Constants.Instance.SettingsPath;
+            AppViewModel.Instance.SavedLogsDirectoryList = new List<string> {
+                "Say",
+                "Shout",
+                "Party",
+                "Tell",
+                "LS",
+                "CWLS",
+                "FC",
+                "Yell",
+            };
         }
 
         private void SetupSharlayanManager() {
