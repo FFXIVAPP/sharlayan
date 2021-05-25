@@ -46,15 +46,12 @@
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    CurrentPlayerResult result = this._memoryHandler.Reader.GetCurrentPlayer();
+            CurrentPlayerResult result = this._memoryHandler.Reader.GetCurrentPlayer();
 
-                    EventHost.Instance.RaiseNewCurrentUserEvent(this._memoryHandler, result.Entity);
-                    EventHost.Instance.RaiseNewPlayerInfoEvent(this._memoryHandler, result.PlayerInfo);
+            EventHost.Instance.RaiseNewCurrentUserEvent(this._memoryHandler, result.Entity);
+            EventHost.Instance.RaiseNewPlayerInfoEvent(this._memoryHandler, result.PlayerInfo);
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

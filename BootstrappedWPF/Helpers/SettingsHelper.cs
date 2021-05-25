@@ -9,10 +9,10 @@
 
     public static class SettingsHelper {
         public static void SaveChatCodes() {
-            IEnumerable<XElement> xElements = Constants.Instance.XChatCodes.Descendants().Elements("Code");
+            IEnumerable<XElement> xElements = AppViewModel.Instance.XChatCodes.Descendants().Elements("Code");
             XElement[] enumerable = xElements as XElement[] ?? xElements.ToArray();
 
-            foreach (ChatCode chatCode in Constants.Instance.ChatCodes) {
+            foreach (ChatCode chatCode in AppViewModel.Instance.ChatCodes) {
                 XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == chatCode.Code);
 
                 string xKey = chatCode.Code;
@@ -25,7 +25,7 @@
                 keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xDescription));
 
                 if (element is null) {
-                    XMLHelper.SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
+                    XMLHelper.SaveXMLNode(AppViewModel.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
                 }
                 else {
                     XElement xColorElement = element.Element("Color");
@@ -46,7 +46,7 @@
                 }
             }
 
-            Constants.Instance.XChatCodes.Save(Path.Combine(AppViewModel.Instance.ConfigurationsPath, "ChatCodes.xml"));
+            AppViewModel.Instance.XChatCodes.Save(Path.Combine(AppViewModel.Instance.ConfigurationsPath, "ChatCodes.xml"));
         }
     }
 }

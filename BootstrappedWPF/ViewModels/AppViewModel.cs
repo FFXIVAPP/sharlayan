@@ -5,7 +5,9 @@
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
+    using System.Xml.Linq;
 
+    using BootstrappedWPF.Helpers;
     using BootstrappedWPF.Models;
 
     using Sharlayan.Core;
@@ -17,7 +19,11 @@
 
         private string _cachePath;
 
+        private ObservableCollection<ChatCode> _chatCodes;
+
         private string _configurationsPath;
+
+        private CultureInfo _cultureInfo;
 
         private ObservableCollection<LanguageItem> _interfaceLanguages;
 
@@ -28,6 +34,8 @@
         private List<string> _savedLogsDirectoryList;
 
         private string _settingsPath;
+
+        private XDocument _xChatCodes;
 
         public AppViewModel() {
             this.InterfaceLanguages.Add(
@@ -103,6 +111,11 @@
             }
         }
 
+        public ObservableCollection<ChatCode> ChatCodes {
+            get => this._chatCodes ??= new ObservableCollection<ChatCode>();
+            set => this.SetProperty(ref this._chatCodes, value);
+        }
+
         public ConcurrentDictionary<string, List<ChatLogItem>> ChatHistory { get; } = new ConcurrentDictionary<string, List<ChatLogItem>>();
 
         public string ConfigurationsPath {
@@ -114,6 +127,11 @@
 
                 this.SetProperty(ref this._configurationsPath, value);
             }
+        }
+
+        public CultureInfo CultureInfo {
+            get => this._cultureInfo ??= new CultureInfo("en");
+            set => this.SetProperty(ref this._cultureInfo, value);
         }
 
         public ObservableCollection<LanguageItem> InterfaceLanguages {
@@ -161,6 +179,27 @@
 
                 this.SetProperty(ref this._settingsPath, value);
             }
+        }
+
+        public XDocument XChatCodes {
+            get {
+                if (this._xChatCodes is not null) {
+                    return this._xChatCodes;
+                }
+
+                string path = Path.Combine(this.CachePath, "Configurations", "ChatCodes.xml");
+                try {
+                    this._xChatCodes = File.Exists(path)
+                                           ? XDocument.Load(path)
+                                           : ResourceHelper.LoadXML($"{Constants.AppPack}Resources/ChatCodes.xml");
+                }
+                catch (Exception) {
+                    this._xChatCodes = ResourceHelper.LoadXML($"{Constants.AppPack}Resources/ChatCodes.xml");
+                }
+
+                return this._xChatCodes;
+            }
+            set => this.SetProperty(ref this._xChatCodes, value);
         }
     }
 }

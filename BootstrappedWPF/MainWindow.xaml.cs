@@ -8,14 +8,10 @@
     using BootstrappedWPF.Properties;
     using BootstrappedWPF.ViewModels;
 
-    using MaterialDesignThemes.Wpf;
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private readonly PaletteHelper _paletteHelper = new PaletteHelper();
-
         public MainWindow() {
             this.InitializeComponent();
 

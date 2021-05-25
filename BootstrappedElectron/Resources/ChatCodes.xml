@@ -1,82 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Codes>
 	<Group Name="Chat" Type="Chat">
 		<Group Name="You" Subject="You" Direction="Multi">
 			<Code Key="000A">
-				<Color>FFFFFF</Color>
+				<Color>FFFF00</Color>
 				<Description>Say</Description>
 			</Code>
 			<Code Key="000B">
-				<Color>FFFFFF</Color>
+				<Color>9932CC</Color>
 				<Description>Shout</Description>
 			</Code>
 			<Code Key="000E">
-				<Color>FFFFFF</Color>
+				<Color>00BFFF</Color>
 				<Description>Party</Description>
 			</Code>
 			<Code Key="000C">
-				<Color>FFFFFF</Color>
+				<Color>00FFFF</Color>
 				<Description>Tell (Out)</Description>
 			</Code>
 			<Code Key="000F">
-				<Color>FFFFFF</Color>
+				<Color>FF4500</Color>
 				<Description>Alliance</Description>
 			</Code>
 			<Code Key="0010">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[1]</Description>
 			</Code>
 			<Code Key="0011">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[2]</Description>
 			</Code>
 			<Code Key="0012">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[3]</Description>
 			</Code>
 			<Code Key="0013">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[4]</Description>
 			</Code>
 			<Code Key="0014">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[5]</Description>
 			</Code>
 			<Code Key="0015">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[6]</Description>
 			</Code>
 			<Code Key="0016">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[7]</Description>
 			</Code>
 			<Code Key="0017">
-				<Color>FFFFFF</Color>
+				<Color>ADFF2F</Color>
 				<Description>Linkshell[8]</Description>
 			</Code>
 			<Code Key="0018">
-				<Color>FFFFFF</Color>
+				<Color>00FF00</Color>
 				<Description>Free Company</Description>
 			</Code>
 			<Code Key="001E">
-				<Color>FFFFFF</Color>
+				<Color>FF00FF</Color>
 				<Description>Yell</Description>
 			</Code>
 		</Group>
 		<Group Name="You" Subject="You" Direction="To">
 			<Code Key="000D">
-				<Color>FFFFFF</Color>
+				<Color>00FFFF</Color>
 				<Description>Tell (In)</Description>
 			</Code>
 		</Group>
 		<Group Name="Emotes" Subject="You" Direction="Multi">
 			<Code Key="001D">
-				<Color>FFFFFF</Color>
+				<Color>FF8C00</Color>
 				<Description>Standard Emotes</Description>
 			</Code>
 			<Code Key="001C">
-				<Color>FFFFFF</Color>
+				<Color>FF8C00</Color>
 				<Description>Custom Emotes</Description>
 			</Code>
 		</Group>

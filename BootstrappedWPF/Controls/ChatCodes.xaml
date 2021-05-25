@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:BootstrappedWPF.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:BootstrappedWPF.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -13,8 +14,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary
-                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -24,7 +24,7 @@
             x:Name="ChatCodesDataGrid"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
-            ItemsSource="{Binding Source={x:Static app:Constants.Instance}, Path=ChatCodes, Mode=TwoWay}"
+            ItemsSource="{Binding Source={x:Static viewModels:AppViewModel.Instance}, Path=ChatCodes, Mode=TwoWay}"
             SelectionMode="Extended"
             SelectionUnit="Cell" />
     </Grid>

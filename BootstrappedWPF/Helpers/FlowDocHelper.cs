@@ -14,36 +14,35 @@
         private static readonly StringToBrushConverter _converter = new StringToBrushConverter();
 
         public static void AppendChatLogItem(MemoryHandler memoryHandler, ChatLogItem chatLogItem, FlowDocumentReader reader) {
-            Task.Run(
-                () => DispatcherHelper.Invoke(
-                    () => {
-                        Span process = new Span(new Run($"[{memoryHandler.Configuration.ProcessModel.ProcessID}] ")) {
-                            Foreground = (Brush) _converter.Convert("#FF000000"),
-                            FontWeight = FontWeights.Bold,
+            DispatcherHelper.Invoke(
+                () => {
+                    Span process = new Span(new Run($"[{memoryHandler.Configuration.ProcessModel.ProcessID}] ")) {
+                        Foreground = (Brush) _converter.Convert("#FF000000"),
+                        FontWeight = FontWeights.Bold,
+                    };
+                    Span time = new Span(new Run(chatLogItem.TimeStamp.ToString("[HH:mm:ss] "))) {
+                        Foreground = (Brush) _converter.Convert("#FF0000FF"),
+                        FontWeight = FontWeights.Bold,
+                    };
+                    Span line = new Span(new Run(chatLogItem.Message)) {
+                        Foreground = (Brush) _converter.Convert("#FF000000"),
+                    };
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.Inlines.Add(process);
+                    paragraph.Inlines.Add(time);
+                    if (!string.IsNullOrWhiteSpace(chatLogItem.PlayerName)) {
+                        Span playerLine = new Span(new Run($"[{chatLogItem.PlayerName}] ")) {
+                            Foreground = (Brush) _converter.Convert("#FFFF00FF"),
                         };
-                        Span time = new Span(new Run(chatLogItem.TimeStamp.ToString("[HH:mm:ss] "))) {
-                            Foreground = (Brush) _converter.Convert("#FF0000FF"),
-                            FontWeight = FontWeights.Bold,
-                        };
-                        Span line = new Span(new Run(chatLogItem.Message)) {
-                            Foreground = (Brush) _converter.Convert("#FF000000"),
-                        };
-                        Paragraph paragraph = new Paragraph();
-                        paragraph.Inlines.Add(process);
-                        paragraph.Inlines.Add(time);
-                        if (!string.IsNullOrWhiteSpace(chatLogItem.PlayerName)) {
-                            Span playerLine = new Span(new Run($"[{chatLogItem.PlayerName}] ")) {
-                                Foreground = (Brush) _converter.Convert("#FFFF00FF"),
-                            };
-                            paragraph.Inlines.Add(playerLine);
-                        }
+                        paragraph.Inlines.Add(playerLine);
+                    }
 
-                        paragraph.Inlines.Add(line);
-                        reader.Document.Blocks.Add(paragraph);
-                        if (reader.Document.Blocks.LastBlock != null) {
-                            reader.Document.Blocks.LastBlock.Loaded += MessageAdded;
-                        }
-                    }));
+                    paragraph.Inlines.Add(line);
+                    reader.Document.Blocks.Add(paragraph);
+                    if (reader.Document.Blocks.LastBlock != null) {
+                        reader.Document.Blocks.LastBlock.Loaded += MessageAdded;
+                    }
+                });
         }
 
         public static void AppendMessage(MemoryHandler memoryHandler, string message, FlowDocumentReader reader) {
@@ -52,16 +51,15 @@
         }
 
         public static void AppendMessage(string message, FlowDocumentReader reader) {
-            Task.Run(
-                () => DispatcherHelper.Invoke(
-                    () => {
-                        Paragraph paragraph = new Paragraph();
-                        paragraph.Inlines.Add(new Span(new Run(message)));
-                        reader.Document.Blocks.Add(paragraph);
-                        if (reader.Document.Blocks.LastBlock != null) {
-                            reader.Document.Blocks.LastBlock.Loaded += MessageAdded;
-                        }
-                    }));
+            DispatcherHelper.Invoke(
+                () => {
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.Inlines.Add(new Span(new Run(message)));
+                    reader.Document.Blocks.Add(paragraph);
+                    if (reader.Document.Blocks.LastBlock != null) {
+                        reader.Document.Blocks.LastBlock.Loaded += MessageAdded;
+                    }
+                });
         }
 
         private static void MessageAdded(object sender, RoutedEventArgs e) {

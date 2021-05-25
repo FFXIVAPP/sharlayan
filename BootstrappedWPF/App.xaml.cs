@@ -51,7 +51,7 @@
         }
 
         private void ConfigureNLog() {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Bootstrapped.exe.nlog");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BootstrappedWPF.exe.nlog");
             StringReader stringReader;
             stringReader = File.Exists(path)
                                ? new StringReader(XElement.Load(path).ToString())
@@ -68,7 +68,7 @@
                     case "InterfaceLanguage":
                         LanguageItem item = AppViewModel.Instance.InterfaceLanguages.FirstOrDefault(languageItem => languageItem.Language == Settings.Default.InterfaceLanguage);
                         if (item is not null) {
-                            Constants.Instance.CultureInfo = Settings.Default.Culture = item.CultureInfo;
+                            AppViewModel.Instance.CultureInfo = Settings.Default.Culture = item.CultureInfo;
                             LocaleHelper.UpdateLocale(Settings.Default.Culture);
                         }
 

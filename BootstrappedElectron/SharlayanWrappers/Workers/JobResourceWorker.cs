@@ -54,14 +54,11 @@ namespace BootstrappedElectron.SharlayanWrappers.Workers {
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
+            JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
 
-                    EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
+            EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

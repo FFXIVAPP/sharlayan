@@ -46,14 +46,11 @@
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    InventoryResult result = this._memoryHandler.Reader.GetInventory();
+            InventoryResult result = this._memoryHandler.Reader.GetInventory();
 
-                    EventHost.Instance.RaiseNewInventoryContainersEvent(this._memoryHandler, result.InventoryContainers);
+            EventHost.Instance.RaiseNewInventoryContainersEvent(this._memoryHandler, result.InventoryContainers);
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

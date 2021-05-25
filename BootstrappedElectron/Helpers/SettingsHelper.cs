@@ -18,10 +18,10 @@ namespace BootstrappedElectron.Helpers {
 
     public static class SettingsHelper {
         public static void SaveChatCodes() {
-            IEnumerable<XElement> xElements = Constants.Instance.XChatCodes.Descendants().Elements("Code");
+            IEnumerable<XElement> xElements = AppConfig.Instance.XChatCodes.Descendants().Elements("Code");
             XElement[] enumerable = xElements as XElement[] ?? xElements.ToArray();
 
-            foreach (ChatCode chatCode in Constants.Instance.ChatCodes) {
+            foreach (ChatCode chatCode in AppConfig.Instance.ChatCodes) {
                 XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == chatCode.Code);
 
                 string xKey = chatCode.Code;
@@ -34,7 +34,7 @@ namespace BootstrappedElectron.Helpers {
                 keyValuePairs.Add(new KeyValuePair<string, string>(xKey, xDescription));
 
                 if (element is null) {
-                    SaveXMLNode(Constants.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
+                    SaveXMLNode(AppConfig.Instance.XChatCodes, "Codes", "Code", xKey, keyValuePairs);
                 }
                 else {
                     XElement xColorElement = element.Element("Color");
@@ -55,7 +55,7 @@ namespace BootstrappedElectron.Helpers {
                 }
             }
 
-            Constants.Instance.XChatCodes.Save(Path.Combine(AppConfig.Instance.ConfigurationsPath, "ChatCodes.xml"));
+            AppConfig.Instance.XChatCodes.Save(Path.Combine(AppConfig.Instance.ConfigurationsPath, "ChatCodes.xml"));
         }
 
         private static void SaveXMLNode(XDocument xDoc, string xRoot, string xNode, string xKey, IEnumerable<KeyValuePair<string, string>> xValuePairs) {

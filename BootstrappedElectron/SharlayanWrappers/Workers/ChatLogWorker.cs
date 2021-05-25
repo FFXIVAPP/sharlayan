@@ -64,21 +64,20 @@ namespace BootstrappedElectron.SharlayanWrappers.Workers {
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    ChatLogResult result = this._memoryHandler.Reader.GetChatLog(this._previousArrayIndex, this._previousOffset);
+            ChatLogResult result = this._memoryHandler.Reader.GetChatLog(this._previousArrayIndex, this._previousOffset);
 
-                    this._previousArrayIndex = result.PreviousArrayIndex;
-                    this._previousOffset = result.PreviousOffset;
+            this._previousArrayIndex = result.PreviousArrayIndex;
+            this._previousOffset = result.PreviousOffset;
 
-                    while (!result.ChatLogItems.IsEmpty) {
-                        if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem)) {
-                            EventHost.Instance.RaiseNewChatLogItemEvent(this._memoryHandler, chatLogItem);
-                        }
-                    }
+            while (!result.ChatLogItems.IsEmpty)
+            {
+                if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem))
+                {
+                    EventHost.Instance.RaiseNewChatLogItemEvent(this._memoryHandler, chatLogItem);
+                }
+            }
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }
