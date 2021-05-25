@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PartyMemberResolver.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -30,6 +30,10 @@ namespace Sharlayan.Utilities {
         private NPCWorkerDelegate _npcWorkerDelegate;
 
         private PCWorkerDelegate _pcWorkerDelegate;
+
+        private byte[] _statusesMap;
+
+        private byte[] _statusMap;
 
         public PartyMemberResolver(MemoryHandler memoryHandler, PCWorkerDelegate pcWorkerDelegate, NPCWorkerDelegate npcWorkerDelegate, MonsterWorkerDelegate monsterWorkerDelegate) {
             this._memoryHandler = memoryHandler;
@@ -63,6 +67,16 @@ namespace Sharlayan.Utilities {
                 int defaultStatusEffectOffset = this._memoryHandler.Structures.PartyMember.DefaultStatusEffectOffset;
                 PartyMember entry = new PartyMember();
                 try {
+                    const int limit = 15;
+                    int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
+                    if (this._statusesMap == null) {
+                        this._statusesMap = new byte[statusSize * 15];
+                    }
+
+                    if (this._statusMap == null) {
+                        this._statusMap = new byte[statusSize];
+                    }
+
                     entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
                     entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
                     entry.Y = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Y);
@@ -78,24 +92,19 @@ namespace Sharlayan.Utilities {
                     entry.HPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPCurrent);
                     entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPMax);
                     entry.MPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PartyMember.MPCurrent);
-                    const int limit = 15;
-
-                    int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
-                    byte[] statusesSource = new byte[limit * statusSize];
 
                     List<StatusItem> foundStatuses = new List<StatusItem>();
 
-                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, this._statusesMap, 0, limit * statusSize);
                     for (int i = 0; i < limit; i++) {
                         bool isNewStatus = false;
 
-                        byte[] statusSource = new byte[statusSize];
-                        Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
+                        Buffer.BlockCopy(this._statusesMap, i * statusSize, this._statusMap, 0, statusSize);
 
-                        short StatusID = SharlayanBitConverter.TryToInt16(statusSource, this._memoryHandler.Structures.StatusItem.StatusID);
-                        uint CasterID = SharlayanBitConverter.TryToUInt32(statusSource, this._memoryHandler.Structures.StatusItem.CasterID);
+                        short statusID = SharlayanBitConverter.TryToInt16(this._statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(this._statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
+                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
                         if (statusEntry == null) {
                             statusEntry = new StatusItem();
@@ -104,10 +113,10 @@ namespace Sharlayan.Utilities {
 
                         statusEntry.TargetEntity = null;
                         statusEntry.TargetName = entry.Name;
-                        statusEntry.StatusID = StatusID;
-                        statusEntry.Stacks = statusSource[this._memoryHandler.Structures.StatusItem.Stacks];
-                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusSource, this._memoryHandler.Structures.StatusItem.Duration);
-                        statusEntry.CasterID = CasterID;
+                        statusEntry.StatusID = statusID;
+                        statusEntry.Stacks = this._statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(this._statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        statusEntry.CasterID = casterID;
 
                         foundStatuses.Add(statusEntry);
 

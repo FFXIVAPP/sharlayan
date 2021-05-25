@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="StringExtensions.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,6 +10,7 @@
 
 namespace Sharlayan.Extensions {
     using System;
+    using System.Collections.Concurrent;
     using System.Globalization;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -21,28 +22,41 @@ namespace Sharlayan.Extensions {
 
         private static readonly Regex Titles = new Regex(@"(?<num>\d+)(?<designator>\w+)", DefaultOptions | RegexOptions.IgnoreCase);
 
-        private static readonly Regex CleanSpaces = new Regex(@"[ ]+", RegexOptions.Compiled);
+        private static ConcurrentDictionary<string, string> _fromHexLookup = new ConcurrentDictionary<string, string>();
+
+        private static ConcurrentDictionary<string, string> _titleCaseLookup = new ConcurrentDictionary<string, string>();
 
         public static string FromHex(this string source) {
+            if (_fromHexLookup.TryGetValue(source, out string existing)) {
+                return existing;
+            }
+
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i <= source.Length - 2; i += 2) {
                 builder.Append(Convert.ToChar(int.Parse(source.Substring(i, 2), NumberStyles.HexNumber)));
             }
 
-            return builder.ToString();
+            string result = builder.ToString();
+
+            _fromHexLookup.AddOrUpdate(source, result, (k, v) => result);
+
+            return result;
         }
 
         public static string ToTitleCase(this string source, bool all = true) {
-            if (string.IsNullOrWhiteSpace(source.Trim())) {
+            if (string.IsNullOrWhiteSpace(source)) {
                 return string.Empty;
             }
 
-            string cleaned = source.TrimAndCleanSpaces();
+            if (_titleCaseLookup.TryGetValue(source, out string existing)) {
+                return existing;
+            }
+
             string result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
                 all
-                    ? cleaned.ToLower()
-                    : cleaned);
-            Match reg = Romans.Match(cleaned);
+                    ? source.ToLower()
+                    : source);
+            Match reg = Romans.Match(source);
             if (reg.Success) {
                 string replace = Convert.ToString(reg.Groups["roman"].Value);
                 string original = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(replace.ToLower());
@@ -56,11 +70,9 @@ namespace Sharlayan.Extensions {
                 result = result.Replace($"{num}{designator}", $"{num}{designator.ToLower()}");
             }
 
-            return result;
-        }
+            _titleCaseLookup.AddOrUpdate(source, result, (k, v) => result);
 
-        public static string TrimAndCleanSpaces(this string source) {
-            return CleanSpaces.Replace(source, " ").Trim();
+            return result;
         }
     }
 }

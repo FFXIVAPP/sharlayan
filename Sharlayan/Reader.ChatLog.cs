@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.ChatLog.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -116,19 +116,22 @@ namespace Sharlayan {
 
             public int PreviousOffset;
 
+            private byte[] _indexes;
+
             private int BUFFER_SIZE = 4000;
 
             public ChatLogReader(MemoryHandler memoryHandler) {
                 this._memoryHandler = memoryHandler;
+                this._indexes = new byte[this.BUFFER_SIZE];
             }
 
             private MemoryHandler _memoryHandler { get; }
 
             public void EnsureArrayIndexes() {
                 this.Indexes.Clear();
-                byte[] indexes = this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.OffsetArrayStart), this.BUFFER_SIZE);
+                this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.OffsetArrayStart), this._indexes);
                 for (int i = 0; i < this.BUFFER_SIZE; i += 4) {
-                    this.Indexes.Add(BitConverter.ToInt32(indexes, i));
+                    this.Indexes.Add(BitConverter.ToInt32(this._indexes, i));
                 }
             }
 

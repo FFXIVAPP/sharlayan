@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MemoryHandler.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -118,6 +118,10 @@ namespace Sharlayan {
             byte[] data = new byte[length];
             this.Peek(address, data);
             return data;
+        }
+
+        public void GetByteArray(IntPtr address, byte[] destination) {
+            this.Peek(address, destination);
         }
 
         public short GetInt16(IntPtr address, long offset = 0) {

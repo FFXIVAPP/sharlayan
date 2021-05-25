@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Target.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -17,6 +17,10 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
+        private byte[] _targetInfoMap;
+
+        private byte[] _targetMap;
+
         public bool CanGetTargetInfo() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.TargetKey);
             if (canRead) {
@@ -33,18 +37,22 @@ namespace Sharlayan {
                 return result;
             }
 
+            if (this._targetInfoMap == null) {
+                this._targetInfoMap = new byte[this._memoryHandler.Structures.TargetInfo.SourceSize];
+            }
+
             try {
                 IntPtr targetAddress = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.TargetKey];
 
                 if (targetAddress.ToInt64() > 0) {
-                    byte[] targetInfoSource = this._memoryHandler.GetByteArray(targetAddress, this._memoryHandler.Structures.TargetInfo.SourceSize);
+                    this._memoryHandler.GetByteArray(targetAddress, this._targetInfoMap);
 
-                    long currentTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Current);
-                    long mouseOverTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.MouseOver);
-                    long focusTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Focus);
-                    long previousTarget = this._memoryHandler.GetInt64FromBytes(targetInfoSource, this._memoryHandler.Structures.TargetInfo.Previous);
+                    long currentTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Current);
+                    long mouseOverTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.MouseOver);
+                    long focusTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Focus);
+                    long previousTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Previous);
 
-                    uint currentTargetID = SharlayanBitConverter.TryToUInt32(targetInfoSource, this._memoryHandler.Structures.TargetInfo.CurrentID);
+                    uint currentTargetID = SharlayanBitConverter.TryToUInt32(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.CurrentID);
 
                     if (currentTarget > 0) {
                         try {
@@ -161,8 +169,12 @@ namespace Sharlayan {
         private ActorItem GetTargetActorItemFromSource(long address) {
             IntPtr targetAddress = new IntPtr(address);
 
-            byte[] source = this._memoryHandler.GetByteArray(targetAddress, this._memoryHandler.Structures.TargetInfo.Size);
-            ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(source);
+            if (this._targetMap == null) {
+                this._targetMap = new byte[this._memoryHandler.Structures.TargetInfo.Size];
+            }
+
+            this._memoryHandler.GetByteArray(targetAddress, this._targetMap);
+            ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(this._targetMap);
 
             if (entry.Type == Actor.Type.EventObject) {
                 (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.PlayerInfo.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -15,6 +15,8 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
 
     public partial class Reader {
+        private byte[] _playerMap;
+
         public bool CanGetPlayerInfo() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PlayerInformationKey);
             if (canRead) {
@@ -37,11 +39,15 @@ namespace Sharlayan {
                 return result;
             }
 
+            if (this._playerMap == null) {
+                this._playerMap = new byte[this._memoryHandler.Structures.PlayerInfo.SourceSize];
+            }
+
             try {
-                byte[] source = this._memoryHandler.GetByteArray(PlayerInfoMap, this._memoryHandler.Structures.PlayerInfo.SourceSize);
+                this._memoryHandler.GetByteArray(PlayerInfoMap, this._playerMap);
 
                 try {
-                    result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(source);
+                    result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(this._playerMap);
                 }
                 catch (Exception ex) {
                     this._memoryHandler.RaiseException(Logger, ex, true);

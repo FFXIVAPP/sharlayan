@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actions.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -22,6 +22,14 @@ namespace Sharlayan {
 
     public partial class Reader {
         private readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
+
+        private byte[] _hotbarItemsMap;
+
+        private byte[] _hotbarMap;
+
+        private byte[] _recastItemsMap;
+
+        private byte[] _recastMap;
 
         public bool CanGetActions() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.HotBarKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.RecastKey);
@@ -74,9 +82,15 @@ namespace Sharlayan {
 
             int hotbarContainerSize = this._memoryHandler.Structures.HotBarItem.ContainerSize;
             IntPtr hotbarContainerAddress = IntPtr.Add(HotBarMap, (int) type * hotbarContainerSize);
+            if (this._hotbarItemsMap == null) {
+                this._hotbarItemsMap = new byte[hotbarContainerSize];
+            }
 
             int recastContainerSize = this._memoryHandler.Structures.RecastItem.ContainerSize;
             IntPtr recastContainerAddress = IntPtr.Add(RecastMap, (int) type * recastContainerSize);
+            if (this._recastItemsMap == null) {
+                this._recastItemsMap = new byte[recastContainerSize];
+            }
 
             ActionContainer container = new ActionContainer {
                 ContainerType = type,
@@ -85,7 +99,14 @@ namespace Sharlayan {
             bool canUseKeyBinds = false;
 
             int hotbarItemSize = this._memoryHandler.Structures.HotBarItem.ItemSize;
+            if (this._hotbarMap == null) {
+                this._hotbarMap = new byte[hotbarItemSize];
+            }
+
             int recastItemSize = this._memoryHandler.Structures.RecastItem.ItemSize;
+            if (this._recastMap == null) {
+                this._recastMap = new byte[recastItemSize];
+            }
 
             int limit;
 
@@ -107,17 +128,14 @@ namespace Sharlayan {
                     break;
             }
 
-            byte[] hotbarItemsSource = this._memoryHandler.GetByteArray(hotbarContainerAddress, hotbarContainerSize);
-            byte[] recastItemsSource = this._memoryHandler.GetByteArray(recastContainerAddress, recastContainerSize);
+            this._memoryHandler.GetByteArray(hotbarContainerAddress, this._hotbarItemsMap);
+            this._memoryHandler.GetByteArray(recastContainerAddress, this._recastItemsMap);
 
             for (int i = 0; i < limit; i++) {
-                byte[] hotbarSource = new byte[hotbarItemSize];
-                byte[] recastSource = new byte[recastItemSize];
+                Buffer.BlockCopy(this._hotbarItemsMap, i * hotbarItemSize, this._hotbarMap, 0, hotbarItemSize);
+                Buffer.BlockCopy(this._recastItemsMap, i * recastItemSize, this._recastMap, 0, recastItemSize);
 
-                Buffer.BlockCopy(hotbarItemsSource, i * hotbarItemSize, hotbarSource, 0, hotbarItemSize);
-                Buffer.BlockCopy(recastItemsSource, i * recastItemSize, recastSource, 0, recastItemSize);
-
-                string name = this._memoryHandler.GetStringFromBytes(hotbarSource, this._memoryHandler.Structures.HotBarItem.Name);
+                string name = this._memoryHandler.GetStringFromBytes(this._hotbarMap, this._memoryHandler.Structures.HotBarItem.Name);
                 int slot = i;
 
                 if (string.IsNullOrWhiteSpace(name)) {
@@ -126,8 +144,8 @@ namespace Sharlayan {
 
                 ActionItem item = new ActionItem {
                     Name = name,
-                    ID = SharlayanBitConverter.TryToInt16(hotbarSource, this._memoryHandler.Structures.HotBarItem.ID),
-                    KeyBinds = this._memoryHandler.GetStringFromBytes(hotbarSource, this._memoryHandler.Structures.HotBarItem.KeyBinds),
+                    ID = SharlayanBitConverter.TryToInt16(this._hotbarMap, this._memoryHandler.Structures.HotBarItem.ID),
+                    KeyBinds = this._memoryHandler.GetStringFromBytes(this._hotbarMap, this._memoryHandler.Structures.HotBarItem.KeyBinds),
                     Slot = slot,
                 };
 
@@ -151,20 +169,20 @@ namespace Sharlayan {
                     }
                 }
 
-                item.Category = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Category);
-                item.Type = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Type);
-                item.Icon = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Icon);
-                item.CoolDownPercent = recastSource[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
-                item.IsAvailable = SharlayanBitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.IsAvailable);
+                item.Category = SharlayanBitConverter.TryToInt32(this._recastMap, this._memoryHandler.Structures.RecastItem.Category);
+                item.Type = SharlayanBitConverter.TryToInt32(this._recastMap, this._memoryHandler.Structures.RecastItem.Type);
+                item.Icon = SharlayanBitConverter.TryToInt32(this._recastMap, this._memoryHandler.Structures.RecastItem.Icon);
+                item.CoolDownPercent = this._recastMap[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
+                item.IsAvailable = SharlayanBitConverter.TryToBoolean(this._recastMap, this._memoryHandler.Structures.RecastItem.IsAvailable);
 
-                int remainingCost = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.RemainingCost);
+                int remainingCost = SharlayanBitConverter.TryToInt32(this._recastMap, this._memoryHandler.Structures.RecastItem.RemainingCost);
 
                 item.RemainingCost = remainingCost != -1
                                          ? remainingCost
                                          : 0;
-                item.Amount = SharlayanBitConverter.TryToInt32(recastSource, this._memoryHandler.Structures.RecastItem.Amount);
-                item.InRange = SharlayanBitConverter.TryToBoolean(recastSource, this._memoryHandler.Structures.RecastItem.InRange);
-                item.IsProcOrCombo = recastSource[this._memoryHandler.Structures.RecastItem.ActionProc] > 0;
+                item.Amount = SharlayanBitConverter.TryToInt32(this._recastMap, this._memoryHandler.Structures.RecastItem.Amount);
+                item.InRange = SharlayanBitConverter.TryToBoolean(this._recastMap, this._memoryHandler.Structures.RecastItem.InRange);
+                item.IsProcOrCombo = this._recastMap[this._memoryHandler.Structures.RecastItem.ActionProc] > 0;
 
                 container.ActionItems.Add(item);
             }

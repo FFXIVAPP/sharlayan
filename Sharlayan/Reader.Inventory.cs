@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Inventory.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -16,6 +16,12 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
 
     public partial class Reader {
+        const int _inventoryByteCount = 24;
+
+        const int _inventoryCount = 74;
+
+        private byte[] _inventoryMap;
+
         public bool CanGetInventory() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.InventoryKey);
             if (canRead) {
@@ -33,30 +39,31 @@ namespace Sharlayan {
             }
 
             try {
-                const int inventoryCount = 74;
-                const int inventoryByteCount = 24;
+                if (this._inventoryMap == null) {
+                    this._inventoryMap = new byte[_inventoryCount * _inventoryByteCount];
+                }
 
-                IntPtr inventoryMap = new IntPtr(this._memoryHandler.GetInt64(this._memoryHandler.Scanner.Locations[Signatures.InventoryKey]));
-                byte[] inventoryBytes = this._memoryHandler.GetByteArray(inventoryMap, inventoryCount * 24);
+                IntPtr inventoryAddress = new IntPtr(this._memoryHandler.GetInt64(this._memoryHandler.Scanner.Locations[Signatures.InventoryKey]));
+                this._memoryHandler.GetByteArray(inventoryAddress, this._inventoryMap);
 
-                for (int i = 0; i < inventoryCount; i++) {
-                    int bagIndex = i * inventoryByteCount;
-                    uint bagID = BitConverter.ToUInt32(inventoryBytes, bagIndex + this._memoryHandler.Structures.InventoryContainer.ID);
+                for (int i = 0; i < _inventoryCount; i++) {
+                    int bagIndex = i * _inventoryByteCount;
+                    uint bagID = BitConverter.ToUInt32(this._inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.ID);
 
                     if (!Enum.IsDefined(typeof(Inventory.Container), bagID)) {
                         continue;
                     }
 
                     InventoryContainer container = new InventoryContainer {
-                        Amount = BitConverter.ToUInt32(inventoryBytes, bagIndex + this._memoryHandler.Structures.InventoryContainer.Amount),
+                        Amount = BitConverter.ToUInt32(this._inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.Amount),
                         TypeID = bagID,
                         ContainerType = (Inventory.Container) bagID,
                     };
 
                     int itemByteCount = 56;
 
-                    IntPtr slotMap = new IntPtr(this._memoryHandler.GetInt64FromBytes(inventoryBytes, bagIndex));
-                    byte[] slotBytes = this._memoryHandler.GetByteArray(slotMap, (int) container.Amount * itemByteCount);
+                    IntPtr inventorySlotAddress = new IntPtr(this._memoryHandler.GetInt64FromBytes(this._inventoryMap, bagIndex));
+                    byte[] slotBytes = this._memoryHandler.GetByteArray(inventorySlotAddress, (int) container.Amount * itemByteCount);
 
                     for (int j = 0; j < container.Amount; j++) {
                         int slotIndex = j * itemByteCount;

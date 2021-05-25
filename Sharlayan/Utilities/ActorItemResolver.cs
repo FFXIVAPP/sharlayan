@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItemResolver.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -31,6 +31,8 @@ namespace Sharlayan.Utilities {
 
         private PCWorkerDelegate _pcWorkerDelegate;
 
+        private byte[] _statusMap;
+
         public ActorItemResolver(MemoryHandler memoryHandler, PCWorkerDelegate pcWorkerDelegate, NPCWorkerDelegate npcWorkerDelegate, MonsterWorkerDelegate monsterWorkerDelegate) {
             this._memoryHandler = memoryHandler;
             this._pcWorkerDelegate = pcWorkerDelegate;
@@ -38,8 +40,8 @@ namespace Sharlayan.Utilities {
             this._monsterWorkerDelegate = monsterWorkerDelegate;
         }
 
-        public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null) {
-            entry = entry ?? new ActorItem();
+        public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
+            ActorItem entry = existingActorItem ?? new ActorItem();
             int defaultBaseOffset = this._memoryHandler.Structures.ActorItem.DefaultBaseOffset;
             int defaultStatOffset = this._memoryHandler.Structures.ActorItem.DefaultStatOffset;
             int defaultStatusEffectOffset = this._memoryHandler.Structures.ActorItem.DefaultStatusEffectOffset;
@@ -137,6 +139,10 @@ namespace Sharlayan.Utilities {
                 }
 
                 int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
+                if (this._statusMap == null) {
+                    this._statusMap = new byte[statusSize];
+                }
+
                 byte[] statusesSource = new byte[limit * statusSize];
 
                 List<StatusItem> foundStatuses = new List<StatusItem>();
@@ -144,14 +150,12 @@ namespace Sharlayan.Utilities {
                 Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
                 for (int i = 0; i < limit; i++) {
                     bool isNewStatus = false;
+                    Buffer.BlockCopy(statusesSource, i * statusSize, this._statusMap, 0, statusSize);
 
-                    byte[] statusSource = new byte[statusSize];
-                    Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
+                    short statusID = SharlayanBitConverter.TryToInt16(this._statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                    uint casterID = SharlayanBitConverter.TryToUInt32(this._statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                    short StatusID = SharlayanBitConverter.TryToInt16(statusSource, this._memoryHandler.Structures.StatusItem.StatusID);
-                    uint CasterID = SharlayanBitConverter.TryToUInt32(statusSource, this._memoryHandler.Structures.StatusItem.CasterID);
-
-                    StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
+                    StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
                     if (statusEntry == null) {
                         statusEntry = new StatusItem();
@@ -160,10 +164,10 @@ namespace Sharlayan.Utilities {
 
                     statusEntry.TargetEntity = entry;
                     statusEntry.TargetName = entry.Name;
-                    statusEntry.StatusID = StatusID;
-                    statusEntry.Stacks = statusSource[this._memoryHandler.Structures.StatusItem.Stacks];
-                    statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusSource, this._memoryHandler.Structures.StatusItem.Duration);
-                    statusEntry.CasterID = CasterID;
+                    statusEntry.StatusID = statusID;
+                    statusEntry.Stacks = this._statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                    statusEntry.Duration = SharlayanBitConverter.TryToSingle(this._statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                    statusEntry.CasterID = casterID;
 
                     try {
                         ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.PartyMembers.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -17,6 +17,8 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
+        private byte[] _partyMemberMap;
+
         public bool CanGetPartyMembers() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyCountKey);
             if (canRead) {
@@ -43,12 +45,15 @@ namespace Sharlayan {
             try {
                 byte partyCount = this._memoryHandler.GetByte(PartyCountMap);
                 int sourceSize = this._memoryHandler.Structures.PartyMember.SourceSize;
+                if (this._partyMemberMap == null) {
+                    this._partyMemberMap = new byte[sourceSize];
+                }
 
                 if (partyCount > 1 && partyCount < 9) {
                     for (uint i = 0; i < partyCount; i++) {
                         long address = PartyInfoMap.ToInt64() + i * (uint) sourceSize;
-                        byte[] source = this._memoryHandler.GetByteArray(new IntPtr(address), sourceSize);
-                        uint ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
+                        this._memoryHandler.GetByteArray(new IntPtr(address), this._partyMemberMap);
+                        uint ID = SharlayanBitConverter.TryToUInt32(this._partyMemberMap, this._memoryHandler.Structures.PartyMember.ID);
                         ActorItem existing = null;
                         bool newEntry = false;
 
@@ -66,7 +71,7 @@ namespace Sharlayan {
                             newEntry = true;
                         }
 
-                        PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(source, existing);
+                        PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(this._partyMemberMap, existing);
                         if (!entry.IsValid) {
                             continue;
                         }
