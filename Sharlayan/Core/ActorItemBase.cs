@@ -13,7 +13,6 @@ namespace Sharlayan.Core {
     using System.Collections.Generic;
 
     using Sharlayan.Core.Enums;
-    using Sharlayan.Extensions;
 
     public class ActorItemBase {
         private string _name;
@@ -66,7 +65,7 @@ namespace Sharlayan.Core {
 
         public string Name {
             get => this._name ?? string.Empty;
-            set => this._name = value.ToTitleCase();
+            set => this._name = value;
         }
 
         public List<StatusItem> StatusItems { get; protected set; } = new List<StatusItem>();

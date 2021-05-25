@@ -95,6 +95,8 @@ namespace Sharlayan {
                     result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
+                (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
+
                 foreach (KeyValuePair<IntPtr, IntPtr> kvp in this._uniqueCharacterAddresses) {
                     try {
                         IntPtr characterAddress = new IntPtr(kvp.Value.ToInt64());
@@ -168,7 +170,9 @@ namespace Sharlayan {
                             entry.EventObjectType = EventObjectType;
                         }
 
-                        this.EnsureMapAndZone(entry);
+                        entry.MapID = mapID;
+                        entry.MapIndex = mapIndex;
+                        entry.MapTerritory = mapTerritory;
 
                         if (isFirstEntry) {
                             if (targetAddress.ToInt64() > 0) {

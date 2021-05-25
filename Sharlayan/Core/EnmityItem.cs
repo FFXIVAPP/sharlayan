@@ -10,7 +10,6 @@
 
 namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Extensions;
 
     public class EnmityItem : IEnmityItem {
         private string _name;
@@ -21,7 +20,7 @@ namespace Sharlayan.Core {
 
         public string Name {
             get => this._name ?? string.Empty;
-            set => this._name = value.ToTitleCase();
+            set => this._name = value;
         }
     }
 }

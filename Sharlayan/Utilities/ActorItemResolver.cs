@@ -31,8 +31,6 @@ namespace Sharlayan.Utilities {
 
         private PCWorkerDelegate _pcWorkerDelegate;
 
-        private byte[] _statusMap;
-
         public ActorItemResolver(MemoryHandler memoryHandler, PCWorkerDelegate pcWorkerDelegate, NPCWorkerDelegate npcWorkerDelegate, MonsterWorkerDelegate monsterWorkerDelegate) {
             this._memoryHandler = memoryHandler;
             this._pcWorkerDelegate = pcWorkerDelegate;
@@ -139,21 +137,21 @@ namespace Sharlayan.Utilities {
                 }
 
                 int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
-                if (this._statusMap == null) {
-                    this._statusMap = new byte[statusSize];
-                }
 
-                byte[] statusesSource = new byte[limit * statusSize];
+                byte[] statusesMap = new byte[limit * statusSize];
+                byte[] statusMap = new byte[statusSize];
 
                 List<StatusItem> foundStatuses = new List<StatusItem>();
 
-                Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
+                Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
+
                 for (int i = 0; i < limit; i++) {
                     bool isNewStatus = false;
-                    Buffer.BlockCopy(statusesSource, i * statusSize, this._statusMap, 0, statusSize);
 
-                    short statusID = SharlayanBitConverter.TryToInt16(this._statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
-                    uint casterID = SharlayanBitConverter.TryToUInt32(this._statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
+                    Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
+
+                    short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                    uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
                     StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
@@ -165,8 +163,8 @@ namespace Sharlayan.Utilities {
                     statusEntry.TargetEntity = entry;
                     statusEntry.TargetName = entry.Name;
                     statusEntry.StatusID = statusID;
-                    statusEntry.Stacks = this._statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
-                    statusEntry.Duration = SharlayanBitConverter.TryToSingle(this._statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                    statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                    statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
                     statusEntry.CasterID = casterID;
 
                     try {

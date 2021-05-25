@@ -182,7 +182,11 @@ namespace Sharlayan {
                 entry.EventObjectType = EventObjectType;
             }
 
-            this.EnsureMapAndZone(entry);
+            (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
+
+            entry.MapID = mapID;
+            entry.MapIndex = mapIndex;
+            entry.MapTerritory = mapTerritory;
 
             return entry;
         }

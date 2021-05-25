@@ -10,11 +10,8 @@
 
 namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Extensions;
 
     public class StatusItem : IStatusItem {
-        private string _targetName;
-
         public uint CasterID { get; set; }
 
         public float Duration { get; set; }
@@ -31,11 +28,7 @@ namespace Sharlayan.Core {
 
         public ActorItem TargetEntity { get; set; }
 
-        public string TargetName {
-            get => this._targetName;
-
-            set => this._targetName = value.ToTitleCase();
-        }
+        public string TargetName { get; set; }
 
         public bool IsValid() {
             return this.StatusID > 0 && this.Duration <= 86400 && this.CasterID > 0;
