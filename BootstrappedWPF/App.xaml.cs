@@ -55,7 +55,7 @@
             StringReader stringReader;
             stringReader = File.Exists(path)
                                ? new StringReader(XElement.Load(path).ToString())
-                               : new StringReader(ResourceHelper.LoadXML($"{Constants.AppPack}Resources/Bootstrapped.exe.nlog").ToString());
+                               : new StringReader(ResourceHelper.LoadXML($"{Constants.AppPack}Resources/BootstrappedWPF.exe.nlog").ToString());
 
             using XmlReader xmlReader = XmlReader.Create(stringReader);
             LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
@@ -81,7 +81,7 @@
         }
 
         private void Default_OnSettingChanging(object sender, SettingChangingEventArgs e) {
-            Logging.Log(Logger, $"SettingChanging : [{e.SettingName},{e.SettingKey}]");
+            Logging.Log(Logger, $"SettingChanging : [{e.SettingName},{e.NewValue}]");
         }
     }
 }

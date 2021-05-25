@@ -15,7 +15,8 @@
                     ColorAdjustment="{materialDesign:ColorAdjustment}"
                     PrimaryColor="Red"
                     SecondaryColor="Blue" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <!-- <ResourceDictionary Source="pack://application:,,,/MaterialDesignExtensions;component/Themes/Generic.xaml" /> -->
 
             </ResourceDictionary.MergedDictionaries>

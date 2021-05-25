@@ -1,7 +1,6 @@
 ﻿namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using BootstrappedWPF.Properties;

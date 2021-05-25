@@ -9,7 +9,7 @@
     using System.Threading;
     using System.Windows;
     using System.Windows.Threading;
-        
+
     using Ionic.Zip;
 
     public static class UpdateManager {

@@ -1,16 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ChatLogWorker.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   ChatLogWorker.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedElectron.SharlayanWrappers.Workers {
+﻿namespace BootstrappedElectron.SharlayanWrappers.Workers {
     using System;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using Sharlayan;
@@ -69,10 +58,8 @@ namespace BootstrappedElectron.SharlayanWrappers.Workers {
             this._previousArrayIndex = result.PreviousArrayIndex;
             this._previousOffset = result.PreviousOffset;
 
-            while (!result.ChatLogItems.IsEmpty)
-            {
-                if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem))
-                {
+            while (!result.ChatLogItems.IsEmpty) {
+                if (result.ChatLogItems.TryDequeue(out ChatLogItem chatLogItem)) {
                     EventHost.Instance.RaiseNewChatLogItemEvent(this._memoryHandler, chatLogItem);
                 }
             }

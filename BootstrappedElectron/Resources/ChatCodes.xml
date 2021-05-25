@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Codes>
 	<Group Name="Chat" Type="Chat">
 		<Group Name="You" Subject="You" Direction="Multi">
