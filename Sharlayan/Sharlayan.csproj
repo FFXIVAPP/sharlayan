@@ -31,15 +31,7 @@
 		<PackageReference Include="NLog" Version="4.7.0" />
 		<PackageReference Include="NLog.Config" Version="4.7.0" />
 		<PackageReference Include="NLog.Schema" Version="4.7.0" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

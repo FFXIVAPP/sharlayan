@@ -37,10 +37,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
 	</ItemGroup>

@@ -16,10 +16,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AdditionalFiles Include="$(SolutionDir)stylecop.json" Link="stylecop.json" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="NLog" Version="4.7.0" />
 		<PackageReference Include="NLog.Config" Version="4.7.0" />
 		<PackageReference Include="NLog.Schema" Version="4.7.0" />
