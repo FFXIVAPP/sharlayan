@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AppContext.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   AppContext.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedElectron {
+﻿namespace BootstrappedElectron {
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
@@ -46,7 +36,7 @@ namespace BootstrappedElectron {
         }
 
         private void LoadChatCodes() {
-            foreach (XElement xElement in Constants.Instance.XChatCodes.Descendants().Elements("Code")) {
+            foreach (XElement xElement in AppConfig.Instance.XChatCodes.Descendants().Elements("Code")) {
                 string xKey = xElement.Attribute("Key")?.Value;
                 string xColor = xElement.Element("Color")?.Value ?? "FFFFFF";
                 string xDescription = xElement.Element("Description")?.Value ?? "Unknown";
@@ -55,7 +45,7 @@ namespace BootstrappedElectron {
                     continue;
                 }
 
-                Constants.Instance.ChatCodes.Add(new ChatCode(xKey, xColor, xDescription));
+                AppConfig.Instance.ChatCodes.Add(new ChatCode(xKey, xColor, xDescription));
             }
         }
 
@@ -104,10 +94,10 @@ namespace BootstrappedElectron {
         }
 
         private void SetupDirectories() {
-            AppConfig.Instance.CachePath = Constants.Instance.CachePath;
-            AppConfig.Instance.ConfigurationsPath = Constants.Instance.ConfigurationsPath;
-            AppConfig.Instance.LogsPath = Constants.Instance.LogsPath;
-            AppConfig.Instance.SettingsPath = Constants.Instance.SettingsPath;
+            AppConfig.Instance.CachePath = Constants.CachePath;
+            AppConfig.Instance.ConfigurationsPath = Constants.ConfigurationsPath;
+            AppConfig.Instance.LogsPath = Constants.LogsPath;
+            AppConfig.Instance.SettingsPath = Constants.SettingsPath;
         }
 
         private void SetupSharlayanManager() {

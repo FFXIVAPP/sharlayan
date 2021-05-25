@@ -1,17 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PartyWorker.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   PartyWorker.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedElectron.SharlayanWrappers.Workers {
+﻿namespace BootstrappedElectron.SharlayanWrappers.Workers {
     using System;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using Sharlayan;
@@ -57,25 +46,22 @@ namespace BootstrappedElectron.SharlayanWrappers.Workers {
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    PartyResult result = this._memoryHandler.Reader.GetPartyMembers();
+            PartyResult result = this._memoryHandler.Reader.GetPartyMembers();
 
-                    if (!this._partyReferencesSet) {
-                        this._partyReferencesSet = true;
-                        EventHost.Instance.RaiseNewPartyMembersEvent(this._memoryHandler, result.PartyMembers);
-                    }
+            if (!this._partyReferencesSet) {
+                this._partyReferencesSet = true;
+                EventHost.Instance.RaiseNewPartyMembersEvent(this._memoryHandler, result.PartyMembers);
+            }
 
-                    if (result.NewPartyMembers.Any()) {
-                        EventHost.Instance.RaisePartyMembersAddedEvent(this._memoryHandler, result.NewPartyMembers);
-                    }
+            if (result.NewPartyMembers.Any()) {
+                EventHost.Instance.RaisePartyMembersAddedEvent(this._memoryHandler, result.NewPartyMembers);
+            }
 
-                    if (result.RemovedPartyMembers.Any()) {
-                        EventHost.Instance.RaisePartyMembersRemovedEvent(this._memoryHandler, result.RemovedPartyMembers);
-                    }
+            if (result.RemovedPartyMembers.Any()) {
+                EventHost.Instance.RaisePartyMembersRemovedEvent(this._memoryHandler, result.RemovedPartyMembers);
+            }
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

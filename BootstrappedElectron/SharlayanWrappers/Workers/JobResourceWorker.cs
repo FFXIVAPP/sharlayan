@@ -1,16 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="JobResourceWorker.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   JobResourceWorker.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedElectron.SharlayanWrappers.Workers {
+﻿namespace BootstrappedElectron.SharlayanWrappers.Workers {
     using System;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using Sharlayan;
@@ -54,14 +43,11 @@ namespace BootstrappedElectron.SharlayanWrappers.Workers {
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
+            JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
 
-                    EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
+            EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

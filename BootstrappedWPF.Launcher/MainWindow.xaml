@@ -55,7 +55,8 @@
             <GradientStop Offset="0.7" Color="#20000000" />
             <GradientStop Offset="1" Color="#0C000000" />
         </LinearGradientBrush>
-        <RadialGradientBrush x:Key="ProgressBarIndicatorLightingEffectLeft" RadiusX="1" RadiusY="1" RelativeTransform="1,0,0,1,0.5,0.5">
+        <RadialGradientBrush x:Key="ProgressBarIndicatorLightingEffectLeft" RadiusX="1" RadiusY="1"
+                             RelativeTransform="1,0,0,1,0.5,0.5">
             <GradientStop Offset="0" Color="#60FFFFC4" />
             <GradientStop Offset="1" Color="#00FFFFC4" />
         </RadialGradientBrush>
@@ -63,7 +64,8 @@
             <GradientStop Offset="0" Color="#60FFFFC4" />
             <GradientStop Offset="1" Color="#00FFFFC4" />
         </LinearGradientBrush>
-        <RadialGradientBrush x:Key="ProgressBarIndicatorLightingEffectRight" RadiusX="1" RadiusY="1" RelativeTransform="1,0,0,1,-0.5,0.5">
+        <RadialGradientBrush x:Key="ProgressBarIndicatorLightingEffectRight" RadiusX="1" RadiusY="1"
+                             RelativeTransform="1,0,0,1,-0.5,0.5">
             <GradientStop Offset="0" Color="#60FFFFC4" />
             <GradientStop Offset="1" Color="#00FFFFC4" />
         </RadialGradientBrush>

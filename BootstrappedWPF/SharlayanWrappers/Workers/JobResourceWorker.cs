@@ -1,6 +1,5 @@
 ﻿namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using BootstrappedWPF.Properties;
@@ -46,14 +45,11 @@
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
+            JobResourceResult result = this._memoryHandler.Reader.GetJobResources();
 
-                    EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
+            EventHost.Instance.RaiseNewJobResourcesContainerEvent(this._memoryHandler, result.JobResourcesContainer);
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace BootstrappedWPF.SharlayanWrappers.Workers {
     using System;
     using System.Linq;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using BootstrappedWPF.Properties;
@@ -53,51 +52,48 @@
 
             this._isScanning = true;
 
-            Task.Run(
-                () => {
-                    ActorResult result = this._memoryHandler.Reader.GetActors();
+            ActorResult result = this._memoryHandler.Reader.GetActors();
 
-                    if (!this._monsterReferencesSet) {
-                        this._monsterReferencesSet = true;
-                        EventHost.Instance.RaiseNewMonsterActorItemsEvent(this._memoryHandler, result.CurrentMonsters);
-                    }
+            if (!this._monsterReferencesSet) {
+                this._monsterReferencesSet = true;
+                EventHost.Instance.RaiseNewMonsterActorItemsEvent(this._memoryHandler, result.CurrentMonsters);
+            }
 
-                    if (!this._npcReferencesSet) {
-                        this._npcReferencesSet = true;
-                        EventHost.Instance.RaiseNewNPCActorItemsEvent(this._memoryHandler, result.CurrentNPCs);
-                    }
+            if (!this._npcReferencesSet) {
+                this._npcReferencesSet = true;
+                EventHost.Instance.RaiseNewNPCActorItemsEvent(this._memoryHandler, result.CurrentNPCs);
+            }
 
-                    if (!this._pcReferencesSet) {
-                        this._pcReferencesSet = true;
-                        EventHost.Instance.RaiseNewPCActorItemsEvent(this._memoryHandler, result.CurrentPCs);
-                    }
+            if (!this._pcReferencesSet) {
+                this._pcReferencesSet = true;
+                EventHost.Instance.RaiseNewPCActorItemsEvent(this._memoryHandler, result.CurrentPCs);
+            }
 
-                    if (result.NewMonsters.Any()) {
-                        EventHost.Instance.RaiseMonsterActorItemsAddedEvent(this._memoryHandler, result.NewMonsters);
-                    }
+            if (result.NewMonsters.Any()) {
+                EventHost.Instance.RaiseMonsterActorItemsAddedEvent(this._memoryHandler, result.NewMonsters);
+            }
 
-                    if (result.NewNPCs.Any()) {
-                        EventHost.Instance.RaiseNPCActorItemsAddedEvent(this._memoryHandler, result.NewNPCs);
-                    }
+            if (result.NewNPCs.Any()) {
+                EventHost.Instance.RaiseNPCActorItemsAddedEvent(this._memoryHandler, result.NewNPCs);
+            }
 
-                    if (result.NewPCs.Any()) {
-                        EventHost.Instance.RaisePCActorItemsAddedEvent(this._memoryHandler, result.NewPCs);
-                    }
+            if (result.NewPCs.Any()) {
+                EventHost.Instance.RaisePCActorItemsAddedEvent(this._memoryHandler, result.NewPCs);
+            }
 
-                    if (result.RemovedMonsters.Any()) {
-                        EventHost.Instance.RaiseMonsterActorItemsRemovedEvent(this._memoryHandler, result.RemovedMonsters);
-                    }
+            if (result.RemovedMonsters.Any()) {
+                EventHost.Instance.RaiseMonsterActorItemsRemovedEvent(this._memoryHandler, result.RemovedMonsters);
+            }
 
-                    if (result.RemovedNPCs.Any()) {
-                        EventHost.Instance.RaiseNPCActorItemsRemovedEvent(this._memoryHandler, result.RemovedNPCs);
-                    }
+            if (result.RemovedNPCs.Any()) {
+                EventHost.Instance.RaiseNPCActorItemsRemovedEvent(this._memoryHandler, result.RemovedNPCs);
+            }
 
-                    if (result.RemovedPCs.Any()) {
-                        EventHost.Instance.RaisePCActorItemsRemovedEvent(this._memoryHandler, result.RemovedPCs);
-                    }
+            if (result.RemovedPCs.Any()) {
+                EventHost.Instance.RaisePCActorItemsRemovedEvent(this._memoryHandler, result.RemovedPCs);
+            }
 
-                    this._isScanning = false;
-                });
+            this._isScanning = false;
         }
     }
 }

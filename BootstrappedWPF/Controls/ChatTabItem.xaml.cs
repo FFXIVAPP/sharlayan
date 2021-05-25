@@ -4,7 +4,9 @@
 
     using BootstrappedWPF.Helpers;
     using BootstrappedWPF.SharlayanWrappers;
-    using BootstrappedWPF.SharlayanWrappers.Events;
+
+    using Sharlayan;
+    using Sharlayan.Core;
 
     /// <summary>
     /// Interaction logic for ChatTabItem.xaml
@@ -17,7 +19,7 @@
 
             Instance = this;
 
-            EventHost.Instance.OnNewChatLogItem += this.OnOnNewChatLogItem;
+            EventHost.Instance.OnNewChatLogItem += this.OnNewChatLogItem;
         }
 
         ~ChatTabItem() {
@@ -25,11 +27,11 @@
         }
 
         public void Dispose() {
-            EventHost.Instance.OnNewChatLogItem -= this.OnOnNewChatLogItem;
+            EventHost.Instance.OnNewChatLogItem -= this.OnNewChatLogItem;
         }
 
-        private void OnOnNewChatLogItem(object? sender, NewChatLogItemEvent e) {
-            FlowDocHelper.AppendChatLogItem(e.MemoryHandler, e.EventData, this.ChatLogReader._FDR);
+        private void OnNewChatLogItem(object? sender, MemoryHandler memoryHandler, ChatLogItem chatLogItem) {
+            FlowDocHelper.AppendChatLogItem(memoryHandler, chatLogItem, this.ChatLogReader._FDR);
         }
     }
 }

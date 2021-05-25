@@ -1,14 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AppContext.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
-//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
-// </copyright>
-// <summary>
-//   AppContext.cs Implementation
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace BootstrappedConsole {
+﻿namespace BootstrappedConsole {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -38,7 +28,7 @@ namespace BootstrappedConsole {
                 SharlayanConfiguration sharlayanConfiguration = new SharlayanConfiguration {
                     ProcessModel = new ProcessModel {
                         Process = process,
-                    }
+                    },
                 };
                 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(sharlayanConfiguration);
                 handler.ExceptionEvent += delegate { };

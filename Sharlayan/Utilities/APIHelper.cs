@@ -44,17 +44,15 @@ namespace Sharlayan.Utilities {
             string patchVersion = configuration.PatchVersion;
             string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-{patchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
-                string json = FileResponseToJSON(file);
-                return JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
+                return FileResponseToJSON<IEnumerable<Signature>>(file);
             }
-            else {
-                string json = APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
-                IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
-                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
+            string json = APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
+            IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
 
-                return resolved;
-            }
+            File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
+
+            return resolved;
         }
 
         public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
@@ -122,22 +120,24 @@ namespace Sharlayan.Utilities {
         }
 
         private static T EnsureClassValues<T>(string file) {
-            string json = FileResponseToJSON(file);
-            return JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
+            return FileResponseToJSON<T>(file);
         }
 
         private static void EnsureDictionaryValues<T>(ConcurrentDictionary<uint, T> dictionary, string file) {
-            string json = FileResponseToJSON(file);
-            ConcurrentDictionary<uint, T> resolved = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, T>>(json, Constants.SerializerSettings);
+            ConcurrentDictionary<uint, T> resolved = FileResponseToJSON<ConcurrentDictionary<uint, T>>(file);
 
             foreach (KeyValuePair<uint, T> kvp in resolved) {
                 dictionary.AddOrUpdate(kvp.Key, kvp.Value, (k, v) => kvp.Value);
             }
         }
 
-        private static string FileResponseToJSON(string file) {
-            using (StreamReader streamReader = new StreamReader(file)) {
-                return streamReader.ReadToEnd();
+        private static T FileResponseToJSON<T>(string file) {
+            using (StreamReader streamReader = File.OpenText(file)) {
+                JsonSerializer serializer = new JsonSerializer {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Populate,
+                };
+                return (T) serializer.Deserialize(streamReader, typeof(T));
             }
         }
     }

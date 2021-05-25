@@ -51,11 +51,11 @@
         }
 
         private void ConfigureNLog() {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Bootstrapped.exe.nlog");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "BootstrappedWPF.exe.nlog");
             StringReader stringReader;
             stringReader = File.Exists(path)
                                ? new StringReader(XElement.Load(path).ToString())
-                               : new StringReader(ResourceHelper.LoadXML($"{Constants.AppPack}Resources/Bootstrapped.exe.nlog").ToString());
+                               : new StringReader(ResourceHelper.LoadXML($"{Constants.AppPack}Resources/BootstrappedWPF.exe.nlog").ToString());
 
             using XmlReader xmlReader = XmlReader.Create(stringReader);
             LogManager.Configuration = new XmlLoggingConfiguration(xmlReader, null);
@@ -68,7 +68,7 @@
                     case "InterfaceLanguage":
                         LanguageItem item = AppViewModel.Instance.InterfaceLanguages.FirstOrDefault(languageItem => languageItem.Language == Settings.Default.InterfaceLanguage);
                         if (item is not null) {
-                            Constants.Instance.CultureInfo = Settings.Default.Culture = item.CultureInfo;
+                            AppViewModel.Instance.CultureInfo = Settings.Default.Culture = item.CultureInfo;
                             LocaleHelper.UpdateLocale(Settings.Default.Culture);
                         }
 
@@ -81,7 +81,7 @@
         }
 
         private void Default_OnSettingChanging(object sender, SettingChangingEventArgs e) {
-            Logging.Log(Logger, $"SettingChanging : [{e.SettingName},{e.SettingKey}]");
+            Logging.Log(Logger, $"SettingChanging : [{e.SettingName},{e.NewValue}]");
         }
     }
 }
