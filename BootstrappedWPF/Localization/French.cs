@@ -11,6 +11,7 @@
             _translations.Add("MainWindow_SettingsButtonToolTip", "Paramètres");
             _translations.Add("MainWindow_ChatLogButtonToolTip", "ChatLog");
             _translations.Add("MainWindow_DebugButtonToolTip", "Déboguer");
+            _translations.Add("MainWindow_AboutButtonToolTip", "Quelque");
             _translations.Add("HomeTabItem_WelcomeText", "Bienvenue dans l'exemple WPF de Sharlayan");
             _translations.Add("AboutTabItem_GetInTouchText", "Entrer en contact");
             _translations.Add("AboutTabItem_GetInTouchExtendedText", "Dites bonjour, faites une demande de fonctionnalité ou soulevez un bogue via l'un de ces canaux:");

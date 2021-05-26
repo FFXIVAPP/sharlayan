@@ -11,6 +11,7 @@
             _translations.Add("MainWindow_SettingsButtonToolTip", "설정");
             _translations.Add("MainWindow_ChatLogButtonToolTip", "ChatLog");
             _translations.Add("MainWindow_DebugButtonToolTip", "디버그");
+            _translations.Add("MainWindow_AboutButtonToolTip", "약간");
             _translations.Add("HomeTabItem_WelcomeText", "Sharlayan의 WPF 예제에 오신 것을 환영합니다.");
             _translations.Add("AboutTabItem_GetInTouchText", "연락하기");
             _translations.Add("AboutTabItem_GetInTouchExtendedText", "다음 채널 중 하나를 통해 인사, 기능 요청 또는 버그 제기 :");

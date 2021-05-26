@@ -11,6 +11,7 @@
             _translations.Add("MainWindow_SettingsButtonToolTip", "设定值");
             _translations.Add("MainWindow_ChatLogButtonToolTip", "聊天记录");
             _translations.Add("MainWindow_DebugButtonToolTip", "除错");
+            _translations.Add("MainWindow_AboutButtonToolTip", "关于");
             _translations.Add("HomeTabItem_WelcomeText", "欢迎来到Sharlayan的WPF示例");
             _translations.Add("AboutTabItem_GetInTouchText", "保持联系");
             _translations.Add("AboutTabItem_GetInTouchExtendedText", "打个招呼，提出功能请求，或通过以下其中一种渠道引发错误：");
