@@ -15,6 +15,11 @@ namespace Sharlayan.Core {
 
     public class ChatLogItem : IChatLogItem, ICloneable {
         /// <summary>
+        /// character name of player that was loaded when log was detected
+        /// </summary>
+        public string PlayerCharacterName { get; set; }
+
+        /// <summary>
         /// raw bytes from memory
         /// </summary>
         public byte[] Bytes { get; set; }
@@ -43,11 +48,6 @@ namespace Sharlayan.Core {
         /// message without name of player
         /// </summary>
         public string Message { get; set; }
-
-        /// <summary>
-        /// character name of player that was loaded when log was detected
-        /// </summary>
-        public string PlayerCharacterName { get; set; }
 
         /// <summary>
         /// player name from message

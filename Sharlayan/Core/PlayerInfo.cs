@@ -15,6 +15,7 @@ namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
 
     public class PlayerInfo : IPlayerInfo {
+        public int MPMax { get; set; }
         public byte ACN { get; set; }
 
         public int ACN_CurrentEXP { get; set; }
@@ -164,8 +165,6 @@ namespace Sharlayan.Core {
         public int MIN_CurrentEXP { get; set; }
 
         public short Mind { get; set; }
-
-        public int MPMax { get; set; }
 
         public byte MRD { get; set; }
 

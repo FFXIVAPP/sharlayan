@@ -6,9 +6,11 @@
     using Sharlayan.Core;
 
     public class EventHost {
+        public delegate void SharlayanEventHandler<T>(object sender, MemoryHandler memoryHandler, T eventData);
+
         private static Lazy<EventHost> _instance = new Lazy<EventHost>(() => new EventHost());
 
-        public delegate void SharlayanEventHandler<T>(object sender, MemoryHandler memoryHandler, T eventData);
+        public static EventHost Instance => _instance.Value;
 
         public event SharlayanEventHandler<ConcurrentDictionary<uint, ActorItem>> OnMonsterActorItemsAdded = delegate { };
 
@@ -47,8 +49,6 @@
         public event SharlayanEventHandler<ConcurrentDictionary<uint, ActorItem>> OnPCActorItemsAdded = delegate { };
 
         public event SharlayanEventHandler<ConcurrentDictionary<uint, ActorItem>> OnPCActorItemsRemoved = delegate { };
-
-        public static EventHost Instance => _instance.Value;
 
         public virtual void RaiseMonsterActorItemsAddedEvent(MemoryHandler memoryHandler, ConcurrentDictionary<uint, ActorItem> eventData) {
             this.OnMonsterActorItemsAdded?.Invoke(this, memoryHandler, eventData);

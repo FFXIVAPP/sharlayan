@@ -27,12 +27,12 @@
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
 
-        ~ChatLogWorker() {
-            this.Dispose();
-        }
-
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
+        }
+
+        ~ChatLogWorker() {
+            this.Dispose();
         }
 
         public void Reset() {

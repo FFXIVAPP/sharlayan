@@ -13,7 +13,6 @@ namespace Sharlayan.Extensions {
     using System.Collections.Concurrent;
     using System.Globalization;
     using System.Text;
-    using System.Text.RegularExpressions;
 
     public static class StringExtensions {
         private static ConcurrentDictionary<string, string> _fromHexLookup = new ConcurrentDictionary<string, string>();

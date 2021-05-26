@@ -108,6 +108,10 @@ namespace Sharlayan {
         private class ChatLogReader {
             public readonly List<int> Indexes = new List<int>();
 
+            private byte[] _indexes;
+
+            private int BUFFER_SIZE = 4000;
+
             public bool ChatLogFirstRun = true;
 
             public ChatLogPointers ChatLogPointers;
@@ -115,10 +119,6 @@ namespace Sharlayan {
             public int PreviousArrayIndex;
 
             public int PreviousOffset;
-
-            private byte[] _indexes;
-
-            private int BUFFER_SIZE = 4000;
 
             public ChatLogReader(MemoryHandler memoryHandler) {
                 this._memoryHandler = memoryHandler;

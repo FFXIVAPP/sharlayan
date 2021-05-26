@@ -4,6 +4,8 @@
     using Sharlayan;
 
     public class WorkerSet {
+        private readonly MemoryHandler _memoryHandler;
+
         internal ActionWorker ActionWorker;
 
         internal ActorWorker ActorWorker;
@@ -19,8 +21,6 @@
         internal PartyWorker PartyWorker;
 
         internal TargetWorker TargetWorker;
-
-        private readonly MemoryHandler _memoryHandler;
 
         public WorkerSet(MemoryHandler memoryHandler) {
             this._memoryHandler = memoryHandler;

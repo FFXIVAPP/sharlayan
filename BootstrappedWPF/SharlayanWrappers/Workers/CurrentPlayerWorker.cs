@@ -20,12 +20,12 @@
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
 
-        ~CurrentPlayerWorker() {
-            this.Dispose();
-        }
-
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
+        }
+
+        ~CurrentPlayerWorker() {
+            this.Dispose();
         }
 
         public void StartScanning() {

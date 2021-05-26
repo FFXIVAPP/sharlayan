@@ -21,10 +21,6 @@
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
 
-        ~ActorWorker() {
-            this.Dispose();
-        }
-
         private bool _monsterReferencesSet { get; set; }
 
         private bool _npcReferencesSet { get; set; }
@@ -33,6 +29,10 @@
 
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
+        }
+
+        ~ActorWorker() {
+            this.Dispose();
         }
 
         public void StartScanning() {

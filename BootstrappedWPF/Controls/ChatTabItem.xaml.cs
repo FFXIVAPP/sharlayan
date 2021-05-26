@@ -22,12 +22,12 @@
             EventHost.Instance.OnNewChatLogItem += this.OnNewChatLogItem;
         }
 
-        ~ChatTabItem() {
-            this.Dispose();
-        }
-
         public void Dispose() {
             EventHost.Instance.OnNewChatLogItem -= this.OnNewChatLogItem;
+        }
+
+        ~ChatTabItem() {
+            this.Dispose();
         }
 
         private void OnNewChatLogItem(object? sender, MemoryHandler memoryHandler, ChatLogItem chatLogItem) {

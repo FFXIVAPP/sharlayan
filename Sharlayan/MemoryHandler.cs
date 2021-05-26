@@ -66,16 +66,6 @@ namespace Sharlayan {
             Task.Run(() => this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAllRegions));
         }
 
-        ~MemoryHandler() {
-            this.Dispose();
-        }
-
-        public event EventHandler<ExceptionEvent> ExceptionEvent = (sender, args) => { };
-
-        public event EventHandler<MemoryHandlerDisposedEvent> MemoryHandlerDisposedEvent = (sender, args) => { };
-
-        public event EventHandler<MemoryLocationsFoundEvent> MemoryLocationsFoundEvent = (sender, args) => { };
-
         public SharlayanConfiguration Configuration { get; set; }
 
         public bool IsAttached { get; set; }
@@ -107,6 +97,16 @@ namespace Sharlayan {
                 this.RaiseMemoryHandlerDisposed(Logger);
             }
         }
+
+        ~MemoryHandler() {
+            this.Dispose();
+        }
+
+        public event EventHandler<ExceptionEvent> ExceptionEvent = (sender, args) => { };
+
+        public event EventHandler<MemoryHandlerDisposedEvent> MemoryHandlerDisposedEvent = (sender, args) => { };
+
+        public event EventHandler<MemoryLocationsFoundEvent> MemoryLocationsFoundEvent = (sender, args) => { };
 
         public byte GetByte(IntPtr address, long offset = 0) {
             byte[] data = new byte[1];

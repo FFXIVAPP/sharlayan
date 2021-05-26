@@ -14,6 +14,7 @@ namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
 
     public class ActionItem : IActionItem {
+        public bool IsKeyBindAssigned => !string.IsNullOrWhiteSpace(this.KeyBinds);
         public string ActionKey { get; set; }
 
         public int Amount { get; set; }
@@ -29,8 +30,6 @@ namespace Sharlayan.Core {
         public bool InRange { get; set; }
 
         public bool IsAvailable { get; set; }
-
-        public bool IsKeyBindAssigned => !string.IsNullOrWhiteSpace(this.KeyBinds);
 
         public bool IsProcOrCombo { get; set; }
 

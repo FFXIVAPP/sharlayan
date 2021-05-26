@@ -19,14 +19,14 @@
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
 
-        ~PartyWorker() {
-            this.Dispose();
-        }
-
         private bool _partyReferencesSet { get; set; }
 
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
+        }
+
+        ~PartyWorker() {
+            this.Dispose();
         }
 
         public void StartScanning() {

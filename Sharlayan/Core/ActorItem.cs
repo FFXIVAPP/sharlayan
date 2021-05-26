@@ -13,6 +13,31 @@ namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
 
     public class ActorItem : ActorItemBase, IActorItem {
+        public double CastingPercentage =>
+            this.IsCasting && this.CastingTime > 0
+                ? this.CastingProgress / this.CastingTime
+                : 0;
+
+        public bool IsAgroed => (this.AgroFlags & 1) > 0;
+
+        public bool IsClaimed => this.Status == Actor.Status.Claimed;
+
+        public bool IsFate => this.Fate == 0x801AFFFF && this.Type == Actor.Type.Monster;
+
+        // 0xBF if targetable, 0xBD if not. Assuming a 0x2 bitmask for now.
+        public bool IsTargetable => (this.TargetFlags & 2) > 0;
+
+        public bool IsValid {
+            get {
+                switch (this.Type) {
+                    case Actor.Type.NPC:
+                        return this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
+                    default:
+                        return this.ID != 0;
+                }
+            }
+        }
+
         public Actor.ActionStatus ActionStatus { get; set; }
 
         public byte ActionStatusID { get; set; }
@@ -20,11 +45,6 @@ namespace Sharlayan.Core {
         public byte AgroFlags { get; set; }
 
         public short CastingID { get; set; }
-
-        public double CastingPercentage =>
-            this.IsCasting && this.CastingTime > 0
-                ? this.CastingProgress / this.CastingTime
-                : 0;
 
         public float CastingProgress { get; set; }
 
@@ -64,29 +84,9 @@ namespace Sharlayan.Core {
 
         public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
 
-        public bool IsAgroed => (this.AgroFlags & 1) > 0;
-
         public bool IsCasting => (this.CombatFlags & (1 << 7)) != 0;
 
-        public bool IsClaimed => this.Status == Actor.Status.Claimed;
-
-        public bool IsFate => this.Fate == 0x801AFFFF && this.Type == Actor.Type.Monster;
-
         public bool IsGM { get; set; }
-
-        // 0xBF if targetable, 0xBD if not. Assuming a 0x2 bitmask for now.
-        public bool IsTargetable => (this.TargetFlags & 2) > 0;
-
-        public bool IsValid {
-            get {
-                switch (this.Type) {
-                    case Actor.Type.NPC:
-                        return this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
-                    default:
-                        return this.ID != 0;
-                }
-            }
-        }
 
         public uint MapID { get; set; }
 

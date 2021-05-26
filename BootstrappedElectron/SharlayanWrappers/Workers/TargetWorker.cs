@@ -18,12 +18,12 @@
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
 
-        ~TargetWorker() {
-            this.Dispose();
-        }
-
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
+        }
+
+        ~TargetWorker() {
+            this.Dispose();
         }
 
         public void StartScanning() {

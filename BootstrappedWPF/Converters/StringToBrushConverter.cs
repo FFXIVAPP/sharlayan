@@ -28,6 +28,10 @@
             return result;
         }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            return new BrushConverter().ConvertFrom("#FFFFFFFF");
+        }
+
         public object Convert(object value) {
             BrushConverter brushConverter = new BrushConverter();
             value = value.ToString()?.Substring(0, 1) == "#"
@@ -42,10 +46,6 @@
             }
 
             return result;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            return new BrushConverter().ConvertFrom("#FFFFFFFF");
         }
     }
 }
