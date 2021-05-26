@@ -1,10 +1,12 @@
 ﻿namespace BootstrappedWPF.Helpers {
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Media;
 
     using BootstrappedWPF.Converters;
+    using BootstrappedWPF.ViewModels;
 
     using Sharlayan;
     using Sharlayan.Core;
@@ -16,15 +18,16 @@
             DispatcherHelper.Invoke(
                 () => {
                     Span process = new Span(new Run($"[{memoryHandler.Configuration.ProcessModel.ProcessID}] ")) {
-                        Foreground = (Brush) _converter.Convert("#FF000000"),
+                        Foreground = (Brush) _converter.Convert("#FFFFFFFF"),
                         FontWeight = FontWeights.Bold,
                     };
                     Span time = new Span(new Run(chatLogItem.TimeStamp.ToString("[HH:mm:ss] "))) {
-                        Foreground = (Brush) _converter.Convert("#FF0000FF"),
+                        Foreground = Brushes.MediumPurple,
                         FontWeight = FontWeights.Bold,
                     };
+                    string lineColor = AppViewModel.Instance.ChatCodes.FirstOrDefault(code => code.Code.Equals(chatLogItem.Code))?.Color ?? "FFFFFF";
                     Span line = new Span(new Run(chatLogItem.Message)) {
-                        Foreground = (Brush) _converter.Convert("#FF000000"),
+                        Foreground = (Brush) _converter.Convert($@"#{lineColor}"),
                     };
                     Paragraph paragraph = new Paragraph();
                     paragraph.Inlines.Add(process);
