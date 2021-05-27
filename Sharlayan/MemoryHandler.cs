@@ -10,6 +10,7 @@
 
 namespace Sharlayan {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
@@ -18,11 +19,16 @@ namespace Sharlayan {
 
     using NLog;
 
-    using Sharlayan.Events;
     using Sharlayan.Models.Structures;
     using Sharlayan.Utilities;
 
     public class MemoryHandler : IDisposable {
+        public delegate void ExceptionEvent(object sender, Exception e, bool levelIsError = false);
+
+        public delegate void MemoryHandlerDisposedEvent(object sender);
+
+        public delegate void MemoryLocationsFoundEvent(object sender, ConcurrentDictionary<string, MemoryLocation> memoryLocations, long processingTime);
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private bool _isNewInstance = true;
@@ -37,7 +43,6 @@ namespace Sharlayan {
                 this.ProcessHandle = this.Configuration.ProcessModel.Process.Handle;
             }
             finally {
-                Constants.ProcessHandle = this.ProcessHandle;
                 this.IsAttached = true;
             }
 
@@ -92,21 +97,14 @@ namespace Sharlayan {
                 // IGNORED
             }
             finally {
-                Constants.ProcessHandle = this.ProcessHandle = IntPtr.Zero;
                 this.IsAttached = false;
-                this.RaiseMemoryHandlerDisposed(Logger);
+                this.RaiseMemoryHandlerDisposed();
             }
         }
 
         ~MemoryHandler() {
             this.Dispose();
         }
-
-        public event EventHandler<ExceptionEvent> ExceptionEvent = (sender, args) => { };
-
-        public event EventHandler<MemoryHandlerDisposedEvent> MemoryHandlerDisposedEvent = (sender, args) => { };
-
-        public event EventHandler<MemoryLocationsFoundEvent> MemoryLocationsFoundEvent = (sender, args) => { };
 
         public byte GetByte(IntPtr address, long offset = 0) {
             byte[] data = new byte[1];
@@ -297,16 +295,22 @@ namespace Sharlayan {
             this.Structures = APIHelper.GetStructures(this.Configuration);
         }
 
-        protected internal virtual void RaiseException(Logger logger, Exception e, bool levelIsError = false) {
-            this.ExceptionEvent?.Invoke(this, new ExceptionEvent(this, logger, e, levelIsError));
+        public event ExceptionEvent OnException = delegate { };
+
+        public event MemoryHandlerDisposedEvent OnMemoryHandlerDisposed = delegate { };
+
+        public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
+
+        protected internal virtual void RaiseException(Exception e, bool levelIsError = false) {
+            this.OnException?.Invoke(this, e, levelIsError);
         }
 
-        protected internal virtual void RaiseMemoryHandlerDisposed(Logger logger) {
-            this.MemoryHandlerDisposedEvent?.Invoke(this, new MemoryHandlerDisposedEvent(this, logger));
+        protected internal virtual void RaiseMemoryHandlerDisposed() {
+            this.OnMemoryHandlerDisposed?.Invoke(this);
         }
 
-        protected internal virtual void RaiseMemoryLocationsFound(Logger logger, Dictionary<string, MemoryLocation> memoryLocations, long processingTime) {
-            this.MemoryLocationsFoundEvent?.Invoke(this, new MemoryLocationsFoundEvent(this, logger, memoryLocations, processingTime));
+        protected internal virtual void RaiseMemoryLocationsFound(ConcurrentDictionary<string, MemoryLocation> memoryLocations, long processingTime) {
+            this.OnMemoryLocationsFound?.Invoke(this, memoryLocations, processingTime);
         }
 
         private void GetProcessModules() {

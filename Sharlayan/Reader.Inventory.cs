@@ -105,7 +105,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(ex, true);
             }
 
             return result;

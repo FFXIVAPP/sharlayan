@@ -56,7 +56,7 @@ namespace Sharlayan {
                     mapID = this._memoryHandler.GetUInt32(this._memoryHandler.Scanner.Locations[Signatures.MapInformationKey], 8);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(ex, true);
                 }
             }
 
@@ -72,7 +72,7 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(ex, true);
                 }
             }
 

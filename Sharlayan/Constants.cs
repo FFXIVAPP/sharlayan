@@ -9,8 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
-    using System;
-
     using Newtonsoft.Json;
 
     internal static class Constants {
@@ -103,7 +101,5 @@ namespace Sharlayan {
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Populate,
         };
-
-        public static IntPtr ProcessHandle { get; set; }
     }
 }

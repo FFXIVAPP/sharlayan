@@ -13,7 +13,7 @@ namespace Sharlayan {
     using System.Runtime.InteropServices;
     using System.Text;
 
-    internal static class UnsafeNativeMethods {
+    public static class UnsafeNativeMethods {
         public enum ProcessAccessFlags {
             PROCESS_VM_ALL = 0x001F0FFF,
         }

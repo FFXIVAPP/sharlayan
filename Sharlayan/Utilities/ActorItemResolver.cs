@@ -174,7 +174,7 @@ namespace Sharlayan.Utilities {
                         statusEntry.SourceEntity = (pc ?? npc) ?? monster;
                     }
                     catch (Exception ex) {
-                        this._memoryHandler.RaiseException(Logger, ex, true);
+                        this._memoryHandler.RaiseException(ex, true);
                     }
 
                     try {
@@ -229,7 +229,7 @@ namespace Sharlayan.Utilities {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(ex, true);
             }
 
             this.CleanXPValue(ref entry);

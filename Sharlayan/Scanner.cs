@@ -10,6 +10,7 @@
 
 namespace Sharlayan {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -49,7 +50,7 @@ namespace Sharlayan {
 
         public bool IsScanning { get; private set; }
 
-        public Dictionary<string, MemoryLocation> Locations { get; } = new Dictionary<string, MemoryLocation>();
+        public ConcurrentDictionary<string, MemoryLocation> Locations { get; } = new ConcurrentDictionary<string, MemoryLocation>();
 
         private MemoryHandler _memoryHandler { get; }
 
@@ -88,7 +89,7 @@ namespace Sharlayan {
 
                     sw.Stop();
 
-                    this._memoryHandler.RaiseMemoryLocationsFound(Logger, this.Locations, sw.ElapsedMilliseconds);
+                    this._memoryHandler.RaiseMemoryLocationsFound(this.Locations, sw.ElapsedMilliseconds);
 
                     this.IsScanning = false;
                 });
@@ -181,7 +182,7 @@ namespace Sharlayan {
                         this._regions.Add(info);
                     }
                     else {
-                        this._memoryHandler.RaiseException(Logger, new Exception(info.ToString()));
+                        this._memoryHandler.RaiseException(new Exception(info.ToString()));
                     }
 
                     unchecked {
@@ -197,7 +198,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(ex, true);
             }
         }
 
@@ -230,7 +231,7 @@ namespace Sharlayan {
                             signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
 
                             if (!this.Locations.ContainsKey(signature.Key)) {
-                                this.Locations.Add(signature.Key, new MemoryLocation(signature, this._memoryHandler));
+                                this.Locations.TryAdd(signature.Key, new MemoryLocation(signature, this._memoryHandler));
                             }
                         }
 
@@ -242,7 +243,7 @@ namespace Sharlayan {
                     searchStart = IntPtr.Add(searchStart, regionIncrement);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(ex, true);
                 }
             }
         }

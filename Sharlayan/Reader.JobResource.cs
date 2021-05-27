@@ -68,7 +68,7 @@ namespace Sharlayan {
                 result.JobResourcesContainer.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(this._jobResourcesMap);
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(Logger, ex);
+                this._memoryHandler.RaiseException(ex);
             }
 
             return result;

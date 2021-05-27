@@ -39,7 +39,12 @@ namespace Sharlayan {
         }
 
         public bool RemoveHandler(int processID) {
-            return this._memoryHandlers.TryRemove(processID, out MemoryHandler removedHandler);
+            if (!this._memoryHandlers.TryRemove(processID, out MemoryHandler removedHandler)) {
+                return false;
+            }
+
+            removedHandler.Dispose();
+            return true;
         }
     }
 }

@@ -10,7 +10,6 @@
     using BootstrappedElectron.SharlayanWrappers;
 
     using Sharlayan;
-    using Sharlayan.Events;
     using Sharlayan.Models;
 
     public class AppContext {
@@ -49,17 +48,17 @@
             }
         }
 
-        private void MemoryHandler_OnExceptionEvent(object? sender, ExceptionEvent e) {
+        private void MemoryHandler_OnExceptionEvent(object sender, Exception e, bool levelIsError = false) {
             if (sender is not MemoryHandler memoryHandler) {
                 return;
             }
 
             // TODO: this should be handled in sharlayan; when we can detect character changes this will be updated/removed and placed in sharlayan
-            if (e.Exception.GetType() != typeof(OverflowException)) {
+            if (e.GetType() != typeof(OverflowException)) {
                 return;
             }
 
-            if (e.Exception.StackTrace is null || !e.Exception.StackTrace.Contains("ChatLogReader")) {
+            if (e.StackTrace is null || !e.StackTrace.Contains("ChatLogReader")) {
                 return;
             }
 
@@ -79,17 +78,21 @@
                 });
         }
 
-        private void MemoryHandler_OnMemoryHandlerDisposedEvent(object? sender, MemoryHandlerDisposedEvent e) {
+        private void MemoryHandler_OnMemoryHandlerDisposedEvent(object sender) {
             if (sender is not MemoryHandler memoryHandler) {
                 return;
             }
+
+            memoryHandler.OnException -= this.MemoryHandler_OnExceptionEvent;
+            memoryHandler.OnMemoryHandlerDisposed -= this.MemoryHandler_OnMemoryHandlerDisposedEvent;
+            memoryHandler.OnMemoryLocationsFound -= this.MemoryHandler_OnMemoryLocationsFoundEvent;
 
             if (this._workerSets.TryRemove(memoryHandler.Configuration.ProcessModel.ProcessID, out WorkerSet workerSet)) {
                 workerSet.StopMemoryWorkers();
             }
         }
 
-        private void MemoryHandler_OnMemoryLocationsFoundEvent(object? sender, MemoryLocationsFoundEvent e) {
+        private void MemoryHandler_OnMemoryLocationsFoundEvent(object sender, ConcurrentDictionary<string, MemoryLocation> memoryLocations, long processingTime) {
             if (sender is not MemoryHandler memoryHandler) { }
         }
 
@@ -108,9 +111,9 @@
                     },
                 };
                 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(sharlayanConfiguration);
-                handler.ExceptionEvent += this.MemoryHandler_OnExceptionEvent;
-                handler.MemoryHandlerDisposedEvent += this.MemoryHandler_OnMemoryHandlerDisposedEvent;
-                handler.MemoryLocationsFoundEvent += this.MemoryHandler_OnMemoryLocationsFoundEvent;
+                handler.OnException += this.MemoryHandler_OnExceptionEvent;
+                handler.OnMemoryHandlerDisposed += this.MemoryHandler_OnMemoryHandlerDisposedEvent;
+                handler.OnMemoryLocationsFound += this.MemoryHandler_OnMemoryLocationsFoundEvent;
             }
         }
 

@@ -219,7 +219,7 @@ namespace Sharlayan {
                         }
                     }
                     catch (Exception ex) {
-                        this._memoryHandler.RaiseException(Logger, ex, true);
+                        this._memoryHandler.RaiseException(ex, true);
                     }
                 }
 
@@ -262,13 +262,13 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(ex, true);
                 }
 
                 this._memoryHandler.ScanCount++;
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(ex, true);
             }
 
             result.CurrentMonsters = this._monsterWorkerDelegate.ActorItems;
