@@ -50,7 +50,7 @@ namespace Sharlayan {
                     result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(this._playerMap);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex, true);
+                    this._memoryHandler.RaiseException(ex);
                 }
 
                 if (this.CanGetAgroEntities()) {
@@ -76,7 +76,7 @@ namespace Sharlayan {
                 result.Entity = this._pcWorkerDelegate.CurrentUser;
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             return result;

@@ -80,7 +80,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             foreach (List<byte> bytes in buffered.Where(b => b.Count > 0)) {
@@ -95,7 +95,7 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex, true);
+                    this._memoryHandler.RaiseException(ex);
                 }
             }
 

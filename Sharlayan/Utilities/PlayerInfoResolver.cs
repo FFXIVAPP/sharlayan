@@ -212,7 +212,7 @@ namespace Sharlayan.Utilities {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             return entry;

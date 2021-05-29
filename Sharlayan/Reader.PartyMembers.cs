@@ -97,7 +97,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             try {
@@ -107,7 +107,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             result.PartyMembers = this._partyWorkerDelegate.PartyMembers;

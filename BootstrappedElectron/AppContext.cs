@@ -48,17 +48,17 @@
             }
         }
 
-        private void MemoryHandler_OnExceptionEvent(object sender, Exception e, bool levelIsError = false) {
+        private void MemoryHandler_OnExceptionEvent(object sender, Exception ex) {
             if (sender is not MemoryHandler memoryHandler) {
                 return;
             }
 
             // TODO: this should be handled in sharlayan; when we can detect character changes this will be updated/removed and placed in sharlayan
-            if (e.GetType() != typeof(OverflowException)) {
+            if (ex.GetType() != typeof(OverflowException)) {
                 return;
             }
 
-            if (e.StackTrace is null || !e.StackTrace.Contains("ChatLogReader")) {
+            if (ex.StackTrace is null || !ex.StackTrace.Contains("ChatLogReader")) {
                 return;
             }
 

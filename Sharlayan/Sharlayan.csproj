@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net462;net472;net48</TargetFrameworks>
+		<TargetFrameworks>net48;net5.0</TargetFrameworks>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
 		<Authors>Ryan Wilson</Authors>
@@ -42,28 +42,12 @@
 		<OutputPath>.\bin\Debug</OutputPath>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
-		<DocumentationFile>.\bin\Release\netstandard2.1\Sharlayan.xml</DocumentationFile>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
+		<DocumentationFile>.\bin\Release\net5.0\Sharlayan.xml</DocumentationFile>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\netstandard2.1\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net462\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net462\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net472\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net472\Sharlayan.xml</DocumentationFile>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+		<DocumentationFile>.\bin\Debug\net5.0\Sharlayan.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
@@ -73,14 +57,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
 		<DocumentationFile>.\bin\Debug\net48\Sharlayan.xml</DocumentationFile>
 	</PropertyGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net462'">
-		<Reference Include="System.Web" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net472'">
-		<Reference Include="System.Web" />
-	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net48'">
 		<Reference Include="System.Web" />

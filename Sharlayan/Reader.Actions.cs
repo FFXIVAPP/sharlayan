@@ -70,7 +70,7 @@ namespace Sharlayan {
                 result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_PETBAR));
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             return result;

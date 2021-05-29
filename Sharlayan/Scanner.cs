@@ -198,7 +198,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Sharlayan {
                     searchStart = IntPtr.Add(searchStart, regionIncrement);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex, true);
+                    this._memoryHandler.RaiseException(ex);
                 }
             }
         }

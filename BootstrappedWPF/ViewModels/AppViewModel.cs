@@ -92,7 +92,7 @@
         public string AppTitle {
             get => this._appTitle;
             set {
-                string appTitle = "XIVLOG";
+                string appTitle = "BootstrappedWPF";
                 string title = string.IsNullOrWhiteSpace(value)
                                    ? appTitle
                                    : $"{appTitle}: {value}";

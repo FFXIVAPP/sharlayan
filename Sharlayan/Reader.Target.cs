@@ -64,7 +64,7 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex, true);
+                            this._memoryHandler.RaiseException(ex);
                         }
                     }
 
@@ -77,7 +77,7 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex, true);
+                            this._memoryHandler.RaiseException(ex);
                         }
                     }
 
@@ -90,7 +90,7 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex, true);
+                            this._memoryHandler.RaiseException(ex);
                         }
                     }
 
@@ -103,7 +103,7 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex, true);
+                            this._memoryHandler.RaiseException(ex);
                         }
                     }
 
@@ -141,26 +141,26 @@ namespace Sharlayan {
                                                 enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
                                             }
                                             catch (Exception ex) {
-                                                this._memoryHandler.RaiseException(ex, true);
+                                                this._memoryHandler.RaiseException(ex);
                                             }
                                         }
 
                                         result.TargetInfo.EnmityItems.Add(enmityEntry);
                                     }
                                     catch (Exception ex) {
-                                        this._memoryHandler.RaiseException(ex, true);
+                                        this._memoryHandler.RaiseException(ex);
                                     }
                                 }
                             }
                         }
                     }
                     catch (Exception ex) {
-                        this._memoryHandler.RaiseException(ex, true);
+                        this._memoryHandler.RaiseException(ex);
                     }
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex, true);
+                this._memoryHandler.RaiseException(ex);
             }
 
             return result;

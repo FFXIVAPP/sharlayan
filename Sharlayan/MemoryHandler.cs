@@ -23,7 +23,7 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public class MemoryHandler : IDisposable {
-        public delegate void ExceptionEvent(object sender, Exception e, bool levelIsError = false);
+        public delegate void ExceptionEvent(object sender, Exception ex);
 
         public delegate void MemoryHandlerDisposedEvent(object sender);
 
@@ -301,8 +301,8 @@ namespace Sharlayan {
 
         public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
 
-        protected internal virtual void RaiseException(Exception e, bool levelIsError = false) {
-            this.OnException?.Invoke(this, e, levelIsError);
+        protected internal virtual void RaiseException(Exception ex) {
+            this.OnException?.Invoke(this, ex);
         }
 
         protected internal virtual void RaiseMemoryHandlerDisposed() {
