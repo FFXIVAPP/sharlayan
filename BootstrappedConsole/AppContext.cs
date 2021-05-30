@@ -33,8 +33,8 @@
                 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(sharlayanConfiguration);
                 handler.OnException += delegate { };
                 handler.OnMemoryLocationsFound += delegate(object sender, ConcurrentDictionary<string, MemoryLocation> memoryLocations, long processingTime) {
-                    foreach (KeyValuePair<string, MemoryLocation> kvp in memoryLocations) {
-                        Console.WriteLine($"Process[{handler.Configuration.ProcessModel.ProcessID}] -> MemoryLocation Found -> {kvp.Key} => {kvp.Value.GetAddress():X}");
+                    foreach ((string key, MemoryLocation memoryLocation) in memoryLocations) {
+                        Console.WriteLine($"Process[{handler.Configuration.ProcessModel.ProcessID}] -> MemoryLocation Found -> {key} => {memoryLocation.GetAddress():X}");
                     }
                 };
             }

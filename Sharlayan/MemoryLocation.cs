@@ -10,6 +10,7 @@
 
 namespace Sharlayan {
     using System;
+    using System.Linq;
 
     using Sharlayan.Models;
 
@@ -37,14 +38,14 @@ namespace Sharlayan {
                 }
             }
             else {
-                if (this._signature.PointerPath == null || this._signature.PointerPath.Count == 0) {
+                if (this._signature.PointerPath == null || !this._signature.PointerPath.Any()) {
                     return IntPtr.Zero;
                 }
 
                 baseAddress = this._memoryHandler.GetStaticAddress(0);
             }
 
-            if (this._signature.PointerPath == null || this._signature.PointerPath.Count == 0) {
+            if (this._signature.PointerPath == null || !this._signature.PointerPath.Any()) {
                 return baseAddress;
             }
 

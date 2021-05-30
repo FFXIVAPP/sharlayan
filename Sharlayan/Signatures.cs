@@ -9,7 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
-    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Utilities;
@@ -47,8 +47,9 @@ namespace Sharlayan {
 
         public const string ZoneInformationKey = "ZONEINFO";
 
-        public static IEnumerable<Signature> Resolve(SharlayanConfiguration configuration) {
-            return APIHelper.GetSignatures(configuration);
+        public static async Task<Signature[]> Resolve(SharlayanConfiguration configuration) {
+            Signature[] signatures = await APIHelper.GetSignatures(configuration);
+            return signatures;
         }
     }
 }

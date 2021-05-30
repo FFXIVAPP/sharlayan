@@ -9,12 +9,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Utilities {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Cache;
+    using System.Net.Http;
     using System.Text;
+    using System.Threading.Tasks;
 
     using Newtonsoft.Json;
 
@@ -29,43 +31,43 @@ namespace Sharlayan.Utilities {
 
         private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-        public static void GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
+        public static async Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
             string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-{configuration.PatchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                APIResponseToDictionary(actions, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json");
+                await APIResponseToDictionary(actions, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json");
             }
         }
 
-        public static IEnumerable<Signature> GetSignatures(SharlayanConfiguration configuration) {
+        public static async Task<Signature[]> GetSignatures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
             string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-{patchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
-                return FileResponseToJSON<IEnumerable<Signature>>(file);
+                return FileResponseToJSON<Signature[]>(file);
             }
 
-            string json = APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
-            IEnumerable<Signature> resolved = JsonConvert.DeserializeObject<IEnumerable<Signature>>(json, Constants.SerializerSettings);
+            string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
+            Signature[] resolved = JsonConvert.DeserializeObject<Signature[]>(json, Constants.SerializerSettings);
 
             File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
 
             return resolved;
         }
 
-        public static void GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
+        public static async Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
             string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-{configuration.PatchVersion}.json");
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                APIResponseToDictionary(statusEffects, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json");
+                await APIResponseToDictionary(statusEffects, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json");
             }
         }
 
-        public static StructuresContainer GetStructures(SharlayanConfiguration configuration) {
+        public static async Task<StructuresContainer> GetStructures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
             string file = Path.Combine(configuration.JSONCacheDirectory, $"structures-{region}-{patchVersion}.json");
@@ -73,10 +75,11 @@ namespace Sharlayan.Utilities {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            return APIResponseToClass<StructuresContainer>(file, $"{configuration.APIBaseURL}/structures/{region}/{patchVersion}.json");
+            StructuresContainer structuresContainer = await APIResponseToClass<StructuresContainer>(file, $"{configuration.APIBaseURL}/structures/{region}/{patchVersion}.json");
+            return structuresContainer;
         }
 
-        public static void GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
+        public static async Task GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
@@ -86,12 +89,12 @@ namespace Sharlayan.Utilities {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                APIResponseToDictionary(mapInfos, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json");
+                await APIResponseToDictionary(mapInfos, file, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json");
             }
         }
 
-        private static T APIResponseToClass<T>(string file, string uri) {
-            string json = APIResponseToJSON(uri);
+        private static async Task<T> APIResponseToClass<T>(string file, string uri) {
+            string json = await APIResponseToJSON(uri);
             T resolved = JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
 
             File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -99,8 +102,8 @@ namespace Sharlayan.Utilities {
             return resolved;
         }
 
-        private static void APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string file, string uri) {
-            string json = APIResponseToJSON(uri);
+        private static async Task APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string file, string uri) {
+            string json = await APIResponseToJSON(uri);
             ConcurrentDictionary<uint, T> resolved = JsonConvert.DeserializeObject<ConcurrentDictionary<uint, T>>(json, Constants.SerializerSettings);
 
             foreach (KeyValuePair<uint, T> kvp in resolved) {
@@ -110,13 +113,16 @@ namespace Sharlayan.Utilities {
             File.WriteAllText(file, JsonConvert.SerializeObject(dictionary, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
         }
 
-        private static string APIResponseToJSON(string uri) {
-            using (WebClient webClient = new WebClient {
-                Encoding = _webClientEncoding,
-                CachePolicy = _webClientRequestCachePolicy,
-            }) {
-                return webClient.DownloadString(uri);
-            }
+        private static async Task<string> APIResponseToJSON(string uri) {
+            using HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(uri),
+            };
+            using HttpClient httpClient = new HttpClient();
+            using HttpResponseMessage response = await httpClient.SendAsync(request);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            return responseBody;
         }
 
         private static T EnsureClassValues<T>(string file) {
@@ -132,13 +138,12 @@ namespace Sharlayan.Utilities {
         }
 
         private static T FileResponseToJSON<T>(string file) {
-            using (StreamReader streamReader = File.OpenText(file)) {
-                JsonSerializer serializer = new JsonSerializer {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    DefaultValueHandling = DefaultValueHandling.Populate,
-                };
-                return (T) serializer.Deserialize(streamReader, typeof(T));
-            }
+            using StreamReader streamReader = File.OpenText(file);
+            JsonSerializer serializer = new JsonSerializer {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Populate,
+            };
+            return (T) serializer.Deserialize(streamReader, typeof(T));
         }
     }
 }

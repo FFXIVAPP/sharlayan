@@ -38,17 +38,14 @@ namespace Sharlayan.Utilities {
                        : DefaultStatusInfo;
         }
 
-        internal static void Resolve(SharlayanConfiguration configuration) {
+        internal static async Task Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            Task.Run(
-                () => {
-                    APIHelper.GetStatusEffects(_statusEffects, configuration);
-                    _loading = false;
-                });
+            await APIHelper.GetStatusEffects(_statusEffects, configuration);
+            _loading = false;
         }
     }
 }

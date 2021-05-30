@@ -66,7 +66,7 @@ namespace Sharlayan.Core {
 
         public object Clone() {
             byte[] bytes = new byte[this.Bytes.Length];
-            this.Bytes.CopyTo(bytes, 0);
+            Buffer.BlockCopy(this.Bytes, 0, bytes, 0, this.Bytes.Length);
             return new ChatLogItem {
                 PlayerCharacterName = this.PlayerCharacterName,
                 Bytes = bytes,

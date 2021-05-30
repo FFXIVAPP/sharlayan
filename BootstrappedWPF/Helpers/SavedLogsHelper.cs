@@ -77,8 +77,8 @@
             if (AppViewModel.Instance.ChatHistory.Any()) {
                 try {
                     // clear current builders
-                    foreach (KeyValuePair<string, StringBuilder> textLogBuilder in _textLogBuilders) {
-                        textLogBuilder.Value.Clear();
+                    foreach ((string _, StringBuilder builder) in _textLogBuilders) {
+                        builder.Clear();
                     }
 
                     // setup full xml log file

@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Utilities {
-    using System.Linq;
     using System.Text;
 
     public static class XMLCleaner {
@@ -19,8 +18,10 @@ namespace Sharlayan.Utilities {
             }
 
             StringBuilder buffer = new StringBuilder(xValue.Length);
-            foreach (char xChar in xValue.Where(xChar => IsLegalXmlChar(xChar))) {
-                buffer.Append(xChar);
+            foreach (char c in xValue) {
+                if (IsLegalXmlChar(c)) {
+                    buffer.Append(c);
+                }
             }
 
             return buffer.ToString();

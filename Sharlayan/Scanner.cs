@@ -40,6 +40,10 @@ namespace Sharlayan {
 
         private const int Writable = PageReadwrite | PageWritecopy | PageExecuteReadwrite | PageExecuteWritecopy | PageGuard;
 
+        private const int BufferSize = 0x1200;
+
+        private const int RegionIncrement = 0x1000;
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION> _regions;
@@ -54,7 +58,7 @@ namespace Sharlayan {
 
         private MemoryHandler _memoryHandler { get; }
 
-        public void LoadOffsets(IEnumerable<Signature> signatures, bool scanAllRegions = false) {
+        public void LoadOffsets(Signature[] signatures, bool scanAllRegions = false) {
             if (this._memoryHandler.Configuration.ProcessModel.Process == null) {
                 return;
             }
@@ -70,7 +74,7 @@ namespace Sharlayan {
                         this.LoadRegions();
                     }
 
-                    List<Signature> scanable = signatures as List<Signature> ?? signatures.ToList();
+                    List<Signature> scanable = signatures.ToList();
                     if (scanable.Any()) {
                         foreach (Signature signature in scanable) {
                             if (signature.Value == string.Empty) {
@@ -182,7 +186,7 @@ namespace Sharlayan {
                         this._regions.Add(info);
                     }
                     else {
-                        this._memoryHandler.RaiseException(new Exception(info.ToString()));
+                        this._memoryHandler.RaiseException(Logger, new Exception(info.ToString()));
                     }
 
                     unchecked {
@@ -198,52 +202,49 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
         }
 
-        private void ResolveLocations(IntPtr baseAddress, IntPtr searchStart, IntPtr searchEnd, ref List<Signature> notFound) {
-            const int bufferSize = 0x1200;
-            const int regionIncrement = 0x1000;
-
-            byte[] buffer = new byte[bufferSize];
+        private void ResolveLocations(IntPtr baseAddress, IntPtr searchStart, IntPtr searchEnd, ref List<Signature> unresolvedSignatures) {
+            byte[] buffer = new byte[BufferSize];
             List<Signature> temp = new List<Signature>();
             int regionCount = 0;
 
             while (searchStart.ToInt64() < searchEnd.ToInt64()) {
                 try {
-                    IntPtr regionSize = new IntPtr(bufferSize);
-                    if (IntPtr.Add(searchStart, bufferSize).ToInt64() > searchEnd.ToInt64()) {
+                    IntPtr regionSize = new IntPtr(BufferSize);
+                    if (IntPtr.Add(searchStart, BufferSize).ToInt64() > searchEnd.ToInt64()) {
                         regionSize = (IntPtr) (searchEnd.ToInt64() - searchStart.ToInt64());
                     }
 
                     if (UnsafeNativeMethods.ReadProcessMemory(this._memoryHandler.ProcessHandle, searchStart, buffer, regionSize, out IntPtr _)) {
-                        foreach (Signature signature in notFound) {
-                            int index = this.FindSuperSignature(buffer, this.SignatureToByte(signature.Value, WildCardChar));
+                        foreach (Signature unresolvedSignature in unresolvedSignatures) {
+                            int index = this.FindSuperSignature(buffer, this.SignatureToByte(unresolvedSignature.Value, WildCardChar));
                             if (index < 0) {
-                                temp.Add(signature);
+                                temp.Add(unresolvedSignature);
                                 continue;
                             }
 
-                            IntPtr baseResult = new IntPtr((long) (baseAddress + regionCount * regionIncrement));
-                            IntPtr searchResult = IntPtr.Add(baseResult, index + signature.Offset);
+                            IntPtr baseResult = new IntPtr((long) (baseAddress + regionCount * RegionIncrement));
+                            IntPtr searchResult = IntPtr.Add(baseResult, index + unresolvedSignature.Offset);
 
-                            signature.SigScanAddress = new IntPtr(searchResult.ToInt64());
+                            unresolvedSignature.SigScanAddress = new IntPtr(searchResult.ToInt64());
 
-                            if (!this.Locations.ContainsKey(signature.Key)) {
-                                this.Locations.TryAdd(signature.Key, new MemoryLocation(signature, this._memoryHandler));
+                            if (!this.Locations.ContainsKey(unresolvedSignature.Key)) {
+                                this.Locations.TryAdd(unresolvedSignature.Key, new MemoryLocation(unresolvedSignature, this._memoryHandler));
                             }
                         }
 
-                        notFound = new List<Signature>(temp);
+                        unresolvedSignatures = new List<Signature>(temp);
                         temp.Clear();
                     }
 
                     regionCount++;
-                    searchStart = IntPtr.Add(searchStart, regionIncrement);
+                    searchStart = IntPtr.Add(searchStart, RegionIncrement);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex);
+                    this._memoryHandler.RaiseException(Logger, ex);
                 }
             }
         }

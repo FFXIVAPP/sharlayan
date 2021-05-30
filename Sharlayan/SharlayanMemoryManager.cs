@@ -12,7 +12,6 @@ namespace Sharlayan {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class SharlayanMemoryManager {
         private static Lazy<SharlayanMemoryManager> _instance = new Lazy<SharlayanMemoryManager>(() => new SharlayanMemoryManager());
@@ -34,8 +33,8 @@ namespace Sharlayan {
             return memoryHandler;
         }
 
-        public List<MemoryHandler> GetHandlers() {
-            return Instance._memoryHandlers.Values.ToList();
+        public ICollection<MemoryHandler> GetHandlers() {
+            return Instance._memoryHandlers.Values;
         }
 
         public bool RemoveHandler(int processID) {

@@ -39,17 +39,14 @@ namespace Sharlayan.Utilities {
                        : DefaultZoneInfo;
         }
 
-        internal static void Resolve(SharlayanConfiguration configuration) {
+        internal static async Task Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            Task.Run(
-                () => {
-                    APIHelper.GetZones(_zones, configuration);
-                    _loading = false;
-                });
+            await APIHelper.GetZones(_zones, configuration);
+            _loading = false;
         }
     }
 }

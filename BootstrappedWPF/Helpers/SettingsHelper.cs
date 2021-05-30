@@ -13,7 +13,8 @@
             XElement[] enumerable = xElements as XElement[] ?? xElements.ToArray();
 
             foreach (ChatCode chatCode in AppViewModel.Instance.ChatCodes) {
-                XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == chatCode.Code);
+                ChatCode code = chatCode;
+                XElement element = enumerable.FirstOrDefault(e => e.Attribute("Key")?.Value == code.Code);
 
                 string xKey = chatCode.Code;
                 string xColor = chatCode.Color;
