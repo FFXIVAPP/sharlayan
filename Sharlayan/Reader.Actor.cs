@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actor.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,22 +10,21 @@
 
 namespace Sharlayan {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
 
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
-    using Sharlayan.Delegates;
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Utilities;
 
-    using BitConverter = Sharlayan.Utilities.BitConverter;
+    public partial class Reader {
+        private ConcurrentDictionary<uint, DateTime> _expiringActors = new ConcurrentDictionary<uint, DateTime>();
 
-    public static partial class Reader {
-        private static Dictionary<uint, DateTime> expiringActors = new Dictionary<uint, DateTime>();
+        private ConcurrentDictionary<IntPtr, IntPtr> _uniqueCharacterAddresses = new ConcurrentDictionary<IntPtr, IntPtr>();
 
-        public static bool CanGetActors() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.CharacterMapKey);
+        public bool CanGetActors() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CHARMAP_KEY);
             if (canRead) {
                 // OTHER STUFF?
             }
@@ -33,41 +32,35 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static ActorResult GetActors() {
-            var result = new ActorResult();
+        public ActorResult GetActors() {
+            ActorResult result = new ActorResult();
 
-            if (!CanGetActors() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetActors() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
+            IntPtr targetAddress = IntPtr.Zero;
+
+            int limit = this._memoryHandler.Structures.ActorItem.EntityCount;
+            int sourceSize = this._memoryHandler.Structures.ActorItem.SourceSize;
+
+            byte[] characterAddressMap = this._memoryHandler.BufferPool.Rent(8 * limit);
+            byte[] sourceMap = this._memoryHandler.BufferPool.Rent(sourceSize);
+            byte[] targetInfoMap = this._memoryHandler.BufferPool.Rent(128);
+
             try {
-                IntPtr targetAddress = IntPtr.Zero;
+                this._memoryHandler.GetByteArray(this._memoryHandler.Scanner.Locations[Signatures.CHARMAP_KEY], characterAddressMap);
 
-                var endianSize = MemoryHandler.Instance.ProcessModel.IsWin64
-                                     ? 8
-                                     : 4;
-
-                var sourceSize = MemoryHandler.Instance.Structures.ActorItem.SourceSize;
-                var limit = MemoryHandler.Instance.Structures.ActorItem.EntityCount;
-                byte[] characterAddressMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations[Signatures.CharacterMapKey], endianSize * limit);
-                Dictionary<IntPtr, IntPtr> uniqueAddresses = new Dictionary<IntPtr, IntPtr>();
                 IntPtr firstAddress = IntPtr.Zero;
 
                 DateTime now = DateTime.Now;
 
                 TimeSpan staleActorRemovalTime = TimeSpan.FromSeconds(0.25);
 
-                var firstTime = true;
+                bool firstTime = true;
 
-                for (var i = 0; i < limit; i++) {
-                    IntPtr characterAddress;
-
-                    if (MemoryHandler.Instance.ProcessModel.IsWin64) {
-                        characterAddress = new IntPtr(BitConverter.TryToInt64(characterAddressMap, i * endianSize));
-                    }
-                    else {
-                        characterAddress = new IntPtr(BitConverter.TryToInt32(characterAddressMap, i * endianSize));
-                    }
+                for (int i = 0; i < limit; i++) {
+                    IntPtr characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(characterAddressMap, i * 8));
 
                     if (characterAddress == IntPtr.Zero) {
                         continue;
@@ -78,39 +71,40 @@ namespace Sharlayan {
                         firstTime = false;
                     }
 
-                    uniqueAddresses[characterAddress] = characterAddress;
+                    this._uniqueCharacterAddresses[characterAddress] = characterAddress;
                 }
 
-                foreach (KeyValuePair<uint, ActorItem> kvp in MonsterWorkerDelegate.ActorItems) {
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._monsterWorkerDelegate.ActorItems) {
                     result.RemovedMonsters.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
-                foreach (KeyValuePair<uint, ActorItem> kvp in NPCWorkerDelegate.ActorItems) {
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._npcWorkerDelegate.ActorItems) {
                     result.RemovedNPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
-                foreach (KeyValuePair<uint, ActorItem> kvp in PCWorkerDelegate.ActorItems) {
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._pcWorkerDelegate.ActorItems) {
                     result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                 }
 
-                foreach (KeyValuePair<IntPtr, IntPtr> kvp in uniqueAddresses) {
-                    try {
-                        var characterAddress = new IntPtr(kvp.Value.ToInt64());
-                        byte[] source = MemoryHandler.Instance.GetByteArray(characterAddress, sourceSize);
+                (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
 
-                        // var source = MemoryHandler.Instance.GetByteArray(characterAddress, 0x3F40);
-                        var ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
-                        var NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
-                        var Type = (Actor.Type) source[MemoryHandler.Instance.Structures.ActorItem.Type];
+                foreach (KeyValuePair<IntPtr, IntPtr> kvp in this._uniqueCharacterAddresses) {
+                    try {
+                        IntPtr characterAddress = new IntPtr(kvp.Value.ToInt64());
+                        this._memoryHandler.GetByteArray(characterAddress, sourceMap);
+
+                        uint ID = SharlayanBitConverter.TryToUInt32(sourceMap, this._memoryHandler.Structures.ActorItem.ID);
+                        uint NPCID2 = SharlayanBitConverter.TryToUInt32(sourceMap, this._memoryHandler.Structures.ActorItem.NPCID2);
+                        Actor.Type Type = (Actor.Type) sourceMap[this._memoryHandler.Structures.ActorItem.Type];
 
                         ActorItem existing = null;
-                        var newEntry = false;
+                        bool newEntry = false;
 
                         switch (Type) {
                             case Actor.Type.Monster:
                                 if (result.RemovedMonsters.ContainsKey(ID)) {
                                     result.RemovedMonsters.TryRemove(ID, out ActorItem removedMonster);
-                                    existing = MonsterWorkerDelegate.GetActorItem(ID);
+                                    existing = this._monsterWorkerDelegate.GetActorItem(ID);
                                 }
                                 else {
                                     newEntry = true;
@@ -120,7 +114,7 @@ namespace Sharlayan {
                             case Actor.Type.PC:
                                 if (result.RemovedPCs.ContainsKey(ID)) {
                                     result.RemovedPCs.TryRemove(ID, out ActorItem removedPC);
-                                    existing = PCWorkerDelegate.GetActorItem(ID);
+                                    existing = this._pcWorkerDelegate.GetActorItem(ID);
                                 }
                                 else {
                                     newEntry = true;
@@ -132,7 +126,7 @@ namespace Sharlayan {
                             case Actor.Type.EventObject:
                                 if (result.RemovedNPCs.ContainsKey(NPCID2)) {
                                     result.RemovedNPCs.TryRemove(NPCID2, out ActorItem removedNPC);
-                                    existing = NPCWorkerDelegate.GetActorItem(NPCID2);
+                                    existing = this._npcWorkerDelegate.GetActorItem(NPCID2);
                                 }
                                 else {
                                     newEntry = true;
@@ -142,7 +136,7 @@ namespace Sharlayan {
                             default:
                                 if (result.RemovedNPCs.ContainsKey(ID)) {
                                     result.RemovedNPCs.TryRemove(ID, out ActorItem removedNPC);
-                                    existing = NPCWorkerDelegate.GetActorItem(ID);
+                                    existing = this._npcWorkerDelegate.GetActorItem(ID);
                                 }
                                 else {
                                     newEntry = true;
@@ -151,41 +145,40 @@ namespace Sharlayan {
                                 break;
                         }
 
-                        var isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
+                        bool isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
-                        ActorItem entry = ActorItemResolver.ResolveActorFromBytes(source, isFirstEntry, existing);
+                        ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(sourceMap, isFirstEntry, existing);
 
                         if (entry != null && entry.IsValid) {
-                            if (expiringActors.ContainsKey(ID)) {
-                                expiringActors.Remove(ID);
+                            if (this._expiringActors.ContainsKey(ID)) {
+                                this._expiringActors.TryRemove(ID, out DateTime removedDateTime);
                             }
                         }
 
                         if (entry.Type == Actor.Type.EventObject) {
-                            var (EventObjectTypeID, EventObjectType) = GetEventObjectType(targetAddress);
+                            (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);
                             entry.EventObjectTypeID = EventObjectTypeID;
                             entry.EventObjectType = EventObjectType;
                         }
 
-                        EnsureMapAndZone(entry);
+                        entry.MapID = mapID;
+                        entry.MapIndex = mapIndex;
+                        entry.MapTerritory = mapTerritory;
 
                         if (isFirstEntry) {
                             if (targetAddress.ToInt64() > 0) {
-                                byte[] targetInfoSource = MemoryHandler.Instance.GetByteArray(targetAddress, 128);
-                                entry.TargetID = (int) BitConverter.TryToUInt32(targetInfoSource, MemoryHandler.Instance.Structures.ActorItem.ID);
+                                this._memoryHandler.GetByteArray(targetAddress, targetInfoMap);
+                                entry.TargetID = (int) SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.ActorItem.ID);
                             }
                         }
 
-                        // it doesn't matter what this is set to; it won't be used in code below
-                        ActorItem removed;
-
                         if (!entry.IsValid) {
-                            result.NewMonsters.TryRemove(entry.ID, out removed);
-                            result.NewMonsters.TryRemove(entry.NPCID2, out removed);
-                            result.NewNPCs.TryRemove(entry.ID, out removed);
-                            result.NewNPCs.TryRemove(entry.NPCID2, out removed);
-                            result.NewPCs.TryRemove(entry.ID, out removed);
-                            result.NewPCs.TryRemove(entry.NPCID2, out removed);
+                            result.NewMonsters.TryRemove(entry.ID, out ActorItem _);
+                            result.NewMonsters.TryRemove(entry.NPCID2, out ActorItem _);
+                            result.NewNPCs.TryRemove(entry.ID, out ActorItem _);
+                            result.NewNPCs.TryRemove(entry.NPCID2, out ActorItem _);
+                            result.NewPCs.TryRemove(entry.ID, out ActorItem _);
+                            result.NewPCs.TryRemove(entry.NPCID2, out ActorItem _);
                             continue;
                         }
 
@@ -196,60 +189,60 @@ namespace Sharlayan {
                         if (newEntry) {
                             switch (entry.Type) {
                                 case Actor.Type.Monster:
-                                    MonsterWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    this._monsterWorkerDelegate.EnsureActorItem(entry.ID, entry);
                                     result.NewMonsters.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.PC:
-                                    PCWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    this._pcWorkerDelegate.EnsureActorItem(entry.ID, entry);
                                     result.NewPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                                 case Actor.Type.Aetheryte:
                                 case Actor.Type.EventObject:
                                 case Actor.Type.NPC:
-                                    NPCWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
+                                    this._npcWorkerDelegate.EnsureActorItem(entry.NPCID2, entry);
                                     result.NewNPCs.TryAdd(entry.NPCID2, entry.Clone());
                                     break;
                                 default:
-                                    NPCWorkerDelegate.EnsureActorItem(entry.ID, entry);
+                                    this._npcWorkerDelegate.EnsureActorItem(entry.ID, entry);
                                     result.NewNPCs.TryAdd(entry.ID, entry.Clone());
                                     break;
                             }
                         }
                     }
                     catch (Exception ex) {
-                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                        this._memoryHandler.RaiseException(Logger, ex);
                     }
                 }
 
                 try {
                     // add the "removed" actors to the expiring list
                     foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedMonsters) {
-                        if (!expiringActors.ContainsKey(kvp.Key)) {
-                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        if (!this._expiringActors.ContainsKey(kvp.Key)) {
+                            this._expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
 
                     foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedNPCs) {
-                        if (!expiringActors.ContainsKey(kvp.Key)) {
-                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        if (!this._expiringActors.ContainsKey(kvp.Key)) {
+                            this._expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
 
                     foreach (KeyValuePair<uint, ActorItem> kvp in result.RemovedPCs) {
-                        if (!expiringActors.ContainsKey(kvp.Key)) {
-                            expiringActors[kvp.Key] = now + staleActorRemovalTime;
+                        if (!this._expiringActors.ContainsKey(kvp.Key)) {
+                            this._expiringActors[kvp.Key] = now + staleActorRemovalTime;
                         }
                     }
 
                     // check expiring list for stale actors
-                    foreach (var kvp in expiringActors.ToList()) {
+                    foreach (KeyValuePair<uint, DateTime> kvp in this._expiringActors) {
                         if (now > kvp.Value) {
                             // Stale actor. Remove it.
-                            MonsterWorkerDelegate.RemoveActorItem(kvp.Key);
-                            NPCWorkerDelegate.RemoveActorItem(kvp.Key);
-                            PCWorkerDelegate.RemoveActorItem(kvp.Key);
+                            this._monsterWorkerDelegate.RemoveActorItem(kvp.Key);
+                            this._npcWorkerDelegate.RemoveActorItem(kvp.Key);
+                            this._pcWorkerDelegate.RemoveActorItem(kvp.Key);
 
-                            expiringActors.Remove(kvp.Key);
+                            this._expiringActors.TryRemove(kvp.Key, out DateTime removedDateTime);
                         }
                         else {
                             // Not stale enough yet. We're not actually removing it.
@@ -260,14 +253,25 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                    this._memoryHandler.RaiseException(Logger, ex);
                 }
 
-                MemoryHandler.Instance.ScanCount++;
+                this._memoryHandler.ScanCount++;
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
+            finally {
+                this._memoryHandler.BufferPool.Return(characterAddressMap);
+                this._memoryHandler.BufferPool.Return(sourceMap);
+                this._memoryHandler.BufferPool.Return(targetInfoMap);
+            }
+
+            result.CurrentMonsters = this._monsterWorkerDelegate.ActorItems;
+            result.CurrentNPCs = this._npcWorkerDelegate.ActorItems;
+            result.CurrentPCs = this._pcWorkerDelegate.ActorItems;
+
+            this._uniqueCharacterAddresses.Clear();
 
             return result;
         }

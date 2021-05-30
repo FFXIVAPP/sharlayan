@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActionLookup.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -12,100 +12,65 @@ namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
 
     public static class ActionLookup {
-        private static ConcurrentDictionary<uint, ActionItem> Actions = new ConcurrentDictionary<uint, ActionItem>();
+        private static ConcurrentDictionary<uint, ActionItem> _actions = new ConcurrentDictionary<uint, ActionItem>();
+
+        private static bool _loading;
 
         private static ActionItem DefaultActionInfo = new ActionItem {
             Name = new Localization {
-                Chinese = "???",
-                English = "???",
-                French = "???",
-                German = "???",
-                Japanese = "???",
-                Korean = "???",
+                Chinese = Constants.UNKNOWN_LOCALIZED_NAME,
+                English = Constants.UNKNOWN_LOCALIZED_NAME,
+                French = Constants.UNKNOWN_LOCALIZED_NAME,
+                German = Constants.UNKNOWN_LOCALIZED_NAME,
+                Japanese = Constants.UNKNOWN_LOCALIZED_NAME,
+                Korean = Constants.UNKNOWN_LOCALIZED_NAME,
             },
         };
 
-        private static bool Loading;
+        private static List<ActionItem> _damageOverTimeActions;
 
-        public static List<ActionItem> DamageOverTimeActions(string patchVersion = "latest") {
-            List<ActionItem> results = new List<ActionItem>();
-            if (Loading) {
-                return results;
+        private static List<ActionItem> _healingOverTimeActions;
+
+        public static List<ActionItem> DamageOverTimeActions() {
+            if (_damageOverTimeActions.Any()) {
+                return _damageOverTimeActions;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion);
-                return results;
-            }
+            return _damageOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value).ToList();
         }
 
-        public static ActionItem GetActionInfo(string name, string patchVersion = "latest") {
-            if (Loading) {
-                return DefaultActionInfo;
+        public static List<ActionItem> HealingOverTimeActions() {
+            if (_healingOverTimeActions.Any()) {
+                return _healingOverTimeActions;
             }
 
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultActionInfo;
-            }
+            return _healingOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
         }
 
-        public static ActionItem GetActionInfo(uint id, string patchVersion = "latest") {
-            if (Loading) {
-                return DefaultActionInfo;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    return Actions.ContainsKey(id)
-                               ? Actions[id]
-                               : DefaultActionInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultActionInfo;
-            }
+        public static ActionItem GetActionInfo(string name) {
+            return _actions.FirstOrDefault(kvp => kvp.Value.Name.Matches(name)).Value ?? DefaultActionInfo;
         }
 
-        public static List<ActionItem> HealingOverTimeActions(string patchVersion = "latest") {
-            List<ActionItem> results = new List<ActionItem>();
-            if (Loading) {
-                return results;
-            }
-
-            lock (Actions) {
-                if (Actions.Any()) {
-                    results.AddRange(Actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value));
-                    return results;
-                }
-
-                Resolve(patchVersion);
-                return results;
-            }
+        public static ActionItem GetActionInfo(uint id) {
+            return _actions.ContainsKey(id)
+                       ? _actions[id]
+                       : DefaultActionInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
-            if (Loading) {
+        internal static async Task Resolve(SharlayanConfiguration configuration) {
+            if (_loading) {
                 return;
             }
 
-            Loading = true;
-            APIHelper.GetActions(Actions, patchVersion);
-            Loading = false;
+            _loading = true;
+            await APIHelper.GetActions(_actions, configuration);
+            _loading = false;
         }
     }
 }

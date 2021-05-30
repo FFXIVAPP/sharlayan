@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -9,69 +9,47 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
-    using System;
+    using Sharlayan.Delegates;
+    using Sharlayan.Utilities;
 
-    using NLog;
+    public partial class Reader {
+        private ActorItemResolver _actorItemResolver;
 
-    using Sharlayan.Core;
-    using Sharlayan.Core.Enums;
+        private ChatLogReader _chatLogReader;
 
-    public static partial class Reader {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private ChatLogWorkerDelegate _chatLogWorkerDelegate = new ChatLogWorkerDelegate();
 
-        public static bool CanGetAgroEntities() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.AgroCountKey) && Scanner.Instance.Locations.ContainsKey(Signatures.AgroMapKey);
-            if (canRead) {
-                // OTHER STUFF?
-            }
+        private JobResourceResolver _jobResourceResolver;
 
-            return canRead;
+        private MonsterWorkerDelegate _monsterWorkerDelegate = new MonsterWorkerDelegate();
+
+        private NPCWorkerDelegate _npcWorkerDelegate = new NPCWorkerDelegate();
+
+        private PartyWorkerDelegate _partyWorkerDelegate = new PartyWorkerDelegate();
+
+        private PCWorkerDelegate _pcWorkerDelegate = new PCWorkerDelegate();
+
+        public Reader(MemoryHandler memoryHandler) {
+            this._memoryHandler = memoryHandler;
+
+            this._chatLogReader = new ChatLogReader(this._memoryHandler);
+
+            this._chatLogWorkerDelegate = new ChatLogWorkerDelegate();
+            this._monsterWorkerDelegate = new MonsterWorkerDelegate();
+            this._npcWorkerDelegate = new NPCWorkerDelegate();
+            this._partyWorkerDelegate = new PartyWorkerDelegate();
+            this._pcWorkerDelegate = new PCWorkerDelegate();
+
+            this._actorItemResolver = new ActorItemResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
+            this._playerInfoResolver = new PlayerInfoResolver(this._memoryHandler);
+            this._partyMemberResolver = new PartyMemberResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
+            this._jobResourceResolver = new JobResourceResolver(this._memoryHandler);
         }
 
-        public static bool CanGetEnmityEntities() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.EnmityCountKey) && Scanner.Instance.Locations.ContainsKey(Signatures.EnmityMapKey);
-            if (canRead) {
-                // OTHER STUFF?
-            }
+        private MemoryHandler _memoryHandler { get; }
 
-            return canRead;
-        }
+        private PartyMemberResolver _partyMemberResolver { get; }
 
-        private static void EnsureMapAndZone(ActorItem entry) {
-            if (Scanner.Instance.Locations.ContainsKey(Signatures.MapInformationKey)) {
-                try {
-                    entry.MapTerritory = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.MapInformationKey]);
-                    entry.MapID = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.MapInformationKey], 8);
-                }
-                catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                }
-            }
-
-            if (Scanner.Instance.Locations.ContainsKey(Signatures.ZoneInformationKey)) {
-                try {
-                    entry.MapIndex = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.ZoneInformationKey], 8);
-
-                    // current map is 0 if the map the actor is in does not have more than 1 layer.
-                    // if the map has more than 1 layer, overwrite the map id.
-                    var currentActiveMapID = (uint) MemoryHandler.Instance.GetPlatformUInt(Scanner.Instance.Locations[Signatures.ZoneInformationKey]);
-                    if (currentActiveMapID > 0) {
-                        entry.MapID = currentActiveMapID;
-                    }
-                }
-                catch (Exception ex) {
-                    MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                }
-            }
-        }
-
-        private static (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) GetEventObjectType(IntPtr address) {
-            IntPtr eventObjectTypePointer = IntPtr.Add(address, MemoryHandler.Instance.Structures.ActorItem.EventObjectType);
-            IntPtr eventObjectTypeAddress = MemoryHandler.Instance.ReadPointer(eventObjectTypePointer, 4);
-
-            var eventObjectTypeID = MemoryHandler.Instance.GetUInt16(eventObjectTypeAddress);
-
-            return (eventObjectTypeID, (Actor.EventObjectType) eventObjectTypeID);
-        }
+        private PlayerInfoResolver _playerInfoResolver { get; }
     }
 }

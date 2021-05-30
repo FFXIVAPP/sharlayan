@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActionItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -14,6 +14,7 @@ namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
 
     public class ActionItem : IActionItem {
+        public bool IsKeyBindAssigned => !string.IsNullOrWhiteSpace(this.KeyBinds);
         public string ActionKey { get; set; }
 
         public int Amount { get; set; }
@@ -29,8 +30,6 @@ namespace Sharlayan.Core {
         public bool InRange { get; set; }
 
         public bool IsAvailable { get; set; }
-
-        public bool IsKeyBindAssigned => !string.IsNullOrWhiteSpace(this.KeyBinds);
 
         public bool IsProcOrCombo { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actions.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,22 +10,24 @@
 
 namespace Sharlayan {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
 
     using Sharlayan.Core;
-    using Sharlayan.Models;
     using Sharlayan.Models.ReadResults;
+    using Sharlayan.Utilities;
 
     using Action = Sharlayan.Core.Enums.Action;
-    using BitConverter = Sharlayan.Utilities.BitConverter;
 
-    public static partial class Reader {
-        private static readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
+    public partial class Reader {
+        private readonly ConcurrentDictionary<string, (string, string, string, List<string>)> _hotbarActionCache = new ConcurrentDictionary<string, (string, string, string, List<string>)>();
 
-        public static bool CanGetActions() {
-            var canRead = Scanner.Instance.Locations.ContainsKey(Signatures.HotBarKey) && Scanner.Instance.Locations.ContainsKey(Signatures.RecastKey);
+        private readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
+
+        public bool CanGetActions() {
+            bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.HOTBAR_KEY) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.RECAST_KEY);
             if (canRead) {
                 // OTHER STUFF
             }
@@ -33,60 +35,66 @@ namespace Sharlayan {
             return canRead;
         }
 
-        public static ActionResult GetActions() {
-            var result = new ActionResult();
+        public ActionResult GetActions() {
+            ActionResult result = new ActionResult();
 
-            if (!CanGetActions() || !MemoryHandler.Instance.IsAttached) {
+            if (!this.CanGetActions() || !this._memoryHandler.IsAttached) {
                 return result;
             }
 
             try {
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_1));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_2));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_3));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_4));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_5));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_6));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_7));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_8));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_9));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.HOTBAR_10));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_1));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_2));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_3));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_4));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_5));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_6));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_7));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_HOTBAR_8));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.PETBAR));
-                result.ActionContainers.Add(GetHotBarRecast(Action.Container.CROSS_PETBAR));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_1));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_2));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_3));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_4));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_5));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_6));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_7));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_8));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_9));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_10));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_1));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_2));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_3));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_4));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_5));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_6));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_7));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_8));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.PETBAR));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_PETBAR));
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
             return result;
         }
 
-        private static ActionContainer GetHotBarRecast(Action.Container type) {
-            Signature HotBarMap = Scanner.Instance.Locations[Signatures.HotBarKey];
-            Signature RecastMap = Scanner.Instance.Locations[Signatures.RecastKey];
+        private ActionContainer GetHotBarRecast(Action.Container type) {
+            bool canUseKeyBinds = false;
 
-            var hotbarContainerSize = MemoryHandler.Instance.Structures.HotBarItem.ContainerSize;
-            IntPtr hotbarContainerAddress = IntPtr.Add(HotBarMap, (int) type * hotbarContainerSize);
-
-            var recastContainerSize = MemoryHandler.Instance.Structures.RecastItem.ContainerSize;
-            IntPtr recastContainerAddress = IntPtr.Add(RecastMap, (int) type * recastContainerSize);
-
-            var container = new ActionContainer {
+            ActionContainer container = new ActionContainer {
                 ContainerType = type,
             };
 
-            var canUseKeyBinds = false;
+            IntPtr hotbarAddress = this._memoryHandler.Scanner.Locations[Signatures.HOTBAR_KEY];
+            IntPtr recastAddress = this._memoryHandler.Scanner.Locations[Signatures.RECAST_KEY];
 
-            var hotbarItemSize = MemoryHandler.Instance.Structures.HotBarItem.ItemSize;
-            var recastItemSize = MemoryHandler.Instance.Structures.RecastItem.ItemSize;
+            int hotbarContainerSize = this._memoryHandler.Structures.HotBarItem.ContainerSize;
+            int recastContainerSize = this._memoryHandler.Structures.RecastItem.ContainerSize;
+
+            IntPtr hotbarContainerAddress = IntPtr.Add(hotbarAddress, (int) type * hotbarContainerSize);
+            IntPtr recastContainerAddress = IntPtr.Add(recastAddress, (int) type * recastContainerSize);
+
+            int hotbarItemSize = this._memoryHandler.Structures.HotBarItem.ItemSize;
+            int recastItemSize = this._memoryHandler.Structures.RecastItem.ItemSize;
+
+            byte[] hotbarItemsMap = this._memoryHandler.BufferPool.Rent(hotbarContainerSize);
+            byte[] recastItemsMap = this._memoryHandler.BufferPool.Rent(recastContainerSize);
+
+            byte[] hotbarMap = this._memoryHandler.BufferPool.Rent(hotbarItemSize);
+            byte[] recastMap = this._memoryHandler.BufferPool.Rent(recastItemSize);
 
             int limit;
 
@@ -108,66 +116,95 @@ namespace Sharlayan {
                     break;
             }
 
-            byte[] hotbarItemsSource = MemoryHandler.Instance.GetByteArray(hotbarContainerAddress, hotbarContainerSize);
-            byte[] recastItemsSource = MemoryHandler.Instance.GetByteArray(recastContainerAddress, recastContainerSize);
+            try {
+                this._memoryHandler.GetByteArray(hotbarContainerAddress, hotbarItemsMap);
+                this._memoryHandler.GetByteArray(recastContainerAddress, recastItemsMap);
 
-            for (var i = 0; i < limit; i++) {
-                byte[] hotbarSource = new byte[hotbarItemSize];
-                byte[] recastSource = new byte[recastItemSize];
+                for (int i = 0; i < limit; i++) {
+                    Buffer.BlockCopy(hotbarItemsMap, i * hotbarItemSize, hotbarMap, 0, hotbarItemSize);
+                    Buffer.BlockCopy(recastItemsMap, i * recastItemSize, recastMap, 0, recastItemSize);
 
-                Buffer.BlockCopy(hotbarItemsSource, i * hotbarItemSize, hotbarSource, 0, hotbarItemSize);
-                Buffer.BlockCopy(recastItemsSource, i * recastItemSize, recastSource, 0, recastItemSize);
+                    string name = this._memoryHandler.GetStringFromBytes(hotbarMap, this._memoryHandler.Structures.HotBarItem.Name);
+                    int slot = i;
 
-                var name = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarItem.Name);
-                var slot = i;
+                    if (string.IsNullOrWhiteSpace(name)) {
+                        continue;
+                    }
 
-                if (string.IsNullOrWhiteSpace(name)) {
-                    continue;
-                }
+                    ActionItem item = new ActionItem {
+                        Name = name,
+                        ID = SharlayanBitConverter.TryToInt16(hotbarMap, this._memoryHandler.Structures.HotBarItem.ID),
+                        KeyBinds = this._memoryHandler.GetStringFromBytes(hotbarMap, this._memoryHandler.Structures.HotBarItem.KeyBinds),
+                        Slot = slot,
+                    };
 
-                var item = new ActionItem {
-                    Name = name,
-                    ID = BitConverter.TryToInt16(hotbarSource, MemoryHandler.Instance.Structures.HotBarItem.ID),
-                    KeyBinds = MemoryHandler.Instance.GetStringFromBytes(hotbarSource, MemoryHandler.Instance.Structures.HotBarItem.KeyBinds),
-                    Slot = slot,
-                };
+                    if (canUseKeyBinds) {
+                        if (!string.IsNullOrWhiteSpace(item.KeyBinds)) {
+                            // keep a cache based on the keybinds key, users will typically not change this so there isn't a concern about going through and handling those changes
+                            if (this._hotbarActionCache.TryGetValue(item.KeyBinds, out (string itemName, string itemKeyBinds, string itemActionKey, List<string> itemModifiers) cached)) {
+                                item.Name = cached.itemName;
+                                item.KeyBinds = cached.itemKeyBinds;
+                                item.ActionKey = cached.itemActionKey;
+                                item.Modifiers.AddRange(cached.itemModifiers);
+                            }
+                            else {
+                                string key = item.KeyBinds;
+                                string itemName = item.Name.Replace($" {item.KeyBinds}", string.Empty);
+                                string itemKeyBinds = this.KeyBindsRegex.Replace(item.KeyBinds, string.Empty);
+                                string itemActionKey = string.Empty;
 
-                if (canUseKeyBinds) {
-                    if (!string.IsNullOrWhiteSpace(item.KeyBinds)) {
-                        item.Name = item.Name.Replace($" {item.KeyBinds}", string.Empty);
-                        item.KeyBinds = KeyBindsRegex.Replace(item.KeyBinds, string.Empty);
-                        List<string> buttons = item.KeyBinds.Split(
-                            new[] {
-                                '+',
-                            }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                        if (buttons.Count > 0) {
-                            item.ActionKey = buttons.Last();
-                        }
+                                List<string> itemModifiers = new List<string>();
 
-                        if (buttons.Count > 1) {
-                            for (var x = 0; x < buttons.Count - 1; x++) {
-                                item.Modifiers.Add(buttons[x]);
+                                item.Name = itemName;
+                                item.KeyBinds = itemKeyBinds;
+
+                                string[] buttons = item.KeyBinds.Split(
+                                    new[] {
+                                        '+',
+                                    }, StringSplitOptions.RemoveEmptyEntries);
+                                if (buttons.Any()) {
+                                    item.ActionKey = itemActionKey = buttons[buttons.Length - 1];
+                                }
+
+                                if (buttons.Length > 1) {
+                                    for (int x = 0; x < buttons.Length - 1; x++) {
+                                        itemModifiers.Add(buttons[x]);
+                                    }
+
+                                    item.Modifiers.AddRange(itemModifiers);
+                                }
+
+                                this._hotbarActionCache.TryAdd(key, (itemName, itemKeyBinds, itemActionKey, itemModifiers));
                             }
                         }
                     }
+
+                    item.Category = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Category);
+                    item.Type = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Type);
+                    item.Icon = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Icon);
+                    item.CoolDownPercent = recastMap[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
+                    item.IsAvailable = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.IsAvailable);
+
+                    int remainingCost = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.RemainingCost);
+
+                    item.RemainingCost = remainingCost != -1
+                                             ? remainingCost
+                                             : 0;
+                    item.Amount = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Amount);
+                    item.InRange = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.InRange);
+                    item.IsProcOrCombo = recastMap[this._memoryHandler.Structures.RecastItem.ActionProc] > 0;
+
+                    container.ActionItems.Add(item);
                 }
-
-                item.Category = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastItem.Category);
-                item.Type = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastItem.Type);
-                item.Icon = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastItem.Icon);
-                item.CoolDownPercent = recastSource[MemoryHandler.Instance.Structures.RecastItem.CoolDownPercent];
-                item.IsAvailable = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastItem.IsAvailable);
-
-                var remainingCost = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastItem.RemainingCost);
-
-                item.RemainingCost = remainingCost != -1
-                                         ? remainingCost
-                                         : 0;
-                item.Amount = BitConverter.TryToInt32(recastSource, MemoryHandler.Instance.Structures.RecastItem.Amount);
-                item.InRange = BitConverter.TryToBoolean(recastSource, MemoryHandler.Instance.Structures.RecastItem.InRange);
-                item.IsProcOrCombo = recastSource[MemoryHandler.Instance.Structures.RecastItem.ActionProc] > 0;
-
-                container.ActionItems.Add(item);
+            }
+            catch (Exception ex) {
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+            finally {
+                this._memoryHandler.BufferPool.Return(hotbarItemsMap);
+                this._memoryHandler.BufferPool.Return(hotbarMap);
+                this._memoryHandler.BufferPool.Return(recastItemsMap);
+                this._memoryHandler.BufferPool.Return(recastMap);
             }
 
             return container;

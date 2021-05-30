@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="StatusEffectLookup.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,53 +10,42 @@
 
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
-    using System.Linq;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
 
     public static class StatusEffectLookup {
+        private static bool _loading;
+
+        private static ConcurrentDictionary<uint, StatusItem> _statusEffects = new ConcurrentDictionary<uint, StatusItem>();
+
         private static StatusItem DefaultStatusInfo = new StatusItem {
             Name = new Localization {
-                Chinese = "???",
-                English = "???",
-                French = "???",
-                German = "???",
-                Japanese = "???",
-                Korean = "???",
+                Chinese = Constants.UNKNOWN_LOCALIZED_NAME,
+                English = Constants.UNKNOWN_LOCALIZED_NAME,
+                French = Constants.UNKNOWN_LOCALIZED_NAME,
+                German = Constants.UNKNOWN_LOCALIZED_NAME,
+                Japanese = Constants.UNKNOWN_LOCALIZED_NAME,
+                Korean = Constants.UNKNOWN_LOCALIZED_NAME,
             },
             CompanyAction = false,
         };
 
-        private static bool Loading;
-
-        private static ConcurrentDictionary<uint, StatusItem> StatusEffects = new ConcurrentDictionary<uint, StatusItem>();
-
-        public static StatusItem GetStatusInfo(uint id, string patchVersion = "latest") {
-            if (Loading) {
-                return DefaultStatusInfo;
-            }
-
-            lock (StatusEffects) {
-                if (StatusEffects.Any()) {
-                    return StatusEffects.ContainsKey(id)
-                               ? StatusEffects[id]
-                               : DefaultStatusInfo;
-                }
-
-                Resolve(patchVersion);
-                return DefaultStatusInfo;
-            }
+        public static StatusItem GetStatusInfo(uint id) {
+            return _statusEffects.ContainsKey(id)
+                       ? _statusEffects[id]
+                       : DefaultStatusInfo;
         }
 
-        internal static void Resolve(string patchVersion = "latest") {
-            if (Loading) {
+        internal static async Task Resolve(SharlayanConfiguration configuration) {
+            if (_loading) {
                 return;
             }
 
-            Loading = true;
-            APIHelper.GetStatusEffects(StatusEffects, patchVersion);
-            Loading = false;
+            _loading = true;
+            await APIHelper.GetStatusEffects(_statusEffects, configuration);
+            _loading = false;
         }
     }
 }

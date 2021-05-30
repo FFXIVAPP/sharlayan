@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItemResolver.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -18,88 +18,109 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
     using Sharlayan.Delegates;
+    using Sharlayan.Enums;
 
-    internal static class ActorItemResolver {
+    internal class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem entry = null) {
-            entry = entry ?? new ActorItem();
-            var defaultBaseOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultBaseOffset;
-            var defaultStatOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultStatOffset;
-            var defaultStatusEffectOffset = MemoryHandler.Instance.Structures.ActorItem.DefaultStatusEffectOffset;
+        private readonly List<StatusItem> _foundStatuses;
+
+        private MemoryHandler _memoryHandler;
+
+        private MonsterWorkerDelegate _monsterWorkerDelegate;
+
+        private NPCWorkerDelegate _npcWorkerDelegate;
+
+        private PCWorkerDelegate _pcWorkerDelegate;
+
+        public ActorItemResolver(MemoryHandler memoryHandler, PCWorkerDelegate pcWorkerDelegate, NPCWorkerDelegate npcWorkerDelegate, MonsterWorkerDelegate monsterWorkerDelegate) {
+            this._memoryHandler = memoryHandler;
+            this._pcWorkerDelegate = pcWorkerDelegate;
+            this._npcWorkerDelegate = npcWorkerDelegate;
+            this._monsterWorkerDelegate = monsterWorkerDelegate;
+            this._foundStatuses = new List<StatusItem>();
+        }
+
+        public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
+            this._foundStatuses.Clear();
+
+            ActorItem entry = existingActorItem ?? new ActorItem();
+
+            int defaultBaseOffset = this._memoryHandler.Structures.ActorItem.DefaultBaseOffset;
+            int defaultStatOffset = this._memoryHandler.Structures.ActorItem.DefaultStatOffset;
+            int defaultStatusEffectOffset = this._memoryHandler.Structures.ActorItem.DefaultStatusEffectOffset;
+
             try {
                 entry.MapTerritory = 0;
                 entry.MapIndex = 0;
                 entry.MapID = 0;
                 entry.TargetID = 0;
-                entry.Name = MemoryHandler.Instance.GetStringFromBytes(source, MemoryHandler.Instance.Structures.ActorItem.Name);
-                entry.ID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ID);
+                entry.Name = this._memoryHandler.GetStringFromBytes(source, this._memoryHandler.Structures.ActorItem.Name);
+                entry.ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ID);
                 entry.UUID = string.IsNullOrEmpty(entry.UUID)
                                  ? Guid.NewGuid().ToString()
                                  : entry.UUID;
-                entry.NPCID1 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID1);
-                entry.NPCID2 = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.NPCID2);
-                entry.OwnerID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.OwnerID);
-                entry.TypeID = source[MemoryHandler.Instance.Structures.ActorItem.Type];
+                entry.NPCID1 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID1);
+                entry.NPCID2 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID2);
+                entry.OwnerID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.OwnerID);
+                entry.TypeID = source[this._memoryHandler.Structures.ActorItem.Type];
                 entry.Type = (Actor.Type) entry.TypeID;
 
-                entry.TargetTypeID = source[MemoryHandler.Instance.Structures.ActorItem.TargetType];
+                entry.TargetTypeID = source[this._memoryHandler.Structures.ActorItem.TargetType];
                 entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
 
-                entry.GatheringStatus = source[MemoryHandler.Instance.Structures.ActorItem.GatheringStatus];
-                entry.Distance = source[MemoryHandler.Instance.Structures.ActorItem.Distance];
+                entry.GatheringStatus = source[this._memoryHandler.Structures.ActorItem.GatheringStatus];
+                entry.Distance = source[this._memoryHandler.Structures.ActorItem.Distance];
 
-                entry.X = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.X + defaultBaseOffset);
-                entry.Z = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.Z + defaultBaseOffset);
-                entry.Y = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.Y + defaultBaseOffset);
-                entry.Heading = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.Heading + defaultBaseOffset);
-                entry.HitBoxRadius = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.HitBoxRadius + defaultBaseOffset);
-                entry.Fate = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.Fate + defaultBaseOffset); // ??
-                entry.TargetFlags = source[MemoryHandler.Instance.Structures.ActorItem.TargetFlags]; // ??
-                entry.GatheringInvisible = source[MemoryHandler.Instance.Structures.ActorItem.GatheringInvisible]; // ??
-                entry.ModelID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ModelID);
-                entry.ActionStatusID = source[MemoryHandler.Instance.Structures.ActorItem.ActionStatus];
+                entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.X + defaultBaseOffset);
+                entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.Z + defaultBaseOffset);
+                entry.Y = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.Y + defaultBaseOffset);
+                entry.Heading = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.Heading + defaultBaseOffset);
+                entry.HitBoxRadius = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.HitBoxRadius + defaultBaseOffset);
+                entry.Fate = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.Fate + defaultBaseOffset); // ??
+                entry.TargetFlags = source[this._memoryHandler.Structures.ActorItem.TargetFlags]; // ??
+                entry.GatheringInvisible = source[this._memoryHandler.Structures.ActorItem.GatheringInvisible]; // ??
+                entry.ModelID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ModelID);
+                entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
-                entry.IsGM = BitConverter.TryToBoolean(source, MemoryHandler.Instance.Structures.ActorItem.IsGM); // ?
-                entry.IconID = source[MemoryHandler.Instance.Structures.ActorItem.Icon];
+                entry.IsGM = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsGM); // ?
+                entry.IconID = source[this._memoryHandler.Structures.ActorItem.Icon];
                 entry.Icon = (Actor.Icon) entry.IconID;
 
-                entry.StatusID = source[MemoryHandler.Instance.Structures.ActorItem.Status];
+                entry.StatusID = source[this._memoryHandler.Structures.ActorItem.Status];
                 entry.Status = (Actor.Status) entry.StatusID;
 
-                entry.ClaimedByID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.ClaimedByID);
-                var targetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.TargetID);
-                var pcTargetID = targetID;
+                entry.ClaimedByID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ClaimedByID);
+                uint targetID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.TargetID);
+                uint pcTargetID = targetID;
 
-                entry.JobID = source[MemoryHandler.Instance.Structures.ActorItem.Job + defaultStatOffset];
+                entry.JobID = source[this._memoryHandler.Structures.ActorItem.Job + defaultStatOffset];
                 entry.Job = (Actor.Job) entry.JobID;
 
-                entry.Level = source[MemoryHandler.Instance.Structures.ActorItem.Level + defaultStatOffset];
-                entry.GrandCompany = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompany + defaultStatOffset];
-                entry.GrandCompanyRank = source[MemoryHandler.Instance.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
-                entry.Title = source[MemoryHandler.Instance.Structures.ActorItem.Title + defaultStatOffset];
-                entry.HPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorItem.HPCurrent + defaultStatOffset);
-                entry.HPMax = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorItem.HPMax + defaultStatOffset);
-                entry.MPCurrent = BitConverter.TryToInt32(source, MemoryHandler.Instance.Structures.ActorItem.MPCurrent + defaultStatOffset);
+                entry.Level = source[this._memoryHandler.Structures.ActorItem.Level + defaultStatOffset];
+                entry.GrandCompany = source[this._memoryHandler.Structures.ActorItem.GrandCompany + defaultStatOffset];
+                entry.GrandCompanyRank = source[this._memoryHandler.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
+                entry.Title = source[this._memoryHandler.Structures.ActorItem.Title + defaultStatOffset];
+                entry.HPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.HPCurrent + defaultStatOffset);
+                entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.HPMax + defaultStatOffset);
+                entry.MPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.MPCurrent + defaultStatOffset);
                 entry.MPMax = 10000;
-                entry.TPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.TPCurrent + defaultStatOffset);
-                entry.TPMax = 1000;
-                entry.GPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.GPCurrent + defaultStatOffset);
-                entry.GPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.GPMax + defaultStatOffset);
-                entry.CPCurrent = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.CPCurrent + defaultStatOffset);
-                entry.CPMax = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.CPMax + defaultStatOffset);
+                entry.GPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.GPCurrent + defaultStatOffset);
+                entry.GPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.GPMax + defaultStatOffset);
+                entry.CPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.CPCurrent + defaultStatOffset);
+                entry.CPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.CPMax + defaultStatOffset);
 
                 // entry.Race = source[0x2578]; // ??
                 // entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.AgroFlags = source[MemoryHandler.Instance.Structures.ActorItem.AgroFlags];
-                entry.CombatFlags = source[MemoryHandler.Instance.Structures.ActorItem.CombatFlags];
-                entry.DifficultyRank = source[MemoryHandler.Instance.Structures.ActorItem.DifficultyRank];
-                entry.CastingID = BitConverter.TryToInt16(source, MemoryHandler.Instance.Structures.ActorItem.CastingID); // 0x2C94);
-                entry.CastingTargetID = BitConverter.TryToUInt32(source, MemoryHandler.Instance.Structures.ActorItem.CastingTargetID); // 0x2CA0);
-                entry.CastingProgress = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.CastingProgress); // 0x2CC4);
-                entry.CastingTime = BitConverter.TryToSingle(source, MemoryHandler.Instance.Structures.ActorItem.CastingTime); // 0x2DA8);
+                entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
+                entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
+                entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];
+                entry.CastingID = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.CastingID); // 0x2C94);
+                entry.CastingTargetID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.CastingTargetID); // 0x2CA0);
+                entry.CastingProgress = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.CastingProgress); // 0x2CC4);
+                entry.CastingTime = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.CastingTime); // 0x2DA8);
                 entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Y);
                 if (targetID > 0) {
                     entry.TargetID = (int) targetID;
@@ -115,92 +136,101 @@ namespace Sharlayan.Utilities {
                 }
 
                 entry.MapIndex = 0;
-                var limit = 60;
+                int limit = 60;
                 switch (entry.Type) {
                     case Actor.Type.PC:
                         limit = 30;
                         break;
                 }
 
-                int statusSize = MemoryHandler.Instance.Structures.StatusItem.SourceSize;
-                byte[] statusesSource = new byte[limit * statusSize];
+                int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
 
-                List<StatusItem> foundStatuses = new List<StatusItem>();
+                byte[] statusesMap = this._memoryHandler.BufferPool.Rent(statusSize * limit);
+                byte[] statusMap = this._memoryHandler.BufferPool.Rent(statusSize);
 
-                Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesSource, 0, limit * statusSize);
-                for (var i = 0; i < limit; i++) {
-                    bool isNewStatus = false;
+                try {
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
 
-                    byte[] statusSource = new byte[statusSize];
-                    Buffer.BlockCopy(statusesSource, i * statusSize, statusSource, 0, statusSize);
+                    for (int i = 0; i < limit; i++) {
+                        bool isNewStatus = false;
 
-                    short StatusID = BitConverter.TryToInt16(statusSource, MemoryHandler.Instance.Structures.StatusItem.StatusID);
-                    uint CasterID = BitConverter.TryToUInt32(statusSource, MemoryHandler.Instance.Structures.StatusItem.CasterID);
+                        Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
 
-                    var statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == CasterID && x.StatusID == StatusID);
+                        short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                    if (statusEntry == null) {
-                        statusEntry = new StatusItem();
-                        isNewStatus = true;
-                    }
+                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
-                    statusEntry.TargetEntity = entry;
-                    statusEntry.TargetName = entry.Name;
-                    statusEntry.StatusID = StatusID;
-                    statusEntry.Stacks = statusSource[MemoryHandler.Instance.Structures.StatusItem.Stacks];
-                    statusEntry.Duration = BitConverter.TryToSingle(statusSource, MemoryHandler.Instance.Structures.StatusItem.Duration);
-                    statusEntry.CasterID = CasterID;
+                        if (statusEntry == null) {
+                            statusEntry = new StatusItem();
+                            isNewStatus = true;
+                        }
 
-                    try {
-                        ActorItem pc = PCWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        ActorItem npc = NPCWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        ActorItem monster = MonsterWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        statusEntry.SourceEntity = (pc ?? npc) ?? monster;
-                    }
-                    catch (Exception ex) {
-                        MemoryHandler.Instance.RaiseException(Logger, ex, true);
-                    }
+                        statusEntry.TargetEntity = entry;
+                        statusEntry.TargetName = entry.Name;
+                        statusEntry.StatusID = statusID;
+                        statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        statusEntry.CasterID = casterID;
 
-                    try {
-                        Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
-                        if (statusInfo != null) {
-                            statusEntry.IsCompanyAction = statusInfo.CompanyAction;
-                            var statusKey = statusInfo.Name.English;
-                            switch (MemoryHandler.Instance.GameLanguage) {
-                                case "French":
-                                    statusKey = statusInfo.Name.French;
-                                    break;
-                                case "Japanese":
-                                    statusKey = statusInfo.Name.Japanese;
-                                    break;
-                                case "German":
-                                    statusKey = statusInfo.Name.German;
-                                    break;
-                                case "Chinese":
-                                    statusKey = statusInfo.Name.Chinese;
-                                    break;
-                                case "Korean":
-                                    statusKey = statusInfo.Name.Korean;
-                                    break;
+                        try {
+                            ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            ActorItem npc = this._npcWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            ActorItem monster = this._monsterWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            statusEntry.SourceEntity = (pc ?? npc) ?? monster;
+                        }
+                        catch (Exception ex) {
+                            this._memoryHandler.RaiseException(Logger, ex);
+                        }
+
+                        try {
+                            Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
+                            if (statusInfo != null) {
+                                statusEntry.IsCompanyAction = statusInfo.CompanyAction;
+                                string statusKey = statusInfo.Name.English;
+                                switch (this._memoryHandler.Configuration.GameLanguage) {
+                                    case GameLanguage.French:
+                                        statusKey = statusInfo.Name.French;
+                                        break;
+                                    case GameLanguage.Japanese:
+                                        statusKey = statusInfo.Name.Japanese;
+                                        break;
+                                    case GameLanguage.German:
+                                        statusKey = statusInfo.Name.German;
+                                        break;
+                                    case GameLanguage.Chinese:
+                                        statusKey = statusInfo.Name.Chinese;
+                                        break;
+                                    case GameLanguage.Korean:
+                                        statusKey = statusInfo.Name.Korean;
+                                        break;
+                                }
+
+                                statusEntry.StatusName = statusKey;
+                            }
+                        }
+                        catch (Exception) {
+                            statusEntry.StatusName = Constants.UNKNOWN_LOCALIZED_NAME;
+                        }
+
+                        if (statusEntry.IsValid()) {
+                            if (isNewStatus) {
+                                entry.StatusItems.Add(statusEntry);
                             }
 
-                            statusEntry.StatusName = statusKey;
+                            this._foundStatuses.Add(statusEntry);
                         }
-                    }
-                    catch (Exception) {
-                        statusEntry.StatusName = "UNKNOWN";
-                    }
-
-                    if (statusEntry.IsValid()) {
-                        if (isNewStatus) {
-                            entry.StatusItems.Add(statusEntry);
-                        }
-
-                        foundStatuses.Add(statusEntry);
                     }
                 }
+                catch (Exception ex) {
+                    this._memoryHandler.RaiseException(Logger, ex);
+                }
+                finally {
+                    this._memoryHandler.BufferPool.Return(statusesMap);
+                    this._memoryHandler.BufferPool.Return(statusMap);
+                }
 
-                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
+                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
 
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {
@@ -213,19 +243,19 @@ namespace Sharlayan.Utilities {
                 }
             }
             catch (Exception ex) {
-                MemoryHandler.Instance.RaiseException(Logger, ex, true);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
-            CleanXPValue(ref entry);
+            this.CleanXPValue(ref entry);
 
             if (isCurrentUser) {
-                PCWorkerDelegate.CurrentUser = entry;
+                this._pcWorkerDelegate.CurrentUser = entry;
             }
 
             return entry;
         }
 
-        private static void CleanXPValue(ref ActorItem entity) {
+        private void CleanXPValue(ref ActorItem entity) {
             if (entity.HPCurrent < 0 || entity.HPMax < 0) {
                 entity.HPCurrent = 1;
                 entity.HPMax = 1;
