@@ -20,6 +20,8 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
+        private const string UNRESOLVED = "UNRESOLVED";
+
         public bool CanGetChatLog() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.ChatLogKey);
             if (canRead) {
@@ -45,7 +47,7 @@ namespace Sharlayan {
                 return result;
             }
 
-            List<List<byte>> buffered = new List<List<byte>>();
+            List<byte[]> bufferList = new List<byte[]>();
 
             try {
                 this._chatLogReader.ChatLogPointers = new ChatLogPointers {
@@ -67,13 +69,15 @@ namespace Sharlayan {
                 }
                 else {
                     if (currentArrayIndex < this._chatLogReader.PreviousArrayIndex) {
-                        buffered.AddRange(this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000));
+                        IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000);
+                        bufferList.AddRange(bufferEntries);
                         this._chatLogReader.PreviousOffset = 0;
                         this._chatLogReader.PreviousArrayIndex = 0;
                     }
 
                     if (this._chatLogReader.PreviousArrayIndex < currentArrayIndex) {
-                        buffered.AddRange(this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, (int) currentArrayIndex));
+                        IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, (int) currentArrayIndex);
+                        bufferList.AddRange(bufferEntries);
                     }
 
                     this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
@@ -83,16 +87,16 @@ namespace Sharlayan {
                 this._memoryHandler.RaiseException(Logger, ex);
             }
 
-            foreach (List<byte> bytes in buffered) {
+            foreach (byte[] bytes in bufferList) {
                 if (!bytes.Any()) {
                     continue;
                 }
 
                 try {
-                    ChatLogItem chatLogEntry = ChatEntry.Process(bytes.ToArray());
+                    ChatLogItem chatLogEntry = ChatEntry.Process(bytes);
 
                     // assign logged user for this instance to chatLogEntry
-                    chatLogEntry.PlayerCharacterName = this._pcWorkerDelegate.CurrentUser.Name;
+                    chatLogEntry.PlayerCharacterName = this._pcWorkerDelegate.CurrentUser?.Name ?? UNRESOLVED;
 
                     if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+")) {
                         result.ChatLogItems.Enqueue(chatLogEntry);

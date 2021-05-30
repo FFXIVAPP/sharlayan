@@ -210,7 +210,7 @@ namespace Sharlayan.Utilities {
                             }
                         }
                         catch (Exception) {
-                            statusEntry.StatusName = "UNKNOWN";
+                            statusEntry.StatusName = Constants.UNKNOWN_LOCALIZED_NAME;
                         }
 
                         if (statusEntry.IsValid()) {

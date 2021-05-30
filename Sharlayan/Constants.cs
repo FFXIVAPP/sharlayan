@@ -14,6 +14,8 @@ namespace Sharlayan {
     internal static class Constants {
         public const string DefaultAPIBaseURL = "https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master";
 
+        public static readonly string UNKNOWN_LOCALIZED_NAME = "???";
+
         public static readonly string[] ChatAlliance = {
             "000F",
         };

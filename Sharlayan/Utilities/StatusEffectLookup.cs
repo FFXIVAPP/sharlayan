@@ -22,12 +22,12 @@ namespace Sharlayan.Utilities {
 
         private static StatusItem DefaultStatusInfo = new StatusItem {
             Name = new Localization {
-                Chinese = "???",
-                English = "???",
-                French = "???",
-                German = "???",
-                Japanese = "???",
-                Korean = "???",
+                Chinese = Constants.UNKNOWN_LOCALIZED_NAME,
+                English = Constants.UNKNOWN_LOCALIZED_NAME,
+                French = Constants.UNKNOWN_LOCALIZED_NAME,
+                German = Constants.UNKNOWN_LOCALIZED_NAME,
+                Japanese = Constants.UNKNOWN_LOCALIZED_NAME,
+                Korean = Constants.UNKNOWN_LOCALIZED_NAME,
             },
             CompanyAction = false,
         };

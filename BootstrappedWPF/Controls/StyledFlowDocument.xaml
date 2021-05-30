@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:BootstrappedWPF.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:BootstrappedWPF.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -26,7 +27,11 @@
                 x:FieldModifier="public"
                 BorderBrush="{DynamicResource MaterialDesignBody}"
                 BorderThickness="2"
-                ViewingMode="Scroll">
+                MaxZoom="300"
+                MinZoom="50"
+                ViewingMode="Scroll"
+                Zoom="{Binding FlowDocumentZoom, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                ZoomIncrement="10">
                 <FlowDocument
                     x:Name="_FD"
                     x:FieldModifier="public"

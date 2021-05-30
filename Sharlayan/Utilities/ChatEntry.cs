@@ -17,6 +17,12 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Core;
 
     public class ChatEntry {
+        private const string INDEX_CHECK = ":";
+
+        private const string STARTS_WITH_CHECK = "::";
+
+        private const string CLEAND_SUBSTRING_CHECK = ": ";
+
         public static ChatLogItem Process(byte[] raw) {
             ChatLogItem chatLogEntry = new ChatLogItem();
             try {
@@ -26,11 +32,11 @@ namespace Sharlayan.Utilities {
                 chatLogEntry.Raw = Encoding.UTF8.GetString(raw.ToArray());
                 byte[] cleanable = raw.Skip(8).ToArray();
                 string cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
-                if (cleaned.StartsWith("::")) {
+                if (cleaned.StartsWith(STARTS_WITH_CHECK)) {
                     cleaned = cleaned.Substring(1);
                 }
 
-                int cut = cleaned.Substring(0, 2) == ": "
+                int cut = cleaned.Substring(0, 2) == CLEAND_SUBSTRING_CHECK
                               ? 2
                               : 1;
                 chatLogEntry.Message = chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
@@ -39,7 +45,7 @@ namespace Sharlayan.Utilities {
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
 
                 if (Constants.ChatPublic.Contains(chatLogEntry.Code)) {
-                    chatLogEntry.PlayerName = chatLogEntry.Line.Substring(0, chatLogEntry.Line.IndexOf(":", StringComparison.OrdinalIgnoreCase));
+                    chatLogEntry.PlayerName = chatLogEntry.Line.Substring(0, chatLogEntry.Line.IndexOf(INDEX_CHECK, StringComparison.OrdinalIgnoreCase));
                     chatLogEntry.Message = chatLogEntry.Message.Replace($"{chatLogEntry.PlayerName}: ", string.Empty);
                 }
             }

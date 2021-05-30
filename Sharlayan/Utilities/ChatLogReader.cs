@@ -57,15 +57,15 @@ namespace Sharlayan.Utilities {
             }
         }
 
-        public IEnumerable<List<byte>> ResolveEntries(int offset, int length) {
-            List<List<byte>> entries = new List<List<byte>>();
+        public IEnumerable<byte[]> ResolveEntries(int offset, int length) {
+            List<byte[]> entries = new List<byte[]>();
 
             this.EnsureArrayIndexes();
 
             for (int i = offset; i < length; i++) {
                 int currentOffset = this.Indexes[i];
 
-                List<byte> entry = this.ResolveEntry(this.PreviousOffset, currentOffset);
+                byte[] entry = this.ResolveEntry(this.PreviousOffset, currentOffset);
                 if (entry.Any()) {
                     entries.Add(entry);
                 }
@@ -76,10 +76,10 @@ namespace Sharlayan.Utilities {
             return entries;
         }
 
-        private List<byte> ResolveEntry(int offset, int length) {
-            List<byte> result = new List<byte>();
-
+        private byte[] ResolveEntry(int offset, int length) {
             int size = length - offset;
+
+            byte[] result = new byte[size];
 
             if (size == 0) {
                 return result;
@@ -89,9 +89,7 @@ namespace Sharlayan.Utilities {
 
             try {
                 this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.LogStart + offset), buffer);
-                for (int i = 0; i < size; i++) {
-                    result.Add(buffer[i]);
-                }
+                Buffer.BlockCopy(buffer, 0, result, 0, size);
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
