@@ -33,8 +33,24 @@ namespace Sharlayan.Utilities {
             },
         };
 
+        private static List<ActionItem> _damageOverTimeActions;
+
+        private static List<ActionItem> _healingOverTimeActions;
+
         public static List<ActionItem> DamageOverTimeActions() {
-            return _actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value).ToList();
+            if (_damageOverTimeActions.Any()) {
+                return _damageOverTimeActions;
+            }
+
+            return _damageOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value).ToList();
+        }
+
+        public static List<ActionItem> HealingOverTimeActions() {
+            if (_healingOverTimeActions.Any()) {
+                return _healingOverTimeActions;
+            }
+
+            return _healingOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
         }
 
         public static ActionItem GetActionInfo(string name) {
@@ -47,21 +63,14 @@ namespace Sharlayan.Utilities {
                        : DefaultActionInfo;
         }
 
-        public static List<ActionItem> HealingOverTimeActions() {
-            return _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
-        }
-
-        internal static void Resolve(SharlayanConfiguration configuration) {
+        internal static async Task Resolve(SharlayanConfiguration configuration) {
             if (_loading) {
                 return;
             }
 
             _loading = true;
-            Task.Run(
-                () => {
-                    APIHelper.GetActions(_actions, configuration);
-                    _loading = false;
-                });
+            await APIHelper.GetActions(_actions, configuration);
+            _loading = false;
         }
     }
 }

@@ -23,6 +23,8 @@ namespace Sharlayan.Utilities {
     internal class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly List<StatusItem> _foundStatuses;
+
         private MemoryHandler _memoryHandler;
 
         private MonsterWorkerDelegate _monsterWorkerDelegate;
@@ -36,13 +38,18 @@ namespace Sharlayan.Utilities {
             this._pcWorkerDelegate = pcWorkerDelegate;
             this._npcWorkerDelegate = npcWorkerDelegate;
             this._monsterWorkerDelegate = monsterWorkerDelegate;
+            this._foundStatuses = new List<StatusItem>();
         }
 
         public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
+            this._foundStatuses.Clear();
+
             ActorItem entry = existingActorItem ?? new ActorItem();
+
             int defaultBaseOffset = this._memoryHandler.Structures.ActorItem.DefaultBaseOffset;
             int defaultStatOffset = this._memoryHandler.Structures.ActorItem.DefaultStatOffset;
             int defaultStatusEffectOffset = this._memoryHandler.Structures.ActorItem.DefaultStatusEffectOffset;
+
             try {
                 entry.MapTerritory = 0;
                 entry.MapIndex = 0;
@@ -138,85 +145,92 @@ namespace Sharlayan.Utilities {
 
                 int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
 
-                byte[] statusesMap = new byte[limit * statusSize];
-                byte[] statusMap = new byte[statusSize];
+                byte[] statusesMap = this._memoryHandler.BufferPool.Rent(statusSize * limit);
+                byte[] statusMap = this._memoryHandler.BufferPool.Rent(statusSize);
 
-                List<StatusItem> foundStatuses = new List<StatusItem>();
+                try {
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
 
-                Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
+                    for (int i = 0; i < limit; i++) {
+                        bool isNewStatus = false;
 
-                for (int i = 0; i < limit; i++) {
-                    bool isNewStatus = false;
+                        Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
 
-                    Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
+                        short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                    short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
-                    uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
+                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
-                    StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
+                        if (statusEntry == null) {
+                            statusEntry = new StatusItem();
+                            isNewStatus = true;
+                        }
 
-                    if (statusEntry == null) {
-                        statusEntry = new StatusItem();
-                        isNewStatus = true;
-                    }
+                        statusEntry.TargetEntity = entry;
+                        statusEntry.TargetName = entry.Name;
+                        statusEntry.StatusID = statusID;
+                        statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        statusEntry.CasterID = casterID;
 
-                    statusEntry.TargetEntity = entry;
-                    statusEntry.TargetName = entry.Name;
-                    statusEntry.StatusID = statusID;
-                    statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
-                    statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
-                    statusEntry.CasterID = casterID;
+                        try {
+                            ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            ActorItem npc = this._npcWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            ActorItem monster = this._monsterWorkerDelegate.GetActorItem(statusEntry.CasterID);
+                            statusEntry.SourceEntity = (pc ?? npc) ?? monster;
+                        }
+                        catch (Exception ex) {
+                            this._memoryHandler.RaiseException(Logger, ex);
+                        }
 
-                    try {
-                        ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        ActorItem npc = this._npcWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        ActorItem monster = this._monsterWorkerDelegate.GetActorItem(statusEntry.CasterID);
-                        statusEntry.SourceEntity = (pc ?? npc) ?? monster;
-                    }
-                    catch (Exception ex) {
-                        this._memoryHandler.RaiseException(ex);
-                    }
+                        try {
+                            Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
+                            if (statusInfo != null) {
+                                statusEntry.IsCompanyAction = statusInfo.CompanyAction;
+                                string statusKey = statusInfo.Name.English;
+                                switch (this._memoryHandler.Configuration.GameLanguage) {
+                                    case GameLanguage.French:
+                                        statusKey = statusInfo.Name.French;
+                                        break;
+                                    case GameLanguage.Japanese:
+                                        statusKey = statusInfo.Name.Japanese;
+                                        break;
+                                    case GameLanguage.German:
+                                        statusKey = statusInfo.Name.German;
+                                        break;
+                                    case GameLanguage.Chinese:
+                                        statusKey = statusInfo.Name.Chinese;
+                                        break;
+                                    case GameLanguage.Korean:
+                                        statusKey = statusInfo.Name.Korean;
+                                        break;
+                                }
 
-                    try {
-                        Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
-                        if (statusInfo != null) {
-                            statusEntry.IsCompanyAction = statusInfo.CompanyAction;
-                            string statusKey = statusInfo.Name.English;
-                            switch (this._memoryHandler.Configuration.GameLanguage) {
-                                case GameLanguage.French:
-                                    statusKey = statusInfo.Name.French;
-                                    break;
-                                case GameLanguage.Japanese:
-                                    statusKey = statusInfo.Name.Japanese;
-                                    break;
-                                case GameLanguage.German:
-                                    statusKey = statusInfo.Name.German;
-                                    break;
-                                case GameLanguage.Chinese:
-                                    statusKey = statusInfo.Name.Chinese;
-                                    break;
-                                case GameLanguage.Korean:
-                                    statusKey = statusInfo.Name.Korean;
-                                    break;
+                                statusEntry.StatusName = statusKey;
+                            }
+                        }
+                        catch (Exception) {
+                            statusEntry.StatusName = "UNKNOWN";
+                        }
+
+                        if (statusEntry.IsValid()) {
+                            if (isNewStatus) {
+                                entry.StatusItems.Add(statusEntry);
                             }
 
-                            statusEntry.StatusName = statusKey;
+                            this._foundStatuses.Add(statusEntry);
                         }
-                    }
-                    catch (Exception) {
-                        statusEntry.StatusName = "UNKNOWN";
-                    }
-
-                    if (statusEntry.IsValid()) {
-                        if (isNewStatus) {
-                            entry.StatusItems.Add(statusEntry);
-                        }
-
-                        foundStatuses.Add(statusEntry);
                     }
                 }
+                catch (Exception ex) {
+                    this._memoryHandler.RaiseException(Logger, ex);
+                }
+                finally {
+                    this._memoryHandler.BufferPool.Return(statusesMap);
+                    this._memoryHandler.BufferPool.Return(statusMap);
+                }
 
-                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
+                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
 
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {
@@ -229,7 +243,7 @@ namespace Sharlayan.Utilities {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
             this.CleanXPValue(ref entry);

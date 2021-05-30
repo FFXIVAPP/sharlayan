@@ -20,8 +20,6 @@ namespace Sharlayan {
 
         const int _inventoryCount = 74;
 
-        private byte[] _inventoryMap;
-
         public bool CanGetInventory() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.InventoryKey);
             if (canRead) {
@@ -38,31 +36,29 @@ namespace Sharlayan {
                 return result;
             }
 
-            try {
-                if (this._inventoryMap == null) {
-                    this._inventoryMap = new byte[_inventoryCount * _inventoryByteCount];
-                }
+            byte[] inventoryMap = this._memoryHandler.BufferPool.Rent(_inventoryCount * _inventoryByteCount);
 
+            try {
                 IntPtr inventoryAddress = new IntPtr(this._memoryHandler.GetInt64(this._memoryHandler.Scanner.Locations[Signatures.InventoryKey]));
-                this._memoryHandler.GetByteArray(inventoryAddress, this._inventoryMap);
+                this._memoryHandler.GetByteArray(inventoryAddress, inventoryMap);
 
                 for (int i = 0; i < _inventoryCount; i++) {
                     int bagIndex = i * _inventoryByteCount;
-                    uint bagID = BitConverter.ToUInt32(this._inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.ID);
+                    uint bagID = BitConverter.ToUInt32(inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.ID);
 
                     if (!Enum.IsDefined(typeof(Inventory.Container), bagID)) {
                         continue;
                     }
 
                     InventoryContainer container = new InventoryContainer {
-                        Amount = BitConverter.ToUInt32(this._inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.Amount),
+                        Amount = BitConverter.ToUInt32(inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.Amount),
                         TypeID = bagID,
                         ContainerType = (Inventory.Container) bagID,
                     };
 
                     int itemByteCount = 56;
 
-                    IntPtr inventorySlotAddress = new IntPtr(this._memoryHandler.GetInt64FromBytes(this._inventoryMap, bagIndex));
+                    IntPtr inventorySlotAddress = new IntPtr(this._memoryHandler.GetInt64FromBytes(inventoryMap, bagIndex));
                     byte[] slotBytes = this._memoryHandler.GetByteArray(inventorySlotAddress, (int) container.Amount * itemByteCount);
 
                     for (int j = 0; j < container.Amount; j++) {
@@ -105,7 +101,10 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+            finally {
+                this._memoryHandler.BufferPool.Return(inventoryMap);
             }
 
             return result;

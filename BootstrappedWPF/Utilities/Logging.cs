@@ -8,8 +8,8 @@
     using NLog;
 
     public static class Logging {
-        public static void Debug(Logger logger, string message, Exception exception = null, bool levelIsError = false) {
-            Debug(logger, new LogItem(message, exception, levelIsError));
+        public static void Debug(Logger logger, string message, Exception exception = null) {
+            Debug(logger, new LogItem(message, exception));
         }
 
         public static void Debug(Logger logger, LogItem logItem) {
@@ -21,8 +21,8 @@
             }
         }
 
-        public static void Log(Logger logger, string message, Exception exception = null, bool levelIsError = false) {
-            Log(logger, new LogItem(message, exception, levelIsError));
+        public static void Log(Logger logger, string message, Exception exception = null) {
+            Log(logger, new LogItem(message, exception));
         }
 
         public static void Log(Logger logger, LogItem logItem) {

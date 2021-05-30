@@ -23,6 +23,8 @@ namespace Sharlayan.Utilities {
     internal class PartyMemberResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly List<StatusItem> _foundStatuses;
+
         private MemoryHandler _memoryHandler;
 
         private MonsterWorkerDelegate _monsterWorkerDelegate;
@@ -31,20 +33,19 @@ namespace Sharlayan.Utilities {
 
         private PCWorkerDelegate _pcWorkerDelegate;
 
-        private byte[] _statusesMap;
-
-        private byte[] _statusMap;
-
         public PartyMemberResolver(MemoryHandler memoryHandler, PCWorkerDelegate pcWorkerDelegate, NPCWorkerDelegate npcWorkerDelegate, MonsterWorkerDelegate monsterWorkerDelegate) {
             this._memoryHandler = memoryHandler;
             this._pcWorkerDelegate = pcWorkerDelegate;
             this._npcWorkerDelegate = npcWorkerDelegate;
             this._monsterWorkerDelegate = monsterWorkerDelegate;
+            this._foundStatuses = new List<StatusItem>();
         }
 
         public PartyMember ResolvePartyMemberFromBytes(byte[] source, ActorItem actorItem = null) {
+            this._foundStatuses.Clear();
+
             if (actorItem != null) {
-                PartyMember entry = new PartyMember {
+                PartyMember memberFromActorItem = new PartyMember {
                     X = actorItem.X,
                     Y = actorItem.Y,
                     Z = actorItem.Z,
@@ -59,24 +60,21 @@ namespace Sharlayan.Utilities {
                     MPCurrent = actorItem.MPCurrent,
                     HitBoxRadius = actorItem.HitBoxRadius,
                 };
-                entry.StatusItems.AddRange(actorItem.StatusItems);
-                this.CleanXPValue(ref entry);
-                return entry;
+                memberFromActorItem.StatusItems.AddRange(actorItem.StatusItems);
+                this.CleanXPValue(ref memberFromActorItem);
+                return memberFromActorItem;
             }
-            else {
-                int defaultStatusEffectOffset = this._memoryHandler.Structures.PartyMember.DefaultStatusEffectOffset;
-                PartyMember entry = new PartyMember();
+
+            int defaultStatusEffectOffset = this._memoryHandler.Structures.PartyMember.DefaultStatusEffectOffset;
+            PartyMember entry = new PartyMember();
+            try {
+                const int limit = 15;
+                int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
+
+                byte[] statusesMap = this._memoryHandler.BufferPool.Rent(statusSize * limit);
+                byte[] statusMap = this._memoryHandler.BufferPool.Rent(statusSize);
+
                 try {
-                    const int limit = 15;
-                    int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
-                    if (this._statusesMap == null) {
-                        this._statusesMap = new byte[statusSize * 15];
-                    }
-
-                    if (this._statusMap == null) {
-                        this._statusMap = new byte[statusSize];
-                    }
-
                     entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
                     entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
                     entry.Y = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Y);
@@ -87,22 +85,19 @@ namespace Sharlayan.Utilities {
                     entry.JobID = source[this._memoryHandler.Structures.PartyMember.Job];
                     entry.Job = (Actor.Job) entry.JobID;
                     entry.HitBoxRadius = 0.5f;
-
                     entry.Level = source[this._memoryHandler.Structures.PartyMember.Level];
                     entry.HPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPCurrent);
                     entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPMax);
                     entry.MPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PartyMember.MPCurrent);
 
-                    List<StatusItem> foundStatuses = new List<StatusItem>();
-
-                    Buffer.BlockCopy(source, defaultStatusEffectOffset, this._statusesMap, 0, limit * statusSize);
+                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
                     for (int i = 0; i < limit; i++) {
                         bool isNewStatus = false;
 
-                        Buffer.BlockCopy(this._statusesMap, i * statusSize, this._statusMap, 0, statusSize);
+                        Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
 
-                        short statusID = SharlayanBitConverter.TryToInt16(this._statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
-                        uint casterID = SharlayanBitConverter.TryToUInt32(this._statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
+                        short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
                         StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
 
@@ -114,11 +109,11 @@ namespace Sharlayan.Utilities {
                         statusEntry.TargetEntity = null;
                         statusEntry.TargetName = entry.Name;
                         statusEntry.StatusID = statusID;
-                        statusEntry.Stacks = this._statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
-                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(this._statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
                         statusEntry.CasterID = casterID;
 
-                        foundStatuses.Add(statusEntry);
+                        this._foundStatuses.Add(statusEntry);
 
                         try {
                             ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);
@@ -127,7 +122,7 @@ namespace Sharlayan.Utilities {
                             statusEntry.SourceEntity = (pc ?? npc) ?? monster;
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex);
+                            this._memoryHandler.RaiseException(Logger, ex);
                         }
 
                         try {
@@ -165,19 +160,27 @@ namespace Sharlayan.Utilities {
                                 entry.StatusItems.Add(statusEntry);
                             }
 
-                            foundStatuses.Add(statusEntry);
+                            this._foundStatuses.Add(statusEntry);
                         }
                     }
-
-                    entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex);
+                    this._memoryHandler.RaiseException(Logger, ex);
+                }
+                finally {
+                    this._memoryHandler.BufferPool.Return(statusesMap);
+                    this._memoryHandler.BufferPool.Return(statusMap);
                 }
 
-                this.CleanXPValue(ref entry);
-                return entry;
+                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
             }
+            catch (Exception ex) {
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+
+            this.CleanXPValue(ref entry);
+
+            return entry;
         }
 
         private void CleanXPValue(ref PartyMember entity) {

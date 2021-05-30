@@ -10,8 +10,8 @@
             }
 
             XElement newElement = new XElement(xNode, new XAttribute("Key", xKey));
-            foreach (KeyValuePair<string, string> s in xValuePairs) {
-                newElement.Add(new XElement(s.Key, s.Value));
+            foreach ((string key, string value) in xValuePairs) {
+                newElement.Add(new XElement(key, value));
             }
 
             element.Add(newElement);

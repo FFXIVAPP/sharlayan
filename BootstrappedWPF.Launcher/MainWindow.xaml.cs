@@ -1,8 +1,17 @@
-﻿namespace BootstrappedWPF.Launcher {
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainWindow.xaml.cs" company="SyndicatedLife">
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
+// </copyright>
+// <summary>
+//   MainWindow.xaml.cs Implementation
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace BootstrappedWPF.Launcher {
     using System;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Threading;
     using System.Windows;
     using System.Windows.Input;
@@ -24,8 +33,10 @@
             try {
                 string path = Directory.GetCurrentDirectory();
                 FileInfo[] files = new DirectoryInfo(path).GetFiles();
-                foreach (FileInfo file in files.Where(t => t.Extension == ".tmp" || t.Extension == ".PendingOverwrite")) {
-                    file.Delete();
+                foreach (FileInfo file in files) {
+                    if (file.Extension == ".tmp" || file.Extension == ".PendingOverwrite") {
+                        file.Delete();
+                    }
                 }
             }
             catch (Exception) {

@@ -20,6 +20,8 @@
 
     using MaterialDesignThemes.Wpf;
 
+    using NLog;
+
     using Sharlayan;
     using Sharlayan.Models;
 
@@ -79,7 +81,7 @@
             }
         }
 
-        private void MemoryHandler_OnExceptionEvent(object sender, Exception ex) {
+        private void MemoryHandler_OnExceptionEvent(object sender, Logger logger, Exception ex) {
             if (sender is not MemoryHandler memoryHandler) {
                 return;
             }
@@ -128,8 +130,8 @@
                 return;
             }
 
-            foreach (KeyValuePair<string, MemoryLocation> kvp in memoryLocations) {
-                FlowDocHelper.AppendMessage(memoryHandler, $"MemoryLocation Found -> {kvp.Key} => {kvp.Value.GetAddress():X}", DebugTabItem.Instance.DebugLogReader._FDR);
+            foreach ((string key, MemoryLocation memoryLocation) in memoryLocations) {
+                FlowDocHelper.AppendMessage(memoryHandler, $"MemoryLocation Found -> {key} => {memoryLocation.GetAddress():X}", DebugTabItem.Instance.DebugLogReader._FDR);
             }
         }
 
@@ -174,7 +176,8 @@
         }
 
         private void SetupWorkerSets() {
-            foreach (MemoryHandler memoryHandler in SharlayanMemoryManager.Instance.GetHandlers()) {
+            ICollection<MemoryHandler> memoryHandlers = SharlayanMemoryManager.Instance.GetHandlers();
+            foreach (MemoryHandler memoryHandler in memoryHandlers) {
                 WorkerSet workerSet = new WorkerSet(memoryHandler);
                 this._workerSets.AddOrUpdate(memoryHandler.Configuration.ProcessModel.ProcessID, workerSet, (k, v) => workerSet);
             }
@@ -183,13 +186,13 @@
         private void StartAllSharlayanWorkers() {
             this.StopAllSharlayanWorkers();
 
-            foreach (WorkerSet workerSet in this._workerSets.Values.ToList()) {
+            foreach (WorkerSet workerSet in this._workerSets.Values) {
                 workerSet.StartMemoryWorkers();
             }
         }
 
         private void StopAllSharlayanWorkers() {
-            foreach (WorkerSet workerSet in this._workerSets.Values.ToList()) {
+            foreach (WorkerSet workerSet in this._workerSets.Values) {
                 workerSet.StopMemoryWorkers();
             }
         }

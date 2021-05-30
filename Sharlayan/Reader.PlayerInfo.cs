@@ -15,8 +15,6 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
 
     public partial class Reader {
-        private byte[] _playerMap;
-
         public bool CanGetPlayerInfo() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PlayerInformationKey);
             if (canRead) {
@@ -33,24 +31,22 @@ namespace Sharlayan {
                 return result;
             }
 
-            IntPtr PlayerInfoMap = this._memoryHandler.Scanner.Locations[Signatures.PlayerInformationKey];
+            IntPtr playerInfoAddress = this._memoryHandler.Scanner.Locations[Signatures.PlayerInformationKey];
 
-            if (PlayerInfoMap.ToInt64() <= 6496) {
+            if (playerInfoAddress.ToInt64() <= 6496) {
                 return result;
             }
 
-            if (this._playerMap == null) {
-                this._playerMap = new byte[this._memoryHandler.Structures.PlayerInfo.SourceSize];
-            }
+            byte[] playerMap = this._memoryHandler.BufferPool.Rent(this._memoryHandler.Structures.PlayerInfo.SourceSize);
 
             try {
-                this._memoryHandler.GetByteArray(PlayerInfoMap, this._playerMap);
+                this._memoryHandler.GetByteArray(playerInfoAddress, playerMap);
 
                 try {
-                    result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(this._playerMap);
+                    result.PlayerInfo = this._playerInfoResolver.ResolvePlayerFromBytes(playerMap);
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex);
+                    this._memoryHandler.RaiseException(Logger, ex);
                 }
 
                 if (this.CanGetAgroEntities()) {
@@ -76,7 +72,10 @@ namespace Sharlayan {
                 result.Entity = this._pcWorkerDelegate.CurrentUser;
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+            finally {
+                this._memoryHandler.BufferPool.Return(playerMap);
             }
 
             return result;

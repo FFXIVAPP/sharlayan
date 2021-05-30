@@ -39,9 +39,9 @@ namespace Sharlayan {
             this._chatLogReader.PreviousArrayIndex = previousArrayIndex;
             this._chatLogReader.PreviousOffset = previousOffset;
 
-            IntPtr chatPointerMap = this._memoryHandler.Scanner.Locations[Signatures.ChatLogKey];
+            IntPtr chatPointerAddress = this._memoryHandler.Scanner.Locations[Signatures.ChatLogKey];
 
-            if (chatPointerMap.ToInt64() <= 20) {
+            if (chatPointerAddress.ToInt64() <= 20) {
                 return result;
             }
 
@@ -49,13 +49,13 @@ namespace Sharlayan {
 
             try {
                 this._chatLogReader.ChatLogPointers = new ChatLogPointers {
-                    LineCount = this._memoryHandler.GetUInt32(chatPointerMap),
-                    OffsetArrayStart = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayStart),
-                    OffsetArrayPos = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayPos),
-                    OffsetArrayEnd = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayEnd),
-                    LogStart = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.LogStart),
-                    LogNext = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.LogNext),
-                    LogEnd = this._memoryHandler.GetInt64(chatPointerMap, this._memoryHandler.Structures.ChatLogPointers.LogEnd),
+                    LineCount = this._memoryHandler.GetUInt32(chatPointerAddress),
+                    OffsetArrayStart = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayStart),
+                    OffsetArrayPos = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayPos),
+                    OffsetArrayEnd = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayEnd),
+                    LogStart = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogStart),
+                    LogNext = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogNext),
+                    LogEnd = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogEnd),
                 };
 
                 long currentArrayIndex = (this._chatLogReader.ChatLogPointers.OffsetArrayPos - this._chatLogReader.ChatLogPointers.OffsetArrayStart) / 4;
@@ -80,10 +80,14 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
-            foreach (List<byte> bytes in buffered.Where(b => b.Count > 0)) {
+            foreach (List<byte> bytes in buffered) {
+                if (!bytes.Any()) {
+                    continue;
+                }
+
                 try {
                     ChatLogItem chatLogEntry = ChatEntry.Process(bytes.ToArray());
 
@@ -95,7 +99,7 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex);
+                    this._memoryHandler.RaiseException(Logger, ex);
                 }
             }
 
@@ -103,53 +107,6 @@ namespace Sharlayan {
             result.PreviousOffset = this._chatLogReader.PreviousOffset;
 
             return result;
-        }
-
-        private class ChatLogReader {
-            public readonly List<int> Indexes = new List<int>();
-
-            private byte[] _indexes;
-
-            private int BUFFER_SIZE = 4000;
-
-            public bool ChatLogFirstRun = true;
-
-            public ChatLogPointers ChatLogPointers;
-
-            public int PreviousArrayIndex;
-
-            public int PreviousOffset;
-
-            public ChatLogReader(MemoryHandler memoryHandler) {
-                this._memoryHandler = memoryHandler;
-                this._indexes = new byte[this.BUFFER_SIZE];
-            }
-
-            private MemoryHandler _memoryHandler { get; }
-
-            public void EnsureArrayIndexes() {
-                this.Indexes.Clear();
-                this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.OffsetArrayStart), this._indexes);
-                for (int i = 0; i < this.BUFFER_SIZE; i += 4) {
-                    this.Indexes.Add(BitConverter.ToInt32(this._indexes, i));
-                }
-            }
-
-            public IEnumerable<List<byte>> ResolveEntries(int offset, int length) {
-                List<List<byte>> entries = new List<List<byte>>();
-                this.EnsureArrayIndexes();
-                for (int i = offset; i < length; i++) {
-                    int currentOffset = this.Indexes[i];
-                    entries.Add(this.ResolveEntry(this.PreviousOffset, currentOffset));
-                    this.PreviousOffset = currentOffset;
-                }
-
-                return entries;
-            }
-
-            private List<byte> ResolveEntry(int offset, int length) {
-                return new List<byte>(this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.LogStart + offset), length - offset));
-            }
         }
     }
 }

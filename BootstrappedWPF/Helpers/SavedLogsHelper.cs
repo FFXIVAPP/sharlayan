@@ -77,8 +77,8 @@
             if (AppViewModel.Instance.ChatHistory.Any()) {
                 try {
                     // clear current builders
-                    foreach (KeyValuePair<string, StringBuilder> textLogBuilder in _textLogBuilders) {
-                        textLogBuilder.Value.Clear();
+                    foreach ((string _, StringBuilder builder) in _textLogBuilders) {
+                        builder.Clear();
                     }
 
                     // setup full xml log file
@@ -102,7 +102,7 @@
                                 }
                             }
                             catch (Exception ex) {
-                                Logging.Log(Logger, new LogItem(ex, true));
+                                Logging.Log(Logger, new LogItem(ex));
                             }
 
                             // process xml log
@@ -122,7 +122,7 @@
                                 XMLHelper.SaveXMLNode(xChatHistory, "History", "Entry", xCode, keyPairList);
                             }
                             catch (Exception ex) {
-                                Logging.Log(Logger, new LogItem(ex, true));
+                                Logging.Log(Logger, new LogItem(ex));
                             }
                         }
                     }
@@ -166,7 +166,7 @@
                         }
                     }
                     catch (Exception ex) {
-                        Logging.Log(Logger, new LogItem(ex, true));
+                        Logging.Log(Logger, new LogItem(ex));
                     }
 
                     // save xml log
@@ -174,11 +174,11 @@
                         xChatHistory.Save(Path.Combine(AppViewModel.Instance.LogsPath, $"{DateTime.Now:yyyy_MM_dd_HH.mm.ss}_ChatHistory.xml"));
                     }
                     catch (Exception ex) {
-                        Logging.Log(Logger, new LogItem(ex, true));
+                        Logging.Log(Logger, new LogItem(ex));
                     }
                 }
                 catch (Exception ex) {
-                    Logging.Log(Logger, new LogItem(ex, true));
+                    Logging.Log(Logger, new LogItem(ex));
                 }
             }
         }

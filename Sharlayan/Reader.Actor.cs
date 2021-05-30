@@ -10,8 +10,8 @@
 
 namespace Sharlayan {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
 
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
@@ -19,15 +19,9 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
-        private byte[] _actorTargetInfoMap = new byte[128];
+        private ConcurrentDictionary<uint, DateTime> _expiringActors = new ConcurrentDictionary<uint, DateTime>();
 
-        private byte[] _characterAddressMap;
-
-        private Dictionary<uint, DateTime> _expiringActors = new Dictionary<uint, DateTime>();
-
-        private byte[] _sourceMap;
-
-        private Dictionary<IntPtr, IntPtr> _uniqueCharacterAddresses = new Dictionary<IntPtr, IntPtr>();
+        private ConcurrentDictionary<IntPtr, IntPtr> _uniqueCharacterAddresses = new ConcurrentDictionary<IntPtr, IntPtr>();
 
         public bool CanGetActors() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey);
@@ -45,20 +39,17 @@ namespace Sharlayan {
                 return result;
             }
 
+            IntPtr targetAddress = IntPtr.Zero;
+
+            int limit = this._memoryHandler.Structures.ActorItem.EntityCount;
+            int sourceSize = this._memoryHandler.Structures.ActorItem.SourceSize;
+
+            byte[] characterAddressMap = this._memoryHandler.BufferPool.Rent(8 * limit);
+            byte[] sourceMap = this._memoryHandler.BufferPool.Rent(sourceSize);
+            byte[] targetInfoMap = this._memoryHandler.BufferPool.Rent(128);
+
             try {
-                IntPtr targetAddress = IntPtr.Zero;
-
-                int limit = this._memoryHandler.Structures.ActorItem.EntityCount;
-                if (this._characterAddressMap == null) {
-                    this._characterAddressMap = new byte[8 * limit];
-                }
-
-                int sourceSize = this._memoryHandler.Structures.ActorItem.SourceSize;
-                if (this._sourceMap == null) {
-                    this._sourceMap = new byte[sourceSize];
-                }
-
-                this._memoryHandler.GetByteArray(this._memoryHandler.Scanner.Locations[Signatures.CharacterMapKey], this._characterAddressMap);
+                this._memoryHandler.GetByteArray(this._memoryHandler.Scanner.Locations[Signatures.CharacterMapKey], characterAddressMap);
 
                 IntPtr firstAddress = IntPtr.Zero;
 
@@ -69,7 +60,7 @@ namespace Sharlayan {
                 bool firstTime = true;
 
                 for (int i = 0; i < limit; i++) {
-                    IntPtr characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(this._characterAddressMap, i * 8));
+                    IntPtr characterAddress = new IntPtr(SharlayanBitConverter.TryToInt64(characterAddressMap, i * 8));
 
                     if (characterAddress == IntPtr.Zero) {
                         continue;
@@ -100,11 +91,11 @@ namespace Sharlayan {
                 foreach (KeyValuePair<IntPtr, IntPtr> kvp in this._uniqueCharacterAddresses) {
                     try {
                         IntPtr characterAddress = new IntPtr(kvp.Value.ToInt64());
-                        this._memoryHandler.GetByteArray(characterAddress, this._sourceMap);
+                        this._memoryHandler.GetByteArray(characterAddress, sourceMap);
 
-                        uint ID = SharlayanBitConverter.TryToUInt32(this._sourceMap, this._memoryHandler.Structures.ActorItem.ID);
-                        uint NPCID2 = SharlayanBitConverter.TryToUInt32(this._sourceMap, this._memoryHandler.Structures.ActorItem.NPCID2);
-                        Actor.Type Type = (Actor.Type) this._sourceMap[this._memoryHandler.Structures.ActorItem.Type];
+                        uint ID = SharlayanBitConverter.TryToUInt32(sourceMap, this._memoryHandler.Structures.ActorItem.ID);
+                        uint NPCID2 = SharlayanBitConverter.TryToUInt32(sourceMap, this._memoryHandler.Structures.ActorItem.NPCID2);
+                        Actor.Type Type = (Actor.Type) sourceMap[this._memoryHandler.Structures.ActorItem.Type];
 
                         ActorItem existing = null;
                         bool newEntry = false;
@@ -156,11 +147,11 @@ namespace Sharlayan {
 
                         bool isFirstEntry = kvp.Value.ToInt64() == firstAddress.ToInt64();
 
-                        ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(this._sourceMap, isFirstEntry, existing);
+                        ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(sourceMap, isFirstEntry, existing);
 
                         if (entry != null && entry.IsValid) {
                             if (this._expiringActors.ContainsKey(ID)) {
-                                this._expiringActors.Remove(ID);
+                                this._expiringActors.TryRemove(ID, out DateTime removedDateTime);
                             }
                         }
 
@@ -176,8 +167,8 @@ namespace Sharlayan {
 
                         if (isFirstEntry) {
                             if (targetAddress.ToInt64() > 0) {
-                                this._memoryHandler.GetByteArray(targetAddress, this._actorTargetInfoMap);
-                                entry.TargetID = (int) SharlayanBitConverter.TryToUInt32(this._actorTargetInfoMap, this._memoryHandler.Structures.ActorItem.ID);
+                                this._memoryHandler.GetByteArray(targetAddress, targetInfoMap);
+                                entry.TargetID = (int) SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.ActorItem.ID);
                             }
                         }
 
@@ -219,7 +210,7 @@ namespace Sharlayan {
                         }
                     }
                     catch (Exception ex) {
-                        this._memoryHandler.RaiseException(ex);
+                        this._memoryHandler.RaiseException(Logger, ex);
                     }
                 }
 
@@ -244,14 +235,14 @@ namespace Sharlayan {
                     }
 
                     // check expiring list for stale actors
-                    foreach (KeyValuePair<uint, DateTime> kvp in this._expiringActors.ToList()) {
+                    foreach (KeyValuePair<uint, DateTime> kvp in this._expiringActors) {
                         if (now > kvp.Value) {
                             // Stale actor. Remove it.
                             this._monsterWorkerDelegate.RemoveActorItem(kvp.Key);
                             this._npcWorkerDelegate.RemoveActorItem(kvp.Key);
                             this._pcWorkerDelegate.RemoveActorItem(kvp.Key);
 
-                            this._expiringActors.Remove(kvp.Key);
+                            this._expiringActors.TryRemove(kvp.Key, out DateTime removedDateTime);
                         }
                         else {
                             // Not stale enough yet. We're not actually removing it.
@@ -262,13 +253,18 @@ namespace Sharlayan {
                     }
                 }
                 catch (Exception ex) {
-                    this._memoryHandler.RaiseException(ex);
+                    this._memoryHandler.RaiseException(Logger, ex);
                 }
 
                 this._memoryHandler.ScanCount++;
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+            finally {
+                this._memoryHandler.BufferPool.Return(characterAddressMap);
+                this._memoryHandler.BufferPool.Return(sourceMap);
+                this._memoryHandler.BufferPool.Return(targetInfoMap);
             }
 
             result.CurrentMonsters = this._monsterWorkerDelegate.ActorItems;

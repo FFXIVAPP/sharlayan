@@ -135,25 +135,25 @@ namespace Sharlayan.Core {
             cloned.EnmityItems = new System.Collections.Generic.List<EnmityItem>();
             cloned.StatusItems = new System.Collections.Generic.List<StatusItem>();
 
-            foreach (EnmityItem item in this.EnmityItems) {
+            foreach (EnmityItem enmityItem in this.EnmityItems) {
                 cloned.EnmityItems.Add(
                     new EnmityItem {
-                        Enmity = item.Enmity,
-                        ID = item.ID,
-                        Name = item.Name,
+                        Enmity = enmityItem.Enmity,
+                        ID = enmityItem.ID,
+                        Name = enmityItem.Name,
                     });
             }
 
-            foreach (StatusItem item in this.StatusItems) {
+            foreach (StatusItem statusItem in this.StatusItems) {
                 cloned.StatusItems.Add(
                     new StatusItem {
-                        CasterID = item.CasterID,
-                        Duration = item.Duration,
-                        IsCompanyAction = item.IsCompanyAction,
-                        Stacks = item.Stacks,
-                        StatusID = item.StatusID,
-                        StatusName = item.StatusName,
-                        TargetName = item.TargetName,
+                        CasterID = statusItem.CasterID,
+                        Duration = statusItem.Duration,
+                        IsCompanyAction = statusItem.IsCompanyAction,
+                        Stacks = statusItem.Stacks,
+                        StatusID = statusItem.StatusID,
+                        StatusName = statusItem.StatusName,
+                        TargetName = statusItem.TargetName,
                     });
             }
 

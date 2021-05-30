@@ -17,10 +17,6 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
-        private byte[] _targetInfoMap;
-
-        private byte[] _targetMap;
-
         public bool CanGetTargetInfo() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.TargetKey);
             if (canRead) {
@@ -37,26 +33,24 @@ namespace Sharlayan {
                 return result;
             }
 
-            if (this._targetInfoMap == null) {
-                this._targetInfoMap = new byte[this._memoryHandler.Structures.TargetInfo.SourceSize];
-            }
+            byte[] targetInfoMap = this._memoryHandler.BufferPool.Rent(this._memoryHandler.Structures.TargetInfo.SourceSize);
 
             try {
                 IntPtr targetAddress = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.TargetKey];
 
                 if (targetAddress.ToInt64() > 0) {
-                    this._memoryHandler.GetByteArray(targetAddress, this._targetInfoMap);
+                    this._memoryHandler.GetByteArray(targetAddress, targetInfoMap);
 
-                    long currentTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Current);
-                    long mouseOverTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.MouseOver);
-                    long focusTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Focus);
-                    long previousTarget = this._memoryHandler.GetInt64FromBytes(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.Previous);
+                    long currentTargetAddress = this._memoryHandler.GetInt64FromBytes(targetInfoMap, this._memoryHandler.Structures.TargetInfo.Current);
+                    long mouseOverTargetAddress = this._memoryHandler.GetInt64FromBytes(targetInfoMap, this._memoryHandler.Structures.TargetInfo.MouseOver);
+                    long focusTargetAddress = this._memoryHandler.GetInt64FromBytes(targetInfoMap, this._memoryHandler.Structures.TargetInfo.Focus);
+                    long previousTargetAddress = this._memoryHandler.GetInt64FromBytes(targetInfoMap, this._memoryHandler.Structures.TargetInfo.Previous);
 
-                    uint currentTargetID = SharlayanBitConverter.TryToUInt32(this._targetInfoMap, this._memoryHandler.Structures.TargetInfo.CurrentID);
+                    uint currentTargetID = SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.TargetInfo.CurrentID);
 
-                    if (currentTarget > 0) {
+                    if (currentTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(currentTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(currentTargetAddress);
                             currentTargetID = entry.ID;
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
@@ -64,46 +58,46 @@ namespace Sharlayan {
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex);
+                            this._memoryHandler.RaiseException(Logger, ex);
                         }
                     }
 
-                    if (mouseOverTarget > 0) {
+                    if (mouseOverTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(mouseOverTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(mouseOverTargetAddress);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.MouseOverTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex);
+                            this._memoryHandler.RaiseException(Logger, ex);
                         }
                     }
 
-                    if (focusTarget > 0) {
+                    if (focusTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(focusTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(focusTargetAddress);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.FocusTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex);
+                            this._memoryHandler.RaiseException(Logger, ex);
                         }
                     }
 
-                    if (previousTarget > 0) {
+                    if (previousTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(previousTarget);
+                            ActorItem entry = this.GetTargetActorItemFromSource(previousTargetAddress);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.PreviousTarget = entry;
                             }
                         }
                         catch (Exception ex) {
-                            this._memoryHandler.RaiseException(ex);
+                            this._memoryHandler.RaiseException(Logger, ex);
                         }
                     }
 
@@ -141,52 +135,65 @@ namespace Sharlayan {
                                                 enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
                                             }
                                             catch (Exception ex) {
-                                                this._memoryHandler.RaiseException(ex);
+                                                this._memoryHandler.RaiseException(Logger, ex);
                                             }
                                         }
 
                                         result.TargetInfo.EnmityItems.Add(enmityEntry);
                                     }
                                     catch (Exception ex) {
-                                        this._memoryHandler.RaiseException(ex);
+                                        this._memoryHandler.RaiseException(Logger, ex);
                                     }
                                 }
                             }
                         }
                     }
                     catch (Exception ex) {
-                        this._memoryHandler.RaiseException(ex);
+                        this._memoryHandler.RaiseException(Logger, ex);
                     }
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
+            }
+            finally {
+                this._memoryHandler.BufferPool.Return(targetInfoMap);
             }
 
             return result;
         }
 
         private ActorItem GetTargetActorItemFromSource(long address) {
+            ActorItem entry;
+
             IntPtr targetAddress = new IntPtr(address);
 
-            if (this._targetMap == null) {
-                this._targetMap = new byte[this._memoryHandler.Structures.TargetInfo.Size];
+            byte[] targetMap = this._memoryHandler.BufferPool.Rent(this._memoryHandler.Structures.TargetInfo.Size);
+
+            try {
+                this._memoryHandler.GetByteArray(targetAddress, targetMap);
+
+                entry = this._actorItemResolver.ResolveActorFromBytes(targetMap);
+
+                if (entry.Type == Actor.Type.EventObject) {
+                    (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);
+                    entry.EventObjectTypeID = EventObjectTypeID;
+                    entry.EventObjectType = EventObjectType;
+                }
+
+                (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
+
+                entry.MapID = mapID;
+                entry.MapIndex = mapIndex;
+                entry.MapTerritory = mapTerritory;
             }
-
-            this._memoryHandler.GetByteArray(targetAddress, this._targetMap);
-            ActorItem entry = this._actorItemResolver.ResolveActorFromBytes(this._targetMap);
-
-            if (entry.Type == Actor.Type.EventObject) {
-                (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);
-                entry.EventObjectTypeID = EventObjectTypeID;
-                entry.EventObjectType = EventObjectType;
+            catch (Exception ex) {
+                this._memoryHandler.RaiseException(Logger, ex);
+                entry = new ActorItem();
             }
-
-            (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
-
-            entry.MapID = mapID;
-            entry.MapIndex = mapIndex;
-            entry.MapTerritory = mapTerritory;
+            finally {
+                this._memoryHandler.BufferPool.Return(targetMap);
+            }
 
             return entry;
         }

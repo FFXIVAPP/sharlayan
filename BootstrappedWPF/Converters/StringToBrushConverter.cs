@@ -22,7 +22,7 @@
                 result = (Brush) brushConverter.ConvertFrom(value);
             }
             catch (Exception ex) {
-                Logging.Log(Logger, new LogItem(ex, true));
+                Logging.Log(Logger, new LogItem(ex));
             }
 
             return result;
@@ -42,7 +42,7 @@
                 result = (Brush) brushConverter.ConvertFrom(value);
             }
             catch (Exception ex) {
-                Logging.Log(Logger, new LogItem(ex, true));
+                Logging.Log(Logger, new LogItem(ex));
             }
 
             return result;

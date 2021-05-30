@@ -7,6 +7,8 @@
     using NLog;
     using NLog.Config;
 
+    using Sharlayan;
+
     class Program {
         static void Main(string[] args) {
             XElement nLogConfig = XElement.Load("./BootstrappedConsole.exe.nlog");

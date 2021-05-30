@@ -13,17 +13,19 @@ namespace Sharlayan {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
 
     using NLog;
 
+    using Sharlayan.Models;
     using Sharlayan.Models.Structures;
     using Sharlayan.Utilities;
 
     public class MemoryHandler : IDisposable {
-        public delegate void ExceptionEvent(object sender, Exception ex);
+        public delegate void ExceptionEvent(object sender, Logger logger, Exception ex);
 
         public delegate void MemoryHandlerDisposedEvent(object sender);
 
@@ -33,9 +35,10 @@ namespace Sharlayan {
 
         private bool _isNewInstance = true;
 
+        internal ClearingArrayPool<byte> BufferPool = new ClearingArrayPool<byte>();
+
         public MemoryHandler(SharlayanConfiguration configuration) {
             this.Configuration = configuration;
-
             try {
                 this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
             }
@@ -46,34 +49,37 @@ namespace Sharlayan {
                 this.IsAttached = true;
             }
 
-            if (this._isNewInstance) {
-                this._isNewInstance = false;
-
-                ActionLookup.Resolve(this.Configuration);
-                StatusEffectLookup.Resolve(this.Configuration);
-                ZoneLookup.Resolve(this.Configuration);
-
-                Task.Run(this.ResolveMemoryStructures);
-            }
-
             this.Configuration.ProcessModel.Process.EnableRaisingEvents = true;
             this.Configuration.ProcessModel.Process.Exited += this.Process_OnExited;
-
-            this._systemModules.Clear();
 
             this.GetProcessModules();
 
             this.Scanner = new Scanner(this);
             this.Reader = new Reader(this);
 
-            this.Scanner.Locations.Clear();
+            if (this._isNewInstance) {
+                this._isNewInstance = false;
 
-            Task.Run(() => this.Scanner.LoadOffsets(Signatures.Resolve(this.Configuration), this.Configuration.ScanAllRegions));
+                Task.Run(
+                    async () => {
+                        await this.ResolveMemoryStructures();
+
+                        await ActionLookup.Resolve(this.Configuration);
+                        await StatusEffectLookup.Resolve(this.Configuration);
+                        await ZoneLookup.Resolve(this.Configuration);
+                    });
+            }
+
+            Task.Run(
+                async () => {
+                    Signature[] signatures = await Signatures.Resolve(this.Configuration);
+                    this.Scanner.LoadOffsets(signatures, this.Configuration.ScanAllRegions);
+                });
         }
 
         public SharlayanConfiguration Configuration { get; set; }
 
-        public bool IsAttached { get; set; }
+        internal bool IsAttached { get; set; }
 
         public Reader Reader { get; set; }
 
@@ -105,6 +111,12 @@ namespace Sharlayan {
         ~MemoryHandler() {
             this.Dispose();
         }
+
+        public event ExceptionEvent OnException = delegate { };
+
+        public event MemoryHandlerDisposedEvent OnMemoryHandlerDisposed = delegate { };
+
+        public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
 
         public byte GetByte(IntPtr address, long offset = 0) {
             byte[] data = new byte[1];
@@ -171,7 +183,7 @@ namespace Sharlayan {
         }
 
         public string GetStringFromBytes(byte[] source, int offset = 0, int size = 256) {
-            if (source.Length == 0) {
+            if (!source.Any()) {
                 return string.Empty;
             }
 
@@ -263,8 +275,7 @@ namespace Sharlayan {
 
         internal ProcessModule GetModuleByAddress(IntPtr address) {
             try {
-                for (int i = 0; i < this._systemModules.Count; i++) {
-                    ProcessModule module = this._systemModules[i];
+                foreach (ProcessModule module in this._systemModules) {
                     long baseAddress = module.BaseAddress.ToInt64();
                     if (baseAddress <= (long) address && baseAddress + module.ModuleMemorySize >= (long) address) {
                         return module;
@@ -280,29 +291,25 @@ namespace Sharlayan {
 
         internal bool IsSystemModule(IntPtr address) {
             ProcessModule moduleByAddress = this.GetModuleByAddress(address);
-            if (moduleByAddress != null) {
-                foreach (ProcessModule module in this._systemModules) {
-                    if (module.ModuleName == moduleByAddress.ModuleName) {
-                        return true;
-                    }
+            if (moduleByAddress == null) {
+                return false;
+            }
+
+            foreach (ProcessModule module in this._systemModules) {
+                if (module.ModuleName == moduleByAddress.ModuleName) {
+                    return true;
                 }
             }
 
             return false;
         }
 
-        internal void ResolveMemoryStructures() {
-            this.Structures = APIHelper.GetStructures(this.Configuration);
+        internal async Task ResolveMemoryStructures() {
+            this.Structures = await APIHelper.GetStructures(this.Configuration);
         }
 
-        public event ExceptionEvent OnException = delegate { };
-
-        public event MemoryHandlerDisposedEvent OnMemoryHandlerDisposed = delegate { };
-
-        public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
-
-        protected internal virtual void RaiseException(Exception ex) {
-            this.OnException?.Invoke(this, ex);
+        protected internal virtual void RaiseException(Logger logger, Exception ex) {
+            this.OnException?.Invoke(this, logger, ex);
         }
 
         protected internal virtual void RaiseMemoryHandlerDisposed() {
@@ -316,8 +323,7 @@ namespace Sharlayan {
         private void GetProcessModules() {
             ProcessModuleCollection modules = this.Configuration.ProcessModel.Process.Modules;
 
-            for (int i = 0; i < modules.Count; i++) {
-                ProcessModule module = modules[i];
+            foreach (ProcessModule module in modules) {
                 this._systemModules.Add(module);
             }
         }

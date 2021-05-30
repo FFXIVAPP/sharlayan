@@ -17,8 +17,6 @@ namespace Sharlayan {
     using Sharlayan.Utilities;
 
     public partial class Reader {
-        private byte[] _partyMemberMap;
-
         public bool CanGetPartyMembers() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CharacterMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyMapKey) && this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.PartyCountKey);
             if (canRead) {
@@ -35,69 +33,76 @@ namespace Sharlayan {
                 return result;
             }
 
-            IntPtr PartyInfoMap = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.PartyMapKey];
-            MemoryLocation PartyCountMap = this._memoryHandler.Scanner.Locations[Signatures.PartyCountKey];
+            IntPtr partInfoAddress = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.PartyMapKey];
+            IntPtr partyCountyAddress = this._memoryHandler.Scanner.Locations[Signatures.PartyCountKey];
 
             foreach (KeyValuePair<uint, PartyMember> kvp in this._partyWorkerDelegate.PartyMembers) {
                 result.RemovedPartyMembers.TryAdd(kvp.Key, kvp.Value.Clone());
             }
 
             try {
-                byte partyCount = this._memoryHandler.GetByte(PartyCountMap);
+                byte partyCount = this._memoryHandler.GetByte(partyCountyAddress);
                 int sourceSize = this._memoryHandler.Structures.PartyMember.SourceSize;
-                if (this._partyMemberMap == null) {
-                    this._partyMemberMap = new byte[sourceSize];
-                }
 
-                if (partyCount > 1 && partyCount < 9) {
-                    for (uint i = 0; i < partyCount; i++) {
-                        long address = PartyInfoMap.ToInt64() + i * (uint) sourceSize;
-                        this._memoryHandler.GetByteArray(new IntPtr(address), this._partyMemberMap);
-                        uint ID = SharlayanBitConverter.TryToUInt32(this._partyMemberMap, this._memoryHandler.Structures.PartyMember.ID);
-                        ActorItem existing = null;
-                        bool newEntry = false;
+                byte[] partyMemberMap = this._memoryHandler.BufferPool.Rent(sourceSize);
 
-                        if (result.RemovedPartyMembers.ContainsKey(ID)) {
-                            result.RemovedPartyMembers.TryRemove(ID, out PartyMember removedPartyMember);
-                            if (this._monsterWorkerDelegate.ActorItems.ContainsKey(ID)) {
-                                existing = this._monsterWorkerDelegate.GetActorItem(ID);
+                try {
+                    if (partyCount > 1 && partyCount < 9) {
+                        for (uint i = 0; i < partyCount; i++) {
+                            long address = partInfoAddress.ToInt64() + i * (uint) sourceSize;
+                            this._memoryHandler.GetByteArray(new IntPtr(address), partyMemberMap);
+                            uint ID = SharlayanBitConverter.TryToUInt32(partyMemberMap, this._memoryHandler.Structures.PartyMember.ID);
+                            ActorItem existing = null;
+                            bool newEntry = false;
+
+                            if (result.RemovedPartyMembers.ContainsKey(ID)) {
+                                result.RemovedPartyMembers.TryRemove(ID, out PartyMember removedPartyMember);
+                                if (this._monsterWorkerDelegate.ActorItems.ContainsKey(ID)) {
+                                    existing = this._monsterWorkerDelegate.GetActorItem(ID);
+                                }
+
+                                if (this._pcWorkerDelegate.ActorItems.ContainsKey(ID)) {
+                                    existing = this._pcWorkerDelegate.GetActorItem(ID);
+                                }
+                            }
+                            else {
+                                newEntry = true;
                             }
 
-                            if (this._pcWorkerDelegate.ActorItems.ContainsKey(ID)) {
-                                existing = this._pcWorkerDelegate.GetActorItem(ID);
+                            PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(partyMemberMap, existing);
+                            if (!entry.IsValid) {
+                                continue;
+                            }
+
+                            if (existing != null) {
+                                continue;
+                            }
+
+                            if (newEntry) {
+                                this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
+                                result.NewPartyMembers.TryAdd(entry.ID, entry.Clone());
                             }
                         }
-                        else {
-                            newEntry = true;
+                    }
+
+                    if (partyCount <= 1 && this._pcWorkerDelegate.CurrentUser != null) {
+                        PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), this._pcWorkerDelegate.CurrentUser);
+                        if (result.RemovedPartyMembers.ContainsKey(entry.ID)) {
+                            result.RemovedPartyMembers.TryRemove(entry.ID, out PartyMember removedPartyMember);
                         }
 
-                        PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(this._partyMemberMap, existing);
-                        if (!entry.IsValid) {
-                            continue;
-                        }
-
-                        if (existing != null) {
-                            continue;
-                        }
-
-                        if (newEntry) {
-                            this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
-                            result.NewPartyMembers.TryAdd(entry.ID, entry.Clone());
-                        }
+                        this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
                     }
                 }
-
-                if (partyCount <= 1 && this._pcWorkerDelegate.CurrentUser != null) {
-                    PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(Array.Empty<byte>(), this._pcWorkerDelegate.CurrentUser);
-                    if (result.RemovedPartyMembers.ContainsKey(entry.ID)) {
-                        result.RemovedPartyMembers.TryRemove(entry.ID, out PartyMember removedPartyMember);
-                    }
-
-                    this._partyWorkerDelegate.EnsurePartyMember(entry.ID, entry);
+                catch (Exception ex) {
+                    this._memoryHandler.RaiseException(Logger, ex);
+                }
+                finally {
+                    this._memoryHandler.BufferPool.Return(partyMemberMap);
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
             try {
@@ -107,7 +112,7 @@ namespace Sharlayan {
                 }
             }
             catch (Exception ex) {
-                this._memoryHandler.RaiseException(ex);
+                this._memoryHandler.RaiseException(Logger, ex);
             }
 
             result.PartyMembers = this._partyWorkerDelegate.PartyMembers;

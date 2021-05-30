@@ -10,6 +10,7 @@
 
 namespace Sharlayan.Utilities {
     using System;
+    using System.Linq;
 
     internal static class SharlayanBitConverter {
         public static bool TryToBoolean(byte[] value, int index) {
@@ -122,7 +123,7 @@ namespace Sharlayan.Utilities {
         }
 
         public static string TryToString(byte[] value, int index) {
-            if (value.Length == 0 || index >= value.Length) {
+            if (!value.Any() || index >= value.Length) {
                 return default;
             }
 
