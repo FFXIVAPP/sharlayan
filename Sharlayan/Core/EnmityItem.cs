@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="EnmityItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,7 +10,6 @@
 
 namespace Sharlayan.Core {
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Extensions;
 
     public class EnmityItem : IEnmityItem {
         private string _name;
@@ -21,7 +20,7 @@ namespace Sharlayan.Core {
 
         public string Name {
             get => this._name ?? string.Empty;
-            set => this._name = value.ToTitleCase();
+            set => this._name = value;
         }
     }
 }

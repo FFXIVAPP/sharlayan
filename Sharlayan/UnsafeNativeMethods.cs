@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="UnsafeNativeMethods.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -13,7 +13,7 @@ namespace Sharlayan {
     using System.Runtime.InteropServices;
     using System.Text;
 
-    internal static class UnsafeNativeMethods {
+    public static class UnsafeNativeMethods {
         public enum ProcessAccessFlags {
             PROCESS_VM_ALL = 0x001F0FFF,
         }
@@ -50,7 +50,7 @@ namespace Sharlayan {
             public uint Type;
 
             public override string ToString() {
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
                 sb.AppendFormat($"BaseAddress:{this.BaseAddress}{Environment.NewLine}");
                 sb.AppendFormat($"AllocationBase:{this.AllocationBase}{Environment.NewLine}");

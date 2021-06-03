@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -11,10 +11,32 @@
 namespace Sharlayan.Core {
     using Sharlayan.Core.Enums;
     using Sharlayan.Core.Interfaces;
-    using Sharlayan.Delegates;
 
     public class ActorItem : ActorItemBase, IActorItem {
-        public static ActorItem CurrentUser => PCWorkerDelegate.CurrentUser;
+        public double CastingPercentage =>
+            this.IsCasting && this.CastingTime > 0
+                ? this.CastingProgress / this.CastingTime
+                : 0;
+
+        public bool IsAgroed => (this.AgroFlags & 1) > 0;
+
+        public bool IsClaimed => this.Status == Actor.Status.Claimed;
+
+        public bool IsFate => this.Fate == 0x801AFFFF && this.Type == Actor.Type.Monster;
+
+        // 0xBF if targetable, 0xBD if not. Assuming a 0x2 bitmask for now.
+        public bool IsTargetable => (this.TargetFlags & 2) > 0;
+
+        public bool IsValid {
+            get {
+                switch (this.Type) {
+                    case Actor.Type.NPC:
+                        return this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
+                    default:
+                        return this.ID != 0;
+                }
+            }
+        }
 
         public Actor.ActionStatus ActionStatus { get; set; }
 
@@ -23,11 +45,6 @@ namespace Sharlayan.Core {
         public byte AgroFlags { get; set; }
 
         public short CastingID { get; set; }
-
-        public double CastingPercentage =>
-            this.IsCasting && this.CastingTime > 0
-                ? this.CastingProgress / this.CastingTime
-                : 0;
 
         public float CastingProgress { get; set; }
 
@@ -67,29 +84,9 @@ namespace Sharlayan.Core {
 
         public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
 
-        public bool IsAgroed => (this.AgroFlags & 1) > 0;
-
         public bool IsCasting => (this.CombatFlags & (1 << 7)) != 0;
 
-        public bool IsClaimed => this.Status == Actor.Status.Claimed;
-
-        public bool IsFate => this.Fate == 0x801AFFFF && this.Type == Actor.Type.Monster;
-
         public bool IsGM { get; set; }
-
-        // 0xBF if targetable, 0xBD if not. Assuming a 0x2 bitmask for now.
-        public bool IsTargetable => (this.TargetFlags & 2) > 0;
-
-        public bool IsValid {
-            get {
-                switch (this.Type) {
-                    case Actor.Type.NPC:
-                        return this.ID != 0 && (this.NPCID1 != 0 || this.NPCID2 != 0);
-                    default:
-                        return this.ID != 0;
-                }
-            }
-        }
 
         public uint MapID { get; set; }
 
@@ -132,31 +129,31 @@ namespace Sharlayan.Core {
         public bool WeaponUnsheathed => (this.CombatFlags & (1 << 3)) != 0;
 
         public ActorItem Clone() {
-            var cloned = (ActorItem) this.MemberwiseClone();
+            ActorItem cloned = (ActorItem) this.MemberwiseClone();
 
             cloned.Coordinate = new Coordinate(this.Coordinate.X, this.Coordinate.Z, this.Coordinate.Y);
             cloned.EnmityItems = new System.Collections.Generic.List<EnmityItem>();
             cloned.StatusItems = new System.Collections.Generic.List<StatusItem>();
 
-            foreach (EnmityItem item in this.EnmityItems) {
+            foreach (EnmityItem enmityItem in this.EnmityItems) {
                 cloned.EnmityItems.Add(
                     new EnmityItem {
-                        Enmity = item.Enmity,
-                        ID = item.ID,
-                        Name = item.Name,
+                        Enmity = enmityItem.Enmity,
+                        ID = enmityItem.ID,
+                        Name = enmityItem.Name,
                     });
             }
 
-            foreach (StatusItem item in this.StatusItems) {
+            foreach (StatusItem statusItem in this.StatusItems) {
                 cloned.StatusItems.Add(
                     new StatusItem {
-                        CasterID = item.CasterID,
-                        Duration = item.Duration,
-                        IsCompanyAction = item.IsCompanyAction,
-                        Stacks = item.Stacks,
-                        StatusID = item.StatusID,
-                        StatusName = item.StatusName,
-                        TargetName = item.TargetName,
+                        CasterID = statusItem.CasterID,
+                        Duration = statusItem.Duration,
+                        IsCompanyAction = statusItem.IsCompanyAction,
+                        Stacks = statusItem.Stacks,
+                        StatusID = statusItem.StatusID,
+                        StatusName = statusItem.StatusName,
+                        TargetName = statusItem.TargetName,
                     });
             }
 

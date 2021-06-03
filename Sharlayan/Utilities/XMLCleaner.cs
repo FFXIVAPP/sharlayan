@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="XMLCleaner.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -9,7 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Utilities {
-    using System.Linq;
     using System.Text;
 
     public static class XMLCleaner {
@@ -18,9 +17,11 @@ namespace Sharlayan.Utilities {
                 return string.Empty;
             }
 
-            var buffer = new StringBuilder(xValue.Length);
-            foreach (var xChar in xValue.Where(xChar => IsLegalXmlChar(xChar))) {
-                buffer.Append(xChar);
+            StringBuilder buffer = new StringBuilder(xValue.Length);
+            foreach (char c in xValue) {
+                if (IsLegalXmlChar(c)) {
+                    buffer.Append(c);
+                }
             }
 
             return buffer.ToString();

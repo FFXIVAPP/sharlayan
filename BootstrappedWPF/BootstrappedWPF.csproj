@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>logo.ico</ApplicationIcon>
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0.0</FileVersion>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Resources\ChatHistory.xml" />
+		<None Remove="Resources\ChatTabs.xml" />
+		<None Remove="Resources\BootstrappedWPF.exe.nlog" />
+		<None Remove="Resources\blackcat.svg" />
+		<None Remove="Resources\ChatCodes.xml" />
+		<None Remove="Resources\Contact.png" />
+		<None Remove="Resources\DE.png" />
+		<None Remove="Resources\EN.png" />
+		<None Remove="Resources\FR.png" />
+		<None Remove="Resources\JA.png" />
+		<None Remove="Resources\KO.png" />
+		<None Remove="Resources\logo.ico" />
+		<None Remove="Resources\logo.png" />
+		<None Remove="Resources\logo.svg" />
+		<None Remove="Resources\XIVAPP.png" />
+		<None Remove="Resources\ZH.png" />
+		<None Remove="BootstrappedWPF.exe.nlog" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="BootstrappedWPF.exe.nlog">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\sharlayan\Sharlayan\Sharlayan.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\ChatHistory.xml" />
+		<Resource Include="Resources\BootstrappedWPF.exe.nlog" />
+		<Resource Include="Resources\Contact.png" />
+		<Resource Include="Resources\logo.ico" />
+		<Resource Include="Resources\logo.png" />
+		<Resource Include="Resources\logo.svg" />
+		<Resource Include="Resources\EN.png" />
+		<Resource Include="Resources\ChatCodes.xml" />
+		<Resource Include="Resources\ZH.png" />
+		<Resource Include="Resources\DE.png" />
+		<Resource Include="Resources\FR.png" />
+		<Resource Include="Resources\JA.png" />
+		<Resource Include="Resources\KO.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+		<Compile Update="Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+		<None Update="Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+</Project>

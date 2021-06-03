@@ -1,69 +1,73 @@
 # sharlayan
+
 Issue tracking, feature request and release repository.
 
 # What is this?
+
 This is the main memory module for FFXIVAPP split out into it's own repo. For enterprising people this means not having to wait for a full app update as this "should" be a drop in replacement for your existing one in your FFXIVAPP folder.
 
 Pending anything catastrophic update-wise it should be good to go.
 
 # How do I use it and what comes back?
+
 - Add as a reference into your project.
 
 That's the basic of it. For actual instantiation it works as follows:
 
 ```csharp
 using Sharlayan;
+using Sharlayan.Enums;
 using Sharlayan.Models;
-
-// DX9
-Process[] processes = Process.GetProcessesByName("ffxiv");
-if (processes.length)
-{
-    // supported: English, Chinese, Japanese, French, German, Korean
-    string gameLanguage = "English";
-	// whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
-	bool useLocalCache = true;
-	// patchVersion of game, or latest
-	string patchVersion = "latest";
-    Process process = processes[0];
-    ProcessModel processModel = new ProcessModel
-    {
-        Process = process
-    }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, useLocalCache);
-}
 
 // DX11
 Process[] processes = Process.GetProcessesByName("ffxiv_dx11");
 if (processes.length)
 {
-    // supported: English, Chinese, Japanese, French, German, Korean
-    string gameLanguage = "English";
+    // supported: Global, Chinese, Korean
+    GameRegion gameRegion = GameRegion.Global;
+    GameLanguage gameLanguage = GameLanguage.English;
 	// whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
 	bool useLocalCache = true;
 	// patchVersion of game, or latest
 	string patchVersion = "latest";
     Process process = processes[0];
-    ProcessModel processModel = new ProcessModel
-    {
-        Process = process,
-        IsWin64 = true
+    ProcessModel processModel = new ProcessModel {
+        Process = process
     }
-    MemoryHandler.Instance.SetProcess(processModel, gameLanguage, patchVersion, useLocalCache);
+    SharlayanConfiguration configuration = new SharlayanConfiguration {
+        ProcessModel = processModel,
+        GameLanguage = gameLanguage,
+        GameRegion = gameRegion,
+        PatchVersion = patchVersion,
+        UseLocalCache = Settings.Default.UseLocalMemoryJSONDataCache
+    };
+    MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.AddHandler(configuration);
 }
 ```
 
-The memory module is now instantiated and is ready to read data. If you are switching to a new process remember to call SetProcess again.
+The memory module is now instantiated and is ready to read data. When switch processes you should call:
 
-# Reading data
-The following functions are available:
+```csharp
+SharlayanMemoryManager.Instance.RemoveHandler(processModel);
+```
+
+# Reading
+
+The instantiated memory handler for the process comes with it's own reader, or you can create your own.
+
+### Using Predefined
+
+```csharp
+MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.GetHandler(processModel);
+XResult result = memoryHandler.Reader.GetX();
+```
 
 ## Actors (Monster, Player, NPC, etc) Reading
 
 ```csharp
 using Sharlayan;
 
-ActorReadResult readResult = Reader.GetActors();
+ActorReadResult readResult = memoryHandler.Reader.GetActors();
 
 // Removed is list of ID's that were in the last scan
 // New is all the new ID's added
@@ -104,7 +108,7 @@ using Sharlayan;
 int _previousArrayIndex = 0;
 int _previousOffset = 0;
 
-ChatLogReadResult readResult = Reader.GetChatLog(_previousArrayIndex, _previousOffset);
+ChatLogReadResult readResult = memoryHandler.Reader.GetChatLog(_previousArrayIndex, _previousOffset);
 
 List<ChatLogEntry> chatLogEntries = readResult.ChatLogEntries;
 
@@ -130,7 +134,7 @@ public class ChatLogReadResult
 ```csharp
 using Sharlayan;
 
-InventoryReadResult readResult = Reader.GetInventoryItems();
+InventoryReadResult readResult = memoryHandler.Reader.GetInventoryItems();
 
 // The result is the following class
 public class InventoryReadResult
@@ -149,7 +153,7 @@ public class InventoryReadResult
 ```csharp
 using Sharlayan;
 
-PartyInfoReadResult readResult = Reader.GetPartyMembers();
+PartyInfoReadResult readResult = memoryHandler.Reader.GetPartyMembers();
 
 // Removed is list of ID's that were in the last scan
 // New is all the new ID's added
@@ -176,7 +180,7 @@ public class PartyInfoReadResult
 ```csharp
 using Sharlayan;
 
-PlayerInfoReadResult readResult = Reader.GetPlayerInfo();
+PlayerInfoReadResult readResult = memoryHandler.Reader.GetPlayerInfo();
 
 // The result is the following class
 public class PlayerInfoReadResult
@@ -195,7 +199,7 @@ public class PlayerInfoReadResult
 ```csharp
 using Sharlayan;
 
-TargetReadResult readResult = Reader.GetTargetInfo();
+TargetReadResult readResult = memoryHandler.Reader.GetTargetInfo();
 
 // TargetsFound means at least 1 was found
 
@@ -212,11 +216,22 @@ public class TargetReadResult
 }
 ```
 
-# Want to scan for something yourself?
+# Roll your own app?
 
-First instantiate the MemoryHandler class then proceed to create a new Scanner.
+If you want to add your own signatures to scan for you can modify the json file directly that's automatically downloaded/saved into your application directory.
+
+You can also override the built in like so:
 
 ```csharp
+SharlayanConfiguration configuration = new SharlayanConfiguration {
+    ProcessModel = new ProcessModel {
+        Process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault(),
+    },
+};
+MemoryHandler memoryHandler = new MemoryHandler(configuration);
+// it be default will pull in the memory signatures from the local file, backup from API (GitHub)
+memoryHandler.Scanner.Locations.Clear(); // these are resolved MemoryLocation
+
 var signatures = new List<Signature>();
 // typical signature
 signatures.Add(new Signature
@@ -245,12 +260,13 @@ signatures.Add(new Signature
 		0L, // ASM assumes first pointer is always 0
 		144L
 	}
-}); 
-Scanner.Instance.LoadOffsets(Signatures.Resolve(ProcessModel.IsWin64, GameLanguage));
+});
+
+memoryHandler.Scanner.LoadOffsets(signatures);
 ```
 
 Once this is complete you can reference this when reading like so:
 
 ```csharp
-var somethingMap = MemoryHandler.Instance.GetByteArray(Scanner.Instance.Locations["SOMETHING"], 8);
+var somethingMap = memoryHandler.GetByteArray(memoryHandler.Scanner.Locations["SOMETHING"], 8);
 ```

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="BootstrappedConsole.exe.nlog" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="BootstrappedConsole.exe.nlog">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NLog" Version="4.7.0" />
+		<PackageReference Include="NLog.Config" Version="4.7.0" />
+		<PackageReference Include="NLog.Schema" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Sharlayan\Sharlayan.csproj" />
+	</ItemGroup>
+
+</Project>

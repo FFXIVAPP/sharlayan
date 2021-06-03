@@ -1,0 +1,112 @@
+
+[*.{appxmanifest,axml,build,config,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+
+[*.{asax,ascx,aspx,axaml,cs,cshtml,css,htm,html,js,jsx,master,paml,razor,skin,ts,tsx,vb,xaml,xamlx,xoml}]
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+[*.{json,resjson}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+[*]
+
+# Microsoft .NET properties
+csharp_new_line_before_open_brace = none
+csharp_preferred_modifier_order = public, protected, internal, private, static, new, abstract, virtual, override, sealed, readonly, extern, unsafe, volatile, async:suggestion
+csharp_style_var_elsewhere = false:suggestion
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = false:suggestion
+csharp_using_directive_placement = inside_namespace:silent
+dotnet_naming_rule.local_constants_rule.import_to_resharper = as_predefined
+dotnet_naming_rule.local_constants_rule.severity = warning
+dotnet_naming_rule.local_constants_rule.style = upper_camel_case_style
+dotnet_naming_rule.local_constants_rule.symbols = local_constants_symbols
+dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
+dotnet_naming_symbols.local_constants_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.local_constants_symbols.applicable_kinds = local
+dotnet_naming_symbols.local_constants_symbols.required_modifiers = const
+dotnet_separate_import_directive_groups = true
+dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:none
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_qualification_for_event = true:suggestion
+dotnet_style_qualification_for_field = true:suggestion
+dotnet_style_qualification_for_method = true:suggestion
+dotnet_style_qualification_for_property = true:suggestion
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+file_header_template = --------------------------------------------------------------------------------------------------------------------\n<copyright file="{fileName}" company="SyndicatedLife">\n  Copyright© 2007 - $CURRENT_YEAR$ Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)\n  Licensed under the MIT license. See LICENSE.md in the solution root for full license information.\n</copyright>\n<summary>\n  {fileName} Implementation\n</summary>\n--------------------------------------------------------------------------------------------------------------------
+
+# ReSharper properties
+resharper_align_linq_query = true
+resharper_align_multiline_expression = true
+resharper_align_multiline_extends_list = true
+resharper_align_multiline_for_stmt = true
+resharper_align_multline_type_parameter_constrains = true
+resharper_align_multline_type_parameter_list = true
+resharper_braces_for_for = required
+resharper_braces_for_foreach = required
+resharper_braces_for_ifelse = required
+resharper_braces_for_while = required
+resharper_brace_style = end_of_line
+resharper_can_use_global_alias = false
+resharper_csharp_align_multiline_parameter = true
+resharper_csharp_align_multiple_declaration = true
+resharper_csharp_blank_lines_around_single_line_field = 1
+resharper_csharp_blank_lines_around_single_line_invocable = 1
+resharper_csharp_empty_block_style = together_same_line
+resharper_csharp_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_new_line_before_while = true
+resharper_csharp_stick_comment = false
+resharper_csharp_wrap_after_declaration_lpar = true
+resharper_csharp_wrap_after_invocation_lpar = true
+resharper_csharp_wrap_before_binary_opsign = true
+resharper_csharp_wrap_for_stmt_header_style = wrap_if_long
+resharper_csharp_wrap_lines = false
+resharper_csharp_wrap_multiple_declaration_style = chop_always
+resharper_csharp_wrap_ternary_expr_style = chop_always
+resharper_event_handler_pattern_long = $object$_On$event$
+resharper_indent_nested_fixed_stmt = true
+resharper_indent_nested_foreach_stmt = true
+resharper_indent_nested_for_stmt = true
+resharper_indent_nested_lock_stmt = true
+resharper_indent_nested_usings_stmt = true
+resharper_indent_nested_while_stmt = true
+resharper_keep_existing_embedded_arrangement = false
+resharper_keep_existing_expr_member_arrangement = false
+resharper_keep_existing_initializer_arrangement = false
+resharper_keep_existing_linebreaks = false
+resharper_nested_ternary_style = expanded
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_simple_accessor_on_single_line = false
+resharper_place_simple_anonymousmethod_on_single_line = false
+resharper_place_simple_embedded_statement_on_same_line = false
+resharper_place_simple_initializer_on_single_line = false
+resharper_qualified_using_at_nested_scope = true
+resharper_space_within_single_line_array_initializer_braces = true
+resharper_trailing_comma_in_multiline_lists = true
+resharper_trailing_comma_in_singleline_lists = true
+resharper_wrap_array_initializer_style = chop_always
+resharper_wrap_before_first_type_parameter_constraint = true
+resharper_wrap_linq_expressions = chop_always
+resharper_wrap_multiple_type_parameter_constraints_style = wrap_if_long
+resharper_wrap_object_and_collection_initializer_style = chop_always
+
+# ReSharper inspection severities
+resharper_arrange_redundant_parentheses_highlighting = hint
+resharper_arrange_this_qualifier_highlighting = hint
+resharper_arrange_type_member_modifiers_highlighting = hint
+resharper_arrange_type_modifiers_highlighting = hint
+resharper_built_in_type_reference_style_for_member_access_highlighting = hint
+resharper_built_in_type_reference_style_highlighting = hint
+resharper_suggest_var_or_type_built_in_types_highlighting = hint
+resharper_suggest_var_or_type_elsewhere_highlighting = hint
+resharper_suggest_var_or_type_simple_types_highlighting = hint

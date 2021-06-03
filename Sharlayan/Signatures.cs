@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Signatures.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -9,48 +9,47 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
-    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     using Sharlayan.Models;
     using Sharlayan.Utilities;
 
     public static class Signatures {
-        public const string AgroCountKey = "AGRO_COUNT";
+        public const string AGRO_COUNT_KEY = "AGRO_COUNT";
 
-        public const string AgroMapKey = "AGROMAP";
+        public const string AGROMAP_KEY = "AGROMAP";
 
-        public const string CharacterMapKey = "CHARMAP";
+        public const string CHARMAP_KEY = "CHARMAP";
 
-        public const string ChatLogKey = "CHATLOG";
+        public const string CHATLOG_KEY = "CHATLOG";
 
-        public const string EnmityCountKey = "ENMITY_COUNT";
+        public const string ENMITY_COUNT_KEY = "ENMITY_COUNT";
 
-        public const string EnmityMapKey = "ENMITYMAP";
+        public const string ENMITYMAP_KEY = "ENMITYMAP";
 
-        public const string GameMainKey = "GAMEMAIN";
+        public const string HOTBAR_KEY = "HOTBAR";
 
-        public const string HotBarKey = "HOTBAR";
+        public const string INVENTORY_KEY = "INVENTORY";
 
-        public const string InventoryKey = "INVENTORY";
+        public const string JOBRESOURCES_KEY = "JOBRESOURCES";
 
-        public const string JobResourceKey = "JOBRESOURCES";
+        public const string MAPINFO_KEY = "MAPINFO";
 
-        public const string MapInformationKey = "MAPINFO";
+        public const string PARTYCOUNT_KEY = "PARTYCOUNT";
 
-        public const string PartyCountKey = "PARTYCOUNT";
+        public const string PARTYMAP_KEY = "PARTYMAP";
 
-        public const string PartyMapKey = "PARTYMAP";
+        public const string PLAYERINFO_KEY = "PLAYERINFO";
 
-        public const string PlayerInformationKey = "PLAYERINFO";
+        public const string RECAST_KEY = "RECAST";
 
-        public const string RecastKey = "RECAST";
+        public const string TARGET_KEY = "TARGET";
 
-        public const string TargetKey = "TARGET";
+        public const string ZONEINFO_KEY = "ZONEINFO";
 
-        public const string ZoneInformationKey = "ZONEINFO";
-
-        public static IEnumerable<Signature> Resolve(ProcessModel processModel, string patchVersion = "latest") {
-            return APIHelper.GetSignatures(processModel, patchVersion);
+        public static async Task<Signature[]> Resolve(SharlayanConfiguration configuration) {
+            Signature[] signatures = await APIHelper.GetSignatures(configuration);
+            return signatures;
         }
     }
 }

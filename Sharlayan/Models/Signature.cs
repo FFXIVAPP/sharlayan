@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Signature.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -31,18 +31,12 @@ namespace Sharlayan.Models {
         public string Key { get; set; }
 
         [JsonIgnore,]
-        public int Offset {
-            get {
-                return this.Value.Length / 2;
-            }
-        }
+        public int Offset => this.Value.Length / 2;
 
         public List<long> PointerPath { get; set; }
 
         public Regex RegularExpress {
-            get {
-                return this._regularExpress;
-            }
+            get => this._regularExpress;
 
             set {
                 if (value != null) {
@@ -55,33 +49,5 @@ namespace Sharlayan.Models {
         public IntPtr SigScanAddress { get; set; }
 
         public string Value { get; set; }
-
-        public static implicit operator IntPtr(Signature signature) {
-            return signature.GetAddress();
-        }
-
-        public IntPtr GetAddress() {
-            IntPtr baseAddress = IntPtr.Zero;
-            var IsASMSignature = false;
-            if (this.SigScanAddress != IntPtr.Zero) {
-                baseAddress = this.SigScanAddress; // Scanner should have already applied the base offset
-                if (MemoryHandler.Instance.ProcessModel.IsWin64 && this.ASMSignature) {
-                    IsASMSignature = true;
-                }
-            }
-            else {
-                if (this.PointerPath == null || this.PointerPath.Count == 0) {
-                    return IntPtr.Zero;
-                }
-
-                baseAddress = MemoryHandler.Instance.GetStaticAddress(0);
-            }
-
-            if (this.PointerPath == null || this.PointerPath.Count == 0) {
-                return baseAddress;
-            }
-
-            return MemoryHandler.Instance.ResolvePointerPath(this.PointerPath, baseAddress, IsASMSignature);
-        }
     }
 }

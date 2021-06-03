@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProcessModel.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -12,12 +12,8 @@ namespace Sharlayan.Models {
     using System.Diagnostics;
 
     public class ProcessModel {
-        public bool IsWin64 { get; set; }
-
         public Process Process { get; set; }
-
         public int ProcessID => this.Process?.Id ?? -1;
-
         public string ProcessName => this.Process?.ProcessName ?? string.Empty;
     }
 }

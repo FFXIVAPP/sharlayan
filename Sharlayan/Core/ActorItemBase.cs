@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItemBase.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson &amp;lt;syndicated.life@gmail.com&amp;gt; (https://syndicated.life/)
+//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -13,7 +13,6 @@ namespace Sharlayan.Core {
     using System.Collections.Generic;
 
     using Sharlayan.Core.Enums;
-    using Sharlayan.Extensions;
 
     public class ActorItemBase {
         private string _name;
@@ -66,18 +65,10 @@ namespace Sharlayan.Core {
 
         public string Name {
             get => this._name ?? string.Empty;
-            set => this._name = value.ToTitleCase();
+            set => this._name = value;
         }
 
         public List<StatusItem> StatusItems { get; protected set; } = new List<StatusItem>();
-
-        public int TPCurrent { get; set; }
-
-        public int TPMax { get; set; }
-
-        public double TPPercent => this.safeDivide(this.TPCurrent, this.TPMax);
-
-        public string TPString => $"{this.TPCurrent}/{this.TPMax} [{this.TPPercent:P2}]";
 
         public string UUID { get; set; }
 
@@ -88,22 +79,22 @@ namespace Sharlayan.Core {
         public double Z { get; set; }
 
         public float GetCastingDistanceTo(ActorItem compare) {
-            var distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - this.HitBoxRadius;
+            float distance = this.GetHorizontalDistanceTo(compare) - compare.HitBoxRadius - this.HitBoxRadius;
             return distance > 0
                        ? distance
                        : 0;
         }
 
         public float GetDistanceTo(ActorItem compare) {
-            var distanceX = (float) Math.Abs(compare.X - this.X);
-            var distanceY = (float) Math.Abs(compare.Y - this.Y);
-            var distanceZ = (float) Math.Abs(compare.Z - this.Z);
+            float distanceX = (float) Math.Abs(compare.X - this.X);
+            float distanceY = (float) Math.Abs(compare.Y - this.Y);
+            float distanceZ = (float) Math.Abs(compare.Z - this.Z);
             return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2) + Math.Pow(distanceZ, 2));
         }
 
         public float GetHorizontalDistanceTo(ActorItem compare) {
-            var distanceX = (float) Math.Abs(compare.X - this.X);
-            var distanceY = (float) Math.Abs(compare.Y - this.Y);
+            float distanceX = (float) Math.Abs(compare.X - this.X);
+            float distanceY = (float) Math.Abs(compare.Y - this.Y);
             return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2));
         }
 

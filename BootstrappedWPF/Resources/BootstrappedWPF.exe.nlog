@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<targets async="true">
+		<!--
+      This data will be output and viewable by a udp receiver such as log4view
+      Uncomment the rule below if you want files to be generated as well.
+    -->
+		<target xsi:type="NLogViewer" name="viewer"
+		        includeSourceInfo="true" includeCallSite="true"
+		        includeMdc="true" includeNdc="true"
+		        includeNLogData="true"
+		        address="udp://127.0.0.1:9994" />
+		<!-- This data is all application errors that aren't covered by a message box -->
+	</targets>
+	<rules>
+		<logger name="*" minlevel="Trace" writeTo="viewer" />
+		<logger name="*" level="Error" writeTo="f" />
+	</rules>
+</nlog>
