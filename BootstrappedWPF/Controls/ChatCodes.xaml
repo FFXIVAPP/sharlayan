@@ -5,7 +5,9 @@
     xmlns:app="clr-namespace:BootstrappedWPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:BootstrappedWPF.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:BootstrappedWPF.Properties"
     xmlns:viewModels="clr-namespace:BootstrappedWPF.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -21,12 +23,30 @@
     </UserControl.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <DataGrid
             x:Name="ChatCodesDataGrid"
+            Grid.Row="0"
+            Margin="0,2"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
+            CanUserReorderColumns="False"
+            CanUserResizeRows="False"
             ItemsSource="{Binding Source={x:Static viewModels:AppViewModel.Instance}, Path=ChatCodes, Mode=TwoWay}"
-            SelectionMode="Extended"
+            SelectionMode="Single"
             SelectionUnit="Cell" />
+        <Button
+            Grid.Row="1"
+            Margin="0,2"
+            Command="{Binding SaveChatCodesCommand}"
+            Style="{StaticResource MaterialDesignRaisedAccentButton}">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                <materialDesign:PackIcon Margin="0,0,5,0" Kind="ZipDisk" />
+                <TextBlock Text="{Binding Locale[ChatCodes_SaveChangesText], Source={StaticResource AppViewModel}}" />
+            </StackPanel>
+        </Button>
     </Grid>
 </UserControl>

@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MainWindow_HomeButtonText" xml:space="preserve">
+    <value>집</value>
+  </data>
+  <data name="MainWindow_SettingsButtonText" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="MainWindow_ChatLogButtonText" xml:space="preserve">
+    <value>ChatLog</value>
+  </data>
+  <data name="MainWindow_DebugButtonText" xml:space="preserve">
+    <value>디버그</value>
+  </data>
+  <data name="MainWindow_AboutButtonText" xml:space="preserve">
+    <value>약간</value>
+  </data>
+  <data name="HomeTabItem_WelcomeText" xml:space="preserve">
+    <value>Sharlayan의 WPF 예제에 오신 것을 환영합니다.</value>
+  </data>
+  <data name="AboutTabItem_GetInTouchText" xml:space="preserve">
+    <value>연락하기</value>
+  </data>
+  <data name="AboutTabItem_GetInTouchExtendedText" xml:space="preserve">
+    <value>다음 채널 중 하나를 통해 인사, 기능 요청 또는 버그 제기 :</value>
+  </data>
+  <data name="AboutTabItem_OpenSourceText" xml:space="preserve">
+    <value>오픈 소스</value>
+  </data>
+  <data name="AboutTabItem_OpenSourceExtendedText" xml:space="preserve">
+    <value>이 프로젝트는 완전히 오픈 소스입니다. 당신이 그것을 좋아하고 감사의 말을 전하고 싶다면 GitHub Star 버튼을 누르거나, 그것에 대해 트윗하거나 게시하거나, 엄마에게 그것에 대해 말할 수 있습니다!</value>
+  </data>
+  <data name="AboutTabItem_DonationText" xml:space="preserve">
+    <value>기부하고 싶으신가요? 고맙게 받아 들일 것입니다. 버튼을 클릭하여 GitHub 스폰서를 통해 기부하세요.</value>
+  </data>
+  <data name="Palette_PrimaryMidText" xml:space="preserve">
+    <value>기본-중간</value>
+  </data>
+  <data name="Palette_LightText" xml:space="preserve">
+    <value>빛</value>
+  </data>
+  <data name="Palette_MidText" xml:space="preserve">
+    <value>중간</value>
+  </data>
+  <data name="Palette_DarkText" xml:space="preserve">
+    <value>어두운</value>
+  </data>
+  <data name="Palette_AccentText" xml:space="preserve">
+    <value>악센트</value>
+  </data>
+  <data name="PaletteSelector_DescriptionText" xml:space="preserve">
+    <value>이것이 현재 팔레트입니다.</value>
+  </data>
+  <data name="PaletteSelector_LightText" xml:space="preserve">
+    <value>빛</value>
+  </data>
+  <data name="PaletteSelector_DarkText" xml:space="preserve">
+    <value>어두운</value>
+  </data>
+  <data name="PaletteSelector_PrimaryText" xml:space="preserve">
+    <value>일 순위</value>
+  </data>
+  <data name="PaletteSelector_AccentText" xml:space="preserve">
+    <value>악센트</value>
+  </data>
+  <data name="SettingsTabItem_SharlayanTabHeaderText" xml:space="preserve">
+    <value>Sharlayan</value>
+  </data>
+  <data name="SettingsTabItem_ChatCodesTabHeaderText" xml:space="preserve">
+    <value>채팅 코드</value>
+  </data>
+  <data name="SettingsTabItem_ThemeTabHeaderText" xml:space="preserve">
+    <value>테마</value>
+  </data>
+  <data name="UserSettings_DataSettingsText" xml:space="preserve">
+    <value>데이터 설정</value>
+  </data>
+  <data name="UserSettings_UseCachedDataText" xml:space="preserve">
+    <value>Sharlayan 리소스에 로컬로 캐시 된 JSON 사용</value>
+  </data>
+  <data name="UserSettings_ResetSettingsText" xml:space="preserve">
+    <value>설정 재설정</value>
+  </data>
+  <data name="UserSettings_MemoryTimingsText" xml:space="preserve">
+    <value>메모리 타이밍</value>
+  </data>
+  <data name="UserSettings_AdjustmentText" xml:space="preserve">
+    <value>이러한 타이밍을 조정하여 데이터 대기 시간을 늘리거나 줄입니다. 타이밍이 빠를수록 CPU 사용량이 늘어날 수 있습니다.</value>
+  </data>
+  <data name="UserSettings_ActionsHelperText" xml:space="preserve">
+    <value>행위</value>
+  </data>
+  <data name="UserSettings_ActorHelperText" xml:space="preserve">
+    <value>배우</value>
+  </data>
+  <data name="UserSettings_ChatLogHelperText" xml:space="preserve">
+    <value>ChatLog</value>
+  </data>
+  <data name="UserSettings_CurrentPlayerHelperText" xml:space="preserve">
+    <value>현재 플레이어</value>
+  </data>
+  <data name="UserSettings_InventoryHelperText" xml:space="preserve">
+    <value>목록</value>
+  </data>
+  <data name="UserSettings_JobResourcesHelperText" xml:space="preserve">
+    <value>직업 자원</value>
+  </data>
+  <data name="UserSettings_PartyMembersHelperText" xml:space="preserve">
+    <value>파티원</value>
+  </data>
+  <data name="UserSettings_TargetHelperText" xml:space="preserve">
+    <value>표적</value>
+  </data>
+  <data name="ChatCodes_SaveChangesText" xml:space="preserve">
+    <value>변경 사항을 저장하다</value>
+  </data>
+</root>
