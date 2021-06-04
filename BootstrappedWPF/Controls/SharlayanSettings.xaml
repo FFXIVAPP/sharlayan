@@ -12,7 +12,9 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style BasedOn="{StaticResource MaterialDesignTextBox}" TargetType="{x:Type TextBox}">
+        <Style
+            BasedOn="{StaticResource MaterialDesignTextBox}"
+            TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="8,0,8,16" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
@@ -33,17 +35,27 @@
                         Text="{Binding Locale[UserSettings_DataSettingsText], Source={StaticResource AppViewModel}}" />
                 </StackPanel>
             </materialDesign:Card>
-            <CheckBox
-                Margin="0,8"
-                Content="{Binding Locale[UserSettings_UseCachedDataText], Source={StaticResource AppViewModel}}"
-                Foreground="{DynamicResource MaterialDesignBody}"
-                IsChecked="{Binding UseLocalJSONCache, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
-                Style="{StaticResource MaterialDesignDarkCheckBox}" />
-            <StackPanel Margin="0,1" HorizontalAlignment="Left">
+            <StackPanel
+                Margin="0,5"
+                Orientation="Horizontal">
+                <ToggleButton
+                    Margin="2,8,8,8"
+                    Cursor="Hand"
+                    IsChecked="{Binding UseLocalJSONCache, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding Locale[UserSettings_UseCachedDataText], Source={StaticResource AppViewModel}}" />
+            </StackPanel>
+            <StackPanel
+                Margin="0,1"
+                HorizontalAlignment="Left">
                 <Button
                     x:Name="ResetSettingsButton"
+                    Margin="0,2"
                     Command="{Binding ResetSettingsCommand}"
-                    Content="{Binding Locale[UserSettings_ResetSettingsText], Source={StaticResource AppViewModel}}" />
+                    Content="{Binding Locale[UserSettings_ResetSettingsText], Source={StaticResource AppViewModel}}"
+                    Style="{StaticResource MaterialDesignRaisedAccentButton}" />
             </StackPanel>
             <materialDesign:Card
                 Margin="0,2"
@@ -59,7 +71,7 @@
             </materialDesign:Card>
             <StackPanel>
                 <TextBlock
-                    Margin="0,8"
+                    Margin="0,10"
                     Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding Locale[UserSettings_AdjustmentText], Source={StaticResource AppViewModel}}" />
                 <TextBox

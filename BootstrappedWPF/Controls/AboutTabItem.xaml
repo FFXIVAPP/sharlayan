@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:BootstrappedWPF.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -26,7 +27,7 @@
                     VerticalAlignment="Center">
                     <TextBlock
                         Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                        Text="BootstrappedWPF"
+                        Text="{Binding Locale[ApplicationName], Source={StaticResource AppViewModel}}"
                         TextWrapping="Wrap" />
 
                 </StackPanel>

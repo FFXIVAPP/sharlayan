@@ -6,7 +6,7 @@
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
 
-    internal class ActorWorker : IDisposable {
+    internal class ActorWorker : PropertyChangedBase, IDisposable {
         private readonly MemoryHandler _memoryHandler;
 
         private readonly Timer _scanTimer;
@@ -18,12 +18,6 @@
             this._scanTimer = new Timer(250);
             this._scanTimer.Elapsed += this.ScanTimerElapsed;
         }
-
-        private bool _monsterReferencesSet { get; set; }
-
-        private bool _npcReferencesSet { get; set; }
-
-        private bool _pcReferencesSet { get; set; }
 
         public void Dispose() {
             this._scanTimer.Elapsed -= this.ScanTimerElapsed;
@@ -46,26 +40,15 @@
                 return;
             }
 
-            // this._scanTimer.Interval = Settings.Default.ActorWorkerTiming;
+            this._scanTimer.Interval = Settings.Default.ActorWorkerTiming;
 
             this._isScanning = true;
 
             ActorResult result = this._memoryHandler.Reader.GetActors();
 
-            if (!this._monsterReferencesSet) {
-                this._monsterReferencesSet = true;
-                EventHost.Instance.RaiseNewMonsterActorItemsEvent(this._memoryHandler, result.CurrentMonsters);
-            }
-
-            if (!this._npcReferencesSet) {
-                this._npcReferencesSet = true;
-                EventHost.Instance.RaiseNewNPCActorItemsEvent(this._memoryHandler, result.CurrentNPCs);
-            }
-
-            if (!this._pcReferencesSet) {
-                this._pcReferencesSet = true;
-                EventHost.Instance.RaiseNewPCActorItemsEvent(this._memoryHandler, result.CurrentPCs);
-            }
+            EventHost.Instance.RaiseNewMonsterActorItemsEvent(this._memoryHandler, result.CurrentMonsters);
+            EventHost.Instance.RaiseNewNPCActorItemsEvent(this._memoryHandler, result.CurrentNPCs);
+            EventHost.Instance.RaiseNewPCActorItemsEvent(this._memoryHandler, result.CurrentPCs);
 
             if (result.NewMonsters.Any()) {
                 EventHost.Instance.RaiseMonsterActorItemsAddedEvent(this._memoryHandler, result.NewMonsters);

@@ -7,6 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:materialDesignColors="clr-namespace:MaterialDesignColors;assembly=MaterialDesignColors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:BootstrappedWPF.Properties"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -130,7 +131,7 @@
                     Text="{Binding Locale[PaletteSelector_LightText], Source={StaticResource AppViewModel}}" />
 
                 <ToggleButton
-                    Margin="8,0,16,0"
+                    Margin="16,0,16,0"
                     Cursor="Hand"
                     IsChecked="{Binding IsDarkTheme}" />
 
