@@ -6,7 +6,7 @@
     using Sharlayan;
     using Sharlayan.Models.ReadResults;
 
-    internal class ActorWorker : PropertyChangedBase, IDisposable {
+    internal class ActorWorker : IDisposable {
         private readonly MemoryHandler _memoryHandler;
 
         private readonly Timer _scanTimer;
@@ -40,7 +40,7 @@
                 return;
             }
 
-            this._scanTimer.Interval = Settings.Default.ActorWorkerTiming;
+            // this._scanTimer.Interval = Settings.Default.ActorWorkerTiming;
 
             this._isScanning = true;
 
