@@ -3,6 +3,7 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Xml.Linq;
@@ -201,5 +202,7 @@
             }
             set => this.SetProperty(ref this._xChatCodes, value);
         }
+
+        public ConcurrentDictionary<int, Process> GameInstances { get; set; } = new ConcurrentDictionary<int, Process>();
     }
 }
