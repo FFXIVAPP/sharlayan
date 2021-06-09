@@ -68,7 +68,11 @@ namespace Sharlayan {
                         }
                     }
                 }
-
+                
+                if (this._pcWorkerDelegate.CurrentUser == null) {
+                    this.GetActors();
+                }
+                
                 result.Entity = this._pcWorkerDelegate.CurrentUser;
             }
             catch (Exception ex) {
