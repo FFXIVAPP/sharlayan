@@ -51,6 +51,19 @@ namespace Bootstrapper {
 
             Process process = Process.GetProcessesByName(processName).FirstOrDefault();
 
+            if (process == null && RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                var ps = new Process();
+                ps.StartInfo = new ProcessStartInfo("ps", "-Ao pid,command");
+                ps.StartInfo.RedirectStandardOutput = true;
+                ps.Start();
+                var content = ps.StandardOutput.ReadToEnd();
+                ps.WaitForExit(2000);
+
+                var pid = content.Split(Environment.NewLine).Where(x => x.Contains(processName)).Select(x => Enumerable.FirstOrDefault(x.Split(' '))).FirstOrDefault(x => x != null);
+                if (!string.IsNullOrEmpty(pid))
+                    process = Process.GetProcessById(int.Parse(pid));
+            }
+
             if (process != null) {
                 MemoryHandler.Instance.SetProcess(
                     new ProcessModel {

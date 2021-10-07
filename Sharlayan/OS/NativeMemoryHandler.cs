@@ -1,5 +1,6 @@
 using WinHandler = Sharlayan.OS.Windows.NativeMemoryHandler;
 using LinuxHandler = Sharlayan.OS.Linux.NativeMemoryHandler;
+using OSXHandler = Sharlayan.OS.OSX.NativeMemoryHandler;
 using System.Runtime.InteropServices;
 
 namespace Sharlayan.OS
@@ -23,6 +24,10 @@ namespace Sharlayan.OS
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     return (_instance = new LinuxHandler());
+                }
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                    return (_instance = new OSXHandler());
                 }
 
                 return (_instance = new WinHandler());
