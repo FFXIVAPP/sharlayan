@@ -11,7 +11,7 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageTags>ffxiv memory tracking</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>7.0.1</Version>
+		<Version>7.0.2</Version>
 		<Company>SyndicatedLife</Company>
 		<Product>Sharlayan</Product>
 		<Description>Final Fantasy XIV Memory Reading</Description>
