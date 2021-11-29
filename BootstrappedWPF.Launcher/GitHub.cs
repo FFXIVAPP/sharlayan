@@ -15,10 +15,13 @@
                 string url = "https://api.github.com/repos/FFXIVAPP/BootstrappedWPF/releases";
 
                 HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+
                 request.UserAgent = "FFXIVAPP";
                 request.Headers.Add("Accept-Language", "en;q=0.8");
                 request.ContentType = "application/json; charset=utf-8";
                 request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+                // in case github has outage issues, stop checking after 5 seconds
+                request.Timeout = 5000;
 
                 using HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                 using Stream stream = response.GetResponseStream();
