@@ -28,6 +28,7 @@
                     ProcessModel = new ProcessModel {
                         Process = process,
                     },
+                    UseLocalCache = false,
                 };
                 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(sharlayanConfiguration);
                 handler.OnException += delegate { };
