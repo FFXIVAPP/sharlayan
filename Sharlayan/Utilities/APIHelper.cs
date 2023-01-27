@@ -26,7 +26,7 @@ namespace Sharlayan.Utilities {
 
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
-    internal static class APIHelper {
+    public static class APIHelper {
         private static Encoding _webClientEncoding = Encoding.UTF8;
 
         private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);

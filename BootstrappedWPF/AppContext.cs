@@ -33,6 +33,7 @@
         public static AppContext Instance => _instance.Value;
 
         public void Initialize() {
+            this.CleanUp();
             this.SetupCurrentUICulture();
             this.SetupDirectories();
             this.ApplyTheme();
@@ -41,6 +42,17 @@
             this.SetupSharlayanManager();
             this.SetupWorkerSets();
             this.StartAllSharlayanWorkers();
+        }
+
+        private void CleanUp() {
+            this.StopAllSharlayanWorkers();
+
+            foreach ((int processID, Process _) in AppViewModel.Instance.GameInstances) {
+                SharlayanMemoryManager.Instance.RemoveHandler(processID);
+            }
+
+            _workerSets.Clear();
+
         }
 
         private void ApplyTheme() {

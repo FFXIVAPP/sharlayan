@@ -99,7 +99,7 @@
                                 Command="{Binding OpenDiscordInvitePageCommand}"
                                 Style="{DynamicResource MaterialDesignFlatButton}">
                                 <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Discord" />
+                                    <materialDesign:PackIcon Kind="Chat" />
                                     <TextBlock
                                         Margin="8,0,0,0"
                                         VerticalAlignment="Center"
