@@ -12,9 +12,15 @@ namespace Sharlayan.Core.JobResources {
     using System;
 
     using Sharlayan.Core.Interfaces;
+    using Sharlayan.Core.JobResources.Enums;
 
     public sealed class MonkResources : IJobResource {
         public int Chakra { get; set; }
+        public BeastChakraType BeastChakra1 { get; set; }
+        public BeastChakraType BeastChakra2 { get; set; }
+        public BeastChakraType BeastChakra3 { get; set; }
+        public BeastChakraType[] BeastChakra { get; set; }
+        public NadiFlags Nadi { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

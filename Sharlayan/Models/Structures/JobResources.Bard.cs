@@ -11,7 +11,7 @@
 namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class BardResources {
-            public int ActiveSong { get; set; }
+            public byte ActiveSong { get; set; }
             public int Repertoire { get; set; }
             public int SoulVoice { get; set; }
             public int Timer { get; set; }

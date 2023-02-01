@@ -28,5 +28,8 @@ namespace Sharlayan.Models.Structures {
         public SummonerResources Summoner { get; set; } = new SummonerResources();
         public WarriorResources Warrior { get; set; } = new WarriorResources();
         public WhiteMageResources WhiteMage { get; set; } = new WhiteMageResources();
+        public ReaperResources Reaper { get; set; } = new ReaperResources();
+        public SageResources Sage { get; set; } = new SageResources();
+
     }
 }

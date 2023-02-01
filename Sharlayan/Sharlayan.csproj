@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net462;net48;net7.0</TargetFrameworks>
+		<TargetFrameworks>net462;net48;net6.0;net7.0</TargetFrameworks>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
 		<Authors>Ryan Wilson</Authors>

@@ -12,9 +12,7 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class AstrologianResources {
             public int Arcana { get; set; }
-            public int Seal1 { get; set; }
-            public int Seal2 { get; set; }
-            public int Seal3 { get; set; }
+            public int Seals { get; set; }
             public int Timer { get; set; }
         }
     }

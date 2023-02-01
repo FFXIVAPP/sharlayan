@@ -12,6 +12,11 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class MonkResources {
             public int Chakra { get; set; }
+            public int BeastChakra1 { get; set; }
+            public int BeastChakra2 { get; set; }
+            public int BeastChakra3 { get; set; }
+            public int Nadi { get; set; }
+            public int Timer { get; set; }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Sharlayan.Core.JobResources {
         public bool Enochian { get; set; }
         public int PolyglotCount { get; set; }
         public int UmbralHearts { get; set; }
-
+        public int AstralTimer { get; set; }
         public int UmbralStacks { get; set; }
         public TimeSpan Timer { get; set; }
     }

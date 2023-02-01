@@ -55,7 +55,9 @@ namespace Sharlayan.Utilities {
                 return FileResponseToJSON<Signature[]>(file);
             }
 
-            string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{region}/{patchVersion}.json");
+            //https://chromaticsffxiv.com/chromatics2/sharlayan/signatures/latest/x64.json
+            //string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{patchVersion}/x64.json");
+            string json = await APIResponseToJSON($"https://chromaticsffxiv.com/chromatics2/sharlayan/signatures/latest/x64.json");
             Signature[] resolved = JsonConvert.DeserializeObject<Signature[]>(json, Constants.SerializerSettings);
 
             if (configuration.UseLocalCache) {
@@ -89,7 +91,9 @@ namespace Sharlayan.Utilities {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/{region}/{patchVersion}.json");
+            //https://chromaticsffxiv.com/chromatics2/sharlayan/signatures/latest/x64.json
+            StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"https://chromaticsffxiv.com/chromatics2/sharlayan/structures/latest/x64.json");
+            //StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/{patchVersion}/x64.json");
 
             if (configuration.UseLocalCache) {
                 File.WriteAllText(file, JsonConvert.SerializeObject(structuresContainer, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);

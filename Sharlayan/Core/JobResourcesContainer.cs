@@ -29,5 +29,8 @@ namespace Sharlayan.Core {
         public SummonerResources Summoner { get; internal set; } = new SummonerResources();
         public WarriorResources Warrior { get; internal set; } = new WarriorResources();
         public WhiteMageResources WhiteMage { get; internal set; } = new WhiteMageResources();
+        public ReaperResources Reaper { get; internal set; } = new ReaperResources();
+        public SageResources Sage { get; internal set; } = new SageResources();
+
     }
 }

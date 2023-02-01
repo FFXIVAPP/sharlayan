@@ -15,7 +15,7 @@ namespace Sharlayan.Core.JobResources {
     using Sharlayan.Core.JobResources.Enums;
 
     public sealed class BardResources : IJobResource {
-        public BardSong ActiveSong { get; set; }
+        public SongFlags ActiveSong { get; set; }
         public int Repertoire { get; set; }
         public int SoulVoice { get; set; }
         public TimeSpan Timer { get; set; }

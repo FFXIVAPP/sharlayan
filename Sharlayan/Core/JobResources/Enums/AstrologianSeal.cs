@@ -10,12 +10,12 @@
 
 namespace Sharlayan.Core.JobResources.Enums {
     public enum AstrologianSeal : byte {
-        None,
+        None = 0,
 
-        SolarSeal,
+        SolarSeal = 1,
 
-        LunarSeal,
+        LunarSeal = 2,
 
-        CelestialSeal,
+        CelestialSeal = 3,
     }
 }
