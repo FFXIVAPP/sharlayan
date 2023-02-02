@@ -36,9 +36,15 @@ namespace Sharlayan.Utilities {
                     cleaned = cleaned.Substring(1);
                 }
 
-                int cut = cleaned.Substring(0, 2) == CLEANED_SUBSTRING_CHECK
-                              ? 2
-                              : 1;
+                int cut = 0;
+                if (cleaned.Length >= 2 && cleaned.Substring(0, 2) == CLEANED_SUBSTRING_CHECK)
+                {
+                    cut = 2;
+                }
+                else if (cleaned.Length >= 1)
+                {
+                    cut = 1;
+                }
                 chatLogEntry.Message = chatLogEntry.Line = XMLCleaner.SanitizeXmlString(cleaned.Substring(cut));
                 chatLogEntry.IsInternational = IsInternational(chatLogEntry.Line);
 

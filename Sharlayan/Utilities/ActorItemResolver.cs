@@ -63,9 +63,11 @@ namespace Sharlayan.Utilities {
                 entry.NPCID1 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID1);
                 entry.NPCID2 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID2);
                 entry.OwnerID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.OwnerID);
-                entry.TypeID = source[this._memoryHandler.Structures.ActorItem.Type];
-                entry.Type = (Actor.Type) entry.TypeID;
 
+                if (this._memoryHandler.Structures.ActorItem.Type >= 0 && this._memoryHandler.Structures.ActorItem.Type < source.Length) {
+                    entry.TypeID = source[this._memoryHandler.Structures.ActorItem.Type];
+                    entry.Type = (Actor.Type) entry.TypeID;
+                }
                 entry.TargetTypeID = source[this._memoryHandler.Structures.ActorItem.TargetType];
                 entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
 
@@ -88,6 +90,8 @@ namespace Sharlayan.Utilities {
                 entry.IsGM = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsGM); // ?
                 entry.IconID = source[this._memoryHandler.Structures.ActorItem.Icon];
                 entry.Icon = (Actor.Icon) entry.IconID;
+
+                entry.InCutscene = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.InCutscene);
 
                 entry.StatusID = source[this._memoryHandler.Structures.ActorItem.Status];
                 entry.Status = (Actor.Status) entry.StatusID;

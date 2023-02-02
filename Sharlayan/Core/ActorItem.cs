@@ -80,11 +80,11 @@ namespace Sharlayan.Core {
 
         public byte IconID { get; set; }
 
-        public bool InCombat => (this.CombatFlags & (1 << 1)) != 0;
+        public bool InCombat => (this.CombatFlags & (1 << 1)) != 0; //(this.CombatFlags & (1 << 1)) != 0;
 
-        public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
+        public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0; //(this.CombatFlags & (1 << 0)) != 0;
 
-        public bool IsCasting => (this.CombatFlags & (1 << 7)) != 0;
+        public bool IsCasting => (this.CombatFlags & (1 << 2)) != 0; //(this.CombatFlags & (1 << 7)) != 0;
 
         public bool IsGM { get; set; }
 
@@ -126,6 +126,7 @@ namespace Sharlayan.Core {
 
         public byte TypeID { get; set; }
 
+        public bool InCutscene { get; set; }
         public bool WeaponUnsheathed => (this.CombatFlags & (1 << 3)) != 0;
 
         public ActorItem Clone() {

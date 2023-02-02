@@ -142,6 +142,8 @@ namespace Sharlayan.Core.Interfaces {
 
         double Z { get; set; }
 
+        bool InCutscene { get; set; }
+
         ActorItem Clone();
     }
 }

@@ -17,5 +17,7 @@ namespace Sharlayan.Models.Structures {
         public int Name { get; set; }
 
         public int SourceSize { get; set; }
+
+        public int EnmityCount { get; set; }
     }
 }
