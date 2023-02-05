@@ -32,6 +32,10 @@ namespace Sharlayan.Models.Structures {
 
         public int RemainingCost { get; set; }
 
+        public int ChargeReady { get; set; }
+
+        public int ChargesRemaining { get; set; }
+
         public int Type { get; set; }
     }
 }

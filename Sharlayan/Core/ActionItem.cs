@@ -31,6 +31,10 @@ namespace Sharlayan.Core {
 
         public bool IsAvailable { get; set; }
 
+        public bool ChargeReady { get; set; }
+
+        public int ChargesRemaining { get; set; }
+
         public bool IsProcOrCombo { get; set; }
 
         public string KeyBinds { get; set; }

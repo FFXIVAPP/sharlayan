@@ -28,6 +28,10 @@ namespace Sharlayan.Core.Interfaces {
 
         bool IsAvailable { get; set; }
 
+        bool ChargeReady { get; set; }
+
+        int ChargesRemaining { get; set; }
+
         bool IsProcOrCombo { get; set; }
 
         string KeyBinds { get; set; }

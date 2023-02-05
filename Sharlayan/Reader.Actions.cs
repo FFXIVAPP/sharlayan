@@ -184,6 +184,8 @@ namespace Sharlayan {
                     item.Icon = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Icon);
                     item.CoolDownPercent = recastMap[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
                     item.IsAvailable = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.IsAvailable);
+                    item.ChargeReady = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.ChargeReady);
+                    item.ChargesRemaining = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.ChargesRemaining);
 
                     int remainingCost = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.RemainingCost);
 
