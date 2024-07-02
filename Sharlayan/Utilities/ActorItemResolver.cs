@@ -126,6 +126,7 @@ namespace Sharlayan.Utilities {
 
                 // entry.Race = source[0x2578]; // ??
                 // entry.Sex = (Actor.Sex) source[0x2579]; //?
+                entry.IsCasting1 = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsCasting1);
                 if (this._memoryHandler.Structures.ActorItem.AgroFlags >= 0 && this._memoryHandler.Structures.ActorItem.AgroFlags < source.Length) entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
                 if (this._memoryHandler.Structures.ActorItem.CombatFlags >= 0 && this._memoryHandler.Structures.ActorItem.CombatFlags < source.Length) entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
                 if (this._memoryHandler.Structures.ActorItem.DifficultyRank >= 0 && this._memoryHandler.Structures.ActorItem.DifficultyRank < source.Length) entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];

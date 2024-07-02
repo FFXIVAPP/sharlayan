@@ -64,6 +64,9 @@ namespace Sharlayan {
                 result.JobResourcesContainer.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(jobResourcesMap);
                 result.JobResourcesContainer.Sage = this._jobResourceResolver.ResolveSageFromBytes(jobResourcesMap);
                 result.JobResourcesContainer.Reaper = this._jobResourceResolver.ResolveReaperFromBytes(jobResourcesMap);
+                result.JobResourcesContainer.Viper = this._jobResourceResolver.ResolveViperFromBytes(jobResourcesMap);
+                result.JobResourcesContainer.Pictomancer = this._jobResourceResolver.ResolvePictomancerFromBytes(jobResourcesMap);
+
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);

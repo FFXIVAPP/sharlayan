@@ -264,5 +264,23 @@ namespace Sharlayan.Utilities {
 
             return resource;
         }
+
+        internal ViperResources ResolveViperFromBytes(byte[] sourceBytes) {
+            ViperResources resource = new ViperResources();
+
+
+            return resource;
+        }
+
+        internal PictomancerResources ResolvePictomancerFromBytes(byte[] sourceBytes) {
+            PictomancerResources resource = new PictomancerResources();
+
+            resource.PalleteGauge = sourceBytes[this._memoryHandler.Structures.JobResources.Pictomancer.PalleteGauge];
+            resource.WhitePaint = sourceBytes[this._memoryHandler.Structures.JobResources.Pictomancer.WhitePaint];
+            resource.CanvasFlags = (CanvasFlags) sourceBytes[this._memoryHandler.Structures.JobResources.Pictomancer.CanvasFlags];
+            resource.CreatureFlags = (CreatureFlags) sourceBytes[this._memoryHandler.Structures.JobResources.Pictomancer.CreatureFlags];
+
+            return resource;
+        }
     }
 }

@@ -78,6 +78,8 @@ namespace Sharlayan.Core.Interfaces {
 
         bool IsCasting { get; }
 
+        bool IsCasting1 { get; set; }
+
         bool IsGM { get; set; }
 
         Actor.Job Job { get; set; }

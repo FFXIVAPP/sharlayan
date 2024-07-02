@@ -30,6 +30,8 @@ namespace Sharlayan.Models.Structures {
         public WhiteMageResources WhiteMage { get; set; } = new WhiteMageResources();
         public ReaperResources Reaper { get; set; } = new ReaperResources();
         public SageResources Sage { get; set; } = new SageResources();
+        public ViperResources Viper { get; set; } = new ViperResources();
+        public PictomancerResources Pictomancer { get; set; } = new PictomancerResources();
 
     }
 }

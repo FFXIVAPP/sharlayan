@@ -31,6 +31,9 @@ namespace Sharlayan.Core {
         public WhiteMageResources WhiteMage { get; internal set; } = new WhiteMageResources();
         public ReaperResources Reaper { get; internal set; } = new ReaperResources();
         public SageResources Sage { get; internal set; } = new SageResources();
+        public ViperResources Viper { get; internal set; } = new ViperResources();
+        public PictomancerResources Pictomancer { get; internal set; } = new PictomancerResources();
+
 
     }
 }
