@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Target.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -10,6 +10,7 @@
 
 namespace Sharlayan {
     using System;
+    using System.Diagnostics;
 
     using Sharlayan.Core;
     using Sharlayan.Core.Enums;
@@ -110,7 +111,8 @@ namespace Sharlayan {
                 if (result.TargetInfo.CurrentTargetID > 0) {
                     try {
                         if (this.CanGetEnmityEntities()) {
-                            short enmityCount = this._memoryHandler.GetInt16(this._memoryHandler.Scanner.Locations[Signatures.ENMITY_COUNT_KEY]);
+                            IntPtr counter = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITY_COUNT_KEY] + this._memoryHandler.Structures.EnmityItem.EnmityCount;
+                            short enmityCount = this._memoryHandler.GetInt16(counter);
                             IntPtr enmityStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITYMAP_KEY];
 
                             if (enmityCount > 0 && enmityCount < 16 && enmityStructure.ToInt64() > 0) {
@@ -118,11 +120,13 @@ namespace Sharlayan {
                                 for (uint i = 0; i < enmityCount; i++) {
                                     try {
                                         IntPtr address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
+                                        
                                         EnmityItem enmityEntry = new EnmityItem {
                                             ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.EnmityItem.ID),
-                                            // Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
+                                            Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
                                             Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
                                         };
+
                                         if (enmityEntry.ID <= 0) {
                                             continue;
                                         }

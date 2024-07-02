@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JobResourcesContainer.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -29,5 +29,11 @@ namespace Sharlayan.Core {
         public SummonerResources Summoner { get; internal set; } = new SummonerResources();
         public WarriorResources Warrior { get; internal set; } = new WarriorResources();
         public WhiteMageResources WhiteMage { get; internal set; } = new WhiteMageResources();
+        public ReaperResources Reaper { get; internal set; } = new ReaperResources();
+        public SageResources Sage { get; internal set; } = new SageResources();
+        public ViperResources Viper { get; internal set; } = new ViperResources();
+        public PictomancerResources Pictomancer { get; internal set; } = new PictomancerResources();
+
+
     }
 }

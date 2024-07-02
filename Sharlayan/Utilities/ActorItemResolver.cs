@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItemResolver.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -63,14 +63,24 @@ namespace Sharlayan.Utilities {
                 entry.NPCID1 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID1);
                 entry.NPCID2 = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.NPCID2);
                 entry.OwnerID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.OwnerID);
-                entry.TypeID = source[this._memoryHandler.Structures.ActorItem.Type];
-                entry.Type = (Actor.Type) entry.TypeID;
 
-                entry.TargetTypeID = source[this._memoryHandler.Structures.ActorItem.TargetType];
-                entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
+                if (this._memoryHandler.Structures.ActorItem.Type >= 0 && this._memoryHandler.Structures.ActorItem.Type < source.Length)
+                {
+                    entry.TypeID = source[this._memoryHandler.Structures.ActorItem.Type];
+                    entry.Type = (Actor.Type) entry.TypeID;
+                }
 
-                entry.GatheringStatus = source[this._memoryHandler.Structures.ActorItem.GatheringStatus];
-                entry.Distance = source[this._memoryHandler.Structures.ActorItem.Distance];
+                if (this._memoryHandler.Structures.ActorItem.TargetType >= 0 && this._memoryHandler.Structures.ActorItem.TargetType < source.Length)
+                {
+                    entry.TargetTypeID = source[this._memoryHandler.Structures.ActorItem.TargetType];
+                    entry.TargetType = (Actor.TargetType) entry.TargetTypeID;
+                }
+
+                if (this._memoryHandler.Structures.ActorItem.GatheringStatus >= 0 && this._memoryHandler.Structures.ActorItem.GatheringStatus < source.Length)
+                {
+                    entry.GatheringStatus = source[this._memoryHandler.Structures.ActorItem.GatheringStatus];
+                    entry.Distance = source[this._memoryHandler.Structures.ActorItem.Distance];
+                }
 
                 entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.X + defaultBaseOffset);
                 entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.Z + defaultBaseOffset);
@@ -78,31 +88,33 @@ namespace Sharlayan.Utilities {
                 entry.Heading = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.Heading + defaultBaseOffset);
                 entry.HitBoxRadius = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.HitBoxRadius + defaultBaseOffset);
                 entry.Fate = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.Fate + defaultBaseOffset); // ??
-                entry.TargetFlags = source[this._memoryHandler.Structures.ActorItem.TargetFlags]; // ??
-                entry.GatheringInvisible = source[this._memoryHandler.Structures.ActorItem.GatheringInvisible]; // ??
+                if (this._memoryHandler.Structures.ActorItem.TargetFlags >= 0 && this._memoryHandler.Structures.ActorItem.TargetFlags < source.Length) entry.TargetFlags = source[this._memoryHandler.Structures.ActorItem.TargetFlags]; // ??
+                if (this._memoryHandler.Structures.ActorItem.GatheringInvisible >= 0 && this._memoryHandler.Structures.ActorItem.GatheringInvisible < source.Length) entry.GatheringInvisible = source[this._memoryHandler.Structures.ActorItem.GatheringInvisible]; // ??
                 entry.ModelID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ModelID);
                 entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
                 entry.IsGM = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsGM); // ?
-                entry.IconID = source[this._memoryHandler.Structures.ActorItem.Icon];
+                if (this._memoryHandler.Structures.ActorItem.Icon >= 0 && this._memoryHandler.Structures.ActorItem.Icon < source.Length) entry.IconID = source[this._memoryHandler.Structures.ActorItem.Icon];
                 entry.Icon = (Actor.Icon) entry.IconID;
 
-                entry.StatusID = source[this._memoryHandler.Structures.ActorItem.Status];
+                entry.InCutscene = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.InCutscene);
+
+                if (this._memoryHandler.Structures.ActorItem.Status >= 0 && this._memoryHandler.Structures.ActorItem.Status < source.Length) entry.StatusID = source[this._memoryHandler.Structures.ActorItem.Status];
                 entry.Status = (Actor.Status) entry.StatusID;
 
                 entry.ClaimedByID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ClaimedByID);
                 uint targetID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.TargetID);
                 uint pcTargetID = targetID;
 
-                entry.JobID = source[this._memoryHandler.Structures.ActorItem.Job + defaultStatOffset];
+                if (this._memoryHandler.Structures.ActorItem.Job >= 0 && this._memoryHandler.Structures.ActorItem.Job < source.Length) entry.JobID = source[this._memoryHandler.Structures.ActorItem.Job + defaultStatOffset];
                 entry.Job = (Actor.Job) entry.JobID;
 
-                entry.Level = source[this._memoryHandler.Structures.ActorItem.Level + defaultStatOffset];
-                entry.GrandCompany = source[this._memoryHandler.Structures.ActorItem.GrandCompany + defaultStatOffset];
-                entry.GrandCompanyRank = source[this._memoryHandler.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
-                entry.Title = source[this._memoryHandler.Structures.ActorItem.Title + defaultStatOffset];
+                if (this._memoryHandler.Structures.ActorItem.Level >= 0 && this._memoryHandler.Structures.ActorItem.Level < source.Length) entry.Level = source[this._memoryHandler.Structures.ActorItem.Level + defaultStatOffset];
+                if (this._memoryHandler.Structures.ActorItem.GrandCompany >= 0 && this._memoryHandler.Structures.ActorItem.GrandCompany < source.Length) entry.GrandCompany = source[this._memoryHandler.Structures.ActorItem.GrandCompany + defaultStatOffset];
+                if (this._memoryHandler.Structures.ActorItem.GrandCompanyRank >= 0 && this._memoryHandler.Structures.ActorItem.GrandCompanyRank < source.Length) entry.GrandCompanyRank = source[this._memoryHandler.Structures.ActorItem.GrandCompanyRank + defaultStatOffset];
+                if (this._memoryHandler.Structures.ActorItem.Title >= 0 && this._memoryHandler.Structures.ActorItem.Title < source.Length) entry.Title = source[this._memoryHandler.Structures.ActorItem.Title + defaultStatOffset];
                 entry.HPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.HPCurrent + defaultStatOffset);
                 entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.HPMax + defaultStatOffset);
                 entry.MPCurrent = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.ActorItem.MPCurrent + defaultStatOffset);
@@ -114,9 +126,10 @@ namespace Sharlayan.Utilities {
 
                 // entry.Race = source[0x2578]; // ??
                 // entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
-                entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
-                entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];
+                entry.IsCasting1 = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsCasting1);
+                if (this._memoryHandler.Structures.ActorItem.AgroFlags >= 0 && this._memoryHandler.Structures.ActorItem.AgroFlags < source.Length) entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
+                if (this._memoryHandler.Structures.ActorItem.CombatFlags >= 0 && this._memoryHandler.Structures.ActorItem.CombatFlags < source.Length) entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
+                if (this._memoryHandler.Structures.ActorItem.DifficultyRank >= 0 && this._memoryHandler.Structures.ActorItem.DifficultyRank < source.Length) entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];
                 entry.CastingID = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.ActorItem.CastingID); // 0x2C94);
                 entry.CastingTargetID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.CastingTargetID); // 0x2CA0);
                 entry.CastingProgress = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.ActorItem.CastingProgress); // 0x2CC4);

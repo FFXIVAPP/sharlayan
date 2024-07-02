@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.Actions.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -184,6 +184,8 @@ namespace Sharlayan {
                     item.Icon = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.Icon);
                     item.CoolDownPercent = recastMap[this._memoryHandler.Structures.RecastItem.CoolDownPercent];
                     item.IsAvailable = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.IsAvailable);
+                    item.ChargeReady = SharlayanBitConverter.TryToBoolean(recastMap, this._memoryHandler.Structures.RecastItem.ChargeReady);
+                    item.ChargesRemaining = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.ChargesRemaining);
 
                     int remainingCost = SharlayanBitConverter.TryToInt32(recastMap, this._memoryHandler.Structures.RecastItem.RemainingCost);
 

@@ -2,6 +2,7 @@ import './App.css';
 
 import React, { FC } from 'react';
 
+import { EventHost } from './EventHost';
 import logo from './logo.svg';
 
 const App: FC = () => {
@@ -16,6 +17,7 @@ const App: FC = () => {
           Learn React
         </a>
       </header>
+      <EventHost />
     </div>
   );
 };

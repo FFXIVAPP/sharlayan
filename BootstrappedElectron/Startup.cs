@@ -2,6 +2,7 @@ namespace BootstrappedElectron {
     using System.Threading.Tasks;
 
     using ElectronNET.API;
+    using ElectronNET.API.Entities;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -48,7 +49,16 @@ namespace BootstrappedElectron {
             // Open the Electron-Window here
             Task.Run(
                 async () => {
-                    await Electron.WindowManager.CreateWindowAsync();
+                    WebPreferences webPreferences = new WebPreferences {
+                        EnableRemoteModule = true,
+                        ContextIsolation = true
+                    };
+
+                    BrowserWindowOptions browserWindowOptions = new BrowserWindowOptions {
+                        WebPreferences = webPreferences,
+                    };
+
+                    await Electron.WindowManager.CreateWindowAsync(browserWindowOptions);
                     AppContext.Instance.Initialize();
                 });
         }

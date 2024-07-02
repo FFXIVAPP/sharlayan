@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RecastItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -31,6 +31,10 @@ namespace Sharlayan.Models.Structures {
         public int ItemSize { get; set; }
 
         public int RemainingCost { get; set; }
+
+        public int ChargeReady { get; set; }
+
+        public int ChargesRemaining { get; set; }
 
         public int Type { get; set; }
     }

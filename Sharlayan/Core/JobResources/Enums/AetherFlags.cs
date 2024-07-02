@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AetherFlags.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -13,14 +13,16 @@ namespace Sharlayan.Core.JobResources.Enums {
 
     [Flags]
     public enum AetherFlags : byte {
-        Empty = 0,
-
-        AetherFlow1 = 1,
-
-        AetherFlow2 = 2,
-
-        Dreadwyrm1 = 4,
-
-        Dreadwyrm2 = 8,
+        None = 0,
+        Aetherflow1 = 1 << 0,
+        Aetherflow2 = 1 << 1,
+        Aetherflow = Aetherflow1 | Aetherflow2,
+        IfritAttuned = 1 << 2,
+        TitanAttuned = 1 << 3,
+        PhoenixReady = 1 << 4,
+        IfritReady = 1 << 5,
+        TitanReady = 1 << 6,
+        GarudaReady = 1 << 7,
+        GarudaAttuned = IfritAttuned | TitanAttuned
     }
 }
