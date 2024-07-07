@@ -213,5 +213,13 @@ namespace Sharlayan.Core.Interfaces {
         byte WVR { get; set; }
 
         int WVR_CurrentEXP { get; set; }
+
+        byte PCT { get; set; }
+
+        int PCT_CurrentEXP { get; set; }
+
+        byte VPR { get; set; }
+
+        int VPR_CurrentEXP { get; set; }
     }
 }
