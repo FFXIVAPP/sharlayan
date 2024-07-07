@@ -268,6 +268,10 @@ namespace Sharlayan.Utilities {
         internal ViperResources ResolveViperFromBytes(byte[] sourceBytes) {
             ViperResources resource = new ViperResources();
 
+            resource.RattlingCoilStacks = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.RattlingCoilStacks];
+            resource.SerpentOffering = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.SerpentOffering];
+            resource.AnguineTribute = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.AnguineTribute];
+            resource.DreadCombo = (DreadCombo) sourceBytes[this._memoryHandler.Structures.JobResources.Viper.DreadCombo];
 
             return resource;
         }
