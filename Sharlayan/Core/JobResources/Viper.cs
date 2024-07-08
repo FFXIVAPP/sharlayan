@@ -10,7 +10,6 @@
 
 namespace Sharlayan.Core.JobResources {
     using System;
-
     using Sharlayan.Core.Interfaces;
     using Sharlayan.Core.JobResources.Enums;
 
@@ -22,7 +21,7 @@ namespace Sharlayan.Core.JobResources {
         public byte AnguineTribute { get; set; }
 
         public DreadCombo DreadCombo { get; set; }
-
+      
         public TimeSpan Timer { get; set; }
     }
 }

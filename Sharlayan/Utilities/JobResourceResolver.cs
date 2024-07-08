@@ -273,6 +273,7 @@ namespace Sharlayan.Utilities {
             resource.AnguineTribute = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.AnguineTribute];
             resource.DreadCombo = (DreadCombo) sourceBytes[this._memoryHandler.Structures.JobResources.Viper.DreadCombo];
 
+
             return resource;
         }
 
