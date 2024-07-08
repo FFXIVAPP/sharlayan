@@ -10,8 +10,8 @@
 
 namespace BootstrappedWPF.Properties {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -19,19 +19,19 @@ namespace BootstrappedWPF.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
-
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace BootstrappedWPF.Properties {
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace BootstrappedWPF.Properties {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Feel like you want to make a donation?  It would be gratefully received.  Click the button to donate via GitHub sponsors..
         /// </summary>
@@ -68,7 +68,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("AboutTabItem_DonationText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Say hello, make a feature request, or raise a bug through one of these channels:.
         /// </summary>
@@ -77,7 +77,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("AboutTabItem_GetInTouchExtendedText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Get In Touch.
         /// </summary>
@@ -86,7 +86,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("AboutTabItem_GetInTouchText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to This project is completely open source. If you like it and want to say thanks you could hit the GitHub Star button, tweet or post about it, or tell your mum about it!.
         /// </summary>
@@ -95,7 +95,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("AboutTabItem_OpenSourceExtendedText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Open Source.
         /// </summary>
@@ -104,7 +104,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("AboutTabItem_OpenSourceText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to BootstrappedWPF.
         /// </summary>
@@ -113,7 +113,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("ApplicationName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Save Changes.
         /// </summary>
@@ -122,7 +122,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("ChatCodes_SaveChangesText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Welcome to Sharlayan&apos;s WPF Example.
         /// </summary>
@@ -131,7 +131,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("HomeTabItem_WelcomeText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
@@ -140,7 +140,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("MainWindow_AboutButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ChatLog.
         /// </summary>
@@ -149,7 +149,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("MainWindow_ChatLogButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Debug.
         /// </summary>
@@ -158,7 +158,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("MainWindow_DebugButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
@@ -167,7 +167,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("MainWindow_HomeButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
@@ -176,7 +176,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("MainWindow_SettingsButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Accent.
         /// </summary>
@@ -185,7 +185,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("Palette_AccentText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Dark.
         /// </summary>
@@ -194,7 +194,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("Palette_DarkText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
@@ -203,7 +203,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("Palette_LightText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Mid.
         /// </summary>
@@ -212,7 +212,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("Palette_MidText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Primary - Mid.
         /// </summary>
@@ -221,7 +221,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("Palette_PrimaryMidText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Accent.
         /// </summary>
@@ -230,7 +230,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("PaletteSelector_AccentText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Dark.
         /// </summary>
@@ -239,7 +239,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("PaletteSelector_DarkText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to This is your current palette..
         /// </summary>
@@ -248,7 +248,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("PaletteSelector_DescriptionText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
@@ -257,7 +257,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("PaletteSelector_LightText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Primary.
         /// </summary>
@@ -266,7 +266,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("PaletteSelector_PrimaryText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Chat Codes.
         /// </summary>
@@ -275,7 +275,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("SettingsTabItem_ChatCodesTabHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Sharlayan.
         /// </summary>
@@ -284,7 +284,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("SettingsTabItem_SharlayanTabHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Theme.
         /// </summary>
@@ -293,7 +293,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("SettingsTabItem_ThemeTabHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
@@ -302,7 +302,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_ActionsHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Actor.
         /// </summary>
@@ -311,7 +311,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_ActorHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Adjust these timings to increase or decrease data latency. Faster timings may increase CPU usage..
         /// </summary>
@@ -320,7 +320,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_AdjustmentText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ChatLog.
         /// </summary>
@@ -329,7 +329,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_ChatLogHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Current Player.
         /// </summary>
@@ -338,7 +338,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_CurrentPlayerHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Data Settings.
         /// </summary>
@@ -347,7 +347,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_DataSettingsText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Inventory.
         /// </summary>
@@ -356,7 +356,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_InventoryHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Job Resources.
         /// </summary>
@@ -365,7 +365,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_JobResourcesHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Memory Timings.
         /// </summary>
@@ -374,7 +374,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_MemoryTimingsText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Party Members.
         /// </summary>
@@ -383,7 +383,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_PartyMembersHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Reset Settings.
         /// </summary>
@@ -392,7 +392,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_ResetSettingsText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Target.
         /// </summary>
@@ -401,7 +401,7 @@ namespace BootstrappedWPF.Properties {
                 return ResourceManager.GetString("UserSettings_TargetHelperText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Use locally cached JSON for Sharlayan resources.
         /// </summary>
