@@ -1,0 +1,159 @@
+﻿[
+  {
+    "ASMSignature": true,
+    "Key": "TARGET",
+    "PointerPath": [
+      0,
+      -16
+    ],
+    "Value": "5fc3483935********75**483935"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "CHATLOG",
+    "PointerPath": [
+      0,
+      0,
+      64,
+      908
+    ],
+    "Value": "488941104488492C4C8949244C89491C4584C07412488B4218488905********48890D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "CHARMAP",
+    "PointerPath": [
+      0,
+      0
+    ],
+    "Value": "488B0D********BB000000E04885C974**488B01FF5008483BC374**488BD0488D0D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "PARTYMAP",
+    "PointerPath": [
+      0,
+      0
+    ],
+    "Value": "8b7c24440fb66c2440400fb6d5488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "PARTYCOUNT",
+    "PointerPath": [
+      0,
+      15708
+    ],
+    "Value": "8b7c24440fb66c2440400fb6d5488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "MAPINFO",
+    "PointerPath": [
+      0,
+      0
+    ],
+    "Value": "E8********33DB8BFB4885C07403488B388B05********BA5E000000448B05"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "ZONEINFO",
+    "PointerPath": [
+      0,
+      -8
+    ],
+    "Value": "48895C2408574883EC204863FA410FB6D84584C97510488D0D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "PLAYERINFO",
+    "PointerPath": [
+      0,
+      0
+    ],
+    "Value": "83f9ff7412448b048e8bd3488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "ENMITYMAP",
+    "PointerPath": [
+      0,
+      -2608
+    ],
+    "Value": "83f9ff7412448b048e8bd3488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "ENMITY_COUNT",
+    "PointerPath": [
+      0,
+      -2352
+    ],
+    "Value": "83f9ff7412448b048e8bd3488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "AGROMAP",
+    "PointerPath": [
+      0,
+      -2344
+    ],
+    "Value": "83f9ff7412448b048e8bd3488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "AGRO_COUNT",
+    "PointerPath": [
+      0,
+      -40
+    ],
+    "Value": "83f9ff7412448b048e8bd3488d0d"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "HOTBAR",
+    "PointerPath": [
+      0,
+      0,
+      56,
+      48,
+      40,
+      32,
+      0,
+      0
+    ],
+    "Value": "488B4708498B5D00498B7728488B3D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "RECAST",
+    "PointerPath": [
+      0,
+      0,
+      56,
+      24,
+      48,
+      32,
+      60
+    ],
+    "Value": "488B4708498B5D00498B7728488B3D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "INVENTORY",
+    "PointerPath": [
+      0,
+      0
+    ],
+    "Value": "48895C2408488974241048897C2418488B3D"
+  },
+  {
+    "ASMSignature": true,
+    "Key": "COOLDOWNS",
+    "PointerPath": [
+      0,
+      8
+    ],
+    "Value": "48895C24**BB0600000048897424**488D70**48896C24**48897C24**0FB7066685C074**0FB7F84584E474**8BD7488D0D"
+  }
+]

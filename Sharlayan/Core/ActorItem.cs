@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActorItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -14,7 +14,7 @@ namespace Sharlayan.Core {
 
     public class ActorItem : ActorItemBase, IActorItem {
         public double CastingPercentage =>
-            this.IsCasting && this.CastingTime > 0
+            this.IsCasting1 && this.CastingTime > 0
                 ? this.CastingProgress / this.CastingTime
                 : 0;
 
@@ -80,11 +80,13 @@ namespace Sharlayan.Core {
 
         public byte IconID { get; set; }
 
-        public bool InCombat => (this.CombatFlags & (1 << 1)) != 0;
+        public bool IsCasting1 { get; set; }
 
-        public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
+        public bool InCombat => (this.CombatFlags & (1 << 5)) != 0; //(this.CombatFlags & (1 << 1)) != 0;
 
-        public bool IsCasting => (this.CombatFlags & (1 << 7)) != 0;
+        public bool IsAggressive => (this.CombatFlags & (1 << 4)) != 0; //(this.CombatFlags & (1 << 0)) != 0;
+
+        public bool IsCasting => (this.CombatFlags & (1 << 6)) != 0; //(this.CombatFlags & (1 << 7)) != 0;
 
         public bool IsGM { get; set; }
 
@@ -126,7 +128,9 @@ namespace Sharlayan.Core {
 
         public byte TypeID { get; set; }
 
-        public bool WeaponUnsheathed => (this.CombatFlags & (1 << 3)) != 0;
+        public bool InCutscene { get; set; }
+
+        public bool WeaponUnsheathed => (this.CombatFlags & (1 << 0)) != 0;
 
         public ActorItem Clone() {
             ActorItem cloned = (ActorItem) this.MemberwiseClone();

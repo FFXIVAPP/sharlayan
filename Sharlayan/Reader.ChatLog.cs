@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Reader.ChatLog.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -61,27 +61,31 @@ namespace Sharlayan {
                 };
 
                 long currentArrayIndex = (this._chatLogReader.ChatLogPointers.OffsetArrayPos - this._chatLogReader.ChatLogPointers.OffsetArrayStart) / 4;
-                if (this._chatLogReader.ChatLogFirstRun) {
-                    this._chatLogReader.EnsureArrayIndexes();
-                    this._chatLogReader.ChatLogFirstRun = false;
-                    this._chatLogReader.PreviousOffset = this._chatLogReader.Indexes[(int) currentArrayIndex - 1];
-                    this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
-                }
-                else {
-                    if (currentArrayIndex < this._chatLogReader.PreviousArrayIndex) {
-                        IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000);
-                        bufferList.AddRange(bufferEntries);
-                        this._chatLogReader.PreviousOffset = 0;
-                        this._chatLogReader.PreviousArrayIndex = 0;
+                if (currentArrayIndex > 0) {
+                    if (this._chatLogReader.ChatLogFirstRun) {
+                        this._chatLogReader.EnsureArrayIndexes();
+                        this._chatLogReader.ChatLogFirstRun = false;
+                        this._chatLogReader.PreviousOffset = this._chatLogReader.Indexes[(int) currentArrayIndex - 1];
+                        this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
                     }
+                    else {
+                        if (currentArrayIndex < this._chatLogReader.PreviousArrayIndex) {
+                            IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000);
+                            bufferList.AddRange(bufferEntries);
+                            this._chatLogReader.PreviousOffset = 0;
+                            this._chatLogReader.PreviousArrayIndex = 0;
+                        }
 
-                    if (this._chatLogReader.PreviousArrayIndex < currentArrayIndex) {
-                        IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, (int) currentArrayIndex);
-                        bufferList.AddRange(bufferEntries);
+                        if (this._chatLogReader.PreviousArrayIndex < currentArrayIndex) {
+                            IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, (int) currentArrayIndex);
+                            bufferList.AddRange(bufferEntries);
+                        }
+
+                        this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
                     }
-
-                    this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
                 }
+
+                
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);

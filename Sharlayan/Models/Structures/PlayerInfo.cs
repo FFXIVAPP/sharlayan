@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PlayerInfo.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -179,6 +179,14 @@ namespace Sharlayan.Models.Structures {
         public int SAM { get; set; }
 
         public int SAM_CurrentEXP { get; set; }
+
+        public int PCT { get; set; }
+
+        public int PCT_CurrentEXP { get; set; }
+
+        public int VPR { get; set; }
+
+        public int VPR_CurrentEXP { get; set; }
 
         public int SkillSpeed { get; set; }
 

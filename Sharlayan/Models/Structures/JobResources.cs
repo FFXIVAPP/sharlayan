@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="JobResources.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -28,5 +28,10 @@ namespace Sharlayan.Models.Structures {
         public SummonerResources Summoner { get; set; } = new SummonerResources();
         public WarriorResources Warrior { get; set; } = new WarriorResources();
         public WhiteMageResources WhiteMage { get; set; } = new WhiteMageResources();
+        public ReaperResources Reaper { get; set; } = new ReaperResources();
+        public SageResources Sage { get; set; } = new SageResources();
+        public ViperResources Viper { get; set; } = new ViperResources();
+        public PictomancerResources Pictomancer { get; set; } = new PictomancerResources();
+
     }
 }

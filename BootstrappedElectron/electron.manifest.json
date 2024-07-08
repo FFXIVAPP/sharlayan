@@ -10,7 +10,7 @@
   "build": {
     "appId": "com.BootstrappedElectron.app",
     "productName": "BootstrappedElectron",
-    "copyright": "Copyright © 2007 - 2021 Ryan Wilson",
+    "copyright": "Copyright © 2007 - 2022 Ryan Wilson",
     "buildVersion": "1.0.0",
     "compression": "maximum",
     "directories": {

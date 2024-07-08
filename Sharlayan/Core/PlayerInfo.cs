@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PlayerInfo.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -188,9 +188,17 @@ namespace Sharlayan.Core {
 
         public int ROG_CurrentEXP { get; set; }
 
+        public byte RPR { get; set; }
+
+        public int RPR_CurrentEXP { get; set; }
+
         public byte SAM { get; set; }
 
         public int SAM_CurrentEXP { get; set; }
+
+        public byte SGE { get; set; }
+
+        public int SGE_CurrentEXP { get; set; }
 
         public short SkillSpeed { get; set; }
 
@@ -215,5 +223,13 @@ namespace Sharlayan.Core {
         public byte WVR { get; set; }
 
         public int WVR_CurrentEXP { get; set; }
+
+        public byte VPR { get; set; }
+
+        public int VPR_CurrentEXP { get; set; }
+
+        public byte PCT { get; set; }
+
+        public int PCT_CurrentEXP { get; set; }
     }
 }

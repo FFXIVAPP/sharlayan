@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="PlayerInfoResolver.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -71,6 +71,9 @@ namespace Sharlayan.Utilities {
                         entry.DNC = source[this._memoryHandler.Structures.PlayerInfo.DNC];
                         entry.GNB = source[this._memoryHandler.Structures.PlayerInfo.GNB];
 
+                        entry.VPR = source[this._memoryHandler.Structures.PlayerInfo.VPR];
+                        entry.PCT = source[this._memoryHandler.Structures.PlayerInfo.PCT];
+
                         #endregion
 
                         #region Current Experience
@@ -110,6 +113,9 @@ namespace Sharlayan.Utilities {
 
                         entry.DNC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DNC_CurrentEXP);
                         entry.GNB_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GNB_CurrentEXP);
+
+                        entry.VPR_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.VPR_CurrentEXP);
+                        entry.PCT_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.PCT_CurrentEXP);
 
                         #endregion
 

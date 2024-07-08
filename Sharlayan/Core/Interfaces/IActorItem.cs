@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IActorItem.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2021 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -78,6 +78,8 @@ namespace Sharlayan.Core.Interfaces {
 
         bool IsCasting { get; }
 
+        bool IsCasting1 { get; set; }
+
         bool IsGM { get; set; }
 
         Actor.Job Job { get; set; }
@@ -141,6 +143,8 @@ namespace Sharlayan.Core.Interfaces {
         double Y { get; set; }
 
         double Z { get; set; }
+
+        bool InCutscene { get; set; }
 
         ActorItem Clone();
     }
