@@ -228,6 +228,10 @@ namespace Sharlayan.Core.Enums {
             RPR = 0x27,
 
             SGE = 0x28,
+
+            VPR = 0x29,
+
+            PCT = 0x30,
         }
 
         public enum Sex : byte {

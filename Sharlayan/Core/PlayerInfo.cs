@@ -223,5 +223,13 @@ namespace Sharlayan.Core {
         public byte WVR { get; set; }
 
         public int WVR_CurrentEXP { get; set; }
+
+        public byte VPR { get; set; }
+
+        public int VPR_CurrentEXP { get; set; }
+
+        public byte PCT { get; set; }
+
+        public int PCT_CurrentEXP { get; set; }
     }
 }

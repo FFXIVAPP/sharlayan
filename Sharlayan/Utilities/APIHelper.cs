@@ -32,13 +32,16 @@ namespace Sharlayan.Utilities {
         private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
         public static async Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-{configuration.PatchVersion}.json");
+
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-latest.json");
 
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(actions, file);
             }
             else {
-                await APIResponseToDictionary(actions, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json", configuration);
+                //await APIResponseToDictionary(actions, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json", configuration);
+                await APIResponseToDictionary(actions, $"{configuration.APIBaseURL}/xivdatabase/latest/actions.json", configuration);
+
             }
 
             if (configuration.UseLocalCache) {
@@ -49,15 +52,16 @@ namespace Sharlayan.Utilities {
         public static async Task<Signature[]> GetSignatures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-{patchVersion}.json");
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-latest.json");
+
 
             if (File.Exists(file) && configuration.UseLocalCache) {
                 return FileResponseToJSON<Signature[]>(file);
             }
 
-            //https://chromaticsffxiv.com/chromatics3/sharlayan/signatures/latest/x64.json
             //string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{patchVersion}/x64.json");
-            string json = await APIResponseToJSON($"https://chromaticsffxiv.com/chromatics3/sharlayan/signatures/latest/x64.json");
+            string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/latest/x64.json");
+
             Signature[] resolved = JsonConvert.DeserializeObject<Signature[]>(json, Constants.SerializerSettings);
 
             if (configuration.UseLocalCache) {
@@ -68,13 +72,16 @@ namespace Sharlayan.Utilities {
         }
 
         public static async Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-{configuration.PatchVersion}.json");
+
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-latest.json");
 
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(statusEffects, file);
             }
             else {
-                await APIResponseToDictionary(statusEffects, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json", configuration);
+                //await APIResponseToDictionary(statusEffects, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json", configuration);
+                await APIResponseToDictionary(statusEffects, $"{configuration.APIBaseURL}/xivdatabase/latest/statuses.json", configuration);
+
             }
 
             if (configuration.UseLocalCache) {
@@ -85,15 +92,14 @@ namespace Sharlayan.Utilities {
         public static async Task<StructuresContainer> GetStructures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"structures-{region}-{patchVersion}.json");
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"structures-{region}-latest.json");
 
             if (File.Exists(file) && configuration.UseLocalCache) {
                 return EnsureClassValues<StructuresContainer>(file);
             }
 
-            //https://chromaticsffxiv.com/chromatics3/sharlayan/signatures/latest/x64.json
-            StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"https://chromaticsffxiv.com/chromatics3/sharlayan/structures/latest/x64.json");
-            //StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/{patchVersion}/x64.json");
+            // StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/{patchVersion}/x64.json");
+            StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/latest/x64.json");
 
             if (configuration.UseLocalCache) {
                 File.WriteAllText(file, JsonConvert.SerializeObject(structuresContainer, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
@@ -107,13 +113,16 @@ namespace Sharlayan.Utilities {
             // eg: "map id = 4" would be 148 in offset 7.
             // This is known as the TerritoryType value
             // - It maps directly to SaintCoins map.csv against TerritoryType ID
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"zones-{configuration.PatchVersion}.json");
+
+            string file = Path.Combine(configuration.JSONCacheDirectory, $"zones-latest.json");
 
             if (File.Exists(file) && configuration.UseLocalCache) {
                 EnsureDictionaryValues(mapInfos, file);
             }
             else {
-                await APIResponseToDictionary(mapInfos, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json", configuration);
+                //await APIResponseToDictionary(mapInfos, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json", configuration);
+                await APIResponseToDictionary(mapInfos, $"{configuration.APIBaseURL}/xivdatabase/latest/zones.json", configuration);
+
             }
 
             if (configuration.UseLocalCache) {
