@@ -41,6 +41,6 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.113",
     "@mui/material": "^5.11.1",
-    "electron": "^22.0.0"
+    "electron": "^22.3.25"
   }
 }
