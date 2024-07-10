@@ -46,3 +46,12 @@ jobs:
         run: msbuild $env:Solution_Name /t:Build /p:Configuration=$env:Configuration
         env:
           Configuration: ${{ matrix.configuration }}
+
+      # Upload the build artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sharlayan-latest
+          path: |
+            published/
+          overwrite: true
