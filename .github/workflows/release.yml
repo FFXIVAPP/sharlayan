@@ -62,7 +62,7 @@ jobs:
         with:
           name: sharlayan-latest
           path: |
-            published/
+            published/${{ env.SOLUTION_NAME }}.nupkg
           overwrite: true
 
       # Publish to NuGet
