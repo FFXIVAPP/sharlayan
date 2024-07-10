@@ -62,9 +62,13 @@ jobs:
         with:
           name: sharlayan-latest
           path: |
-            published/${{ env.SOLUTION_NAME }}.nupkg
+            published/
           overwrite: true
 
-      # Publish to NuGet
-      - name: Publish to NuGet
-        run: dotnet nuget push published/${{ env.SOLUTION_NAME }}.nupkg --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+      # Publish each package to NuGet
+      - name: Publish each package to NuGet
+        run: |
+          $packages = Get-ChildItem -Path .\published\ -Filter *.nupkg
+          foreach ($package in $packages) {
+            dotnet nuget push $package.FullName --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+          }
