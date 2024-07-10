@@ -14,7 +14,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: Sharlayan.sln
+      SOLUTION_NAME: Sharlayan.sln
+      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     steps:
       - name: Checkout
@@ -37,13 +38,21 @@ jobs:
 
       # Restore the application to populate the obj folder with RuntimeIdentifiers
       - name: Restore the application
-        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+        run: msbuild $env:SOLUTION_NAME /t:Restore /p:Configuration=$env:Configuration
         env:
           Configuration: ${{ matrix.configuration }}
 
+      # Get Library Version
+      - name: Get Library Version
+        id: get_version
+        run: |
+          $version = [System.Version]::Parse((Get-Content -Path .\Sharlayan\Sharlayan\Sharlayan.csproj -Raw | Select-String -Pattern '<Version>(.*)</Version>').Matches.Groups[1].Value)
+          echo "Library Version: $version"
+          echo "::set-output name=version::$version"
+
       # Build the application
       - name: Build the application
-        run: msbuild $env:Solution_Name /t:Build /p:Configuration=$env:Configuration
+        run: msbuild $env:SOLUTION_NAME /t:Build /p:Configuration=$env:Configuration /p:WarningLevel=0
         env:
           Configuration: ${{ matrix.configuration }}
 
@@ -55,3 +64,7 @@ jobs:
           path: |
             published/
           overwrite: true
+
+      # Publish to NuGet
+      - name: Publish to NuGet
+        run: dotnet nuget push published/*.nupkg --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
