@@ -67,4 +67,4 @@ jobs:
 
       # Publish to NuGet
       - name: Publish to NuGet
-        run: dotnet nuget push published/*.nupkg --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push published/${{ env.SOLUTION_NAME }}.nupkg --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
