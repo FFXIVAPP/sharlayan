@@ -102,7 +102,9 @@ internal static class Program {
         Log("[3] PROVIDER OFFSET COMPARISON (Legacy vs FFXIVClientStructsDirect)");
         SharlayanConfiguration legacyConfig = new() {
             ProcessModel = new ProcessModel { Process = game },
+#pragma warning disable CS0618 // LegacySharlayanResources is obsolete but the harness must exercise it for the A/B diff.
             ResourceProvider = ResourceProviderKind.LegacySharlayanResources,
+#pragma warning restore CS0618
             UseLocalCache = true,
             JSONCacheDirectory = AppContext.BaseDirectory, // JSON files placed next to harness exe
         };

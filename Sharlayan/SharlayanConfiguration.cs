@@ -25,7 +25,7 @@ namespace Sharlayan {
         public string JSONCacheDirectory { get; set; } = Directory.GetCurrentDirectory();
         public string PatchVersion { get; set; } = "latest";
         public ProcessModel ProcessModel { get; set; }
-        public ResourceProviderKind ResourceProvider { get; set; } = ResourceProviderKind.LegacySharlayanResources;
+        public ResourceProviderKind ResourceProvider { get; set; } = ResourceProviderKind.FFXIVClientStructsDirect;
         public bool ScanAllRegions { get; set; } = false;
         public bool UseLocalCache { get; set; } = true;
     }
