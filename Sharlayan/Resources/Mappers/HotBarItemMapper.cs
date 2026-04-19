@@ -13,23 +13,34 @@
 namespace Sharlayan.Resources.Mappers {
     using System.Runtime.InteropServices;
 
+    using FFXIVClientStructs.FFXIV.Client.System.String;
     using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
     using Sharlayan.Models.Structures;
 
     internal static class HotBarItemMapper {
         public static HotBarItem Build() {
+            // ContainerSize: FCS's Hotbar struct declares size 0x08 (vtable only); the actual
+            // in-memory stride is 16 slots × HotbarSlot size. Compute from slot size so this
+            // stays correct if HotbarSlot grows.
+            int slotSize = Marshal.SizeOf<RaptureHotbarModule.HotbarSlot>();
+
+            // Name: HotbarSlot.PopUpHelp is a Utf8String (pointer-based C++ object) at slot+0x00.
+            // Its first field is a pointer (StringPtr), so reading bytes at offset 0 yields the
+            // pointer's raw bytes, not the string. The inline char buffer lives at
+            // Utf8String._inlineBuffer @ +0x22 — reading from there gives the null-terminated
+            // action name for short strings (<= 64 chars, which covers every action name).
+            int popUpHelpOff = (int)Marshal.OffsetOf<RaptureHotbarModule.HotbarSlot>(nameof(RaptureHotbarModule.HotbarSlot.PopUpHelp));
+            int inlineBufOff = FieldOffsetReader.OffsetOf<Utf8String>("_inlineBuffer");
+
             return new HotBarItem {
-                ContainerSize = Marshal.SizeOf<RaptureHotbarModule.Hotbar>(),
-                ItemSize = Marshal.SizeOf<RaptureHotbarModule.HotbarSlot>(),
+                ContainerSize = 16 * slotSize,
+                ItemSize = slotSize,
                 ID = (int)Marshal.OffsetOf<RaptureHotbarModule.HotbarSlot>(nameof(RaptureHotbarModule.HotbarSlot.CommandId)),
+                Name = popUpHelpOff + inlineBufOff,
 
-                // Closest equivalent to "Name" is PopUpHelp — the tooltip string shown when
-                // hovering a slot.
-                Name = (int)Marshal.OffsetOf<RaptureHotbarModule.HotbarSlot>(nameof(RaptureHotbarModule.HotbarSlot.PopUpHelp)),
-
-                // KeyBinds maps to the internal _keybindHint FixedSizeArray (terse variant
-                // without the leading space/brackets); consumer code reads from that offset.
+                // KeyBinds maps to _keybindHint — an inline 16-byte FixedSizeArray of bytes
+                // (not behind a Utf8String pointer), so direct byte reads work.
                 KeyBinds = FieldOffsetReader.OffsetOf<RaptureHotbarModule.HotbarSlot>("_keybindHint"),
             };
         }

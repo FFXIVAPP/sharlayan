@@ -82,6 +82,11 @@ namespace Sharlayan.Resources.Mappers {
 
                 // --- CharacterData fields flattened into Character ------------------
                 ClaimedByID = (int)Marshal.OffsetOf<Character>(nameof(Character.CombatTaggerId)),
+                // AgroFlags is a single byte bitfield; Sharlayan's IsAgroed = (AgroFlags & 1) > 0.
+                // CharacterData.Flags.IsHostile is bit 0 of that byte — semantic match.
+                AgroFlags = (int)Marshal.OffsetOf<Character>(nameof(Character.Flags)),
+                // CombatFlags — same byte, different bit (InCombat = bit 1); reuse the offset.
+                CombatFlags = (int)Marshal.OffsetOf<Character>(nameof(Character.Flags)),
                 // Status byte for nameplate/targetability — GameObject.TargetStatus (0x95). Different
                 // from legacy's "Status" which was a 16-bit status-effect id slot; no longer exists.
                 // TargetFlags maps to the targetability-related flags on GameObject.

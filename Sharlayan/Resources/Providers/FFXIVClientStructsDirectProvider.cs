@@ -81,8 +81,8 @@ namespace Sharlayan.Resources.Providers {
             // Multi-hop: Framework (isPointer=true) → UIModule* @ +0x2B68 → sub-module inside UIModule.
             // ResolvePointerPath: hop0 = ASM follow of Framework static ptr, hop1 = deref to Framework,
             // hop2 = +0x2B68 then deref to UIModule, hop3 = +inner (trailing add, no deref).
-            TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework", 0x2B68, 0x19E0);   // UIModule → RaptureLogModule
-            TryAddChain(signatures, Signatures.HOTBAR_KEY,  "Framework", 0x2B68, 0x57B80);  // UIModule → RaptureHotbarModule
+            TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework", 0x2B68, 0x19E0);            // UIModule → RaptureLogModule
+            TryAddChain(signatures, Signatures.HOTBAR_KEY,  "Framework", 0x2B68, 0x57B80 + 0xA0);    // UIModule → RaptureHotbarModule → _hotbars[0] @ +0xA0
             return Task.FromResult(signatures.ToArray());
         }
 

@@ -437,6 +437,8 @@ internal static class Program {
                     Log($"    LocalPlayer.Title      = {dp.Title}   (TitleId — compare against /title list)");
                     Log($"    LocalPlayer.Icon       = {dp.Icon}   (nameplate icon id)");
                     Log($"    LocalPlayer.HitBoxRadius={dp.HitBoxRadius}");
+                    Log($"    LocalPlayer.IsAgroed   = {dp.IsAgroed}   (CharacterData.Flags bit 0 / IsHostile)");
+                    Log($"    LocalPlayer.AgroFlags  = 0x{dp.AgroFlags:X2} CombatFlags=0x{dp.CombatFlags:X2}   (bit 1 = InCombat)");
                 }
                 var dActors2 = directHandler.Reader.GetActors();
                 // Sample up to 3 non-self actors so the user can eye-check names/types.
@@ -447,6 +449,51 @@ internal static class Program {
                     foreach (var a in sample) {
                         Log($"      - {a.Name,-24} Type={a.Type} ID=0x{a.ID:X8} NPCID2={a.NPCID2} HP={a.HPCurrent}/{a.HPMax} Pos=({a.X:F1},{a.Y:F1},{a.Z:F1})");
                     }
+                }
+
+                // Explicitly target HOTBAR_1 and HOTBAR_2 — scanning for "first populated"
+                // was finding CROSS_PETBAR because earlier HOTBARs looked empty (Name offset
+                // bug — reading Utf8String pointer bytes instead of the inline char buffer).
+                if (directHandler.Reader.CanGetActions()) {
+                    var actions = directHandler.Reader.GetActions();
+                    foreach (var target in new[] { Sharlayan.Core.Enums.Action.Container.HOTBAR_1, Sharlayan.Core.Enums.Action.Container.HOTBAR_2 }) {
+                        var bar = actions.ActionContainers.FirstOrDefault(c => c.ContainerType == target);
+                        if (bar == null || bar.ActionItems.Count == 0) {
+                            Log($"    Hotbar {target}: (no populated slots)");
+                            continue;
+                        }
+                        Log($"    Hotbar {target} first 4 slots:");
+                        foreach (var item in bar.ActionItems.Take(4)) {
+                            string keybind = string.IsNullOrEmpty(item.KeyBinds) ? "<unbound>" : item.KeyBinds;
+                            Log($"      slot {item.Slot}: \"{item.Name}\" ID={item.ID} keybind=\"{keybind}\"");
+                        }
+                    }
+                }
+                else {
+                    Log("    Hotbar: CanGetActions=false (HOTBAR or RECAST signature missing)");
+                }
+
+                // Job resources — pulls the active job's gauge from JobGaugeManager. For our
+                // test (BRD), the BardResources fields (ActiveSong / SongTimer / Repertoire /
+                // SoulVoice) should reflect what's shown on the gauge UI in-game.
+                try {
+                    if (directHandler.Reader.CanGetJobResources()) {
+                        var jr = directHandler.Reader.GetJobResources();
+                        var c = jr?.JobResourcesContainer;
+                        if (c != null) {
+                            Log($"    JobResources populated=true  (current job: {dp?.Job})");
+                            Log($"      Bard: ActiveSong={c.Bard.ActiveSong} Timer={c.Bard.Timer}ms Repertoire={c.Bard.Repertoire} SoulVoice={c.Bard.SoulVoice}");
+                        }
+                        else {
+                            Log("    JobResources: Container is null (reader returned empty)");
+                        }
+                    }
+                    else {
+                        Log("    JobResources: CanGetJobResources=false (JOBRESOURCES signature missing)");
+                    }
+                }
+                catch (Exception ex) {
+                    Log($"    ✗ JobResources: {ex.GetType().Name}: {ex.Message}");
                 }
             }
             catch (Exception ex) {
