@@ -33,3 +33,12 @@ Migrating away from the unmaintained [sharlayan-resources](https://github.com/FF
 - `RecastItem.ActionProc` → `Glows` (steady proc indicator), not `Pulses` (short animation trigger).
 - Struct offset diffs in harness [3] that remain are **legacy being stale**, not direct being wrong. Eye-check `[7b]`/`[7c]` output against in-game UI to verify.
 - Genuinely unmapped (no clean FCS equivalent): `ActorItem.ActionStatus` / `DifficultyRank` / `Gathering*` / `GrandCompany*` / `ModelID`; `PlayerInfo` derived attributes (need dynamic Lumina BaseParam indices).
+
+## What's left
+
+- **Chromatics integration validation** — Keybinds layer is wired (P3-B17/B18). Remaining downstream usages need a pass against the `GetGameState` / Weather / BGM / cutscene surface; in particular Chromatics' `Keybinds` special-action path checks `Category == 49 || 51` but the game now writes `56` for role/LB actions — either bump the Chromatics check or route via Lumina's `ActionCategory` sheet here.
+- **Unmapped fields with no clean FCS source** — `ActorItem.{ActionStatus, DifficultyRank, Gathering*, GrandCompany*, ModelID}`, `PlayerInfo` derived attributes (Str/Dex/Crit/etc.) via `PlayerState._attributes + BaseParam`, `BGM.Name` (only `.File` is on the sheet). Needs Lumina-backed helpers, not raw memory offsets.
+- **Legacy provider removal** — `LegacyJsonProvider` still exists so harness [3] can A/B diff against snapshotted JSON. Delete it + `APIHelper` once the struct/offset churn stabilises.
+- **Harness [3] polish** — currently 200+ legacy-stale diff rows. Filter to only "unmapped in direct" rows so the output stays actionable.
+- **FFXIVClientStructsETL** — retargeted to net10.0 so the sln builds, but the HTTP-fetch workflow it existed for is gone. Likely a delete candidate.
+- **Branch housekeeping** — ~20 `P3-B*` commits, easy to squash per logical unit before PR to `master`.
