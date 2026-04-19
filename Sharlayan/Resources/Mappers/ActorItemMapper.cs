@@ -73,6 +73,11 @@ namespace Sharlayan.Resources.Mappers {
                 // Must match the full Character struct size.
                 SourceSize = Marshal.SizeOf<Character>(),
 
+                // EntityCount is the loop limit used by Reader.GetActors — number of
+                // 8-byte pointer slots to read from the CHARMAP pointer array. Matches
+                // FCS' GameObjectManager.ObjectArrays._indexSorted: FixedSizeArray819.
+                EntityCount = 819,
+
                 // The following Sharlayan fields have no clean direct equivalent in
                 // FFXIVClientStructs' Character type at this time. Leaving them at
                 // default(int)=0 preserves the legacy "field absent from JSON" behaviour,

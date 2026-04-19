@@ -358,6 +358,63 @@ internal static class Program {
                 }
                 Log($"  === {matching} match, {diverging} diff, {onlyLegacy} legacy-only, {onlyDirect} direct-only ===");
             }
+
+            // [7b] End-to-end Reader check against direct provider. Addresses in [7]
+            // matching legacy is necessary but not sufficient — the Reader also needs
+            // the StructuresContainer offsets to align with the live game layout. This
+            // block pulls the same fields the legacy path reads and compares values.
+            Log(string.Empty);
+            Log("  [7b] READER OUTPUT (direct provider)");
+            try {
+                var dcp = directHandler.Reader.GetCurrentPlayer();
+                var dp = dcp?.Entity;
+                if (dp == null) {
+                    Log("    Entity=null — PLAYERINFO signature missing or struct offsets broken");
+                }
+                else {
+                    string legacyName = "?"; long legacyHP = 0, legacyMP = 0, legacyLvl = 0;
+                    if (handler != null) {
+                        var lcp = handler.Reader.GetCurrentPlayer()?.Entity;
+                        if (lcp != null) { legacyName = lcp.Name ?? "?"; legacyHP = Convert.ToInt64(lcp.HPCurrent); legacyMP = Convert.ToInt64(lcp.MPCurrent); legacyLvl = Convert.ToInt64(lcp.Level); }
+                    }
+                    string nameMark = string.Equals(dp.Name, legacyName, StringComparison.Ordinal) ? "✓" : "⚠";
+                    string hpMark   = Convert.ToInt64(dp.HPCurrent) == legacyHP ? "✓" : "⚠";
+                    string mpMark   = Convert.ToInt64(dp.MPCurrent) == legacyMP ? "✓" : "⚠";
+                    string lvlMark  = Convert.ToInt64(dp.Level) == legacyLvl ? "✓" : "⚠";
+                    Log($"    {nameMark} Name   legacy=\"{legacyName}\" direct=\"{dp.Name}\"");
+                    Log($"    {hpMark} HP     legacy={legacyHP} direct={dp.HPCurrent}");
+                    Log($"    {mpMark} MP     legacy={legacyMP} direct={dp.MPCurrent}");
+                    Log($"    {lvlMark} Level  legacy={legacyLvl} direct={dp.Level}");
+                    Log($"      Job={dp.Job} Pos=({dp.X:F2},{dp.Y:F2},{dp.Z:F2}) ID=0x{dp.ID:X8} MapTerritory={dp.MapTerritory}");
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ CurrentPlayer: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            try {
+                var dActors = directHandler.Reader.GetActors();
+                int lpcs = 0, lnpcs = 0, lmobs = 0;
+                if (handler != null) {
+                    var la = handler.Reader.GetActors();
+                    lpcs = la.CurrentPCs.Count; lnpcs = la.CurrentNPCs.Count; lmobs = la.CurrentMonsters.Count;
+                }
+                string mark = (dActors.CurrentPCs.Count == lpcs && dActors.CurrentNPCs.Count == lnpcs && dActors.CurrentMonsters.Count == lmobs) ? "✓" : "⚠";
+                Log($"    {mark} Actors legacy PCs={lpcs} NPCs={lnpcs} Mobs={lmobs}  direct PCs={dActors.CurrentPCs.Count} NPCs={dActors.CurrentNPCs.Count} Mobs={dActors.CurrentMonsters.Count}");
+            }
+            catch (Exception ex) {
+                Log($"    ✗ Actors: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            try {
+                var dparty = directHandler.Reader.GetPartyMembers();
+                int lcount = handler != null ? handler.Reader.GetPartyMembers().PartyMembers.Count : 0;
+                string mark = dparty.PartyMembers.Count == lcount ? "✓" : "⚠";
+                Log($"    {mark} Party  legacy={lcount} direct={dparty.PartyMembers.Count}");
+            }
+            catch (Exception ex) {
+                Log($"    ✗ Party: {ex.GetType().Name}: {ex.Message}");
+            }
         }
         catch (Exception ex) {
             Log($"  ✗ Direct scanner failed: {ex.GetType().Name}: {ex.Message}");
