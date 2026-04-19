@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sharlayan</name>
+    </assembly>
+    <members>
+        <member name="P:Sharlayan.Core.ChatLogItem.PlayerCharacterName">
+            <summary>
+            character name of player that was loaded when log was detected
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Bytes">
+            <summary>
+            raw bytes from memory
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Code">
+            <summary>
+            alphanumeric chat code
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Combined">
+            <summary>
+            [Code]:[Line] combination string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.IsInternational">
+            <summary>
+            does the text contain non-roman text
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Line">
+            <summary>
+            "(playerName )?messsage" combination string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Message">
+            <summary>
+            message without name of player
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.PlayerName">
+            <summary>
+            player name from message
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Raw">
+            <summary>
+            raw bytes decoded to string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.TimeStamp">
+            <summary>
+            message timestamp
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)">
+            <summary>
+            Returns the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute"/> value of <paramref name="fieldName"/>
+            on type <typeparamref name="T"/>. Works for both public fields (where
+            <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> would also work) and internal / private fields
+            (e.g. FFXIVClientStructs' <c>_name</c> FixedSizeArray backing fields, which
+            <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> cannot reach across assembly boundaries).
+            Prefer <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf``1(System.String)"/> directly when the field is
+            public — this method exists for the internal-field case.
+            </summary>
+            <exception cref="T:System.MissingFieldException">Field not found on the type.</exception>
+            <exception cref="T:System.InvalidOperationException">Field exists but has no FieldOffsetAttribute.</exception>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.BuildSignature(System.String,Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.StaticAddressInfo,System.Int64)">
+            <summary>
+            Convert an extracted FFXIVClientStructs StaticAddress entry into a Sharlayan Signature.
+            </summary>
+            <param name="sharlayanKey">Scanner key expected by Sharlayan's Reader (e.g. "CHARMAP").</param>
+            <param name="info">The FFXIVClientStructs static-address metadata.</param>
+            <param name="innerOffset">
+            Byte offset inside the resolved struct to reach the field Sharlayan expects. For example
+            CHARMAP is GameObjectManager + 0x20 for the _indexSorted pointer array.
+            </param>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.BuildSignature(System.String,Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.StaticAddressInfo,System.Int64[])">
+             <summary>
+             Multi-hop variant — used when the Sharlayan target lives behind a chain of pointer
+             fields inside the FCS-resolved struct. Each element after the first becomes an
+             additional PointerPath hop that ResolvePointerPath treats as a pointer dereference
+             (only the first hop does the ASM RIP-follow). The very last offset is a non-deref
+             trailing add, so the returned address = penultimate_ptr + offsetChain[^1].
+            
+             Example: CHATLOG = Framework[isPointer] → UIModule @ Framework+0x2B68 → RaptureLogModule @ UIModule+0x19E0
+               offsetChain = [0x2B68, 0x19E0]
+               final PointerPath = [rewindBack, 0 (deref Framework ptr), 0x2B68 (deref UIModule field), 0x19E0 (trailing add)]
+             </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.LuminaXivDatabaseProvider.ResolveSqpackPath(Sharlayan.SharlayanConfiguration)">
+            <summary>
+            Resolves the sqpack directory path either from the explicit
+            <see cref="P:Sharlayan.SharlayanConfiguration.GameInstallPath"/> override, or (falling back)
+            from the running game's MainModule file path (ffxiv_dx11.exe sits next to sqpack/).
+            </summary>
+        </member>
+    </members>
+</doc>

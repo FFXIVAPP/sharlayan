@@ -6,7 +6,7 @@ Out-of-process memory reader for **Final Fantasy XIV** (Windows, DirectX 11). Or
 
 The long-dead [sharlayan-resources](https://github.com/FFXIVAPP/sharlayan-resources) JSON feed is gone. Signatures, struct offsets, and game-data lookups now come from two actively maintained upstreams:
 
-- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** (vendored as a git submodule and ILRepacked into `Sharlayan.dll`) provides the game struct layouts and `[StaticAddress]` byte patterns. Every FFXIV patch day, bumping the submodule is usually enough.
+- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** (vendored as a git submodule and ILRepacked into `Sharlayan.dll`) provides the game struct layouts and `[StaticAddress]` byte patterns.
 - **[Lumina](https://github.com/NotAdam/Lumina)** reads `sqpack` directly for `xivdatabase` content — action names, status effects, territory/map rows — so the library no longer ships a separate JSON mirror of the game's Excel data.
 
 The resulting provider (`FFXIVClientStructsDirect`) is the default; `LegacySharlayanResources` remains available as an opt-in fallback but is marked `[Obsolete]`.
