@@ -15,6 +15,7 @@
 namespace Sharlayan.Resources.Providers {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Sharlayan.Models;
@@ -22,6 +23,7 @@ namespace Sharlayan.Resources.Providers {
     using Sharlayan.Models.XIVDatabase;
     using Sharlayan.Resources.Mappers;
 
+    using Signatures = Sharlayan.Signatures;
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
     internal sealed class FFXIVClientStructsDirectProvider : IResourceProvider {
@@ -49,21 +51,43 @@ namespace Sharlayan.Resources.Providers {
         }
 
         public Task<Signature[]> GetSignaturesAsync(SharlayanConfiguration configuration) {
-            // Signatures via FFXIVClientStructs are deferred: its InteropGenerator.Runtime.Resolver
-            // expects in-process memory and a full .text section copy. Sharlayan is out-of-process.
-            // A faithful port needs to:
-            //   1. ReadProcessMemory the game's .text section into a pinned local buffer.
-            //   2. Walk each relevant FFXIVClientStructs type's Instance() / [StaticAddress]
-            //      attribute for its scan signature + RIP-relative offsets.
-            //   3. Match the pattern in the local buffer, compute the corresponding in-game
-            //      address (gameBase + offset), and post-apply any Sharlayan-side field offset
-            //      (e.g. CHARMAP = CharacterManager.Instance() + offset_of(_battleCharas)).
+            // Sharlayan's Scanner consumes Signature[] and produces one MemoryLocation per Key.
+            // We build those Signatures from FFXIVClientStructs' [StaticAddress] metadata via the
+            // extractor, then attach a final PointerPath hop to reach the exact field inside the
+            // resolved struct that Sharlayan's Reader expects at that scanner key.
             //
-            // Until that lands, consumers who opt into FFXIVClientStructsDirect get an empty
-            // Signature[] — Scanner.Locations stays empty and Reader methods that depend on
-            // signatures return empty results rather than crashing. Consumers that need
-            // signatures should stay on LegacySharlayanResources (still the default).
-            return Task.FromResult(Array.Empty<Signature>());
+            // The (FFXIVClientStructs type → inner offset) table below is hand-curated per scanner
+            // key. Innerset is where the field Sharlayan reads lives inside the struct pointed to by
+            // FFXIVClientStructs' static-address resolver. Keys not yet mapped fall back to the
+            // legacy JSON signatures if UseLocalCache is on and a JSON file sits next to the app,
+            // otherwise they're simply missing (Scanner.Locations won't contain them, and the
+            // corresponding Reader.CanGet* calls return false).
+            List<Signature> signatures = new List<Signature>();
+            TryAdd(signatures, Signatures.CHARMAP_KEY,    "GameObjectManager", innerOffset: 0x20);     // ObjectArrays._indexSorted — 819 x GameObject*
+            TryAdd(signatures, Signatures.PLAYERINFO_KEY, "PlayerState",       innerOffset: 0);        // PlayerState struct base
+            TryAdd(signatures, Signatures.PARTYMAP_KEY,   "GroupManager",      innerOffset: 0x20);     // MainGroup._partyMembers[0]
+            TryAdd(signatures, Signatures.PARTYCOUNT_KEY, "GroupManager",      innerOffset: 0x7FFC);   // MainGroup.MemberCount (MainGroup @ 0x20 + MemberCount @ 0x7FDC)
+            TryAdd(signatures, Signatures.TARGET_KEY,     "TargetSystem",      innerOffset: 0);        // TargetSystem struct base
+            // TODO(P3-B9 follow-up): CHATLOG / HOTBAR go through Framework.Instance()->GetUIModule()
+            // which is a method call chain (not expressible in Sharlayan's PointerPath model).
+            // Needs a different resolver path. Tracked in refactor notes.
+            // TODO(P3-B9 follow-up): INVENTORY / RECAST / MAPINFO / ZONEINFO / ENMITYMAP / ENMITY_COUNT /
+            // AGROMAP / AGRO_COUNT / COOLDOWNS / JOBRESOURCES — need confirmed inner-offset math against
+            // live comparisons with legacy scanner addresses.
+            return Task.FromResult(signatures.ToArray());
+        }
+
+        private static void TryAdd(List<Signature> list, string sharlayanKey, string fcsTypeName, long innerOffset) {
+            if (!FFXIVClientStructsSignatureExtractor.TryGet(fcsTypeName, out var info)) {
+                return;
+            }
+            try {
+                list.Add(FFXIVClientStructsSignatureExtractor.BuildSignature(sharlayanKey, info, innerOffset));
+            }
+            catch {
+                // Conversion failures (bad pattern length etc.) should not prevent other keys from
+                // resolving — individual missing keys are already handled by Reader.CanGet* guards.
+            }
         }
 
         public Task GetActionsAsync(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {

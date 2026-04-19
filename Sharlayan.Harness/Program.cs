@@ -311,6 +311,59 @@ internal static class Program {
             Log(string.Empty);
         }
 
+        // [7] Direct provider scanner — compare addresses vs legacy ----------
+        // P3-B9: FFXIVClientStructsDirect now produces real Signature[] derived from
+        // FFXIVClientStructs' [StaticAddress] attributes + hand-curated inner offsets.
+        // Validation strategy: for every key both providers resolve, the pointer
+        // address must match. A mismatch means either the pattern (FCS side) or the
+        // inner offset (our side) is off for that key.
+        Log("[7] FFXIVCLIENTSTRUCTSDIRECT SCANNER ADDRESSES (vs Legacy)");
+        try {
+            var directScanDone = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            MemoryHandler? directHandler = SharlayanMemoryManager.Instance.AddHandler(directConfig);
+            directHandler.OnMemoryLocationsFound += (_, _, _) => directScanDone.TrySetResult(true);
+            if (directHandler.Scanner.Locations.Count > 0) directScanDone.TrySetResult(true);
+            await Task.WhenAny(directScanDone.Task, Task.Delay(30_000));
+
+            int directCount = directHandler.Scanner.Locations.Count;
+            Log($"  Direct scanner: {directCount} location(s)");
+            if (handler == null) {
+                Log("  (legacy handler missing — cannot diff)");
+            }
+            else {
+                var allKeys = new SortedSet<string>(handler.Scanner.Locations.Keys);
+                foreach (var k in directHandler.Scanner.Locations.Keys) allKeys.Add(k);
+                int matching = 0;
+                int diverging = 0;
+                int onlyLegacy = 0;
+                int onlyDirect = 0;
+                foreach (string key in allKeys) {
+                    handler.Scanner.Locations.TryGetValue(key, out var legacyLoc);
+                    directHandler.Scanner.Locations.TryGetValue(key, out var directLoc);
+                    IntPtr legacyAddr = legacyLoc == null ? IntPtr.Zero : (IntPtr)legacyLoc;
+                    IntPtr directAddr = directLoc == null ? IntPtr.Zero : (IntPtr)directLoc;
+                    if (legacyAddr != IntPtr.Zero && directAddr != IntPtr.Zero) {
+                        bool same = legacyAddr == directAddr;
+                        Log($"    {(same ? "✓" : "⚠")} {key,-14} legacy=0x{legacyAddr.ToInt64():X12} direct=0x{directAddr.ToInt64():X12}{(same ? string.Empty : "  MISMATCH")}");
+                        if (same) matching++; else diverging++;
+                    }
+                    else if (legacyAddr != IntPtr.Zero) {
+                        Log($"    · {key,-14} legacy only (0x{legacyAddr.ToInt64():X12})");
+                        onlyLegacy++;
+                    }
+                    else {
+                        Log($"    · {key,-14} direct only (0x{directAddr.ToInt64():X12})");
+                        onlyDirect++;
+                    }
+                }
+                Log($"  === {matching} match, {diverging} diff, {onlyLegacy} legacy-only, {onlyDirect} direct-only ===");
+            }
+        }
+        catch (Exception ex) {
+            Log($"  ✗ Direct scanner failed: {ex.GetType().Name}: {ex.Message}");
+        }
+        Log(string.Empty);
+
         // [6] Lumina xivdatabase smoke test -----------------------------------
         Log("[6] LUMINA XIVDATABASE VALIDATION (FFXIVClientStructsDirect path)");
         try {
