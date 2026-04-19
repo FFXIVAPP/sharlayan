@@ -40,6 +40,8 @@ namespace Sharlayan.Resources.Providers {
                 InventoryContainer = InventoryContainerMapper.Build(),
                 EnmityItem = EnmityItemMapper.Build(),
                 TargetInfo = TargetInfoMapper.Build(),
+                HotBarItem = HotBarItemMapper.Build(),
+                RecastItem = RecastItemMapper.Build(),
             });
         }
 
