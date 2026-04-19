@@ -32,9 +32,9 @@ Each of these has a `public static partial Instance()` method decorated with `[S
 
 ---
 
-## Multi-hop chain dependencies (hard-coded offsets)
+## Multi-hop chain dependencies (reflection-derived)
 
-`CHATLOG`, `HOTBAR`, and `RECAST` walk a chain of FCS structs. Each intermediate hop has a `[FieldOffset]` that Sharlayan encodes as a **hard-coded long in the provider** — if upstream changes the offset, the final address lands in the wrong place without any compile error. The integrity test validates each hard-coded hop equals the current `Marshal.OffsetOf<T>(nameof(Field))`.
+`CHATLOG`, `HOTBAR`, and `RECAST` walk a chain of FCS structs. Every hop offset is computed at provider-build time via `FieldOffsetReader.OffsetOf<T>(nameof(Field))`, which reads the `[FieldOffset]` attribute. When FCS bumps an offset, the scanner key automatically lands on the new address — no code change needed. The integrity test pins the **current known-good values** so a submodule bump that moved a field fails loudly and prompts a `DEPENDENCY.md` refresh.
 
 ### CHATLOG: `Framework` → `UIModule` → `RaptureLogModule`
 
@@ -101,8 +101,9 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 
 Upstream FCS changes that will surface as failures (in order of severity):
 
-1. **Renamed struct field referenced via `nameof(T.Field)`** — Sharlayan.csproj fails to build. Trivial to spot and fix.
-2. **Renamed struct field referenced by string in `FieldOffsetReader`** — passes compile, fails at mapper build time (test: `FCSDependencyIntegrityTests.PrivateFieldOffsets_Resolve`).
-3. **Renamed singleton type (e.g. `BGMSystem` → `BGMPlayer`)** — passes compile, scanner key silently missing at runtime (test: `FCSDependencyIntegrityTests.SingletonTypeNames_Resolve`).
-4. **Changed `[FieldOffset]` on a hard-coded chain hop (e.g. `Framework.UIModule`)** — no error, scanner key resolves to wrong memory (test: `FCSDependencyIntegrityTests.HardCodedChainOffsets_Match`).
-5. **`[StaticAddress]` attribute removed / pattern changed** — test catches absence; a pattern change is silent until an actual scan runs against the current game binary and misses (detected by `harness.ps1` [7] diff).
+1. **Renamed public struct field referenced via `nameof(T.Field)`** — Sharlayan.csproj fails to build. Trivial to spot and fix. Covers every mapper + provider + `Reader.GameState` site that uses the public field name.
+2. **Renamed private field referenced by string in `FieldOffsetReader`** — passes compile; the integrity test catches it (`PrivateFieldOffset_*_Resolves`).
+3. **Renamed singleton type (e.g. `BGMSystem` → `BGMPlayer`)** — the extractor cache's name lookup fails; integrity test catches it (`SingletonTypeNames_Resolve`).
+4. **Changed `[FieldOffset]` on any referenced field** — the provider and `Reader.GameState` inherit the new offset automatically and **keep working**. The integrity test's documentation pins fail with a clear before/after value, prompting a `DEPENDENCY.md` refresh but not a fix.
+5. **`[StaticAddress]` attribute removed** — test catches absence.
+6. **`[StaticAddress]` pattern changed but attribute preserved** — silent; detected only by running `harness.ps1` against the current game binary (the [7] scanner diff will flag the miss).

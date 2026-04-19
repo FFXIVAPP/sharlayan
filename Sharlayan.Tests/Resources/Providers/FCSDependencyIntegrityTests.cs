@@ -134,11 +134,49 @@ namespace Sharlayan.Tests.Resources.Providers {
             AssertPrivateFieldExists<PlayerState>("_classJobExperience");
         }
 
+        [Fact]
+        public void PrivateFieldOffset_Hate_hateInfo_Resolves() {
+            // Used by FFXIVClientStructsDirectProvider for ENMITYMAP (UIState.Hate._hateInfo).
+            AssertPrivateFieldExists<Hate>("_hateInfo");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_Hater_haters_Resolves() {
+            // Used by FFXIVClientStructsDirectProvider for AGROMAP (UIState.Hater._haters).
+            AssertPrivateFieldExists<Hater>("_haters");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_RaptureHotbarModule_hotbars_Resolves() {
+            // Used by FFXIVClientStructsDirectProvider for HOTBAR (_hotbars[0] inside RaptureHotbarModule).
+            AssertPrivateFieldExists<RaptureHotbarModule>("_hotbars");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_ActionBarNumberArray_bars_Resolves() {
+            // Used by FFXIVClientStructsDirectProvider for RECAST (_bars inside ActionBarNumberArray).
+            AssertPrivateFieldExists<ActionBarNumberArray>("_bars");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_UIModule_RaptureLogModule_Resolves() {
+            // Internal field — referenced via string in the provider.
+            AssertPrivateFieldExists<UIModule>("RaptureLogModule");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_UIModule_RaptureHotbarModule_Resolves() {
+            AssertPrivateFieldExists<UIModule>("RaptureHotbarModule");
+        }
+
         // ------------------------------------------------------------------------------
-        // Hard-coded chain offsets in FFXIVClientStructsDirectProvider. Each number below
-        // is supposed to track the current [FieldOffset] on the named FCS field. If FCS
-        // bumps the field's offset, the scanner resolves to the wrong address without any
-        // compile or attribute warning — the only way to catch it is to re-derive here.
+        // Known-good offsets — documentation pins, not provider guards. The provider now
+        // reads these from [FieldOffset] at runtime, so a change upstream silently
+        // propagates to correct scanner addresses. These assertions instead:
+        //   (1) Pin the current known-good value so DEPENDENCY.md stays accurate;
+        //   (2) Fail loudly on the first run after a submodule bump that moved the field,
+        //       prompting the author to verify the new offset and update DEPENDENCY.md.
+        // The asserted constants are only "hard-coded" in the test, never in production.
         // ------------------------------------------------------------------------------
 
         // All hard-coded offsets are verified by reading the [FieldOffset] attribute from

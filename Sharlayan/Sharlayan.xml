@@ -90,15 +90,26 @@
         <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)">
             <summary>
             Returns the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute"/> value of <paramref name="fieldName"/>
-            on type <typeparamref name="T"/>. Works for both public fields (where
-            <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> would also work) and internal / private fields
-            (e.g. FFXIVClientStructs' <c>_name</c> FixedSizeArray backing fields, which
-            <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> cannot reach across assembly boundaries).
-            Prefer <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf``1(System.String)"/> directly when the field is
-            public — this method exists for the internal-field case.
+            on type <typeparamref name="T"/>. Works for public and internal/private fields, and
+            for types that <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> rejects because they carry managed
+            function pointers (AtkStage, UIModule, RaptureHotbarModule).
             </summary>
             <exception cref="T:System.MissingFieldException">Field not found on the type.</exception>
             <exception cref="T:System.InvalidOperationException">Field exists but has no FieldOffsetAttribute.</exception>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf(System.Type,System.String)">
+            <inheritdoc cref="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)"/>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf``1">
+            <summary>
+            Returns the size declared on <typeparamref name="T"/> via
+            <c>[StructLayout(Size = N)]</c>. Equivalent to <see cref="M:System.Runtime.InteropServices.Marshal.SizeOf``1"/>
+            for blittable types, but also works for FCS types that contain managed function
+            pointers (which <see cref="T:System.Runtime.InteropServices.Marshal"/> can't size).
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf(System.Type)">
+            <inheritdoc cref="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf``1"/>
         </member>
         <member name="M:Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.BuildSignature(System.String,Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.StaticAddressInfo,System.Int64)">
             <summary>

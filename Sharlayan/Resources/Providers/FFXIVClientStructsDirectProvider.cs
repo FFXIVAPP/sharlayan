@@ -6,9 +6,10 @@
 // <summary>
 //   Populates Sharlayan's StructuresContainer and Signature[] using FFXIVClientStructs
 //   types directly (referenced as a git submodule + ProjectReference, ILRepacked into
-//   Sharlayan.dll). Field offsets come from [FieldOffset] attributes on generated types;
-//   signatures resolve via InteropGenerator.Runtime.Resolver against the running game.
-//   xivdatabase methods are delegated to LuminaXivDatabaseProvider.
+//   Sharlayan.dll). Every inner offset in this file is derived via reflection from the
+//   current FCS submodule — no hard-coded field offsets. When FCS bumps, this file
+//   inherits the new offsets without edits. xivdatabase methods are delegated to
+//   LuminaXivDatabaseProvider.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -18,11 +19,23 @@ namespace Sharlayan.Resources.Providers {
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using FFXIVClientStructs.FFXIV.Client.Game;
+    using FFXIVClientStructs.FFXIV.Client.Game.Group;
+    using FFXIVClientStructs.FFXIV.Client.Game.Object;
+    using FFXIVClientStructs.FFXIV.Client.Game.UI;
+    using FFXIVClientStructs.FFXIV.Client.UI;
+    using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
+    using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+    using FFXIVClientStructs.FFXIV.Component.GUI;
+
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
     using Sharlayan.Models.XIVDatabase;
     using Sharlayan.Resources.Mappers;
 
+    // FCS has its own `Task` class in Client.System.Framework; alias Framework instead of
+    // importing the namespace to avoid colliding with System.Threading.Tasks.Task.
+    using Framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework;
     using Signatures = Sharlayan.Signatures;
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
@@ -30,10 +43,6 @@ namespace Sharlayan.Resources.Providers {
         private readonly LuminaXivDatabaseProvider _xivDatabase = new LuminaXivDatabaseProvider();
 
         public Task<StructuresContainer> GetStructuresAsync(SharlayanConfiguration configuration) {
-            // P3-B7: per-struct mappers are being added one at a time. Each mapper below
-            // corresponds to a class in Sharlayan/Models/Structures and populates its
-            // int-offset fields from FFXIVClientStructs struct layouts via
-            // Marshal.OffsetOf / FieldOffsetReader. Unmapped Sharlayan fields default to 0.
             return Task.FromResult(new StructuresContainer {
                 ActorItem = ActorItemMapper.Build(),
                 PartyMember = PartyMemberMapper.Build(),
@@ -51,55 +60,94 @@ namespace Sharlayan.Resources.Providers {
         }
 
         public Task<Signature[]> GetSignaturesAsync(SharlayanConfiguration configuration) {
-            // Sharlayan's Scanner consumes Signature[] and produces one MemoryLocation per Key.
-            // We build those Signatures from FFXIVClientStructs' [StaticAddress] metadata via the
-            // extractor, then attach a final PointerPath hop to reach the exact field inside the
-            // resolved struct that Sharlayan's Reader expects at that scanner key.
+            // Every inner offset below is resolved via FieldOffsetReader, which reads
+            // [FieldOffset] attributes at runtime. When FCS bumps a field's offset, this
+            // file inherits the change for free — no edits, no patch-day diff.
             //
-            // The (FFXIVClientStructs type → inner offset) table below is hand-curated per scanner
-            // key. Innerset is where the field Sharlayan reads lives inside the struct pointed to by
-            // FFXIVClientStructs' static-address resolver. Keys not yet mapped fall back to the
-            // legacy JSON signatures if UseLocalCache is on and a JSON file sits next to the app,
-            // otherwise they're simply missing (Scanner.Locations won't contain them, and the
-            // corresponding Reader.CanGet* calls return false).
+            // For keys whose Reader target is a nested field (e.g. GroupManager.MainGroup
+            // → Group.MemberCount), we sum the hop offsets. The integrity test covers
+            // renames and layout shifts; a silent move WITHIN a struct still resolves.
             List<Signature> signatures = new List<Signature>();
-            // Core singleton structs — directly accessible via [StaticAddress] LEA patterns.
-            TryAdd(signatures, Signatures.CHARMAP_KEY,      "GameObjectManager", innerOffset: 0x20);     // ObjectArrays._indexSorted (819 × GameObject*)
-            TryAdd(signatures, Signatures.PLAYERINFO_KEY,   "PlayerState",       innerOffset: 0);        // PlayerState struct base
-            TryAdd(signatures, Signatures.PARTYMAP_KEY,     "GroupManager",      innerOffset: 0x20);     // MainGroup (Group @ +0x20) → _partyMembers[0] @ Group+0x00
-            TryAdd(signatures, Signatures.PARTYCOUNT_KEY,   "GroupManager",      innerOffset: 0x7FFC);   // MainGroup.MemberCount @ Group+0x7FDC → GroupManager+0x7FFC
-            TryAdd(signatures, Signatures.TARGET_KEY,       "TargetSystem",      innerOffset: 0);        // TargetSystem struct base
-            TryAdd(signatures, Signatures.INVENTORY_KEY,    "InventoryManager",  innerOffset: 0x1E08);   // Inventories pointer field — Reader does GetInt64(KEY) to deref
-            TryAdd(signatures, Signatures.JOBRESOURCES_KEY, "JobGaugeManager",   innerOffset: 0);        // JobGaugeManager struct base; gauge data union @ +0x08
-            // RECAST used to point at ActionManager._cooldowns (raw RecastDetail array), but
-            // Sharlayan.Reader.Actions reads IsAvailable / InRange / ChargeReady / CoolDownPercent /
-            // Icon / ActionProc off each slot — those are the hotbar *UI* state, not ActionManager
-            // timers. The UI state lives in the AtkStage-owned NumberArrayData for ActionBar. Walk
-            // the chain down to ActionBarNumberArray._bars[0] (@+60 inside the IntArray).
+
+            // --- Flat struct targets ---------------------------------------------------
+            // CHARMAP → GameObjectManager.Objects (ObjectArrays); _indexSorted is at +0 inside.
+            TryAdd(signatures, Signatures.CHARMAP_KEY, "GameObjectManager",
+                FieldOffsetReader.OffsetOf<GameObjectManager>(nameof(GameObjectManager.Objects)));
+
+            // PLAYERINFO → PlayerState struct base.
+            TryAdd(signatures, Signatures.PLAYERINFO_KEY, "PlayerState", 0);
+
+            // PARTYMAP → GroupManager.MainGroup (_partyMembers at Group+0, so offset equals MainGroup's).
+            TryAdd(signatures, Signatures.PARTYMAP_KEY, "GroupManager",
+                FieldOffsetReader.OffsetOf<GroupManager>(nameof(GroupManager.MainGroup)));
+
+            // PARTYCOUNT → GroupManager.MainGroup + Group.MemberCount.
+            TryAdd(signatures, Signatures.PARTYCOUNT_KEY, "GroupManager",
+                FieldOffsetReader.OffsetOf<GroupManager>(nameof(GroupManager.MainGroup)) +
+                FieldOffsetReader.OffsetOf<GroupManager.Group>(nameof(GroupManager.Group.MemberCount)));
+
+            // TARGET → TargetSystem struct base.
+            TryAdd(signatures, Signatures.TARGET_KEY, "TargetSystem", 0);
+
+            // INVENTORY → InventoryManager.Inventories (pointer field Reader deref's via GetInt64).
+            TryAdd(signatures, Signatures.INVENTORY_KEY, "InventoryManager",
+                FieldOffsetReader.OffsetOf<InventoryManager>(nameof(InventoryManager.Inventories)));
+
+            // JOBRESOURCES → JobGaugeManager struct base; gauge data union is at +0x08 inside.
+            TryAdd(signatures, Signatures.JOBRESOURCES_KEY, "JobGaugeManager", 0);
+
+            // MAPINFO → GameMain.TransitionTerritoryTypeId (= CurrentTerritoryTypeId in stable
+            // state; CurrentMapId sits at +8 from there, which is what Reader reads at KEY+8).
+            TryAdd(signatures, Signatures.MAPINFO_KEY, "GameMain",
+                FieldOffsetReader.OffsetOf<GameMain>(nameof(GameMain.TransitionTerritoryTypeId)));
+
+            // ZONEINFO → TerritoryInfo.MapIdOverride.
+            TryAdd(signatures, Signatures.ZONEINFO_KEY, "TerritoryInfo",
+                FieldOffsetReader.OffsetOf<TerritoryInfo>(nameof(TerritoryInfo.MapIdOverride)));
+
+            // ENMITY/AGRO family: UIState → UIState.Hate._hateInfo / HateArrayLength /
+            // Hater._haters / HaterCount. Using reflection avoids both inner-struct and
+            // outer-field layout drift.
+            int hateOff   = FieldOffsetReader.OffsetOf<UIState>(nameof(UIState.Hate));
+            int haterOff  = FieldOffsetReader.OffsetOf<UIState>(nameof(UIState.Hater));
+            TryAdd(signatures, Signatures.ENMITYMAP_KEY,    "UIState", hateOff  + FieldOffsetReader.OffsetOf<Hate>("_hateInfo"));
+            TryAdd(signatures, Signatures.ENMITY_COUNT_KEY, "UIState", hateOff  + FieldOffsetReader.OffsetOf<Hate>(nameof(Hate.HateArrayLength)));
+            TryAdd(signatures, Signatures.AGROMAP_KEY,      "UIState", haterOff + FieldOffsetReader.OffsetOf<Hater>("_haters"));
+            TryAdd(signatures, Signatures.AGRO_COUNT_KEY,   "UIState", haterOff + FieldOffsetReader.OffsetOf<Hater>(nameof(Hater.HaterCount)));
+
+            // --- GameState family ------------------------------------------------------
+            TryAdd(signatures, Signatures.GAMEMAIN_KEY,       "GameMain",       0);
+            TryAdd(signatures, Signatures.CONDITIONS_KEY,     "Conditions",     0);
+            TryAdd(signatures, Signatures.CONTENTSFINDER_KEY, "ContentsFinder", 0);
+            TryAdd(signatures, Signatures.WEATHER_KEY,        "WeatherManager", 0);
+            TryAdd(signatures, Signatures.BGMSYSTEM_KEY,      "BGMSystem",      0);
+
+            // --- Multi-hop chains ------------------------------------------------------
+            // CHATLOG: Framework (isPointer=true) → UIModule* @ Framework.UIModule → trailing
+            // add to RaptureLogModule within UIModule.
+            TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework",
+                FieldOffsetReader.OffsetOf<Framework>(nameof(Framework.UIModule)),        // deref to UIModule*
+                FieldOffsetReader.OffsetOf<UIModule>("RaptureLogModule"));                // trailing add
+
+            // HOTBAR: Framework → UIModule* → trailing add to _hotbars[0] inside
+            // UIModule.RaptureHotbarModule. The trailing hop is additive (no deref),
+            // so the two nested field offsets are summed.
+            TryAddChain(signatures, Signatures.HOTBAR_KEY, "Framework",
+                FieldOffsetReader.OffsetOf<Framework>(nameof(Framework.UIModule)),        // deref to UIModule*
+                FieldOffsetReader.OffsetOf<UIModule>("RaptureHotbarModule") +
+                FieldOffsetReader.OffsetOf<RaptureHotbarModule>("_hotbars"));             // trailing add
+
+            // RECAST: AtkStage (isPointer=true) → AtkArrayDataHolder* → NumberArrays** →
+            // NumberArrays[ActionBar = 7] → NumberArrayData* → IntArray (int*) → trailing
+            // add to ActionBarNumberArray._bars[0]. Each pointer-array index is 8 bytes
+            // (size of a pointer), so the ActionBar hop is `(int)ActionBar * 8`.
             TryAddChain(signatures, Signatures.RECAST_KEY, "AtkStage",
-                0x38,    // AtkStage → AtkArrayDataHolder* @ +0x38
-                0x18,    // AtkArrayDataHolder → NumberArrays** @ +0x18
-                7 * 8,   // NumberArrays[NumberArrayType.ActionBar = 7] @ +56
-                0x28,    // NumberArrayData.IntArray @ +0x28 → ActionBarNumberArray*
-                60);     // ActionBarNumberArray._bars @ +60 (skips HotBarLocked + padding)
-            TryAdd(signatures, Signatures.MAPINFO_KEY,      "GameMain",          innerOffset: 0x4118);   // TransitionTerritoryTypeId (= CurrentTerritory in stable state); +8 gives CurrentMapId @ 0x4120
-            TryAdd(signatures, Signatures.ZONEINFO_KEY,     "TerritoryInfo",     innerOffset: 0x14);     // MapIdOverride; Reader uses +0 as currentActiveMapID override
-            TryAdd(signatures, Signatures.ENMITYMAP_KEY,    "UIState",           innerOffset: 0x08);     // UIState.Hate._hateInfo[0] (32 × HateInfo × 0x08 bytes)
-            TryAdd(signatures, Signatures.ENMITY_COUNT_KEY, "UIState",           innerOffset: 0x108);    // UIState.Hate.HateArrayLength
-            TryAdd(signatures, Signatures.AGROMAP_KEY,      "UIState",           innerOffset: 0x110);    // UIState.Hater._haters[0] (32 × HaterInfo × 0x48 bytes)
-            TryAdd(signatures, Signatures.AGRO_COUNT_KEY,   "UIState",           innerOffset: 0xA10);    // UIState.Hater.HaterCount
-            // Multi-hop: Framework (isPointer=true) → UIModule* @ +0x2B68 → sub-module inside UIModule.
-            // ResolvePointerPath: hop0 = ASM follow of Framework static ptr, hop1 = deref to Framework,
-            // hop2 = +0x2B68 then deref to UIModule, hop3 = +inner (trailing add, no deref).
-            TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework", 0x2B68, 0x19E0);            // UIModule → RaptureLogModule
-            TryAddChain(signatures, Signatures.HOTBAR_KEY,  "Framework", 0x2B68, 0x57B80 + 0xA0);    // UIModule → RaptureHotbarModule → _hotbars[0] @ +0xA0
-            // Game-state family: each of these maps to an FCS singleton. Reader.GameState
-            // reads specific byte/ushort/bool fields at fixed inner offsets off these bases.
-            TryAdd(signatures, Signatures.GAMEMAIN_KEY,       "GameMain",       innerOffset: 0);     // TerritoryLoadState @ +0x4100, ConnectedToZone @ +0x40FE
-            TryAdd(signatures, Signatures.CONDITIONS_KEY,     "Conditions",     innerOffset: 0);     // WatchingCutscene @ +58, BoundByDuty @ +34, WaitingForDutyFinder @ +59
-            TryAdd(signatures, Signatures.CONTENTSFINDER_KEY, "ContentsFinder", innerOffset: 0);     // QueueInfo.QueueState @ +0x20 + 0x55 = +0x75
-            TryAdd(signatures, Signatures.WEATHER_KEY,        "WeatherManager", innerOffset: 0);     // WeatherId @ +0x64
-            TryAdd(signatures, Signatures.BGMSYSTEM_KEY,      "BGMSystem",      innerOffset: 0);     // Scenes StdVector @ +0xC0 (extractor handles isPointer=true)
+                FieldOffsetReader.OffsetOf<AtkStage>(nameof(AtkStage.AtkArrayDataHolder)),         // deref
+                FieldOffsetReader.OffsetOf<AtkArrayDataHolder>(nameof(AtkArrayDataHolder.NumberArrays)), // deref
+                (int)NumberArrayType.ActionBar * sizeof(long),                                     // deref NumberArrays[7]
+                FieldOffsetReader.OffsetOf<NumberArrayData>(nameof(NumberArrayData.IntArray)),     // deref IntArray*
+                FieldOffsetReader.OffsetOf<ActionBarNumberArray>("_bars"));                        // trailing add
+
             return Task.FromResult(signatures.ToArray());
         }
 

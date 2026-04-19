@@ -17,9 +17,32 @@ namespace Sharlayan {
     using System;
     using System.IO;
 
+    using FCSGame = FFXIVClientStructs.FFXIV.Client.Game;
+    using FCSGameUI = FFXIVClientStructs.FFXIV.Client.Game.UI;
+
     using Sharlayan.Models.ReadResults;
+    using Sharlayan.Resources.Mappers;
 
     public partial class Reader {
+        // Every inner offset used by GetGameState is derived at class init via
+        // FieldOffsetReader reading [FieldOffset] attributes on FCS structs. Caching as
+        // static readonly avoids reflecting on every frame — GetGameState is typically
+        // polled at UI refresh rates.
+        private static readonly int GameMainTerritoryLoadStateOffset = FieldOffsetReader.OffsetOf<FCSGame.GameMain>(nameof(FCSGame.GameMain.TerritoryLoadState));
+        private static readonly int ConditionsOccupiedInCutSceneEventOffset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.OccupiedInCutSceneEvent));
+        private static readonly int ConditionsWatchingCutsceneOffset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.WatchingCutscene));
+        private static readonly int ConditionsWatchingCutscene78Offset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.WatchingCutscene78));
+        private static readonly int ContentsFinderQueueStateOffset =
+            FieldOffsetReader.OffsetOf<FCSGameUI.ContentsFinder>(nameof(FCSGameUI.ContentsFinder.QueueInfo)) +
+            FieldOffsetReader.OffsetOf<FCSGameUI.ContentsFinderQueueInfo>(nameof(FCSGameUI.ContentsFinderQueueInfo.QueueState));
+        private static readonly int WeatherManagerWeatherIdOffset = FieldOffsetReader.OffsetOf<FCSGame.WeatherManager>(nameof(FCSGame.WeatherManager.WeatherId));
+        private static readonly int BGMSystemScenesOffset = FieldOffsetReader.OffsetOf<FCSGame.BGMSystem>(nameof(FCSGame.BGMSystem.Scenes));
+        private static readonly int BGMSceneSize = FieldOffsetReader.SizeOf<FCSGame.BGMSystem.Scene>();
+        private static readonly int BGMScenePlayingBgmIdOffset = FieldOffsetReader.OffsetOf<FCSGame.BGMSystem.Scene>(nameof(FCSGame.BGMSystem.Scene.PlayingBgmId));
+        // StdVector<T> layout is fixed C++ ABI contract: (T* First, T* Last, T* End) at 0/8/16.
+        private const int StdVectorFirstOffset = 0;
+        private const int StdVectorLastOffset = 8;
+
         // Lumina GameData is lazily constructed on first GetGameState call and cached
         // for the Reader's lifetime. `_luminaAttempted` prevents re-probing the sqpack
         // path every frame when GameInstallPath is unset or the sqpack directory can't
@@ -42,10 +65,10 @@ namespace Sharlayan {
 
             var locations = this._memoryHandler.Scanner.Locations;
 
-            // --- GameMain: TerritoryLoadState @ +0x4100 (1=loading, 2=loaded, 3=unloading) ---
+            // --- GameMain.TerritoryLoadState (1=loading, 2=loaded, 3=unloading) ---
             if (locations.ContainsKey(Signatures.GAMEMAIN_KEY)) {
                 IntPtr gameMain = locations[Signatures.GAMEMAIN_KEY];
-                try { result.TerritoryLoadState = this._memoryHandler.GetByte(gameMain, 0x4100); } catch { /* ignore, leave default */ }
+                try { result.TerritoryLoadState = this._memoryHandler.GetByte(gameMain, GameMainTerritoryLoadStateOffset); } catch { /* ignore, leave default */ }
             }
 
             // IsLoggedIn: CurrentPlayer.Entity resolves with a non-zero entity ID.
@@ -58,27 +81,27 @@ namespace Sharlayan {
             result.IsReadyToRead = result.TerritoryLoadState == 2 && locations.ContainsKey(Signatures.CHARMAP_KEY);
 
             // --- Conditions: FCS exposes three cutscene-related flags on the same struct.
-            //   +35 OccupiedInCutSceneEvent — explicit cutscene-event condition (quest/story/etc).
-            //   +58 WatchingCutscene        — generic "watching a cutscene" flag.
-            //   +78 WatchingCutscene78      — secondary flag set during instance cutscenes.
+            //   OccupiedInCutSceneEvent — explicit cutscene-event condition (quest/story).
+            //   WatchingCutscene        — generic "watching a cutscene" flag.
+            //   WatchingCutscene78      — secondary flag set during instance cutscenes.
             // OR all three so short unskippable cutscenes (which only trip one) still register.
             if (locations.ContainsKey(Signatures.CONDITIONS_KEY)) {
                 IntPtr conditions = locations[Signatures.CONDITIONS_KEY];
                 try {
-                    byte occCutscene = this._memoryHandler.GetByte(conditions, 35);
-                    byte watching58  = this._memoryHandler.GetByte(conditions, 58);
-                    byte watching78  = this._memoryHandler.GetByte(conditions, 78);
+                    byte occCutscene = this._memoryHandler.GetByte(conditions, ConditionsOccupiedInCutSceneEventOffset);
+                    byte watching58  = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutsceneOffset);
+                    byte watching78  = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutscene78Offset);
                     result.WatchingCutscene = occCutscene != 0 || watching58 != 0 || watching78 != 0;
                 }
                 catch { /* ignore */ }
             }
 
-            // --- ContentsFinder.QueueInfo.QueueState @ +0x75 (QueueInfo @ ContentsFinder+0x20, QueueState @ QueueInfo+0x55) ---
+            // --- ContentsFinder.QueueInfo.QueueState
             // FCS ContentsFinderQueueState: 0=None, 1=Pending, 2=Queued, 3=Ready (popped!), 4=Accepted, 5=InContent.
             if (locations.ContainsKey(Signatures.CONTENTSFINDER_KEY)) {
                 IntPtr contentsFinder = locations[Signatures.CONTENTSFINDER_KEY];
                 try {
-                    byte state = this._memoryHandler.GetByte(contentsFinder, 0x20 + 0x55);
+                    byte state = this._memoryHandler.GetByte(contentsFinder, ContentsFinderQueueStateOffset);
                     result.ContentsFinderQueueState = state;
                     result.DutyFinderBellPopped = state == 3; // Ready — DF popped but not yet Accepted.
                     result.InInstance = state >= 4;           // Accepted (entering) or InContent.
@@ -86,27 +109,26 @@ namespace Sharlayan {
                 catch { /* ignore */ }
             }
 
-            // --- WeatherManager.WeatherId @ +0x64 (byte, row id in the Weather sheet) ---
+            // --- WeatherManager.WeatherId (byte, row id in the Weather sheet) ---
             if (locations.ContainsKey(Signatures.WEATHER_KEY)) {
                 IntPtr weather = locations[Signatures.WEATHER_KEY];
-                try { result.CurrentWeatherId = this._memoryHandler.GetByte(weather, 0x64); } catch { /* ignore */ }
+                try { result.CurrentWeatherId = this._memoryHandler.GetByte(weather, WeatherManagerWeatherIdOffset); } catch { /* ignore */ }
             }
 
-            // --- BGMSystem.Scenes StdVector @ +0xC0, iterate 0..N ---
-            // Scene layout: SceneId @ +0x00, BgmId @ +0x0C, PlayingBgmId @ +0x0E (ushort),
-            // stride 0x60. Scenes are priority-ordered — scene 0 (Event) wins over scene 11
-            // (Territory), so first non-zero PlayingBgmId is what the user is hearing.
+            // --- BGMSystem.Scenes StdVector, iterate 0..N ---
+            // Scenes are priority-ordered — scene 0 (Event) wins over scene 11 (Territory),
+            // so the first non-zero PlayingBgmId as we walk the vector is what the user is hearing.
             if (locations.ContainsKey(Signatures.BGMSYSTEM_KEY)) {
                 IntPtr bgmSystem = locations[Signatures.BGMSYSTEM_KEY];
                 try {
-                    long first = this._memoryHandler.GetInt64(bgmSystem, 0xC0);
-                    long last  = this._memoryHandler.GetInt64(bgmSystem, 0xC0 + 8);
+                    long first = this._memoryHandler.GetInt64(bgmSystem, BGMSystemScenesOffset + StdVectorFirstOffset);
+                    long last  = this._memoryHandler.GetInt64(bgmSystem, BGMSystemScenesOffset + StdVectorLastOffset);
                     if (first != 0 && last > first) {
-                        int sceneCount = (int)((last - first) / 0x60);
+                        int sceneCount = (int)((last - first) / BGMSceneSize);
                         if (sceneCount > 12) sceneCount = 12; // cap — 12 documented scene types.
                         for (int i = 0; i < sceneCount; i++) {
-                            IntPtr sceneAddr = new IntPtr(first + i * 0x60);
-                            ushort playing = this._memoryHandler.GetUInt16(sceneAddr, 0x0E);
+                            IntPtr sceneAddr = new IntPtr(first + i * BGMSceneSize);
+                            ushort playing = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePlayingBgmIdOffset);
                             if (playing != 0) {
                                 result.CurrentBgmId = playing;
                                 result.CurrentBgmSceneId = i;
