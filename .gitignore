@@ -119,3 +119,9 @@ Desktop.ini
 packages/
 distribution/
 published/
+
+.fake
+
+# Harness reports (timestamped, local-only)
+reports/
+harness-report*.txt

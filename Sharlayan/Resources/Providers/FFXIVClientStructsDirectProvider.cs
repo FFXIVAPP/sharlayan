@@ -63,17 +63,23 @@ namespace Sharlayan.Resources.Providers {
             // otherwise they're simply missing (Scanner.Locations won't contain them, and the
             // corresponding Reader.CanGet* calls return false).
             List<Signature> signatures = new List<Signature>();
-            TryAdd(signatures, Signatures.CHARMAP_KEY,    "GameObjectManager", innerOffset: 0x20);     // ObjectArrays._indexSorted — 819 x GameObject*
-            TryAdd(signatures, Signatures.PLAYERINFO_KEY, "PlayerState",       innerOffset: 0);        // PlayerState struct base
-            TryAdd(signatures, Signatures.PARTYMAP_KEY,   "GroupManager",      innerOffset: 0x20);     // MainGroup._partyMembers[0]
-            TryAdd(signatures, Signatures.PARTYCOUNT_KEY, "GroupManager",      innerOffset: 0x7FFC);   // MainGroup.MemberCount (MainGroup @ 0x20 + MemberCount @ 0x7FDC)
-            TryAdd(signatures, Signatures.TARGET_KEY,     "TargetSystem",      innerOffset: 0);        // TargetSystem struct base
-            // TODO(P3-B9 follow-up): CHATLOG / HOTBAR go through Framework.Instance()->GetUIModule()
-            // which is a method call chain (not expressible in Sharlayan's PointerPath model).
-            // Needs a different resolver path. Tracked in refactor notes.
-            // TODO(P3-B9 follow-up): INVENTORY / RECAST / MAPINFO / ZONEINFO / ENMITYMAP / ENMITY_COUNT /
-            // AGROMAP / AGRO_COUNT / COOLDOWNS / JOBRESOURCES — need confirmed inner-offset math against
-            // live comparisons with legacy scanner addresses.
+            // Core singleton structs — directly accessible via [StaticAddress] LEA patterns.
+            TryAdd(signatures, Signatures.CHARMAP_KEY,      "GameObjectManager", innerOffset: 0x20);     // ObjectArrays._indexSorted (819 × GameObject*)
+            TryAdd(signatures, Signatures.PLAYERINFO_KEY,   "PlayerState",       innerOffset: 0);        // PlayerState struct base
+            TryAdd(signatures, Signatures.PARTYMAP_KEY,     "GroupManager",      innerOffset: 0x20);     // MainGroup (Group @ +0x20) → _partyMembers[0] @ Group+0x00
+            TryAdd(signatures, Signatures.PARTYCOUNT_KEY,   "GroupManager",      innerOffset: 0x7FFC);   // MainGroup.MemberCount @ Group+0x7FDC → GroupManager+0x7FFC
+            TryAdd(signatures, Signatures.TARGET_KEY,       "TargetSystem",      innerOffset: 0);        // TargetSystem struct base
+            TryAdd(signatures, Signatures.INVENTORY_KEY,    "InventoryManager",  innerOffset: 0);        // InventoryManager struct base; Reader walks Inventories @ +0x1E08
+            TryAdd(signatures, Signatures.JOBRESOURCES_KEY, "JobGaugeManager",   innerOffset: 0);        // JobGaugeManager struct base; gauge data union @ +0x08
+            TryAdd(signatures, Signatures.RECAST_KEY,       "ActionManager",     innerOffset: 0x184);    // _cooldowns[0] — 80 × RecastDetail × 0x14 bytes
+            TryAdd(signatures, Signatures.MAPINFO_KEY,      "GameMain",          innerOffset: 0x4108);   // CurrentTerritoryTypeId; CurrentMapId @ +0x18 relative
+            TryAdd(signatures, Signatures.ZONEINFO_KEY,     "TerritoryInfo",     innerOffset: 0x14);     // MapIdOverride; ChatLinkMapIdOverride @ +0x04 relative
+            TryAdd(signatures, Signatures.ENMITYMAP_KEY,    "UIState",           innerOffset: 0x08);     // UIState.Hate._hateInfo[0] (32 × HateInfo × 0x08 bytes)
+            TryAdd(signatures, Signatures.ENMITY_COUNT_KEY, "UIState",           innerOffset: 0x108);    // UIState.Hate.HateArrayLength
+            TryAdd(signatures, Signatures.AGROMAP_KEY,      "UIState",           innerOffset: 0x110);    // UIState.Hater._haters[0] (32 × HaterInfo × 0x48 bytes)
+            TryAdd(signatures, Signatures.AGRO_COUNT_KEY,   "UIState",           innerOffset: 0xA10);    // UIState.Hater.HaterCount
+            // CHATLOG / HOTBAR require Framework.Instance()->GetUIModule() method-call chain —
+            // not expressible in Sharlayan's PointerPath model. Deferred.
             return Task.FromResult(signatures.ToArray());
         }
 

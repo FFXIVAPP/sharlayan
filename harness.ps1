@@ -31,6 +31,13 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = $PSScriptRoot
 
+# FFXIV's ACG blocks PROCESS_VM_READ from non-admin processes — must run elevated.
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Error "harness.ps1 must be run as Administrator (FFXIV blocks VM reads from non-elevated processes). Right-click your terminal and choose 'Run as administrator', then retry."
+    exit 1
+}
+
 # Build Sharlayan (unmerged) + the harness project.
 $buildArgs = @{
     Configuration = $Configuration
@@ -47,14 +54,23 @@ $harnessCsproj = Join-Path $repoRoot 'Sharlayan.Harness\Sharlayan.Harness.csproj
 dotnet build $harnessCsproj --configuration $Configuration -nowarn:CS1591 --nologo
 if ($LASTEXITCODE -ne 0) { throw 'Harness build failed.' }
 
-$reportPath = Join-Path $repoRoot 'harness-report.txt'
+$reportsDir = Join-Path $repoRoot 'reports'
+if (-not (Test-Path $reportsDir)) { New-Item -ItemType Directory -Path $reportsDir | Out-Null }
+
+$timestamp   = Get-Date -Format 'yyyyMMdd-HHmmss'
+$stampedPath = Join-Path $reportsDir "harness-$timestamp.txt"
+$latestPath  = Join-Path $repoRoot 'harness-report.txt'
+
 Write-Host ''
-Write-Host "==> Running Sharlayan.Harness (report -> $reportPath)" -ForegroundColor Cyan
-dotnet run --no-build --project $harnessCsproj --configuration $Configuration -- "--out=$reportPath"
+Write-Host "==> Running Sharlayan.Harness (report -> $stampedPath)" -ForegroundColor Cyan
+dotnet run --no-build --project $harnessCsproj --configuration $Configuration -- "--out=$stampedPath"
 if ($LASTEXITCODE -ne 0) {
     Write-Warning "Harness exited with code $LASTEXITCODE — see above for details."
     exit $LASTEXITCODE
 }
 
+Copy-Item -Path $stampedPath -Destination $latestPath -Force
+
 Write-Host ''
-Write-Host "✓ Report saved to $reportPath — paste its contents back to the refactor session." -ForegroundColor Green
+Write-Host "✓ Report saved to $stampedPath" -ForegroundColor Green
+Write-Host "✓ Latest copy  -> $latestPath" -ForegroundColor Green
