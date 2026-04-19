@@ -22,6 +22,7 @@ namespace Sharlayan {
 
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
+    using Sharlayan.Resources;
     using Sharlayan.Utilities;
 
     public class MemoryHandler : IDisposable {
@@ -305,7 +306,8 @@ namespace Sharlayan {
         }
 
         internal async Task ResolveMemoryStructures() {
-            this.Structures = await APIHelper.GetStructures(this.Configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(this.Configuration);
+            this.Structures = await provider.GetStructuresAsync(this.Configuration);
         }
 
         protected internal virtual void RaiseException(Logger logger, Exception ex) {

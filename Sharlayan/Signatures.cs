@@ -12,7 +12,7 @@ namespace Sharlayan {
     using System.Threading.Tasks;
 
     using Sharlayan.Models;
-    using Sharlayan.Utilities;
+    using Sharlayan.Resources;
 
     public static class Signatures {
         public const string AGRO_COUNT_KEY = "AGRO_COUNT";
@@ -48,7 +48,8 @@ namespace Sharlayan {
         public const string ZONEINFO_KEY = "ZONEINFO";
 
         public static async Task<Signature[]> Resolve(SharlayanConfiguration configuration) {
-            Signature[] signatures = await APIHelper.GetSignatures(configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+            Signature[] signatures = await provider.GetSignaturesAsync(configuration);
             return signatures;
         }
     }
