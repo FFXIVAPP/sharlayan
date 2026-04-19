@@ -415,6 +415,36 @@ internal static class Program {
             catch (Exception ex) {
                 Log($"    ✗ Party: {ex.GetType().Name}: {ex.Message}");
             }
+
+            // Chat log via direct provider — validates the Framework→UIModule→RaptureLogModule
+            // multi-hop signature AND the FCS-derived ChatLogPointers offsets in tandem. First
+            // call primes the cursor; (0,0) replays the historical ring buffer; last call polls
+            // for a delta. Mirrors [5d] but using the direct handler.
+            try {
+                if (!directHandler.Reader.CanGetChatLog()) {
+                    Log("    ✗ ChatLog direct: CanGetChatLog=false (CHATLOG signature didn't resolve)");
+                }
+                else {
+                    var primed     = directHandler.Reader.GetChatLog();
+                    var historical = directHandler.Reader.GetChatLog(0, 0);
+                    await Task.Delay(1500);
+                    var delta      = directHandler.Reader.GetChatLog(primed.PreviousArrayIndex, primed.PreviousOffset);
+
+                    int lHistCount = handler != null && handler.Reader.CanGetChatLog() ? handler.Reader.GetChatLog(0, 0).ChatLogItems.Count : -1;
+                    string cntMark = lHistCount < 0 ? "?" : (historical.ChatLogItems.Count == lHistCount ? "✓" : "⚠");
+                    Log($"    {cntMark} ChatLog historical: direct={historical.ChatLogItems.Count} items (legacy={(lHistCount < 0 ? "n/a" : lHistCount.ToString())}), +{delta.ChatLogItems.Count} new on 1.5 s poll");
+                    if (historical.ChatLogItems.Count > 0) {
+                        foreach (var item in historical.ChatLogItems.Reverse().Take(2)) {
+                            string line = (item.Line ?? string.Empty).Replace("\n", " ").Trim();
+                            if (line.Length > 70) line = line.Substring(0, 67) + "…";
+                            Log($"      [{item.TimeStamp:HH:mm:ss}] code={item.Code} line=\"{line}\"");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ ChatLog direct: {ex.GetType().Name}: {ex.Message}");
+            }
         }
         catch (Exception ex) {
             Log($"  ✗ Direct scanner failed: {ex.GetType().Name}: {ex.Message}");
