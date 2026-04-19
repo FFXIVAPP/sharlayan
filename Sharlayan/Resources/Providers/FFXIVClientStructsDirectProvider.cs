@@ -15,14 +15,12 @@
 namespace Sharlayan.Resources.Providers {
     using System;
     using System.Collections.Concurrent;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
-
-    using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
     using Sharlayan.Models.XIVDatabase;
+    using Sharlayan.Resources.Mappers;
 
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
@@ -30,15 +28,13 @@ namespace Sharlayan.Resources.Providers {
         private readonly LuminaXivDatabaseProvider _xivDatabase = new LuminaXivDatabaseProvider();
 
         public Task<StructuresContainer> GetStructuresAsync(SharlayanConfiguration configuration) {
-            // SMOKE TEST — proves FFXIVClientStructs types are reachable and Marshal.OffsetOf works
-            // against their [StructLayout(LayoutKind.Explicit)] + [FieldOffset] shape. Real per-struct
-            // mappers land in P3-B7.
-            StructuresContainer container = new StructuresContainer();
-            container.ActorItem ??= new ActorItem();
-            container.ActorItem.HPCurrent = (int)Marshal.OffsetOf<CharacterData>(nameof(CharacterData.Health));
-            container.ActorItem.HPMax = (int)Marshal.OffsetOf<CharacterData>(nameof(CharacterData.MaxHealth));
-            container.ActorItem.MPCurrent = (int)Marshal.OffsetOf<CharacterData>(nameof(CharacterData.Mana));
-            return Task.FromResult(container);
+            // P3-B7: per-struct mappers are being added one at a time. Each mapper below
+            // corresponds to a class in Sharlayan/Models/Structures and populates its
+            // int-offset fields from FFXIVClientStructs struct layouts via
+            // Marshal.OffsetOf / FieldOffsetReader. Unmapped Sharlayan fields default to 0.
+            return Task.FromResult(new StructuresContainer {
+                ActorItem = ActorItemMapper.Build(),
+            });
         }
 
         public Task<Signature[]> GetSignaturesAsync(SharlayanConfiguration configuration) {
