@@ -48,15 +48,32 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_PerJobFieldsAndDerivedStats_StayZero() {
-            // Per-job levels/EXP and derived stats require Lumina ClassJob.ExpArrayIndex
-            // and BaseParam lookups — they are not compile-time struct offsets. Pinned
-            // here so a future mapper edit can't silently change the unmapped baseline
-            // for a field that actually needs the lookup indirection.
+        public void Build_PerJobFieldsAndEXP_AreMapped() {
+            // P3-B11 wired all 29 base-class per-job Level and CurrentEXP offsets using hard-coded
+            // ExpArrayIndex constants from the ClassJob sheet. Each level offset sits at
+            // _classJobLevels + idx*2; each EXP offset at _classJobExperience + idx*4.
+            PlayerInfo info = PlayerInfoMapper.Build();
+            int levelsBase = (int)Marshal.OffsetOf<PlayerState>("_classJobLevels");
+            int expBase    = (int)Marshal.OffsetOf<PlayerState>("_classJobExperience");
+
+            // PGL = ExpArrayIndex 0 (first slot in both arrays).
+            Assert.Equal(levelsBase, info.PGL);
+            Assert.Equal(expBase, info.PGL_CurrentEXP);
+
+            // PCT = ExpArrayIndex 31 (newest job at end of the array).
+            Assert.Equal(levelsBase + 31 * sizeof(short), info.PCT);
+            Assert.Equal(expBase    + 31 * sizeof(int),   info.PCT_CurrentEXP);
+        }
+
+        [Fact]
+        public void Build_DerivedStats_StayZero() {
+            // Derived attributes (Strength/AttackPower/CriticalHitRate/etc.) and resistances
+            // live in PlayerState._attributes indexed by BaseParam — that's dynamic Lumina
+            // data, not a compile-time struct offset. Same for HPMax/MPMax/etc which live on
+            // Character, not PlayerState. Pinned here so a future edit can't silently "map"
+            // them to a stale offset.
             PlayerInfo info = PlayerInfoMapper.Build();
 
-            Assert.Equal(0, info.PLD_Level());
-            Assert.Equal(0, info.BLU_CurrentEXP);
             Assert.Equal(0, info.Strength);
             Assert.Equal(0, info.AttackPower);
             Assert.Equal(0, info.CriticalHitRate);
@@ -65,12 +82,5 @@ namespace Sharlayan.Tests.Resources.Mappers {
             Assert.Equal(0, info.CPMax);
             Assert.Equal(0, info.FireResistance);
         }
-    }
-
-    internal static class PlayerInfoTestExtensions {
-        // PLD (Paladin) has no property on PlayerInfo; this helper keeps the test fluent
-        // and documents the gap symbolically. Returns 0 always — matches the unmapped
-        // expectation for all non-job-listed values.
-        internal static int PLD_Level(this PlayerInfo _) => 0;
     }
 }

@@ -88,24 +88,43 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_UnmappedFields_StayAtZero() {
-            // Pins the decision to leave these Sharlayan-ActorItem properties unmapped
-            // for now — they either have no clean FFXIVClientStructs counterpart or live
-            // on Character.CastInfo / similar nested structs that a later mapper pass
-            // will address. If any of these become non-zero via a future edit, this test
-            // fails and forces the author to update the mapping intentionally.
+        public void Build_NowMappedFields_AreNonZero() {
+            // These were unmapped in the initial P3 pass; P3-B12 and P3-B17 wired them
+            // via BattleChara.CastInfo (casting group), CharacterData.Flags (agro/combat),
+            // GameObject.RenderFlags (cutscene), and CharacterData.CombatTaggerId (claim).
+            ActorItem actorItem = ActorItemMapper.Build();
+
+            Assert.True(actorItem.CastingID > 0, nameof(actorItem.CastingID));
+            Assert.True(actorItem.CastingProgress > 0, nameof(actorItem.CastingProgress));
+            Assert.True(actorItem.CastingTargetID > 0, nameof(actorItem.CastingTargetID));
+            Assert.True(actorItem.CastingTime > 0, nameof(actorItem.CastingTime));
+            Assert.True(actorItem.IsCasting1 > 0, nameof(actorItem.IsCasting1));
+            Assert.True(actorItem.IsCasting2 > 0, nameof(actorItem.IsCasting2));
+            Assert.True(actorItem.Status > 0, nameof(actorItem.Status));
+            Assert.True(actorItem.ClaimedByID > 0, nameof(actorItem.ClaimedByID));
+            Assert.True(actorItem.AgroFlags > 0, nameof(actorItem.AgroFlags));
+            Assert.True(actorItem.CombatFlags > 0, nameof(actorItem.CombatFlags));
+            Assert.True(actorItem.InCutscene > 0, nameof(actorItem.InCutscene));
+            Assert.True(actorItem.TargetFlags > 0, nameof(actorItem.TargetFlags));
+            Assert.True(actorItem.EventObjectType > 0, nameof(actorItem.EventObjectType));
+            Assert.True(actorItem.EntityCount > 0, nameof(actorItem.EntityCount));
+        }
+
+        [Fact]
+        public void Build_StillUnmappedFields_StayAtZero() {
+            // No clean FCS equivalent — PlayerState-sourced data for the local player only
+            // (GrandCompany), computed values (DifficultyRank, ActionStatus), or nested
+            // structs that haven't been wired yet. If any of these become non-zero via a
+            // future edit, this test fails and forces the author to update intentionally.
             ActorItem actorItem = ActorItemMapper.Build();
 
             Assert.Equal(0, actorItem.ActionStatus);
-            Assert.Equal(0, actorItem.CastingID);
-            Assert.Equal(0, actorItem.CastingProgress);
-            Assert.Equal(0, actorItem.CastingTargetID);
-            Assert.Equal(0, actorItem.CastingTime);
-            Assert.Equal(0, actorItem.IsCasting1);
-            Assert.Equal(0, actorItem.IsCasting2);
-            Assert.Equal(0, actorItem.ClaimedByID);
             Assert.Equal(0, actorItem.ModelID);
-            Assert.Equal(0, actorItem.InCutscene);
+            Assert.Equal(0, actorItem.DifficultyRank);
+            Assert.Equal(0, actorItem.GatheringInvisible);
+            Assert.Equal(0, actorItem.GatheringStatus);
+            Assert.Equal(0, actorItem.GrandCompany);
+            Assert.Equal(0, actorItem.GrandCompanyRank);
         }
     }
 }

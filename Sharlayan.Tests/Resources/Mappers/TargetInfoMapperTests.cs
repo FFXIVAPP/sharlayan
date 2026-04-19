@@ -52,9 +52,11 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_UnmappedFields_StayZero() {
+        public void Build_Size_MatchesCharacterSize() {
+            // Reader.Target rents a buffer of TargetInfo.Size bytes to read each target's
+            // actor data — one Character struct's worth (P3-B12).
             TargetInfo info = TargetInfoMapper.Build();
-            Assert.Equal(0, info.Size);
+            Assert.Equal(Marshal.SizeOf<FFXIVClientStructs.FFXIV.Client.Game.Character.Character>(), info.Size);
         }
     }
 }

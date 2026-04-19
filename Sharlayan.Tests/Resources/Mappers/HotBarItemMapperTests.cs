@@ -8,6 +8,7 @@
 namespace Sharlayan.Tests.Resources.Mappers {
     using System.Runtime.InteropServices;
 
+    using FFXIVClientStructs.FFXIV.Client.System.String;
     using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
     using Sharlayan.Models.Structures;
@@ -23,9 +24,12 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_ContainerSize_MatchesHotbarSize() {
+        public void Build_ContainerSize_Is16SlotsOfHotbarSlotSize() {
+            // FCS's Hotbar struct declares size 0x08 (vtable only); the actual in-memory
+            // stride is 16 × HotbarSlot. ContainerSize must be computed from slot size so
+            // bar indexing (RECAST_KEY + type × ContainerSize) lands on the right bar.
             HotBarItem item = HotBarItemMapper.Build();
-            Assert.Equal(Marshal.SizeOf<RaptureHotbarModule.Hotbar>(), item.ContainerSize);
+            Assert.Equal(16 * Marshal.SizeOf<RaptureHotbarModule.HotbarSlot>(), item.ContainerSize);
         }
 
         [Fact]
@@ -35,16 +39,24 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_Name_AtOffsetZero_PopUpHelpIsFirstField() {
-            // PopUpHelp is at native offset 0 on HotbarSlot.
+        public void Build_Name_PointsAtPopUpHelpInlineBuffer() {
+            // PopUpHelp is a Utf8String at slot+0x00; reading bytes there returns the
+            // StringPtr bytes, not the action name. Name must point at _inlineBuffer inside
+            // the Utf8String (+0x22 into it) so GetStringFromBytes reads the inline chars.
             HotBarItem item = HotBarItemMapper.Build();
-            Assert.Equal(0, item.Name);
+            int expected = (int)Marshal.OffsetOf<RaptureHotbarModule.HotbarSlot>(nameof(RaptureHotbarModule.HotbarSlot.PopUpHelp))
+                           + Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf<Utf8String>("_inlineBuffer");
+            Assert.Equal(expected, item.Name);
         }
 
         [Fact]
-        public void Build_KeyBinds_NonZero() {
+        public void Build_KeyBinds_PointsAtPopUpKeybindHint() {
+            // _popUpKeybindHint is the human-readable " [Ctrl+Alt+0]" variant; _keybindHint is
+            // a packed-binary encoding that yields garbage when read as a string. The Reader
+            // splits on '+' so we need the readable one.
             HotBarItem item = HotBarItemMapper.Build();
-            Assert.True(item.KeyBinds > 0, nameof(item.KeyBinds));
+            int expected = Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf<RaptureHotbarModule.HotbarSlot>("_popUpKeybindHint");
+            Assert.Equal(expected, item.KeyBinds);
         }
     }
 }
