@@ -1,272 +1,79 @@
-# sharlayan
+# Sharlayan
 
-Issue tracking, feature request and release repository.
+Out-of-process memory reader for **Final Fantasy XIV** (Windows, DirectX 11). Originally a component of FFXIVAPP, Sharlayan has since been split into its own library. It exposes a stable C# API for reading game state (the player, party, actors, hotbars, chat log, inventory, job gauges, etc.) without injecting into the game process.
 
-# What is this?
+## What's new in 9.0
 
-This is the main memory module for FFXIVAPP split out into it's own repo. For enterprising people this means not having to wait for a full app update as this "should" be a drop in replacement for your existing one in your FFXIVAPP folder.
+The long-dead [sharlayan-resources](https://github.com/FFXIVAPP/sharlayan-resources) JSON feed is gone. Signatures, struct offsets, and game-data lookups now come from two actively maintained upstreams:
 
-Pending anything catastrophic update-wise it should be good to go.
+- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** (vendored as a git submodule and ILRepacked into `Sharlayan.dll`) provides the game struct layouts and `[StaticAddress]` byte patterns. Every FFXIV patch day, bumping the submodule is usually enough.
+- **[Lumina](https://github.com/NotAdam/Lumina)** reads `sqpack` directly for `xivdatabase` content — action names, status effects, territory/map rows — so the library no longer ships a separate JSON mirror of the game's Excel data.
 
-# How do I use it and what comes back?
+The resulting provider (`FFXIVClientStructsDirect`) is the default; `LegacySharlayanResources` remains available as an opt-in fallback but is marked `[Obsolete]`.
 
-- Add as a reference into your project.
+## Installation
 
-That's the basic of it. For actual instantiation it works as follows:
+Add the NuGet-packed `Sharlayan.dll` (or a `ProjectReference` to `Sharlayan.csproj`) to your project. The submodule build is driven from `build.ps1`; see the harness project for a working example.
+
+## Usage
 
 ```csharp
+using System.Diagnostics;
 using Sharlayan;
-using Sharlayan.Enums;
 using Sharlayan.Models;
 
-// DX11
-Process[] processes = Process.GetProcessesByName("ffxiv_dx11");
-if (processes.length)
-{
-    // supported: Global, Chinese, Korean
-    GameRegion gameRegion = GameRegion.Global;
-    GameLanguage gameLanguage = GameLanguage.English;
-	// whether to always hit API on start to get the latest sigs based on patchVersion, or use the local json cache (if the file doesn't exist, API will be hit)
-	bool useLocalCache = true;
-	// patchVersion of game, or latest
-	string patchVersion = "latest";
-    Process process = processes[0];
-    ProcessModel processModel = new ProcessModel {
-        Process = process
-    }
-    SharlayanConfiguration configuration = new SharlayanConfiguration {
-        ProcessModel = processModel,
-        GameLanguage = gameLanguage,
-        GameRegion = gameRegion,
-        PatchVersion = patchVersion,
-        UseLocalCache = Settings.Default.UseLocalMemoryJSONDataCache
-    };
-    MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.AddHandler(configuration);
-}
-```
+Process game = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault()
+              ?? throw new InvalidOperationException("FFXIV not running");
 
-The memory module is now instantiated and is ready to read data. When switch processes you should call:
-
-```csharp
-SharlayanMemoryManager.Instance.RemoveHandler(processModel);
-```
-
-# Reading
-
-The instantiated memory handler for the process comes with it's own reader, or you can create your own.
-
-### Using Predefined
-
-```csharp
-MemoryHandler memoryHandler = SharlayanMemoryManager.Instance.GetHandler(processModel);
-XResult result = memoryHandler.Reader.GetX();
-```
-
-## Actors (Monster, Player, NPC, etc) Reading
-
-```csharp
-using Sharlayan;
-
-ActorReadResult readResult = memoryHandler.Reader.GetActors();
-
-// Removed is list of ID's that were in the last scan
-// New is all the new ID's added
-// Also returned is the Current list of actors.
-
-// The result is the following class
-public class ActorReadResult
-{
-    public ActorReadResult()
-    {
-        RemovedMonster = new Dictionary<uint, uint>();
-        RemovedNPC = new Dictionary<uint, uint>();
-        RemovedPC = new Dictionary<uint, uint>();
-
-        NewMonster = new List<uint>();
-        NewNPC = new List<uint>();
-        NewPC = new List<uint>();
-    }
-
-    public ConcurrentDictionary<uint, ActorItem> MonsterEntities => MonsterWorkerDelegate.EntitiesDictionary;
-    public ConcurrentDictionary<uint, ActorItem> NPCEntities => NPCWorkerDelegate.EntitiesDictionary;
-    public ConcurrentDictionary<uint, ActorItem> PCEntities => PCWorkerDelegate.EntitiesDictionary;
-    public Dictionary<uint, uint> RemovedMonster { get; set; }
-    public Dictionary<uint, uint> RemovedNPC { get; set; }
-    public Dictionary<uint, uint> RemovedPC { get; set; }
-    public List<UInt32> NewMonster { get; set; }
-    public List<UInt32> NewNPC { get; set; }
-    public List<UInt32> NewPC { get; set; }
-}
-```
-
-## ChatLog Reading
-
-```csharp
-using Sharlayan;
-
-// For chatlog you must locally store previous array offsets and indexes in order to pull the correct log from the last time you read it.
-int _previousArrayIndex = 0;
-int _previousOffset = 0;
-
-ChatLogReadResult readResult = memoryHandler.Reader.GetChatLog(_previousArrayIndex, _previousOffset);
-
-List<ChatLogEntry> chatLogEntries = readResult.ChatLogEntries;
-
-_previousArrayIndex = readResult.PreviousArrayIndex;
-_previousOffset = readResult.PreviousOffset;
-
-// The result is the following class
-public class ChatLogReadResult
-{
-    public ChatLogReadResult()
-    {
-        ChatLogEntries = new List<ChatLogEntry>();
-    }
-
-    public List<ChatLogEntry> ChatLogEntries { get; set; }
-    public int PreviousArrayIndex { get; set; }
-    public int PreviousOffset { get; set; }
-}
-```
-
-## Inventory Reading
-
-```csharp
-using Sharlayan;
-
-InventoryReadResult readResult = memoryHandler.Reader.GetInventoryItems();
-
-// The result is the following class
-public class InventoryReadResult
-{
-    public InventoryReadResult()
-    {
-        InventoryEntities = new List<InventoryEntity>();
-    }
-
-    public List<InventoryEntity> InventoryEntities { get; set; }
-}
-```
-
-## Party Reading
-
-```csharp
-using Sharlayan;
-
-PartyInfoReadResult readResult = memoryHandler.Reader.GetPartyMembers();
-
-// Removed is list of ID's that were in the last scan
-// New is all the new ID's added
-// Also returned is the Current list of actors.
-
-// The result is the following class
-public class PartyInfoReadResult
-{
-    public PartyInfoReadResult()
-    {
-        RemovedParty = new Dictionary<uint, uint>();
-
-        NewParty = new List<uint>();
-    }
-
-    public ConcurrentDictionary<uint, PartyMember> PartyEntities => PartyInfoWorkerDelegate.EntitiesDictionary;
-    public Dictionary<uint, uint> RemovedParty { get; set; }
-    public List<UInt32> NewParty { get; set; }
-}
-```
-
-## Player Info Reading
-
-```csharp
-using Sharlayan;
-
-PlayerInfoReadResult readResult = memoryHandler.Reader.GetPlayerInfo();
-
-// The result is the following class
-public class PlayerInfoReadResult
-{
-    public PlayerInfoReadResult()
-    {
-        CurrentPlayer = new CurrentPlayer();
-    }
-
-    public CurrentPlayer CurrentPlayer { get; set; }
-}
-```
-
-## Target Reading
-
-```csharp
-using Sharlayan;
-
-TargetReadResult readResult = memoryHandler.Reader.GetTargetInfo();
-
-// TargetsFound means at least 1 was found
-
-// The result is the following class
-public class TargetReadResult
-{
-    public TargetReadResult()
-    {
-        TargetEntity = new TargetEntity();
-    }
-
-    public TargetEntity TargetEntity { get; set; }
-    public bool TargetsFound { get; set; }
-}
-```
-
-# Roll your own app?
-
-If you want to add your own signatures to scan for you can modify the json file directly that's automatically downloaded/saved into your application directory.
-
-You can also override the built in like so:
-
-```csharp
-SharlayanConfiguration configuration = new SharlayanConfiguration {
-    ProcessModel = new ProcessModel {
-        Process = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault(),
-    },
+SharlayanConfiguration configuration = new() {
+    ProcessModel = new ProcessModel { Process = game },
+    // ResourceProvider defaults to FFXIVClientStructsDirect since 9.0.
+    // GameInstallPath is optional; if set, Lumina will load xivdatabase
+    // (actions, statuses, zones) from your local sqpack.
+    GameInstallPath = Path.GetDirectoryName(game.MainModule!.FileName),
 };
-MemoryHandler memoryHandler = new MemoryHandler(configuration);
-// it be default will pull in the memory signatures from the local file, backup from API (GitHub)
-memoryHandler.Scanner.Locations.Clear(); // these are resolved MemoryLocation
 
-var signatures = new List<Signature>();
-// typical signature
-signatures.Add(new Signature
-{
-	Key = "SOMETHING",
-	Value = "0123456789ABCDEF",
-	Offset = 0
-});
-// pointer path based (no signature)
-signatures.Add(new Signature
-{
-	Key = "SOMETHING2",
-	PointerPath = new List<long>
-	{
-		0x0123456789
-	}
-});
-// Aseembly Signature Based
-signatures.Add(new Signature
-{
-	Key = "SOMETING3",
-	Value = "0123456789ABCDEF0123456789ABCDEF",
-	ASMSignature = true,
-	PointerPath = new List<long>
-	{
-		0L, // ASM assumes first pointer is always 0
-		144L
-	}
-});
+MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(configuration);
 
-memoryHandler.Scanner.LoadOffsets(signatures);
+// FFXIV's anti-tamper (ACG) blocks PROCESS_VM_READ from non-elevated processes —
+// your consumer must run as Administrator or AddHandler will fail to attach.
 ```
 
-Once this is complete you can reference this when reading like so:
+Reading:
 
 ```csharp
-var somethingMap = memoryHandler.GetByteArray(memoryHandler.Scanner.Locations["SOMETHING"], 8);
+var player = handler.Reader.GetCurrentPlayer().Entity;
+Console.WriteLine($"{player.Name} — {player.Job} Lv.{player.Level} HP {player.HPCurrent}/{player.HPMax}");
+
+var actors  = handler.Reader.GetActors();        // PCs, NPCs, monsters
+var party   = handler.Reader.GetPartyMembers();
+var target  = handler.Reader.GetTargetInfo();
+var chat    = handler.Reader.GetChatLog();       // first call primes the cursor; call again for new lines
+var actions = handler.Reader.GetActions();       // hotbars + recast timers
 ```
+
+When switching processes:
+
+```csharp
+SharlayanMemoryManager.Instance.RemoveHandler(configuration.ProcessModel);
+```
+
+Custom signature overrides (unusual — the built-in set covers every `Reader.*` surface) go through `configuration.ResourceProvider` by implementing `IResourceProvider`, not by hand-editing JSON in the working directory.
+
+## Harness
+
+`pwsh .\harness.ps1` (from an elevated terminal) builds Sharlayan + the `Sharlayan.Harness` tool, attaches to the running client, and produces a diagnostic report at `reports/harness-<timestamp>.txt`. Useful both for verifying a new FCS submodule bump and for eye-checking live-read fields against what you see in-game.
+
+## Credits
+
+Sharlayan's 9.0 rebuild is built on the work of several upstream projects. Each retains its own license notice inside `Sharlayan/FFXIVClientStructs/LICENSE` and the respective NuGet packages; the MIT terms below reproduce as required:
+
+- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** — MIT, © 2021–2023 aers. Provides every game struct layout and the `[StaticAddress]` signatures Sharlayan resolves at runtime.
+- **[Lumina](https://github.com/NotAdam/Lumina)** and **Lumina.Excel** — MIT, © NotAdam and contributors. `sqpack` / Excel data loader used for actions, statuses, and territory data.
+- **[Newtonsoft.Json](https://www.newtonsoft.com/json)** — MIT, © James Newton-King. JSON serialisation for snapshotted legacy data.
+- **[NLog](https://nlog-project.org/)** — BSD-3-Clause, © NLog authors.
+- **[ILRepack](https://github.com/gluck/il-repack)** — Apache 2.0. Merges `FFXIVClientStructs.dll` + `InteropGenerator.Runtime.dll` into `Sharlayan.dll` at build time.
+
+## License
+
+Sharlayan is MIT-licensed — see [LICENSE.md](LICENSE.md). Not affiliated with or endorsed by Square Enix.
