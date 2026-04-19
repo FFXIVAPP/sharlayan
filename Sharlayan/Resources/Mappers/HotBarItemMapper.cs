@@ -39,9 +39,13 @@ namespace Sharlayan.Resources.Mappers {
                 ID = (int)Marshal.OffsetOf<RaptureHotbarModule.HotbarSlot>(nameof(RaptureHotbarModule.HotbarSlot.CommandId)),
                 Name = popUpHelpOff + inlineBufOff,
 
-                // KeyBinds maps to _keybindHint — an inline 16-byte FixedSizeArray of bytes
-                // (not behind a Utf8String pointer), so direct byte reads work.
-                KeyBinds = FieldOffsetReader.OffsetOf<RaptureHotbarModule.HotbarSlot>("_keybindHint"),
+                // KeyBinds = _popUpKeybindHint (inline 32-byte ASCII at +0x88). Format is
+                // " [Ctrl+Alt+0]" — leading space + bracketed modifier list with '+' separators.
+                // Reader.Actions strips the brackets, splits on '+', and trims each segment so
+                // Modifiers comes out as clean ["Ctrl","Alt"] (what consumers Contains()-lookup).
+                // NOT _keybindHint (+0xA8): packed-binary encoding where modifier combos collapse
+                // into single bytes > 0x7F — reading as a string yields garbage like "¾0".
+                KeyBinds = FieldOffsetReader.OffsetOf<RaptureHotbarModule.HotbarSlot>("_popUpKeybindHint"),
             };
         }
     }

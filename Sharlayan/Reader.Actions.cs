@@ -150,7 +150,10 @@ namespace Sharlayan {
                             else {
                                 string key = item.KeyBinds;
                                 string itemName = item.Name.Replace($" {item.KeyBinds}", string.Empty);
-                                string itemKeyBinds = this.KeyBindsRegex.Replace(item.KeyBinds, string.Empty);
+                                // Raw KeyBinds from _popUpKeybindHint is " [Ctrl+Alt+0]". KeyBindsRegex
+                                // strips '[' and ']' → " Ctrl+Alt+0"; Trim removes the leading space
+                                // so the final public value is "Ctrl+Alt+0" (consumer-friendly).
+                                string itemKeyBinds = this.KeyBindsRegex.Replace(item.KeyBinds, string.Empty).Trim();
                                 string itemActionKey = string.Empty;
 
                                 List<string> itemModifiers = new List<string>();
@@ -162,6 +165,12 @@ namespace Sharlayan {
                                     new[] {
                                         '+',
                                     }, StringSplitOptions.RemoveEmptyEntries);
+                                // Trim each segment so modifier names come out as "Ctrl"/"Alt"/"Shift"
+                                // rather than " Ctrl" — Chromatics does modifiers.Contains("Ctrl") which
+                                // is whitespace-sensitive.
+                                for (int t = 0; t < buttons.Length; t++) {
+                                    buttons[t] = buttons[t].Trim();
+                                }
                                 if (buttons.Any()) {
                                     item.ActionKey = itemActionKey = buttons[buttons.Length - 1];
                                 }

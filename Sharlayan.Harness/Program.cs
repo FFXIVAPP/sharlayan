@@ -517,14 +517,16 @@ internal static class Program {
                             Log($"    Hotbar {target}: (no populated slots)");
                             continue;
                         }
-                        Log($"    Hotbar {target} first 4 slots:");
-                        foreach (var item in bar.ActionItems.Take(4)) {
+                        Log($"    Hotbar {target} ({bar.ActionItems.Count} populated slots):");
+                        foreach (var item in bar.ActionItems) {
                             string keybind = string.IsNullOrEmpty(item.KeyBinds) ? "<unbound>" : item.KeyBinds;
                             // Dump the recast-driven UI state too so Chromatics' Keybinds layer can
                             // verify IsAvailable / InRange / ChargeReady / CoolDown% are tracking the
                             // live ActionBarSlotNumberArray. Slots Chromatics checks for "special
                             // action" colour are category 49/51 — ActionType for reference.
                             Log($"      slot {item.Slot}: \"{item.Name}\" ID={item.ID} keybind=\"{keybind}\"");
+                            string mods = item.Modifiers.Count == 0 ? "(none)" : string.Join("+", item.Modifiers);
+                            Log($"        ActionKey=\"{item.ActionKey ?? string.Empty}\" Modifiers=[{mods}]");
                             Log($"        Avail={item.IsAvailable} InRange={item.InRange} ChargeReady={item.ChargeReady}/{item.ChargesRemaining} CD={item.CoolDownPercent}% Proc={item.IsProcOrCombo} Cat={item.Category} Icon={item.Icon} Cost={item.RemainingCost}");
                         }
                     }
