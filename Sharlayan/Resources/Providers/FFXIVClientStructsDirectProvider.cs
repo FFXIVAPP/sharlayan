@@ -38,6 +38,8 @@ namespace Sharlayan.Resources.Providers {
                 StatusItem = StatusItemMapper.Build(),
                 InventoryItem = InventoryItemMapper.Build(),
                 InventoryContainer = InventoryContainerMapper.Build(),
+                EnmityItem = EnmityItemMapper.Build(),
+                TargetInfo = TargetInfoMapper.Build(),
             });
         }
 
