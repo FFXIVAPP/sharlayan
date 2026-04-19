@@ -36,6 +36,8 @@ namespace Sharlayan.Resources.Providers {
                 ActorItem = ActorItemMapper.Build(),
                 PartyMember = PartyMemberMapper.Build(),
                 StatusItem = StatusItemMapper.Build(),
+                InventoryItem = InventoryItemMapper.Build(),
+                InventoryContainer = InventoryContainerMapper.Build(),
             });
         }
 
