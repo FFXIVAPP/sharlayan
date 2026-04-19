@@ -1,6 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net462;net48;net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<IncludeSymbols>true</IncludeSymbols>
 		<IncludeSource>true</IncludeSource>
 		<Authors>Ryan Wilson</Authors>
@@ -11,86 +13,71 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageTags>ffxiv memory tracking</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>8.0.1</Version>
+		<Version>9.0.0</Version>
 		<Company>SyndicatedLife</Company>
 		<Product>Sharlayan</Product>
 		<Description>Final Fantasy XIV Memory Reading</Description>
 		<Copyright>Copyright © 2007 - 2022 Ryan Wilson</Copyright>
-		<FileVersion>8.0.0.0</FileVersion>
-		<AssemblyVersion>8.0.0.0</AssemblyVersion>
+		<FileVersion>9.0.0.0</FileVersion>
+		<AssemblyVersion>9.0.0.0</AssemblyVersion>
 		<AssemblyName>Sharlayan</AssemblyName>
 		<RootNamespace>Sharlayan</RootNamespace>
 		<PackageId>Sharlayan</PackageId>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryType></RepositoryType>
 		<PackageIcon>Logo.png</PackageIcon>
-		<LangVersion>latest</LangVersion>
+		<DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+		<!--
+		    Needed so ILRepack (below) can resolve Newtonsoft.Json / Lumina / NLog when
+		    rewriting Sharlayan.dll. Without this, library projects don't emit transitive
+		    NuGet DLLs into the output folder and ILRepack fails to resolve references.
+		-->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
+	<!--
+	    FFXIVClientStructs lives as a git submodule inside this project directory. Exclude
+	    everything under it from Sharlayan's own compilation — it is referenced as a
+	    pre-built DLL (below), not recompiled as source.
+	-->
 	<ItemGroup>
+		<Compile Remove="FFXIVClientStructs\**" />
+		<None Remove="FFXIVClientStructs\**" />
+		<Content Remove="FFXIVClientStructs\**" />
+		<EmbeddedResource Remove="FFXIVClientStructs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Lumina" Version="7.3.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="NLog" Version="5.1.0" />
 		<PackageReference Include="NLog.Schema" Version="5.1.0" />
-		<PackageReference Include="System.Buffers" Version="4.5.1" />
-		<PackageReference Include="System.Net.Http" Version="4.3.4" />
-		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34" PrivateAssets="all" />
+	</ItemGroup>
+
+	<!--
+	    FFXIVClientStructs comes in as pre-built DLLs from the submodule. build.ps1 at the
+	    repo root updates the submodule, builds FFXIVClientStructs, copies the outputs here,
+	    then builds Sharlayan. Consumers get one merged Sharlayan.dll via ILRepack (below).
+	-->
+	<ItemGroup>
+		<Reference Include="FFXIVClientStructs">
+			<HintPath>FFXIVClientStructs\bin\Debug\FFXIVClientStructs.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+		<Reference Include="InteropGenerator.Runtime">
+			<HintPath>FFXIVClientStructs\bin\Debug\InteropGenerator.Runtime.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>.\bin\Release</OutputPath>
+		<OutputPath>.\bin\Release\</OutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath>.\bin\Debug</OutputPath>
+		<OutputPath>.\bin\Debug\</OutputPath>
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net6.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net6.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net7.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net7.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net8.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net8.0\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net462\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net462\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-		<DocumentationFile>.\bin\Release\net48\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-		<DocumentationFile>.\bin\Debug\net48\Sharlayan.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net462'">
-		<Reference Include="System.Web" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)'=='net48'">
-		<Reference Include="System.Web" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="Logo.png">
@@ -99,14 +86,33 @@
 		</None>
 	</ItemGroup>
 
+	<!--
+	    ILRepack merges FFXIVClientStructs.dll + InteropGenerator.Runtime.dll into Sharlayan.dll
+	    so downstream consumers pull in one DLL. Merged types are internalized — they stay out
+	    of Sharlayan's public API surface. NuGet runtime deps (Lumina, Newtonsoft.Json, NLog)
+	    remain transitive.
+	-->
+	<Target Name="ILRepacker" AfterTargets="Build" Condition="'$(DisableILRepack)' != 'true' AND Exists('$(OutputPath)FFXIVClientStructs.dll')">
+		<ItemGroup>
+			<InputAssemblies Include="$(OutputPath)Sharlayan.dll" />
+			<InputAssemblies Include="$(OutputPath)FFXIVClientStructs.dll" />
+			<InputAssemblies Include="$(OutputPath)InteropGenerator.Runtime.dll" />
+			<DoNotInternalizeAssemblies Include="Sharlayan" />
+		</ItemGroup>
+		<ILRepack
+			Parallel="true"
+			Internalize="true"
+			InternalizeExclude="@(DoNotInternalizeAssemblies)"
+			InputAssemblies="@(InputAssemblies)"
+			OutputFile="$(OutputPath)Sharlayan.dll"
+			TargetKind="Dll"
+			LibraryPath="$(OutputPath)" />
+	</Target>
+
 	<Target Name="CopyPackages" AfterTargets="Pack">
 		<ItemGroup>
 			<PACKAGES Include="$(OutputPath)*.nupkg" />
 		</ItemGroup>
 		<Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(SolutionDir)published\" />
-	</Target>
-
-	<Target Name="PostBuild" AfterTargets="CopyPackages">
-		<Exec Command="%25SYSTEMROOT%25\System32\WindowsPowerShell\v1.0\powershell.exe –NonInteractive –ExecutionPolicy Unrestricted –command &quot;&amp; { &amp;'$(SolutionDir)RenameSymbolsToPackage.ps1' '$(TargetName)' }&quot;" />
 	</Target>
 </Project>
