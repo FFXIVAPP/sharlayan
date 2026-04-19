@@ -14,7 +14,19 @@ namespace Sharlayan {
     using System.Text;
 
     public static class UnsafeNativeMethods {
-        public enum ProcessAccessFlags {
+        [Flags]
+        public enum ProcessAccessFlags : uint {
+            PROCESS_VM_READ = 0x00000010,
+            PROCESS_QUERY_INFORMATION = 0x00000400,
+
+            // Minimum rights Sharlayan actually needs. ReadProcessMemory wants
+            // PROCESS_VM_READ; VirtualQueryEx (Scanner.LoadRegions) wants
+            // PROCESS_QUERY_INFORMATION. Opening with just these usually avoids the
+            // UAC elevation prompt when the game runs at the same integrity level.
+            PROCESS_VM_READ_QUERY = PROCESS_VM_READ | PROCESS_QUERY_INFORMATION,
+
+            // Historic flag kept for callers that still ask for full access (e.g.
+            // tooling that eventually writes). Equivalent to PROCESS_ALL_ACCESS.
             PROCESS_VM_ALL = 0x001F0FFF,
         }
 

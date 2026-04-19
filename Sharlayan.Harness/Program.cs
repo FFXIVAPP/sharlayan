@@ -103,7 +103,8 @@ internal static class Program {
         SharlayanConfiguration legacyConfig = new() {
             ProcessModel = new ProcessModel { Process = game },
             ResourceProvider = ResourceProviderKind.LegacySharlayanResources,
-            UseLocalCache = false,
+            UseLocalCache = true,
+            JSONCacheDirectory = AppContext.BaseDirectory, // JSON files placed next to harness exe
         };
         SharlayanConfiguration directConfig = new() {
             ProcessModel = new ProcessModel { Process = game },
@@ -140,18 +141,36 @@ internal static class Program {
         Log(string.Empty);
 
         // [4] Attach MemoryHandler with legacy provider (signatures work here) -
+        //
+        // Note on provenance: sections [4]/[5] exercise the LEGACY provider
+        // (sharlayan-resources) because it's the only path with working signature
+        // scans today. The FFXIVClientStructsDirect provider currently returns an
+        // empty signature array (see FFXIVClientStructsDirectProvider), so its
+        // Scanner would find 0 locations and the Reader would be empty. Section [2]
+        // (struct sizes), section [3] (offset diff) and section [6] (Lumina) DO
+        // exercise the FFXIVClientStructs submodule directly.
         Log("[4] LEGACY PROVIDER — MEMORY HANDLER + READER");
         MemoryHandler? handler = null;
         try {
+            // Scanner.LoadOffsets() is called from a Task.Run inside the MemoryHandler
+            // constructor — IsScanning starts false and only flips true once the async
+            // signature fetch completes and the scan begins.  Polling IsScanning==false
+            // exits immediately before the scan ever starts.  Use the event instead.
+            var scanDone = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             handler = SharlayanMemoryManager.Instance.AddHandler(legacyConfig);
-            // Give Scanner time to pattern-scan.
-            for (int i = 0; i < 20 && handler.Scanner.IsScanning; i++) {
-                await Task.Delay(500);
+            handler.OnMemoryLocationsFound += (_, _, _) => scanDone.TrySetResult(true);
+            // Guard: scan may have completed before we subscribed to the event.
+            if (handler.Scanner.Locations.Count > 0) {
+                scanDone.TrySetResult(true);
             }
-            Log($"  ✓ Attached handler; Scanner locations found: {handler.Scanner.Locations.Count}");
+
+            Log("  Waiting for scanner (up to 30 s)…");
+            bool scanCompleted = await Task.WhenAny(scanDone.Task, Task.Delay(30_000)) == scanDone.Task;
+            int foundCount = handler.Scanner.Locations.Count;
+            Log($"  {(scanCompleted ? "✓" : "⚠ timed out")} Scanner locations found: {foundCount}");
             foreach (string key in handler.Scanner.Locations.Keys.OrderBy(k => k)) {
                 IntPtr addr = handler.Scanner.Locations[key];
-                Log($"    {key,-15} 0x{addr.ToInt64():X}");
+                Log($"    {key,-20} 0x{addr.ToInt64():X}");
             }
         }
         catch (Exception ex) {
@@ -207,6 +226,80 @@ internal static class Program {
                 var r = handler.Reader.GetJobResources();
                 return $"Container populated: {r?.JobResourcesContainer != null}";
             });
+
+            // --- Live values table --------------------------------------------------
+            Log(string.Empty);
+            Log("  [5b] LIVE VALUES");
+            try {
+                var cp = handler.Reader.GetCurrentPlayer();
+                var p = cp?.Entity;
+                if (p == null) {
+                    Log("    Entity null — scanner locations needed before reader works.");
+                }
+                else {
+                    Log($"    Name   : {p.Name}");
+                    Log($"    Job    : {p.Job}  Level: {p.Level}");
+                    Log($"    HP     : {p.HPCurrent,8} / {p.HPMax,-8}  ({(p.HPMax > 0 ? (double)p.HPCurrent / p.HPMax * 100 : 0.0):F1}%)");
+                    Log($"    MP     : {p.MPCurrent,8} / {p.MPMax,-8}  ({(p.MPMax > 0 ? (double)p.MPCurrent / p.MPMax * 100 : 0.0):F1}%)");
+                    Log($"    CP     : {p.CPCurrent,8} / {p.CPMax,-8}");
+                    Log($"    GP     : {p.GPCurrent,8} / {p.GPMax,-8}");
+                    Log($"    Pos    : X={p.X,8:F2}  Y={p.Y,8:F2}  Z={p.Z,8:F2}");
+                    Log($"    ID     : 0x{p.ID:X8}  MapTerritory: {p.MapTerritory}");
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ {ex.GetType().Name}: {ex.Message}");
+            }
+
+            try {
+                var partyResult = handler.Reader.GetPartyMembers();
+                var members = partyResult?.PartyMembers;
+                if (members != null && members.Count > 0) {
+                    Log(string.Empty);
+                    Log($"  [5c] PARTY MEMBERS ({members.Count})");
+                    foreach (var m in members.Values.Take(8)) {
+                        Log($"    {m.Name,-20} {m.Job,-12} HP:{m.HPCurrent,6}/{m.HPMax,-6}  MP:{m.MPCurrent,6}");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ Party read: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            // --- Chat log parsing check -----------------------------------------
+            // Sharlayan's chat reader owns its own byte-to-ChatLogItem parser
+            // (ChatEntry.Process) — FFXIVClientStructs is only consulted for the
+            // LogModule pointer offsets (OffsetArrayStart/LogStart/etc.).  This
+            // block confirms that the Legacy path's ChatLogPointers offsets still
+            // walk the current game's buffer correctly.
+            Log(string.Empty);
+            Log("  [5d] CHAT LOG");
+            try {
+                if (!handler.Reader.CanGetChatLog()) {
+                    Log("    ✗ CanGetChatLog()=false — CHATLOG signature missing.");
+                }
+                else {
+                    // First call primes the previous-index cursor; second call on a
+                    // short delay picks up anything that arrived in between. Either
+                    // way we want to prove the pointer chain is walkable.
+                    var first = handler.Reader.GetChatLog();
+                    await Task.Delay(1500);
+                    var second = handler.Reader.GetChatLog(first.PreviousArrayIndex, first.PreviousOffset);
+
+                    int primed = first.ChatLogItems.Count;
+                    int delta = second.ChatLogItems.Count;
+                    Log($"    ✓ CanGetChatLog()=true — primed {primed} items, +{delta} new on 1.5 s poll");
+                    foreach (var item in second.ChatLogItems.Take(3)) {
+                        string line = (item.Line ?? string.Empty).Replace("\n", " ").Trim();
+                        if (line.Length > 80) line = line.Substring(0, 77) + "…";
+                        Log($"      [{item.TimeStamp:HH:mm:ss}] code={item.Code} line=\"{line}\"");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ Chat read: {ex.GetType().Name}: {ex.Message}");
+            }
+
             Log(string.Empty);
         }
 
