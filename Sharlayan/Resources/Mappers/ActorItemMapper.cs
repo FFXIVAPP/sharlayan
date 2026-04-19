@@ -32,6 +32,18 @@ namespace Sharlayan.Resources.Mappers {
             int vector3Y = (int)Marshal.OffsetOf<Vector3>(nameof(Vector3.Y));
             int vector3Z = (int)Marshal.OffsetOf<Vector3>(nameof(Vector3.Z));
 
+            // Casting & status offsets are BattleChara-relative (0x2790 + field within CastInfo,
+            // 0x23B0 for StatusManager). Non-BattleChara actors will read garbage at these
+            // offsets, same as the legacy mapping — callers guard on IsCasting1 being truthy.
+            int castInfoBase     = (int)Marshal.OffsetOf<BattleChara>(nameof(BattleChara.CastInfo));
+            int statusManagerOff = (int)Marshal.OffsetOf<BattleChara>(nameof(BattleChara.StatusManager));
+            int ciIsCasting      = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.IsCasting));
+            int ciInterruptible  = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.Interruptible));
+            int ciActionId       = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.ActionId));
+            int ciTargetId       = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.TargetId));
+            int ciCurrentCast    = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.CurrentCastTime));
+            int ciTotalCast      = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.TotalCastTime));
+
             return new ActorItem {
                 // --- GameObject base (offset 0 within Character) ----------------------
                 Name = FieldOffsetReader.OffsetOf<GameObject>("_name"),
@@ -76,6 +88,17 @@ namespace Sharlayan.Resources.Mappers {
                 TargetFlags = (int)Marshal.OffsetOf<Character>(nameof(Character.TargetableStatus)),
                 // EventObjectType → EventId on GameObject (32-bit event id; legacy read a ushort).
                 EventObjectType = (int)Marshal.OffsetOf<Character>(nameof(Character.EventId)),
+
+                // --- BattleChara casting + status (offsets only valid for battle actors) ---
+                IsCasting1      = castInfoBase + ciIsCasting,
+                IsCasting2      = castInfoBase + ciInterruptible,
+                CastingID       = castInfoBase + ciActionId,
+                CastingTargetID = castInfoBase + ciTargetId,
+                CastingProgress = castInfoBase + ciCurrentCast,
+                CastingTime     = castInfoBase + ciTotalCast,
+                // Status offset = base of BattleChara.StatusManager; consumers iterate
+                // StatusManager._status[60] from there.
+                Status          = statusManagerOff,
 
                 // --- Bookkeeping ----------------------------------------------------
                 // SourceSize tells ActorItemResolver how many bytes to read per actor.

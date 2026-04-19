@@ -14,6 +14,7 @@
 namespace Sharlayan.Resources.Mappers {
     using System.Runtime.InteropServices;
 
+    using FFXIVClientStructs.FFXIV.Client.Game.Character;
     using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
     using Sharlayan.Models.Structures;
@@ -28,8 +29,9 @@ namespace Sharlayan.Resources.Mappers {
                 Previous = (int)Marshal.OffsetOf<TargetSystem>(nameof(TargetSystem.PreviousTarget)),
                 SourceSize = Marshal.SizeOf<TargetSystem>(),
 
-                // "Size" has no clean equivalent in TargetSystem — unclear what Sharlayan's
-                // historical value referred to. Leaving at 0 preserves the unmapped default.
+                // Size is the byte-count Reader.Target rents to read a targeted actor's
+                // full data — i.e. one Character struct (or any GameObject-derived actor).
+                Size = Marshal.SizeOf<Character>(),
             };
         }
     }
