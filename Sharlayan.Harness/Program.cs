@@ -418,6 +418,41 @@ internal static class Program {
                 Log($"    ✗ Party: {ex.GetType().Name}: {ex.Message}");
             }
 
+            // Live-values dump for hand-verification. Legacy offsets are stale so the [3]
+            // byte-diff table can't tell us whether a given direct offset is correct — but
+            // we can eye-check by reading the fields and comparing against what the game
+            // shows in-game. Pick the first few actors plus the local player and log the
+            // fields that are mapped from FCS (ID, Type, HP, Position, Job, TargetID, etc.).
+            try {
+                var dp = directHandler.Reader.GetCurrentPlayer()?.Entity;
+                if (dp != null) {
+                    Log(string.Empty);
+                    Log("  [7c] EYE-CHECK VALUES (direct provider)");
+                    Log($"    LocalPlayer.TargetID   = 0x{dp.TargetID:X8}   (0 when not targeting)");
+                    Log($"    LocalPlayer.ClaimedByID= 0x{dp.ClaimedByID:X8}   (combat-tag owner; 0 when not in combat)");
+                    Log($"    LocalPlayer.NPCID1     = {dp.NPCID1}");
+                    Log($"    LocalPlayer.NPCID2     = {dp.NPCID2}   (NameId — 0 for players, row id for NPCs)");
+                    Log($"    LocalPlayer.Type       = {dp.Type}   (1=Pc, 2=BattleNpc, 3=EventNpc, 4=Treasure, ...)");
+                    Log($"    LocalPlayer.TargetFlags= {dp.TargetFlags}   (targetability; see ObjectTargetableFlags)");
+                    Log($"    LocalPlayer.Title      = {dp.Title}   (TitleId — compare against /title list)");
+                    Log($"    LocalPlayer.Icon       = {dp.Icon}   (nameplate icon id)");
+                    Log($"    LocalPlayer.HitBoxRadius={dp.HitBoxRadius}");
+                }
+                var dActors2 = directHandler.Reader.GetActors();
+                // Sample up to 3 non-self actors so the user can eye-check names/types.
+                var sample = dActors2.CurrentNPCs.Values.Take(3).ToList();
+                foreach (var mob in dActors2.CurrentMonsters.Values.Take(2)) sample.Add(mob);
+                if (sample.Count > 0) {
+                    Log($"    Sample actors ({sample.Count}):");
+                    foreach (var a in sample) {
+                        Log($"      - {a.Name,-24} Type={a.Type} ID=0x{a.ID:X8} NPCID2={a.NPCID2} HP={a.HPCurrent}/{a.HPMax} Pos=({a.X:F1},{a.Y:F1},{a.Z:F1})");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ EyeCheck: {ex.GetType().Name}: {ex.Message}");
+            }
+
             // Chat log via direct provider — validates the Framework→UIModule→RaptureLogModule
             // multi-hop signature AND the FCS-derived ChatLogPointers offsets in tandem. First
             // call primes the cursor; (0,0) replays the historical ring buffer; last call polls

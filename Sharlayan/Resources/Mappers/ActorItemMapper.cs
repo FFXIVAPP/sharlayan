@@ -68,6 +68,15 @@ namespace Sharlayan.Resources.Mappers {
                 TargetID = (int)Marshal.OffsetOf<Character>(nameof(Character.TargetId)),
                 NPCID2 = (int)Marshal.OffsetOf<Character>(nameof(Character.NameId)),
 
+                // --- CharacterData fields flattened into Character ------------------
+                ClaimedByID = (int)Marshal.OffsetOf<Character>(nameof(Character.CombatTaggerId)),
+                // Status byte for nameplate/targetability — GameObject.TargetStatus (0x95). Different
+                // from legacy's "Status" which was a 16-bit status-effect id slot; no longer exists.
+                // TargetFlags maps to the targetability-related flags on GameObject.
+                TargetFlags = (int)Marshal.OffsetOf<Character>(nameof(Character.TargetableStatus)),
+                // EventObjectType → EventId on GameObject (32-bit event id; legacy read a ushort).
+                EventObjectType = (int)Marshal.OffsetOf<Character>(nameof(Character.EventId)),
+
                 // --- Bookkeeping ----------------------------------------------------
                 // SourceSize tells ActorItemResolver how many bytes to read per actor.
                 // Must match the full Character struct size.
