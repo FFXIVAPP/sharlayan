@@ -42,6 +42,7 @@ namespace Sharlayan.Resources.Providers {
                 TargetInfo = TargetInfoMapper.Build(),
                 HotBarItem = HotBarItemMapper.Build(),
                 RecastItem = RecastItemMapper.Build(),
+                ChatLogPointers = ChatLogPointersMapper.Build(),
             });
         }
 
