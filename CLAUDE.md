@@ -24,6 +24,15 @@ Migrating away from the unmaintained [sharlayan-resources](https://github.com/FF
 
 `pwsh .\harness.ps1` from an **elevated terminal** (FFXIV ACG blocks `PROCESS_VM_READ` from non-admin). Writes timestamped report to `reports/harness-YYYYMMDD-HHmmss.txt` plus `harness-report.txt` at repo root (both gitignored).
 
+## Keep DEPENDENCY.md and the integrity test in sync
+
+Two artifacts catch FCS upstream drift before it turns into silent runtime bugs:
+
+- **`DEPENDENCY.md`** — human-readable inventory of every FCS file, type, and field Sharlayan touches, grouped by subsystem. Update it whenever you add/remove/retarget a signature key, a mapper field, a hard-coded chain offset, or a `FieldOffsetReader` string-name lookup. It's the reference anyone (including future-you) will read to understand "what does a patch-day FCS bump mean for Sharlayan?".
+- **`Sharlayan.Tests/Resources/Providers/FCSDependencyIntegrityTests.cs`** — xunit guards that assert (a) every singleton type name passed to `TryAdd` resolves via the extractor, (b) every private-field string in `FieldOffsetReader` exists, (c) every hard-coded chain offset still matches the current `[FieldOffset]` attribute value, and (d) every mapper `Build()` runs without throwing. Add a new assertion whenever you introduce a new reflection-string or hard-coded offset.
+
+If you bump the submodule and these tests fail, **fix the binding in Sharlayan AND update DEPENDENCY.md** — don't just edit the assertion.
+
 ## Notes
 
 - `IsAgroed` tests **bit 1** (`InCombat`) of `AgroFlags`, not bit 0 (`IsHostile`) — training dummies aren't hostile but they *are* engaged.
