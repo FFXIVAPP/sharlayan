@@ -34,6 +34,7 @@ namespace Sharlayan.Resources.Providers {
             // Marshal.OffsetOf / FieldOffsetReader. Unmapped Sharlayan fields default to 0.
             return Task.FromResult(new StructuresContainer {
                 ActorItem = ActorItemMapper.Build(),
+                PartyMember = PartyMemberMapper.Build(),
             });
         }
 
