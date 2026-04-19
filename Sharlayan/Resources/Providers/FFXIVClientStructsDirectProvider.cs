@@ -44,6 +44,7 @@ namespace Sharlayan.Resources.Providers {
                 RecastItem = RecastItemMapper.Build(),
                 ChatLogPointers = ChatLogPointersMapper.Build(),
                 PlayerInfo = PlayerInfoMapper.Build(),
+                JobResources = JobResourcesMapper.Build(),
             });
         }
 
