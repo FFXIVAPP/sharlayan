@@ -49,7 +49,21 @@ namespace Sharlayan.Resources.Providers {
         }
 
         public Task<Signature[]> GetSignaturesAsync(SharlayanConfiguration configuration) {
-            throw new NotImplementedException("FFXIVClientStructsDirectProvider.GetSignaturesAsync is pending implementation (P3-B9).");
+            // Signatures via FFXIVClientStructs are deferred: its InteropGenerator.Runtime.Resolver
+            // expects in-process memory and a full .text section copy. Sharlayan is out-of-process.
+            // A faithful port needs to:
+            //   1. ReadProcessMemory the game's .text section into a pinned local buffer.
+            //   2. Walk each relevant FFXIVClientStructs type's Instance() / [StaticAddress]
+            //      attribute for its scan signature + RIP-relative offsets.
+            //   3. Match the pattern in the local buffer, compute the corresponding in-game
+            //      address (gameBase + offset), and post-apply any Sharlayan-side field offset
+            //      (e.g. CHARMAP = CharacterManager.Instance() + offset_of(_battleCharas)).
+            //
+            // Until that lands, consumers who opt into FFXIVClientStructsDirect get an empty
+            // Signature[] — Scanner.Locations stays empty and Reader methods that depend on
+            // signatures return empty results rather than crashing. Consumers that need
+            // signatures should stay on LegacySharlayanResources (still the default).
+            return Task.FromResult(Array.Empty<Signature>());
         }
 
         public Task GetActionsAsync(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
