@@ -8,3 +8,4 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Sharlayan.Tests")]
+[assembly: InternalsVisibleTo("Sharlayan.Harness")]
