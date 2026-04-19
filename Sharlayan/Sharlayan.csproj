@@ -27,6 +27,9 @@
 		<RepositoryType></RepositoryType>
 		<PackageIcon>Logo.png</PackageIcon>
 		<DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+		<!-- CS1591 = "Missing XML comment for publicly visible type or member". Public API
+		     predates the rebuild and isn't all doc'd; silencing avoids ~1600 false positives. -->
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
 		<!--
 		    Needed so ILRepack (below) can resolve Newtonsoft.Json / Lumina / NLog when
 		    rewriting Sharlayan.dll. Without this, library projects don't emit transitive

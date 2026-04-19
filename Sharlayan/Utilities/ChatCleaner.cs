@@ -104,7 +104,7 @@ namespace Sharlayan.Utilities {
 
                 line = cleaned;
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 // TODO: figure out how to raise exception
             }
 
@@ -141,7 +141,7 @@ namespace Sharlayan.Utilities {
                 cleaned = Regex.Replace(cleaned, @"[\x00-\x1F]+", string.Empty);
                 line = cleaned;
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 // TODO: figure out how to raise exception
             }
 

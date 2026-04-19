@@ -14,10 +14,6 @@ namespace Sharlayan.Core.JobResources {
     using Sharlayan.Core.Interfaces;
 
     public sealed class BlackMageResources : IJobResource {
-        private int _astralStacks;
-
-        private int _umbralStacks;
-
         public int AstralStacks { get; set; }
 
         public bool Enochian { get; set; }

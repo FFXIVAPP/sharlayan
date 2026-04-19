@@ -125,3 +125,9 @@ published/
 # Harness reports (timestamped, local-only)
 reports/
 harness-report*.txt
+
+# Claude Code / editor agent local state (also holds CHANGES.md and
+# DESIGN_REFACTOR.md — local-only refactor notes, not committed)
+.claude/
+.fake
+CLAUDE.md

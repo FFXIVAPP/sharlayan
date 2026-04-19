@@ -105,7 +105,7 @@ namespace Sharlayan {
                     UnsafeNativeMethods.CloseHandle(this.ProcessHandle);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 // IGNORED
             }
             finally {

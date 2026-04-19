@@ -17,8 +17,10 @@ using Newtonsoft.Json;
 using Sharlayan;
 using Sharlayan.Utilities;
 
-// Config up Sharlayan and grab latest current offsets
-var configuration = new SharlayanConfiguration { UseLocalCache = false };
+// Config up Sharlayan and grab latest current offsets.
+// Note: the HTTP fallback to sharlayan-resources has been removed; this tool now reads a
+// snapshotted structures-global-latest.json from JSONCacheDirectory (defaults to CWD).
+var configuration = new SharlayanConfiguration { UseLocalCache = true };
 var structuresContainer = await APIHelper.GetStructures(configuration);
 
 // ETL FFXIVClientStructs int Sharlayan format

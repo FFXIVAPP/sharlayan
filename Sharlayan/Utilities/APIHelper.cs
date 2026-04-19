@@ -1,10 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="APIHelper.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   APIHelper.cs Implementation
+//   Local-JSON-only bootstrap for the legacy resource path. The HTTP fetch against the
+//   sharlayan-resources repository has been removed — that repo is no longer maintained
+//   and its signatures/offsets drift with every FFXIV patch. New code should go through
+//   Sharlayan.Resources.IResourceProvider and ResourceProviderFactory.Create(configuration),
+//   which defaults to FFXIVClientStructsDirect. This class remains only so the harness's
+//   [3] A/B diff against snapshotted legacy JSON keeps working.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,9 +18,6 @@ namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net.Cache;
-    using System.Net.Http;
-    using System.Text;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -26,154 +28,58 @@ namespace Sharlayan.Utilities {
 
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
-    /// <summary>
-    /// Historical static entry point for fetching sharlayan-resources JSON. Still works
-    /// but is considered obsolete — new code should go through Sharlayan.Resources.IResourceProvider
-    /// and ResourceProviderFactory.Create(configuration). The legacy path is now wrapped by
-    /// Sharlayan.Resources.Providers.LegacyJsonProvider, which delegates to these methods.
-    /// </summary>
     public static class APIHelper {
-        private static Encoding _webClientEncoding = Encoding.UTF8;
-
-        private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
         [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetActionsAsync via ResourceProviderFactory.")]
-        public static async Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
-
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-latest.json");
-
-            if (File.Exists(file) && configuration.UseLocalCache) {
-                EnsureDictionaryValues(actions, file);
-            }
-            else {
-                //await APIResponseToDictionary(actions, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/actions.json", configuration);
-                await APIResponseToDictionary(actions, $"{configuration.APIBaseURL}/xivdatabase/latest/actions.json", configuration);
-
-            }
-
-            if (configuration.UseLocalCache) {
-                File.WriteAllText(file, JsonConvert.SerializeObject(actions, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-            }
+        public static Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "actions-latest.json");
+            RequireLocalFile(file, "actions");
+            EnsureDictionaryValues(actions, file);
+            return Task.CompletedTask;
         }
 
         [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetSignaturesAsync via ResourceProviderFactory.")]
-        public static async Task<Signature[]> GetSignatures(SharlayanConfiguration configuration) {
+        public static Task<Signature[]> GetSignatures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
-            string patchVersion = configuration.PatchVersion;
             string file = Path.Combine(configuration.JSONCacheDirectory, $"signatures-{region}-latest.json");
-
-
-            if (File.Exists(file) && configuration.UseLocalCache) {
-                return FileResponseToJSON<Signature[]>(file);
-            }
-
-            //string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/{patchVersion}/x64.json");
-            string json = await APIResponseToJSON($"{configuration.APIBaseURL}/signatures/latest/x64.json");
-
-            Signature[] resolved = JsonConvert.DeserializeObject<Signature[]>(json, Constants.SerializerSettings);
-
-            if (configuration.UseLocalCache) {
-                File.WriteAllText(file, JsonConvert.SerializeObject(resolved, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-            }
-
-            return resolved;
+            RequireLocalFile(file, "signatures");
+            return Task.FromResult(FileResponseToJSON<Signature[]>(file));
         }
 
         [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetStatusEffectsAsync via ResourceProviderFactory.")]
-        public static async Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
-
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-latest.json");
-
-            if (File.Exists(file) && configuration.UseLocalCache) {
-                EnsureDictionaryValues(statusEffects, file);
-            }
-            else {
-                //await APIResponseToDictionary(statusEffects, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/statuses.json", configuration);
-                await APIResponseToDictionary(statusEffects, $"{configuration.APIBaseURL}/xivdatabase/latest/statuses.json", configuration);
-
-            }
-
-            if (configuration.UseLocalCache) {
-                File.WriteAllText(file, JsonConvert.SerializeObject(statusEffects, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-            }
+        public static Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "statuses-latest.json");
+            RequireLocalFile(file, "status effects");
+            EnsureDictionaryValues(statusEffects, file);
+            return Task.CompletedTask;
         }
 
         [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetStructuresAsync via ResourceProviderFactory.")]
-        public static async Task<StructuresContainer> GetStructures(SharlayanConfiguration configuration) {
+        public static Task<StructuresContainer> GetStructures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
-            string patchVersion = configuration.PatchVersion;
             string file = Path.Combine(configuration.JSONCacheDirectory, $"structures-{region}-latest.json");
-
-            if (File.Exists(file) && configuration.UseLocalCache) {
-                return EnsureClassValues<StructuresContainer>(file);
-            }
-
-            // StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/{patchVersion}/x64.json");
-            StructuresContainer structuresContainer = await APIResponseTo<StructuresContainer>($"{configuration.APIBaseURL}/structures/latest/x64.json");
-
-            if (configuration.UseLocalCache) {
-                File.WriteAllText(file, JsonConvert.SerializeObject(structuresContainer, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-            }
-
-            return structuresContainer;
+            RequireLocalFile(file, "structures");
+            return Task.FromResult(FileResponseToJSON<StructuresContainer>(file));
         }
 
         [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetZonesAsync via ResourceProviderFactory.")]
-        public static async Task GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
-            // These ID's link to offset 7 in the old JSON values.
-            // eg: "map id = 4" would be 148 in offset 7.
-            // This is known as the TerritoryType value
-            // - It maps directly to SaintCoins map.csv against TerritoryType ID
-
-            string file = Path.Combine(configuration.JSONCacheDirectory, $"zones-latest.json");
-
-            if (File.Exists(file) && configuration.UseLocalCache) {
-                EnsureDictionaryValues(mapInfos, file);
-            }
-            else {
-                //await APIResponseToDictionary(mapInfos, $"{configuration.APIBaseURL}/xivdatabase/{configuration.PatchVersion}/zones.json", configuration);
-                await APIResponseToDictionary(mapInfos, $"{configuration.APIBaseURL}/xivdatabase/latest/zones.json", configuration);
-
-            }
-
-            if (configuration.UseLocalCache) {
-                File.WriteAllText(file, JsonConvert.SerializeObject(mapInfos, Formatting.Indented, Constants.SerializerSettings), Encoding.UTF8);
-            }
+        public static Task GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
+            string file = Path.Combine(configuration.JSONCacheDirectory, "zones-latest.json");
+            RequireLocalFile(file, "zones");
+            EnsureDictionaryValues(mapInfos, file);
+            return Task.CompletedTask;
         }
 
-        private static async Task APIResponseToDictionary<T>(ConcurrentDictionary<uint, T> dictionary, string uri, SharlayanConfiguration configuration) {
-            ConcurrentDictionary<uint, T> resolved = await APIResponseTo<ConcurrentDictionary<uint, T>>(uri);
-
-            foreach (KeyValuePair<uint, T> kvp in resolved) {
-                dictionary.AddOrUpdate(kvp.Key, kvp.Value, (k, v) => kvp.Value);
+        private static void RequireLocalFile(string path, string kind) {
+            if (!File.Exists(path)) {
+                throw new FileNotFoundException(
+                    $"Legacy {kind} JSON not found at '{path}'. The sharlayan-resources HTTP fallback has been removed; " +
+                    "place a snapshotted JSON file at the configured JSONCacheDirectory or switch SharlayanConfiguration.ResourceProvider " +
+                    "to FFXIVClientStructsDirect (now the default).", path);
             }
-        }
-
-        private static async Task<string> APIResponseToJSON(string uri) {
-            using HttpRequestMessage request = new HttpRequestMessage {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(uri),
-            };
-            using HttpClient httpClient = new HttpClient();
-            using HttpResponseMessage response = await httpClient.SendAsync(request);
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return responseBody;
-        }
-
-        private static async Task<T> APIResponseTo<T>(string uri) {
-            string json = await APIResponseToJSON(uri);
-
-            return JsonConvert.DeserializeObject<T>(json, Constants.SerializerSettings);
-        }
-
-        private static T EnsureClassValues<T>(string file) {
-            return FileResponseToJSON<T>(file);
         }
 
         private static void EnsureDictionaryValues<T>(ConcurrentDictionary<uint, T> dictionary, string file) {
             ConcurrentDictionary<uint, T> resolved = FileResponseToJSON<ConcurrentDictionary<uint, T>>(file);
-
             foreach (KeyValuePair<uint, T> kvp in resolved) {
                 dictionary.AddOrUpdate(kvp.Key, kvp.Value, (k, v) => kvp.Value);
             }
@@ -185,7 +91,7 @@ namespace Sharlayan.Utilities {
                 NullValueHandling = NullValueHandling.Ignore,
                 DefaultValueHandling = DefaultValueHandling.Populate,
             };
-            return (T) serializer.Deserialize(streamReader, typeof(T));
+            return (T)serializer.Deserialize(streamReader, typeof(T));
         }
     }
 }

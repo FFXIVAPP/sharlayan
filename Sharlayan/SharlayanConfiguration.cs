@@ -16,7 +16,6 @@ namespace Sharlayan {
     using Sharlayan.Resources;
 
     public class SharlayanConfiguration {
-        public string APIBaseURL { get; set; } = Constants.DEFAULT_API_BASE_URL;
         public string CharacterName { get; set; }
         public string GameInstallPath { get; set; }
         public GameLanguage GameLanguage { get; set; } = GameLanguage.English;
