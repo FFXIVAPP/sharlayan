@@ -1,9 +1,11 @@
-name: Release .NET Core / .NET Full Framework Library
+name: Release Sharlayan 9
 
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
 
 jobs:
   build:
@@ -18,57 +20,79 @@ jobs:
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     steps:
-      - name: Checkout
+      # FFXIVClientStructs is a git submodule that build.ps1 expects to be populated
+      # before it hands off to `dotnet build`. submodules: recursive pulls it at
+      # checkout time; fetch-depth: 0 is preserved for version-derivation scripts.
+      - name: Checkout (with submodules)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
 
-      # Install the .NET Core workload
-      - name: Install .NET Core
+      # Sharlayan + Sharlayan.Tests + Sharlayan.Harness all target net10.0; the
+      # FFXIVClientStructs submodule's own projects also target net10.0 / netstandard2.0.
+      # Only the current SDK is needed.
+      - name: Install .NET 10 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            7.0.x
-            6.0.x
+          dotnet-version: 10.0.x
 
-      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
-
-      # Get Library Version
-      - name: Get Library Version
+      # Extract <Version> from Sharlayan.csproj. Used by the upload-artifact step so
+      # the artifact name tracks the NuGet version being published.
+      - name: Get library version
         id: get_version
+        shell: pwsh
         run: |
-          $version = [System.Version]::Parse((Get-Content -Path .\${{ env.SOLUTION_NAME }}\${{ env.SOLUTION_NAME }}.csproj -Raw | Select-String -Pattern '<Version>(.*)</Version>').Matches.Groups[1].Value)
-          echo "Library Version: $version"
-          echo "::set-output name=version::$version"
+          $csproj = Get-Content -Path .\${{ env.SOLUTION_NAME }}\${{ env.SOLUTION_NAME }}.csproj -Raw
+          $match = [regex]::Match($csproj, '<Version>(?<v>[^<]+)</Version>')
+          if (-not $match.Success) { throw 'Could not find <Version> in Sharlayan.csproj' }
+          $version = $match.Groups['v'].Value
+          Write-Host "Library version: $version"
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      # Restore the application to populate the obj folder with RuntimeIdentifiers
-      - name: Restore the application
-        run: msbuild ${{ env.SOLUTION_NAME }}.sln /t:Restore /p:Configuration=$env:Configuration
-        env:
-          Configuration: ${{ matrix.configuration }}
+      # build.ps1 orchestrates:
+      #   1. git submodule sync/update (safe no-op on CI since checkout already pulled).
+      #   2. dotnet build on FFXIVClientStructs.csproj → produces FCS DLLs at the
+      #      location Sharlayan.csproj references via HintPath.
+      #   3. dotnet build on Sharlayan.csproj → ILRepacks FCS into Sharlayan.dll and
+      #      auto-packs the .nupkg (GeneratePackageOnBuild=true). The CopyPackages
+      #      MSBuild target then drops the .nupkg under .\published\ at the sln root.
+      # -SkipSubmoduleUpdate because checkout has already done it; running `git
+      # submodule update --remote` under GITHUB_TOKEN can fail if the submodule URL
+      # is SSH-flavoured in the .gitmodules file.
+      - name: Build (FFXIVClientStructs + Sharlayan + ILRepack + NuGet pack)
+        shell: pwsh
+        run: ./build.ps1 -Configuration ${{ matrix.configuration }} -SkipSubmoduleUpdate
 
-      # Build the application
-      - name: Build the application
-        run: msbuild ${{ env.SOLUTION_NAME }}.sln /t:Build /p:Configuration=$env:Configuration /p:WarningLevel=0
-        env:
-          Configuration: ${{ matrix.configuration }}
+      # Sharlayan.Harness requires a live FFXIV client (won't run on CI) — the CI test
+      # gate is Sharlayan.Tests, pure mapper/extractor logic. At time of writing: 79
+      # tests across mapper offset derivation + signature extractor math.
+      - name: Run tests
+        shell: pwsh
+        run: dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj --configuration ${{ matrix.configuration }} --nologo
 
-      # Upload the build artifacts
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sharlayan-latest
+          name: sharlayan-${{ steps.get_version.outputs.version }}
           path: |
             published/
+          if-no-files-found: error
           overwrite: true
 
-      # Publish each package to NuGet
-      - name: Publish each package to NuGet
+      # Only publish on actual master pushes — not PR events. --skip-duplicate makes
+      # re-running the workflow on the same version a no-op instead of an error, so
+      # bumping <Version> in Sharlayan.csproj is the trigger for a new NuGet release.
+      - name: Publish NuGet packages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        shell: pwsh
         run: |
           $packages = Get-ChildItem -Path .\published\ -Filter *.nupkg
+          if (-not $packages) { throw 'No .nupkg files found under .\published\' }
           foreach ($package in $packages) {
-            dotnet nuget push $package.FullName --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+            Write-Host "==> dotnet nuget push $($package.Name)"
+            dotnet nuget push $package.FullName `
+              --skip-duplicate `
+              --api-key ${{ env.NUGET_TOKEN }} `
+              --source https://api.nuget.org/v3/index.json
           }
