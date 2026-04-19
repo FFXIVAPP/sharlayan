@@ -530,6 +530,40 @@ internal static class Program {
                 Log($"    ✗ EyeCheck: {ex.GetType().Name}: {ex.Message}");
             }
 
+            // GameState — validates GAMEMAIN / CONDITIONS / CONTENTSFINDER / WEATHER /
+            // BGMSYSTEM signatures + Lumina name lookups in one shot. Populated fields here
+            // should match the in-game UI: weather matches /weather-inspect, BGM matches
+            // what you can hear, DutyFinderBellPopped iff the queue is "Ready".
+            try {
+                if (directHandler.Reader.CanGetGameState()) {
+                    var gs = directHandler.Reader.GetGameState();
+                    Log(string.Empty);
+                    Log("  [7c.2] GAMESTATE (direct provider)");
+                    Log($"    IsLoggedIn={gs.IsLoggedIn}  IsReadyToRead={gs.IsReadyToRead}  TerritoryLoadState={gs.TerritoryLoadState}  (1=loading,2=loaded,3=unloading)");
+                    // Dump raw Conditions bytes too so a "WatchingCutscene=False when I am"
+                    // report can be pinned to whichever bit the game set for that cutscene.
+                    byte occCut = 0, watch58 = 0, watch78 = 0, bound = 0, occEvt = 0;
+                    if (directHandler.Scanner.Locations.TryGetValue(Sharlayan.Signatures.CONDITIONS_KEY, out var condLoc)) {
+                        IntPtr cond = condLoc;
+                        try { occCut  = directHandler.GetByte(cond, 35); } catch { }
+                        try { watch58 = directHandler.GetByte(cond, 58); } catch { }
+                        try { watch78 = directHandler.GetByte(cond, 78); } catch { }
+                        try { bound   = directHandler.GetByte(cond, 34); } catch { }
+                        try { occEvt  = directHandler.GetByte(cond, 31); } catch { }
+                    }
+                    Log($"    WatchingCutscene={gs.WatchingCutscene}  (raw: OccupiedInCutSceneEvent@35={occCut} WatchingCutscene@58={watch58} WatchingCutscene78@78={watch78} OccupiedInEvent@31={occEvt} BoundByDuty@34={bound})");
+                    Log($"    ContentsFinderQueueState={gs.ContentsFinderQueueState}  (DutyFinderBellPopped={gs.DutyFinderBellPopped}  InInstance={gs.InInstance})");
+                    Log($"    Weather id={gs.CurrentWeatherId}  name=\"{gs.CurrentWeatherName ?? "(no lumina)"}\"");
+                    Log($"    BGM id={gs.CurrentBgmId}  scene={gs.CurrentBgmSceneId}  file=\"{gs.CurrentBgmFile ?? "(no lumina)"}\"");
+                }
+                else {
+                    Log("    GameState: CanGetGameState=false (GAMEMAIN signature didn't resolve)");
+                }
+            }
+            catch (Exception ex) {
+                Log($"    ✗ GameState: {ex.GetType().Name}: {ex.Message}");
+            }
+
             // Chat log via direct provider — validates the Framework→UIModule→RaptureLogModule
             // multi-hop signature AND the FCS-derived ChatLogPointers offsets in tandem. First
             // call primes the cursor; (0,0) replays the historical ring buffer; last call polls

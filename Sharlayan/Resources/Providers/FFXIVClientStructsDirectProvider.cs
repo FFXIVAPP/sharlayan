@@ -83,6 +83,13 @@ namespace Sharlayan.Resources.Providers {
             // hop2 = +0x2B68 then deref to UIModule, hop3 = +inner (trailing add, no deref).
             TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework", 0x2B68, 0x19E0);            // UIModule → RaptureLogModule
             TryAddChain(signatures, Signatures.HOTBAR_KEY,  "Framework", 0x2B68, 0x57B80 + 0xA0);    // UIModule → RaptureHotbarModule → _hotbars[0] @ +0xA0
+            // Game-state family: each of these maps to an FCS singleton. Reader.GameState
+            // reads specific byte/ushort/bool fields at fixed inner offsets off these bases.
+            TryAdd(signatures, Signatures.GAMEMAIN_KEY,       "GameMain",       innerOffset: 0);     // TerritoryLoadState @ +0x4100, ConnectedToZone @ +0x40FE
+            TryAdd(signatures, Signatures.CONDITIONS_KEY,     "Conditions",     innerOffset: 0);     // WatchingCutscene @ +58, BoundByDuty @ +34, WaitingForDutyFinder @ +59
+            TryAdd(signatures, Signatures.CONTENTSFINDER_KEY, "ContentsFinder", innerOffset: 0);     // QueueInfo.QueueState @ +0x20 + 0x55 = +0x75
+            TryAdd(signatures, Signatures.WEATHER_KEY,        "WeatherManager", innerOffset: 0);     // WeatherId @ +0x64
+            TryAdd(signatures, Signatures.BGMSYSTEM_KEY,      "BGMSystem",      innerOffset: 0);     // Scenes StdVector @ +0xC0 (extractor handles isPointer=true)
             return Task.FromResult(signatures.ToArray());
         }
 
