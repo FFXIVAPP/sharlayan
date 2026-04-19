@@ -447,8 +447,38 @@ internal static class Program {
                 if (sample.Count > 0) {
                     Log($"    Sample actors ({sample.Count}):");
                     foreach (var a in sample) {
-                        Log($"      - {a.Name,-24} Type={a.Type} ID=0x{a.ID:X8} NPCID2={a.NPCID2} HP={a.HPCurrent}/{a.HPMax} Pos=({a.X:F1},{a.Y:F1},{a.Z:F1})");
+                        Log($"      - {a.Name,-24} Type={a.Type} ID=0x{a.ID:X8} HP={a.HPCurrent}/{a.HPMax} IsAgroed={a.IsAgroed} AgroFlags=0x{a.AgroFlags:X2}");
                     }
+                }
+
+                // Current target — pulls the actor the player is hard-targeted on. When
+                // engaged with a mob this should show IsAgroed=True for the mob; when
+                // targeting a friendly NPC it should show IsAgroed=False. Soft-target
+                // (MouseOver) and FocusTarget are shown too when set.
+                try {
+                    var tr = directHandler.Reader.GetTargetInfo();
+                    var ti = tr?.TargetInfo;
+                    if (ti == null) {
+                        Log("    CurrentTarget: (TargetInfo null)");
+                    }
+                    else {
+                        void DumpTarget(string label, Sharlayan.Core.ActorItem? t) {
+                            if (t == null) { Log($"    {label}: (none)"); return; }
+                            Log($"    {label}: \"{t.Name}\" Type={t.Type} ID=0x{t.ID:X8} HP={t.HPCurrent}/{t.HPMax}");
+                            Log($"      IsAgroed={t.IsAgroed}  AgroFlags=0x{t.AgroFlags:X2}  CombatFlags=0x{t.CombatFlags:X2}  ClaimedByID=0x{t.ClaimedByID:X8}");
+                            Log($"      IsCasting={t.IsCasting1}  CastingID={t.CastingID}  CastingProgress={t.CastingProgress:F2}/{t.CastingTime:F2}s  CastTargetID=0x{t.CastingTargetID:X8}");
+                            Log($"      Pos=({t.X:F1},{t.Y:F1},{t.Z:F1})  TargetID=0x{t.TargetID:X8}  NPCID2={t.NPCID2}");
+                        }
+                        DumpTarget("CurrentTarget", ti.CurrentTarget);
+                        if (ti.FocusTarget != null) DumpTarget("FocusTarget",   ti.FocusTarget);
+                        if (ti.MouseOverTarget != null) DumpTarget("MouseOverTarget", ti.MouseOverTarget);
+                        if (ti.CurrentTarget == null && ti.FocusTarget == null && ti.MouseOverTarget == null) {
+                            Log($"    CurrentTargetID = 0x{ti.CurrentTargetID:X8}  (no resolved target — target offscreen or between actor frames)");
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    Log($"    ✗ Target: {ex.GetType().Name}: {ex.Message}");
                 }
 
                 // Explicitly target HOTBAR_1 and HOTBAR_2 — scanning for "first populated"
