@@ -205,7 +205,9 @@ internal static class Program {
                 int pcs = r.CurrentPCs.Count;
                 int npcs = r.CurrentNPCs.Count;
                 int mobs = r.CurrentMonsters.Count;
-                Check("  Actors.CurrentPCs >= 1 (self)", pcs >= 1, Log);
+                // Self lives in CurrentPlayer.Entity, not in CurrentPCs — CurrentPCs
+                // is *other* players, so 0 is legitimate in a solo zone (e.g. Mist).
+                Check("  Actors: total actor count > 0", (pcs + npcs + mobs) > 0, Log);
                 return $"PCs={pcs} NPCs={npcs} Monsters={mobs}";
             });
 
@@ -279,20 +281,26 @@ internal static class Program {
                     Log("    ✗ CanGetChatLog()=false — CHATLOG signature missing.");
                 }
                 else {
-                    // First call primes the previous-index cursor; second call on a
-                    // short delay picks up anything that arrived in between. Either
-                    // way we want to prove the pointer chain is walkable.
-                    var first = handler.Reader.GetChatLog();
+                    // First call primes the reader's internal cursor to the tail of
+                    // the current buffer and returns 0 items by design.
+                    var primed = handler.Reader.GetChatLog();
+                    // Calling again with (0, 0) replays the entire in-memory ring
+                    // buffer — this is what we want for validation: it proves the
+                    // ChatLogPointers offsets + ChatEntry.Process parser both work.
+                    var historical = handler.Reader.GetChatLog(0, 0);
                     await Task.Delay(1500);
-                    var second = handler.Reader.GetChatLog(first.PreviousArrayIndex, first.PreviousOffset);
+                    // And one final incremental poll to prove the cursor advances
+                    // correctly when nothing new arrives (should be 0 new items).
+                    var delta = handler.Reader.GetChatLog(primed.PreviousArrayIndex, primed.PreviousOffset);
 
-                    int primed = first.ChatLogItems.Count;
-                    int delta = second.ChatLogItems.Count;
-                    Log($"    ✓ CanGetChatLog()=true — primed {primed} items, +{delta} new on 1.5 s poll");
-                    foreach (var item in second.ChatLogItems.Take(3)) {
-                        string line = (item.Line ?? string.Empty).Replace("\n", " ").Trim();
-                        if (line.Length > 80) line = line.Substring(0, 77) + "…";
-                        Log($"      [{item.TimeStamp:HH:mm:ss}] code={item.Code} line=\"{line}\"");
+                    Log($"    ✓ CanGetChatLog()=true — historical buffer: {historical.ChatLogItems.Count} items, +{delta.ChatLogItems.Count} new on 1.5 s poll");
+                    if (historical.ChatLogItems.Count > 0) {
+                        Log("    Last 3 entries (most recent first):");
+                        foreach (var item in historical.ChatLogItems.Reverse().Take(3)) {
+                            string line = (item.Line ?? string.Empty).Replace("\n", " ").Trim();
+                            if (line.Length > 80) line = line.Substring(0, 77) + "…";
+                            Log($"      [{item.TimeStamp:HH:mm:ss}] code={item.Code} line=\"{line}\"");
+                        }
                     }
                 }
             }
