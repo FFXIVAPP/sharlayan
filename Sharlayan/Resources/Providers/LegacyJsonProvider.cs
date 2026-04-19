@@ -20,6 +20,9 @@ namespace Sharlayan.Resources.Providers {
 
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
+    // APIHelper is [Obsolete] for external callers, but this provider IS the legacy path —
+    // it intentionally forwards to the deprecated methods. Suppress the warning here only.
+#pragma warning disable CS0618 // Type or member is obsolete
     internal sealed class LegacyJsonProvider : IResourceProvider {
         public Task<StructuresContainer> GetStructuresAsync(SharlayanConfiguration configuration) {
             return APIHelper.GetStructures(configuration);
@@ -41,4 +44,5 @@ namespace Sharlayan.Resources.Providers {
             return APIHelper.GetZones(zones, configuration);
         }
     }
+#pragma warning restore CS0618
 }

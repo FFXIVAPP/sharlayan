@@ -26,11 +26,18 @@ namespace Sharlayan.Utilities {
 
     using StatusItem = Sharlayan.Models.XIVDatabase.StatusItem;
 
+    /// <summary>
+    /// Historical static entry point for fetching sharlayan-resources JSON. Still works
+    /// but is considered obsolete — new code should go through Sharlayan.Resources.IResourceProvider
+    /// and ResourceProviderFactory.Create(configuration). The legacy path is now wrapped by
+    /// Sharlayan.Resources.Providers.LegacyJsonProvider, which delegates to these methods.
+    /// </summary>
     public static class APIHelper {
         private static Encoding _webClientEncoding = Encoding.UTF8;
 
         private static RequestCachePolicy _webClientRequestCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
+        [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetActionsAsync via ResourceProviderFactory.")]
         public static async Task GetActions(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
 
             string file = Path.Combine(configuration.JSONCacheDirectory, $"actions-latest.json");
@@ -49,6 +56,7 @@ namespace Sharlayan.Utilities {
             }
         }
 
+        [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetSignaturesAsync via ResourceProviderFactory.")]
         public static async Task<Signature[]> GetSignatures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
@@ -71,6 +79,7 @@ namespace Sharlayan.Utilities {
             return resolved;
         }
 
+        [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetStatusEffectsAsync via ResourceProviderFactory.")]
         public static async Task GetStatusEffects(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
 
             string file = Path.Combine(configuration.JSONCacheDirectory, $"statuses-latest.json");
@@ -89,6 +98,7 @@ namespace Sharlayan.Utilities {
             }
         }
 
+        [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetStructuresAsync via ResourceProviderFactory.")]
         public static async Task<StructuresContainer> GetStructures(SharlayanConfiguration configuration) {
             string region = configuration.GameRegion.ToString().ToLowerInvariant();
             string patchVersion = configuration.PatchVersion;
@@ -108,6 +118,7 @@ namespace Sharlayan.Utilities {
             return structuresContainer;
         }
 
+        [Obsolete("Use Sharlayan.Resources.IResourceProvider.GetZonesAsync via ResourceProviderFactory.")]
         public static async Task GetZones(ConcurrentDictionary<uint, MapItem> mapInfos, SharlayanConfiguration configuration) {
             // These ID's link to offset 7 in the old JSON values.
             // eg: "map id = 4" would be 148 in offset 7.

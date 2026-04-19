@@ -157,13 +157,11 @@ namespace Sharlayan.Resources.Providers {
                 throw new DirectoryNotFoundException($"sqpack directory not found under configured GameInstallPath '{configuration.GameInstallPath}'.");
             }
 
-            string? exePath = configuration.ProcessModel?.Process?.MainModule?.FileName
-                              ?? throw new InvalidOperationException("Cannot locate game sqpack: no GameInstallPath set and no running ProcessModel available.");
+            string exePath = configuration.ProcessModel?.Process?.MainModule?.FileName
+                             ?? throw new InvalidOperationException("Cannot locate game sqpack: no GameInstallPath set and no running ProcessModel available.");
 
-            string? gameDir = Path.GetDirectoryName(exePath);
-            if (string.IsNullOrEmpty(gameDir)) {
-                throw new InvalidOperationException($"Cannot derive game directory from exe path '{exePath}'.");
-            }
+            string gameDir = Path.GetDirectoryName(exePath)
+                             ?? throw new InvalidOperationException($"Cannot derive game directory from exe path '{exePath}'.");
 
             string sqpack = Path.Combine(gameDir, "sqpack");
             if (!Directory.Exists(sqpack)) {
