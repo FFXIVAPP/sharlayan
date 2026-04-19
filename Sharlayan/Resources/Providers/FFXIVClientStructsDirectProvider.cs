@@ -78,8 +78,11 @@ namespace Sharlayan.Resources.Providers {
             TryAdd(signatures, Signatures.ENMITY_COUNT_KEY, "UIState",           innerOffset: 0x108);    // UIState.Hate.HateArrayLength
             TryAdd(signatures, Signatures.AGROMAP_KEY,      "UIState",           innerOffset: 0x110);    // UIState.Hater._haters[0] (32 × HaterInfo × 0x48 bytes)
             TryAdd(signatures, Signatures.AGRO_COUNT_KEY,   "UIState",           innerOffset: 0xA10);    // UIState.Hater.HaterCount
-            // CHATLOG / HOTBAR require Framework.Instance()->GetUIModule() method-call chain —
-            // not expressible in Sharlayan's PointerPath model. Deferred.
+            // Multi-hop: Framework (isPointer=true) → UIModule* @ +0x2B68 → sub-module inside UIModule.
+            // ResolvePointerPath: hop0 = ASM follow of Framework static ptr, hop1 = deref to Framework,
+            // hop2 = +0x2B68 then deref to UIModule, hop3 = +inner (trailing add, no deref).
+            TryAddChain(signatures, Signatures.CHATLOG_KEY, "Framework", 0x2B68, 0x19E0);   // UIModule → RaptureLogModule
+            TryAddChain(signatures, Signatures.HOTBAR_KEY,  "Framework", 0x2B68, 0x57B80);  // UIModule → RaptureHotbarModule
             return Task.FromResult(signatures.ToArray());
         }
 
@@ -93,6 +96,18 @@ namespace Sharlayan.Resources.Providers {
             catch {
                 // Conversion failures (bad pattern length etc.) should not prevent other keys from
                 // resolving — individual missing keys are already handled by Reader.CanGet* guards.
+            }
+        }
+
+        private static void TryAddChain(List<Signature> list, string sharlayanKey, string fcsTypeName, params long[] offsetChain) {
+            if (!FFXIVClientStructsSignatureExtractor.TryGet(fcsTypeName, out var info)) {
+                return;
+            }
+            try {
+                list.Add(FFXIVClientStructsSignatureExtractor.BuildSignature(sharlayanKey, info, offsetChain));
+            }
+            catch {
+                // Same graceful degradation as TryAdd.
             }
         }
 

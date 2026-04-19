@@ -65,7 +65,24 @@ namespace Sharlayan.Resources.Providers {
         /// Byte offset inside the resolved struct to reach the field Sharlayan expects. For example
         /// CHARMAP is GameObjectManager + 0x20 for the _indexSorted pointer array.
         /// </param>
-        public static Signature BuildSignature(string sharlayanKey, StaticAddressInfo info, long innerOffset) {
+        public static Signature BuildSignature(string sharlayanKey, StaticAddressInfo info, long innerOffset)
+            => BuildSignature(sharlayanKey, info, new[] { innerOffset });
+
+        /// <summary>
+        /// Multi-hop variant — used when the Sharlayan target lives behind a chain of pointer
+        /// fields inside the FCS-resolved struct. Each element after the first becomes an
+        /// additional PointerPath hop that ResolvePointerPath treats as a pointer dereference
+        /// (only the first hop does the ASM RIP-follow). The very last offset is a non-deref
+        /// trailing add, so the returned address = penultimate_ptr + offsetChain[^1].
+        ///
+        /// Example: CHATLOG = Framework[isPointer] → UIModule @ Framework+0x2B68 → RaptureLogModule @ UIModule+0x19E0
+        ///   offsetChain = [0x2B68, 0x19E0]
+        ///   final PointerPath = [rewindBack, 0 (deref Framework ptr), 0x2B68 (deref UIModule field), 0x19E0 (trailing add)]
+        /// </summary>
+        public static Signature BuildSignature(string sharlayanKey, StaticAddressInfo info, long[] offsetChain) {
+            if (offsetChain == null || offsetChain.Length == 0) {
+                throw new ArgumentException("offsetChain must contain at least one element", nameof(offsetChain));
+            }
             string patternHex = NormalisePatternHex(info.Pattern);
             int patternBytes = patternHex.Length / 2;
             if (info.RelativeFollowOffset > patternBytes) {
@@ -77,14 +94,14 @@ namespace Sharlayan.Resources.Providers {
             long rewindBack = -(long)(patternBytes - info.RelativeFollowOffset);
             List<long> path = new List<long> { rewindBack };
             if (info.IsPointer) {
-                // The static slot holds a pointer to the struct, not the struct itself. After the
-                // ASM follow resolves to the slot address, we need to dereference it once.
+                // Static slot holds a pointer; an extra deref hop turns RIP-target into struct base.
                 path.Add(0);
             }
-            // Final hop reaches the Sharlayan-specific field inside the resolved struct. Sharlayan's
-            // ResolvePointerPath always does a trailing dereference on the last entry (value ignored),
-            // so baseAddress returned = struct + innerOffset.
-            path.Add(innerOffset);
+            // All but the last offset become pointer-deref hops (ResolvePointerPath calls
+            // ReadPointer at each intermediate step). The trailing offset is a non-deref add.
+            foreach (long off in offsetChain) {
+                path.Add(off);
+            }
 
             return new Signature {
                 Key = sharlayanKey,
