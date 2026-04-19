@@ -35,6 +35,7 @@ namespace Sharlayan.Resources.Providers {
             return Task.FromResult(new StructuresContainer {
                 ActorItem = ActorItemMapper.Build(),
                 PartyMember = PartyMemberMapper.Build(),
+                StatusItem = StatusItemMapper.Build(),
             });
         }
 
