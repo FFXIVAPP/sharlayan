@@ -94,6 +94,14 @@ namespace Sharlayan.Resources.Mappers {
                 // EventObjectType → EventId on GameObject (32-bit event id; legacy read a ushort).
                 EventObjectType = (int)Marshal.OffsetOf<Character>(nameof(Character.EventId)),
 
+                // InCutscene: per-actor cutscene participation flag. GameObject.RenderFlags is
+                // a VisibilityFlags ulong at +0x118. FFXIV sets bit 11 (Nameplate = 1ul << 11)
+                // on every actor currently participating in a cutscene — byte +0x119 goes
+                // 0x00 → 0x08 in that case. Resolver does TryToBoolean (!=0) on a single byte,
+                // so pointing at +0x119 gives the right answer: any bit set in byte 1 of
+                // RenderFlags (in practice just Nameplate) => InCutscene=true.
+                InCutscene = (int)Marshal.OffsetOf<Character>(nameof(Character.RenderFlags)) + 1,
+
                 // --- BattleChara casting + status (offsets only valid for battle actors) ---
                 IsCasting1      = castInfoBase + ciIsCasting,
                 IsCasting2      = castInfoBase + ciInterruptible,

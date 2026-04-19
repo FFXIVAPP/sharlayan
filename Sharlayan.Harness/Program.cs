@@ -439,6 +439,31 @@ internal static class Program {
                     Log($"    LocalPlayer.HitBoxRadius={dp.HitBoxRadius}");
                     Log($"    LocalPlayer.IsAgroed   = {dp.IsAgroed}   (CharacterData.Flags bit 0 / IsHostile)");
                     Log($"    LocalPlayer.AgroFlags  = 0x{dp.AgroFlags:X2} CombatFlags=0x{dp.CombatFlags:X2}   (bit 1 = InCombat)");
+                    Log($"    LocalPlayer.InCutscene = {dp.InCutscene}   (ActorItem.InCutscene — currently unmapped in direct, see raw RenderFlags below)");
+
+                    // Raw per-actor cutscene-candidate bytes from the CHARMAP pointer array. During
+                    // a cutscene the local player's GameObject.RenderFlags should lose the Model bit
+                    // (1 << 1 = 0x02), and TargetableStatus often also changes. We pull the first
+                    // non-null pointer from CHARMAP (the local player is typically slot 0) and read
+                    // the raw bytes so we can see which byte actually reflects cutscene state.
+                    try {
+                        if (directHandler.Scanner.Locations.TryGetValue(Sharlayan.Signatures.CHARMAP_KEY, out var charmap)) {
+                            // CHARMAP is a pointer array (819 × 8 bytes). First pointer → first GameObject*.
+                            long firstActorAddr = directHandler.GetInt64(charmap);
+                            if (firstActorAddr != 0) {
+                                IntPtr actor = new IntPtr(firstActorAddr);
+                                byte tgtStatus      = directHandler.GetByte(actor, 0x95);   // TargetStatus
+                                byte targetable     = directHandler.GetByte(actor, 0x9A);   // TargetableStatus
+                                byte renderFlagsLo  = directHandler.GetByte(actor, 0x118);  // VisibilityFlags low byte
+                                byte renderFlagsHi  = directHandler.GetByte(actor, 0x119);  // high byte (Nameplate = bit 11)
+                                Log($"    LocalPlayer raw @ CHARMAP[0]: TargetStatus@0x95=0x{tgtStatus:X2} TargetableStatus@0x9A=0x{targetable:X2} RenderFlags@0x118=0x{renderFlagsLo:X2} RenderFlags@0x119=0x{renderFlagsHi:X2}");
+                                Log($"      (Model bit = 0x02 on 0x118; during a cutscene this typically drops. Watch which byte changes.)");
+                            }
+                        }
+                    }
+                    catch (Exception ex) {
+                        Log($"    ✗ Raw actor byte dump: {ex.GetType().Name}: {ex.Message}");
+                    }
                 }
                 var dActors2 = directHandler.Reader.GetActors();
                 // Sample up to 3 non-self actors so the user can eye-check names/types.
@@ -495,7 +520,12 @@ internal static class Program {
                         Log($"    Hotbar {target} first 4 slots:");
                         foreach (var item in bar.ActionItems.Take(4)) {
                             string keybind = string.IsNullOrEmpty(item.KeyBinds) ? "<unbound>" : item.KeyBinds;
+                            // Dump the recast-driven UI state too so Chromatics' Keybinds layer can
+                            // verify IsAvailable / InRange / ChargeReady / CoolDown% are tracking the
+                            // live ActionBarSlotNumberArray. Slots Chromatics checks for "special
+                            // action" colour are category 49/51 — ActionType for reference.
                             Log($"      slot {item.Slot}: \"{item.Name}\" ID={item.ID} keybind=\"{keybind}\"");
+                            Log($"        Avail={item.IsAvailable} InRange={item.InRange} ChargeReady={item.ChargeReady}/{item.ChargesRemaining} CD={item.CoolDownPercent}% Proc={item.IsProcOrCombo} Cat={item.Category} Icon={item.Icon} Cost={item.RemainingCost}");
                         }
                     }
                 }

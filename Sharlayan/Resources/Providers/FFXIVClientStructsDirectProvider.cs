@@ -71,7 +71,17 @@ namespace Sharlayan.Resources.Providers {
             TryAdd(signatures, Signatures.TARGET_KEY,       "TargetSystem",      innerOffset: 0);        // TargetSystem struct base
             TryAdd(signatures, Signatures.INVENTORY_KEY,    "InventoryManager",  innerOffset: 0x1E08);   // Inventories pointer field — Reader does GetInt64(KEY) to deref
             TryAdd(signatures, Signatures.JOBRESOURCES_KEY, "JobGaugeManager",   innerOffset: 0);        // JobGaugeManager struct base; gauge data union @ +0x08
-            TryAdd(signatures, Signatures.RECAST_KEY,       "ActionManager",     innerOffset: 0x184);    // _cooldowns[0] — 80 × RecastDetail × 0x14 bytes
+            // RECAST used to point at ActionManager._cooldowns (raw RecastDetail array), but
+            // Sharlayan.Reader.Actions reads IsAvailable / InRange / ChargeReady / CoolDownPercent /
+            // Icon / ActionProc off each slot — those are the hotbar *UI* state, not ActionManager
+            // timers. The UI state lives in the AtkStage-owned NumberArrayData for ActionBar. Walk
+            // the chain down to ActionBarNumberArray._bars[0] (@+60 inside the IntArray).
+            TryAddChain(signatures, Signatures.RECAST_KEY, "AtkStage",
+                0x38,    // AtkStage → AtkArrayDataHolder* @ +0x38
+                0x18,    // AtkArrayDataHolder → NumberArrays** @ +0x18
+                7 * 8,   // NumberArrays[NumberArrayType.ActionBar = 7] @ +56
+                0x28,    // NumberArrayData.IntArray @ +0x28 → ActionBarNumberArray*
+                60);     // ActionBarNumberArray._bars @ +60 (skips HotBarLocked + padding)
             TryAdd(signatures, Signatures.MAPINFO_KEY,      "GameMain",          innerOffset: 0x4118);   // TransitionTerritoryTypeId (= CurrentTerritory in stable state); +8 gives CurrentMapId @ 0x4120
             TryAdd(signatures, Signatures.ZONEINFO_KEY,     "TerritoryInfo",     innerOffset: 0x14);     // MapIdOverride; Reader uses +0 as currentActiveMapID override
             TryAdd(signatures, Signatures.ENMITYMAP_KEY,    "UIState",           innerOffset: 0x08);     // UIState.Hate._hateInfo[0] (32 × HateInfo × 0x08 bytes)
