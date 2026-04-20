@@ -42,7 +42,7 @@ Every inner offset (provider `TryAdd` args, multi-hop chains, `Reader.GameState`
 
 ## What's left
 
-- **Chromatics integration validation** — Keybinds layer is wired (P3-B17/B18). Remaining downstream usages need a pass against the `GetGameState` / Weather / BGM / cutscene surface; in particular Chromatics' `Keybinds` special-action path checks `Category == 49 || 51` but the game now writes `56` for role/LB actions — either bump the Chromatics check or route via Lumina's `ActionCategory` sheet here.
+- **Chromatics integration validation** — Keybinds layer is wired (P3-B17/B18). `Category == 56` added alongside 49/51 for role/LB special-action coloring (P3-B23). Remaining: pass against BGM / cutscene surface.
 - **Unmapped fields with no clean FCS source** — `ActorItem.{ActionStatus, DifficultyRank, Gathering*, GrandCompany*, ModelID}`, `PlayerInfo` derived attributes (Str/Dex/Crit/etc.) via `PlayerState._attributes + BaseParam`, `BGM.Name` (only `.File` is on the sheet). Needs Lumina-backed helpers, not raw memory offsets.
 - **Legacy provider removal** — `LegacyJsonProvider` still exists so harness [3] can A/B diff against snapshotted JSON. Delete it + `APIHelper` once the struct/offset churn stabilises.
 - **Harness [3] polish** — currently 200+ legacy-stale diff rows. Filter to only "unmapped in direct" rows so the output stays actionable.
