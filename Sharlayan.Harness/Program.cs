@@ -276,7 +276,7 @@ internal static class Program {
                         var c = jr?.JobResourcesContainer;
                         if (c != null) {
                             Log($"    JobResources populated=true  (current job: {dp?.Job})");
-                            Log($"      Bard: ActiveSong={c.Bard.ActiveSong} Timer={c.Bard.Timer}ms Repertoire={c.Bard.Repertoire} SoulVoice={c.Bard.SoulVoice}");
+                            Log($"      Bard: ActiveSong={c.Bard.ActiveSong} Timer={c.Bard.Timer}ms Repertoire={c.Bard.Repertoire} SoulVoice={c.Bard.SoulVoice} RadiantFinaleCoda=0x{c.Bard.RadiantFinaleCoda:X2}(b{c.Bard.RadiantFinaleCoda:b3})");
                         }
                         else {
                             Log("    JobResources: Container is null (reader returned empty)");
