@@ -59,6 +59,13 @@
 		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34" PrivateAssets="all" />
 	</ItemGroup>
 
+	<!-- Test-only access for internal members (e.g. MapLanguage in Reader.Lumina.cs).
+	     The tests build with DisableILRepack=true so the unmerged Sharlayan.dll still
+	     carries the IVT attribute. -->
+	<ItemGroup>
+		<InternalsVisibleTo Include="Sharlayan.Tests" />
+	</ItemGroup>
+
 	<!--
 	    FFXIVClientStructs comes in as pre-built DLLs from the submodule. build.ps1 at the
 	    repo root updates the submodule, builds FFXIVClientStructs, copies the outputs here,

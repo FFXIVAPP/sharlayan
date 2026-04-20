@@ -84,7 +84,8 @@ namespace Sharlayan {
             }
         }
 
-        private static Lumina.Data.Language MapLanguage(string code) {
+        // Internal for xunit coverage (Sharlayan.Tests carries the InternalsVisibleTo).
+        internal static Lumina.Data.Language MapLanguage(string code) {
             if (string.IsNullOrWhiteSpace(code)) return Lumina.Data.Language.English;
             switch (code.Trim().ToLowerInvariant()) {
                 case "en": return Lumina.Data.Language.English;
