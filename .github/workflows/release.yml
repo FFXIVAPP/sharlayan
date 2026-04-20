@@ -43,10 +43,12 @@ jobs:
         id: get_version
         shell: pwsh
         run: |
-          $csproj = Get-Content -Path .\${{ env.SOLUTION_NAME }}\${{ env.SOLUTION_NAME }}.csproj -Raw
-          $match = [regex]::Match($csproj, '<Version>(?<v>[^<]+)</Version>')
-          if (-not $match.Success) { throw 'Could not find <Version> in Sharlayan.csproj' }
-          $version = $match.Groups['v'].Value
+          $props = Get-Content -Path .\${{ env.SOLUTION_NAME }}\version.props -Raw
+          $major = [regex]::Match($props, '<VersionMajor>(\d+)').Groups[1].Value
+          $minor = [regex]::Match($props, '<VersionMinor>(\d+)').Groups[1].Value
+          $patch = [regex]::Match($props, '<VersionPatch>(\d+)').Groups[1].Value
+          if (-not $major -or -not $minor -or -not $patch) { throw 'Could not parse version from version.props' }
+          $version = "$major.$minor.$patch"
           Write-Host "Library version: $version"
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
