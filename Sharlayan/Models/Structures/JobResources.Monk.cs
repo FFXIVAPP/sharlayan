@@ -15,6 +15,7 @@ namespace Sharlayan.Models.Structures {
             public int BeastChakra1 { get; set; }
             public int BeastChakra2 { get; set; }
             public int BeastChakra3 { get; set; }
+            public int BeastChakraStacks { get; set; }
             public int Nadi { get; set; }
             public int Timer { get; set; }
         }

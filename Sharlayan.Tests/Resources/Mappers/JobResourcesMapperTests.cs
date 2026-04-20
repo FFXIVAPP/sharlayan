@@ -38,7 +38,7 @@ namespace Sharlayan.Tests.Resources.Mappers {
         [Fact]
         public void Build_Astrologian_Cards_MatchesCardsOffset() {
             JobResources resources = JobResourcesMapper.Build();
-            Assert.Equal((int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.Cards)), resources.Astrologian.Seals);
+            Assert.Equal((int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.Cards)), resources.Astrologian.Cards);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace Sharlayan.Tests.Resources.Mappers {
         [Fact]
         public void Build_AllJobs_HaveAtLeastOneNonZeroMappedField() {
             JobResources r = JobResourcesMapper.Build();
-            Assert.True(r.Astrologian.Seals > 0, "Astrologian");
+            Assert.True(r.Astrologian.Cards > 0, "Astrologian");
             Assert.True(r.Bard.Timer > 0, "Bard");
             Assert.True(r.BlackMage.Timer > 0, "BlackMage");
             Assert.True(r.Dancer.Esprit > 0, "Dancer");

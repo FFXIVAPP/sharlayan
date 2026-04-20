@@ -11,9 +11,10 @@
 namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class AstrologianResources {
-            public int Arcana { get; set; }
-            public int Seals { get; set; }
-            public int Timer { get; set; }
+            // Cards (short at 0x08): nibbles 0-2 are the three held cards, nibble 3 is CurrentArcana.
+            public int Cards { get; set; }
+            // CurrentDraw (byte at 0x0A): Astral=0, Umbral=1.
+            public int CurrentDraw { get; set; }
         }
     }
 }

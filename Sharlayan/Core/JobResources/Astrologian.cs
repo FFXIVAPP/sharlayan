@@ -16,8 +16,9 @@ namespace Sharlayan.Core.JobResources {
     using Sharlayan.Core.JobResources.Enums;
 
     public sealed class AstrologianResources : IJobResource {
-        public AstrologianCard Arcana { get; set; }
-        public List<AstrologianSeal> Seals { get; set; } = new List<AstrologianSeal>();
+        public List<AstrologianCard> DrawnCards { get; set; } = new List<AstrologianCard>();
+        public AstrologianCard CurrentArcana { get; set; }
+        public AstrologianDraw DrawType { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

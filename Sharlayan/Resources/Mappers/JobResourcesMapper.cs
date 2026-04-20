@@ -56,10 +56,8 @@ namespace Sharlayan.Resources.Mappers {
 
         private static JobResources.AstrologianResources BuildAstrologian() {
             return new JobResources.AstrologianResources {
-                Arcana = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.CurrentDraw)),
-                Seals = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.Cards)),
-                // Timer: AstrologianGauge has no single "Timer" field in the current layout.
-                // Left unmapped.
+                Cards = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.Cards)),
+                CurrentDraw = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.CurrentDraw)),
             };
         }
 
@@ -68,6 +66,7 @@ namespace Sharlayan.Resources.Mappers {
                 ActiveSong = (byte)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SongFlags)),
                 Repertoire = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.Repertoire)),
                 SoulVoice = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SoulVoice)),
+                RadiantFinaleCoda = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.RadiantFinaleCoda)),
                 Timer = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SongTimer)),
             };
         }
@@ -103,6 +102,8 @@ namespace Sharlayan.Resources.Mappers {
                 BlackBlood = (int)Marshal.OffsetOf<DarkKnightGauge>(nameof(DarkKnightGauge.Blood)),
                 DarkArts = (int)Marshal.OffsetOf<DarkKnightGauge>(nameof(DarkKnightGauge.DarkArtsState)),
                 Timer = (int)Marshal.OffsetOf<DarkKnightGauge>(nameof(DarkKnightGauge.DarksideTimer)),
+                ShadowTimer = (int)Marshal.OffsetOf<DarkKnightGauge>(nameof(DarkKnightGauge.ShadowTimer)),
+                DeliriumStep = (int)Marshal.OffsetOf<DarkKnightGauge>(nameof(DarkKnightGauge.DeliriumStep)),
             };
         }
 
@@ -110,6 +111,7 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.DragoonResources {
                 DragonGaze = (int)Marshal.OffsetOf<DragoonGauge>(nameof(DragoonGauge.EyeCount)),
                 Mode = (int)Marshal.OffsetOf<DragoonGauge>(nameof(DragoonGauge.LotdState)),
+                FirstmindsFocusCount = (int)Marshal.OffsetOf<DragoonGauge>(nameof(DragoonGauge.FirstmindsFocusCount)),
                 Timer = (int)Marshal.OffsetOf<DragoonGauge>(nameof(DragoonGauge.LotdTimer)),
             };
         }
@@ -118,6 +120,7 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.GunBreakerResources {
                 Cartridge = (int)Marshal.OffsetOf<GunbreakerGauge>(nameof(GunbreakerGauge.Ammo)),
                 ComboStep = (int)Marshal.OffsetOf<GunbreakerGauge>(nameof(GunbreakerGauge.AmmoComboStep)),
+                MaxTimerDuration = (int)Marshal.OffsetOf<GunbreakerGauge>(nameof(GunbreakerGauge.MaxTimerDuration)),
             };
         }
 
@@ -125,6 +128,8 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.MachinistResources {
                 Battery = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.Battery)),
                 Heat = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.Heat)),
+                LastSummonBatteryPower = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.LastSummonBatteryPower)),
+                TimerActive = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.TimerActive)),
                 OverheatTimer = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.OverheatTimeRemaining)),
                 SummonTimer = (int)Marshal.OffsetOf<MachinistGauge>(nameof(MachinistGauge.SummonTimeRemaining)),
             };
@@ -136,6 +141,7 @@ namespace Sharlayan.Resources.Mappers {
                 BeastChakra1 = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.BeastChakra1)),
                 BeastChakra2 = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.BeastChakra2)),
                 BeastChakra3 = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.BeastChakra3)),
+                BeastChakraStacks = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.BeastChakraStacks)),
                 Nadi = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.Nadi)),
                 Timer = (int)Marshal.OffsetOf<MonkGauge>(nameof(MonkGauge.BlitzTimeRemaining)),
             };
@@ -144,14 +150,15 @@ namespace Sharlayan.Resources.Mappers {
         private static JobResources.NinjaResources BuildNinja() {
             return new JobResources.NinjaResources {
                 NinkiGauge = (int)Marshal.OffsetOf<NinjaGauge>(nameof(NinjaGauge.Ninki)),
-                // Timer and TimerFlag have no direct NinjaGauge equivalents in the current
-                // layout (the gauge no longer tracks a per-mudra timer). Left unmapped.
+                Kazematoi = (int)Marshal.OffsetOf<NinjaGauge>(nameof(NinjaGauge.Kazematoi)),
             };
         }
 
         private static JobResources.PaladinResources BuildPaladin() {
             return new JobResources.PaladinResources {
                 OathGauge = (int)Marshal.OffsetOf<PaladinGauge>(nameof(PaladinGauge.OathGauge)),
+                ConfiteorComboTimer = (int)Marshal.OffsetOf<PaladinGauge>(nameof(PaladinGauge.ConfiteorComboTimer)),
+                ConfiteorComboStep = (int)Marshal.OffsetOf<PaladinGauge>(nameof(PaladinGauge.ConfiteorComboStep)),
             };
         }
 
@@ -178,6 +185,7 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.RedMageResources {
                 BlackMana = (int)Marshal.OffsetOf<RedMageGauge>(nameof(RedMageGauge.BlackMana)),
                 WhiteMana = (int)Marshal.OffsetOf<RedMageGauge>(nameof(RedMageGauge.WhiteMana)),
+                ManaStacks = (int)Marshal.OffsetOf<RedMageGauge>(nameof(RedMageGauge.ManaStacks)),
             };
         }
 
@@ -195,6 +203,7 @@ namespace Sharlayan.Resources.Mappers {
                 Kenki = (int)Marshal.OffsetOf<SamuraiGauge>(nameof(SamuraiGauge.Kenki)),
                 Meditation = (int)Marshal.OffsetOf<SamuraiGauge>(nameof(SamuraiGauge.MeditationStacks)),
                 Sen = (int)Marshal.OffsetOf<SamuraiGauge>(nameof(SamuraiGauge.SenFlags)),
+                Kaeshi = (int)Marshal.OffsetOf<SamuraiGauge>(nameof(SamuraiGauge.Kaeshi)),
             };
         }
 
@@ -202,6 +211,7 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.ScholarResources {
                 Aetherflow = (int)Marshal.OffsetOf<ScholarGauge>(nameof(ScholarGauge.Aetherflow)),
                 FaerieGauge = (int)Marshal.OffsetOf<ScholarGauge>(nameof(ScholarGauge.FairyGauge)),
+                DismissedFairy = (int)Marshal.OffsetOf<ScholarGauge>(nameof(ScholarGauge.DismissedFairy)),
                 Timer = (int)Marshal.OffsetOf<ScholarGauge>(nameof(ScholarGauge.SeraphTimer)),
             };
         }
@@ -210,6 +220,8 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.SummonerResources {
                 Aether = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.AetherFlags)),
                 Attunement = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.Attunement)),
+                ReturnSummon = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.ReturnSummon)),
+                ReturnSummonGlam = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.ReturnSummonGlam)),
                 AttunementTimer = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.AttunementTimer)),
                 SummonTimer = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.SummonTimer)),
             };
@@ -222,6 +234,7 @@ namespace Sharlayan.Resources.Mappers {
                 SerpentOffering = (int)Marshal.OffsetOf<ViperGauge>(nameof(ViperGauge.SerpentOffering)),
                 AnguineTribute = (int)Marshal.OffsetOf<ViperGauge>(nameof(ViperGauge.AnguineTribute)),
                 DreadCombo = (int)Marshal.OffsetOf<ViperGauge>(nameof(ViperGauge.DreadCombo)),
+                SerpentComboState = (int)Marshal.OffsetOf<ViperGauge>(nameof(ViperGauge.SerpentComboState)),
             };
         }
 

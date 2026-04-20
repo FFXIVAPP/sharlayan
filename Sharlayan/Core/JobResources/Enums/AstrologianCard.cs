@@ -17,7 +17,7 @@ namespace Sharlayan.Core.JobResources.Enums {
         Spear = 4,
         Ewer = 5,
         Spire = 6,
-        Lord = 0x70,
-        Lady = 0x80
+        Lord = 7,
+        Lady = 8,
     }
 }

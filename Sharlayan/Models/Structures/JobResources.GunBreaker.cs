@@ -13,6 +13,7 @@ namespace Sharlayan.Models.Structures {
         public sealed class GunBreakerResources {
             public int Cartridge { get; set; }
             public int ComboStep { get; set; }
+            public int MaxTimerDuration { get; set; }
         }
     }
 }

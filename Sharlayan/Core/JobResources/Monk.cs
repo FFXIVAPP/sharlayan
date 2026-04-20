@@ -20,6 +20,9 @@ namespace Sharlayan.Core.JobResources {
         public BeastChakraType BeastChakra2 { get; set; }
         public BeastChakraType BeastChakra3 { get; set; }
         public BeastChakraType[] BeastChakra { get; set; }
+        public int OpoOpoStacks { get; set; }
+        public int RaptorStacks { get; set; }
+        public int CoeurlStacks { get; set; }
         public NadiFlags Nadi { get; set; }
         public TimeSpan Timer { get; set; }
     }

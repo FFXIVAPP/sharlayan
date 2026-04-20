@@ -1,22 +1,16 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DreadCombo.cs" company="SyndicatedLife">
+// <copyright file="KaeshiAction.cs" company="SyndicatedLife">
 //   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
-// <summary>
-//   DreadCombo.cs Implementation
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Core.JobResources.Enums {
-    using System;
-
-    public enum DreadCombo : byte {
-        Dreadwinder = 1,
-        HuntersCoil = 2,
-        SwiftskinsCoil = 3,
-        PitOfDread = 4,
-        HuntersDen = 5,
-        SwiftskinsDen = 6,
+    public enum KaeshiAction : byte {
+        None = 0,
+        Higanbana = 1,
+        Goken = 2,
+        Setsugekka = 3,
+        Namikiri = 4,
     }
 }

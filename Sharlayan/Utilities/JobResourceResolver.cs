@@ -30,13 +30,15 @@ namespace Sharlayan.Utilities {
         internal AstrologianResources ResolveAstrologianFromBytes(byte[] sourceBytes) {
             AstrologianResources resource = new AstrologianResources();
 
-            resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Astrologian.Timer));
-            resource.Arcana = (AstrologianCard) sourceBytes[this._memoryHandler.Structures.JobResources.Astrologian.Arcana];
-            resource.Seals = new List<AstrologianSeal> {
-                (AstrologianSeal)(3 & (sourceBytes[this._memoryHandler.Structures.JobResources.Astrologian.Seals] >> 0)),
-                (AstrologianSeal)(3 & (sourceBytes[this._memoryHandler.Structures.JobResources.Astrologian.Seals] >> 2)),
-                (AstrologianSeal)(3 & (sourceBytes[this._memoryHandler.Structures.JobResources.Astrologian.Seals] >> 4))
+            short cards = BitConverter.ToInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Astrologian.Cards);
+            resource.DrawnCards = new List<AstrologianCard> {
+                (AstrologianCard)(0xF & (cards >> 0)),
+                (AstrologianCard)(0xF & (cards >> 4)),
+                (AstrologianCard)(0xF & (cards >> 8)),
             };
+            resource.CurrentArcana = (AstrologianCard)(0xF & (cards >> 12));
+            resource.DrawType = (AstrologianDraw)sourceBytes[this._memoryHandler.Structures.JobResources.Astrologian.CurrentDraw];
+            resource.Timer = TimeSpan.Zero;
 
             return resource;
         }
@@ -47,9 +49,8 @@ namespace Sharlayan.Utilities {
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Bard.Timer));
             resource.Repertoire = sourceBytes[this._memoryHandler.Structures.JobResources.Bard.Repertoire];
             resource.SoulVoice = sourceBytes[this._memoryHandler.Structures.JobResources.Bard.SoulVoice];
-            //SongFlags activeSong = (SongFlags) sourceBytes[this._memoryHandler.Structures.JobResources.Bard.ActiveSong];
+            resource.RadiantFinaleCoda = sourceBytes[this._memoryHandler.Structures.JobResources.Bard.RadiantFinaleCoda];
             SongFlags activeSong = ((SongFlags)sourceBytes[this._memoryHandler.Structures.JobResources.Bard.ActiveSong] & (SongFlags.MagesBallad | SongFlags.ArmysPaeon | SongFlags.WanderersMinuet));
-            
             if (activeSong != resource.ActiveSong) {
                 resource.ActiveSong = activeSong;
             }
@@ -61,17 +62,15 @@ namespace Sharlayan.Utilities {
             BlackMageResources resource = new BlackMageResources();
 
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.BlackMage.Timer));
-            resource.AstralTimer = sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.AstralTimer]; //TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.BlackMage.AstralTimer));
             resource.UmbralHearts = sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.UmbralHearts];
-            sbyte stacks = (sbyte) sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.Stacks];
-            resource.UmbralStacks = stacks >= 0
-                                        ? 0
-                                        : stacks * -1;
-            resource.AstralStacks = stacks <= 0
-                                        ? 0
-                                        : stacks;
             resource.PolyglotCount = sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.PolyglotCount];
-            resource.Enochian = sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.Enochian] != 0;
+            sbyte stacks = (sbyte)sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.Stacks];
+            resource.UmbralStacks = stacks >= 0 ? 0 : stacks * -1;
+            resource.AstralStacks = stacks <= 0 ? 0 : stacks;
+            byte enochianFlags = sourceBytes[this._memoryHandler.Structures.JobResources.BlackMage.Enochian];
+            resource.Enochian = (enochianFlags & 1) != 0;
+            resource.ParadoxActive = (enochianFlags & 2) != 0;
+            resource.AstralSoulStacks = (enochianFlags >> 2) & 7;
 
             return resource;
         }
@@ -113,6 +112,8 @@ namespace Sharlayan.Utilities {
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.DarkKnight.Timer));
             resource.BlackBlood = sourceBytes[this._memoryHandler.Structures.JobResources.DarkKnight.BlackBlood];
             resource.DarkArts = sourceBytes[this._memoryHandler.Structures.JobResources.DarkKnight.DarkArts] != 0;
+            resource.ShadowTimer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.DarkKnight.ShadowTimer));
+            resource.DeliriumStep = BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.DarkKnight.DeliriumStep);
 
             return resource;
         }
@@ -121,8 +122,9 @@ namespace Sharlayan.Utilities {
             DragoonResources resource = new DragoonResources();
 
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Dragoon.Timer));
-            resource.Mode = (DragoonMode) sourceBytes[this._memoryHandler.Structures.JobResources.Dragoon.Mode];
+            resource.Mode = (DragoonMode)sourceBytes[this._memoryHandler.Structures.JobResources.Dragoon.Mode];
             resource.DragonGaze = sourceBytes[this._memoryHandler.Structures.JobResources.Dragoon.DragonGaze];
+            resource.FirstmindsFocusCount = sourceBytes[this._memoryHandler.Structures.JobResources.Dragoon.FirstmindsFocusCount];
 
             return resource;
         }
@@ -132,6 +134,7 @@ namespace Sharlayan.Utilities {
 
             resource.Cartridge = sourceBytes[this._memoryHandler.Structures.JobResources.GunBreaker.Cartridge];
             resource.ComboStep = sourceBytes[this._memoryHandler.Structures.JobResources.GunBreaker.ComboStep];
+            resource.MaxTimerDuration = TimeSpan.FromMilliseconds(BitConverter.ToInt16(sourceBytes, this._memoryHandler.Structures.JobResources.GunBreaker.MaxTimerDuration));
 
             return resource;
         }
@@ -143,6 +146,8 @@ namespace Sharlayan.Utilities {
             resource.SummonTimer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Machinist.SummonTimer));
             resource.Heat = sourceBytes[this._memoryHandler.Structures.JobResources.Machinist.Heat];
             resource.Battery = sourceBytes[this._memoryHandler.Structures.JobResources.Machinist.Battery];
+            resource.LastSummonBatteryPower = sourceBytes[this._memoryHandler.Structures.JobResources.Machinist.LastSummonBatteryPower];
+            resource.TimerActive = sourceBytes[this._memoryHandler.Structures.JobResources.Machinist.TimerActive] != 0;
 
             return resource;
         }
@@ -154,9 +159,13 @@ namespace Sharlayan.Utilities {
             resource.BeastChakra1 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra1];
             resource.BeastChakra2 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra2];
             resource.BeastChakra3 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra3];
+            resource.BeastChakra = new[] { resource.BeastChakra1, resource.BeastChakra2, resource.BeastChakra3 };
+            byte beastStacks = sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakraStacks];
+            resource.OpoOpoStacks = beastStacks & 3;
+            resource.RaptorStacks = (beastStacks >> 2) & 3;
+            resource.CoeurlStacks = (beastStacks >> 4) & 3;
             resource.Nadi = (NadiFlags)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.Nadi];
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Monk.Timer));
-            resource.BeastChakra = new[] {resource.BeastChakra1, resource.BeastChakra2, resource.BeastChakra3};
 
             return resource;
         }
@@ -164,13 +173,9 @@ namespace Sharlayan.Utilities {
         internal NinjaResources ResolveNinjaFromBytes(byte[] sourceBytes) {
             NinjaResources resource = new NinjaResources();
 
-            ushort time = BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Ninja.Timer);
-            byte timerFlag = sourceBytes[this._memoryHandler.Structures.JobResources.Ninja.TimerFlag];
-            resource.Timer = TimeSpan.FromMilliseconds(
-                timerFlag == 1
-                    ? ushort.MaxValue + time
-                    : time);
             resource.NinkiGauge = sourceBytes[this._memoryHandler.Structures.JobResources.Ninja.NinkiGauge];
+            resource.Kazematoi = sourceBytes[this._memoryHandler.Structures.JobResources.Ninja.Kazematoi];
+            resource.Timer = TimeSpan.Zero;
 
             return resource;
         }
@@ -179,6 +184,8 @@ namespace Sharlayan.Utilities {
             PaladinResources resource = new PaladinResources();
 
             resource.OathGauge = sourceBytes[this._memoryHandler.Structures.JobResources.Paladin.OathGauge];
+            resource.ConfiteorComboTimer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Paladin.ConfiteorComboTimer));
+            resource.ConfiteorComboStep = sourceBytes[this._memoryHandler.Structures.JobResources.Paladin.ConfiteorComboStep];
 
             return resource;
         }
@@ -188,6 +195,7 @@ namespace Sharlayan.Utilities {
 
             resource.WhiteMana = sourceBytes[this._memoryHandler.Structures.JobResources.RedMage.WhiteMana];
             resource.BlackMana = sourceBytes[this._memoryHandler.Structures.JobResources.RedMage.BlackMana];
+            resource.ManaStacks = sourceBytes[this._memoryHandler.Structures.JobResources.RedMage.ManaStacks];
 
             return resource;
         }
@@ -197,7 +205,8 @@ namespace Sharlayan.Utilities {
 
             resource.Kenki = sourceBytes[this._memoryHandler.Structures.JobResources.Samurai.Kenki];
             resource.Meditation = sourceBytes[this._memoryHandler.Structures.JobResources.Samurai.Meditation];
-            resource.Sen = (Iaijutsu) sourceBytes[this._memoryHandler.Structures.JobResources.Samurai.Sen];
+            resource.Sen = (Iaijutsu)sourceBytes[this._memoryHandler.Structures.JobResources.Samurai.Sen];
+            resource.Kaeshi = (KaeshiAction)sourceBytes[this._memoryHandler.Structures.JobResources.Samurai.Kaeshi];
 
             return resource;
         }
@@ -208,6 +217,7 @@ namespace Sharlayan.Utilities {
             resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Scholar.Timer));
             resource.Aetherflow = sourceBytes[this._memoryHandler.Structures.JobResources.Scholar.Aetherflow];
             resource.FaerieGauge = sourceBytes[this._memoryHandler.Structures.JobResources.Scholar.FaerieGauge];
+            resource.DismissedFairy = sourceBytes[this._memoryHandler.Structures.JobResources.Scholar.DismissedFairy] != 0;
 
             return resource;
         }
@@ -217,8 +227,10 @@ namespace Sharlayan.Utilities {
 
             resource.SummonTimer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Summoner.SummonTimer));
             resource.AttunementTimer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Summoner.AttunementTimer));
-            resource.Aether = (AetherFlags) sourceBytes[this._memoryHandler.Structures.JobResources.Summoner.Aether];
+            resource.Aether = (AetherFlags)sourceBytes[this._memoryHandler.Structures.JobResources.Summoner.Aether];
             resource.Attunement = sourceBytes[this._memoryHandler.Structures.JobResources.Summoner.Attunement];
+            resource.ReturnSummon = sourceBytes[this._memoryHandler.Structures.JobResources.Summoner.ReturnSummon];
+            resource.ReturnSummonGlam = sourceBytes[this._memoryHandler.Structures.JobResources.Summoner.ReturnSummonGlam];
 
             return resource;
         }
@@ -268,11 +280,12 @@ namespace Sharlayan.Utilities {
         internal ViperResources ResolveViperFromBytes(byte[] sourceBytes) {
             ViperResources resource = new ViperResources();
 
+            resource.Timer = TimeSpan.FromMilliseconds(BitConverter.ToUInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Viper.Timer));
             resource.RattlingCoilStacks = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.RattlingCoilStacks];
             resource.SerpentOffering = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.SerpentOffering];
             resource.AnguineTribute = sourceBytes[this._memoryHandler.Structures.JobResources.Viper.AnguineTribute];
-            resource.DreadCombo = (DreadCombo) sourceBytes[this._memoryHandler.Structures.JobResources.Viper.DreadCombo];
-
+            resource.DreadCombo = (DreadCombo)sourceBytes[this._memoryHandler.Structures.JobResources.Viper.DreadCombo];
+            resource.SerpentCombo = (SerpentCombo)(sourceBytes[this._memoryHandler.Structures.JobResources.Viper.SerpentComboState] >> 2);
 
             return resource;
         }

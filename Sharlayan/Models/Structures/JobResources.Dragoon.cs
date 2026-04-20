@@ -12,6 +12,7 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class DragoonResources {
             public int DragonGaze { get; set; }
+            public int FirstmindsFocusCount { get; set; }
             public int Mode { get; set; }
             public int Timer { get; set; }
         }

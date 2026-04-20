@@ -17,6 +17,7 @@ namespace Sharlayan.Core.JobResources {
     public sealed class DragoonResources : IJobResource {
         public int DragonGaze { get; set; }
         public DragoonMode Mode { get; set; }
+        public int FirstmindsFocusCount { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace Sharlayan.Core.JobResources {
         public SongFlags ActiveSong { get; set; }
         public int Repertoire { get; set; }
         public int SoulVoice { get; set; }
+        public byte RadiantFinaleCoda { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

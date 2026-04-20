@@ -13,8 +13,10 @@ namespace Sharlayan.Models.Structures {
         public sealed class MachinistResources {
             public int Battery { get; set; }
             public int Heat { get; set; }
+            public int LastSummonBatteryPower { get; set; }
             public int OverheatTimer { get; set; }
             public int SummonTimer { get; set; }
+            public int TimerActive { get; set; }
         }
     }
 }

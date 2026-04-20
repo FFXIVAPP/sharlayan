@@ -15,12 +15,12 @@ namespace Sharlayan.Core.JobResources {
 
     public sealed class BlackMageResources : IJobResource {
         public int AstralStacks { get; set; }
-
-        public bool Enochian { get; set; }
-        public int PolyglotCount { get; set; }
-        public int UmbralHearts { get; set; }
-        public int AstralTimer { get; set; }
         public int UmbralStacks { get; set; }
+        public int UmbralHearts { get; set; }
+        public int PolyglotCount { get; set; }
+        public bool Enochian { get; set; }
+        public bool ParadoxActive { get; set; }
+        public int AstralSoulStacks { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

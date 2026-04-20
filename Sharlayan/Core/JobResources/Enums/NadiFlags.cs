@@ -14,7 +14,8 @@ namespace Sharlayan.Core.JobResources.Enums {
     [Flags]
     public enum NadiFlags : byte
     {
-        Lunar = 2,
-        Solar = 4
+        None = 0,
+        Lunar = 1,
+        Solar = 2,
     }
 }

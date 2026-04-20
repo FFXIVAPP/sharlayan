@@ -9,19 +9,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Core.JobResources.Enums {
-    public enum SongFlags : byte {
-        None = 0,
-        MagesBallad = 5,
-        ArmysPaeon = 10,
-        WanderersMinuet = 15,
-        MagesBalladLastPlayed = 1 << 2,
-        ArmysPaeonLastPlayed = 1 << 3,
-        WanderersMinuetLastPlayed = MagesBalladLastPlayed | ArmysPaeonLastPlayed,
-        MagesBalladCoda = 1 << 4,
-        ArmysPaeonCoda = 1 << 5,
-        WanderersMinuetCoda = 1 << 6
-    }
-    /*
+    using System;
+
+    [Flags]
     public enum SongFlags : byte {
         None = 0,
         MagesBallad = 1 << 0,
@@ -32,7 +22,6 @@ namespace Sharlayan.Core.JobResources.Enums {
         WanderersMinuetLastPlayed = MagesBalladLastPlayed | ArmysPaeonLastPlayed,
         MagesBalladCoda = 1 << 4,
         ArmysPaeonCoda = 1 << 5,
-        WanderersMinuetCoda = 1 << 6
+        WanderersMinuetCoda = 1 << 6,
     }
-    */
 }

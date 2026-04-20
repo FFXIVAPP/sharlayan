@@ -12,6 +12,7 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class ScholarResources {
             public int Aetherflow { get; set; }
+            public int DismissedFairy { get; set; }
             public int FaerieGauge { get; set; }
             public int Timer { get; set; }
         }

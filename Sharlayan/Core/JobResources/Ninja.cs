@@ -15,7 +15,7 @@ namespace Sharlayan.Core.JobResources {
 
     public sealed class NinjaResources : IJobResource {
         public int NinkiGauge { get; set; }
-
+        public int Kazematoi { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

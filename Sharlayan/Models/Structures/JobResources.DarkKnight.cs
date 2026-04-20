@@ -14,6 +14,8 @@ namespace Sharlayan.Models.Structures {
             public int BlackBlood { get; set; }
             public int DarkArts { get; set; }
             public int Timer { get; set; }
+            public int ShadowTimer { get; set; }
+            public int DeliriumStep { get; set; }
         }
     }
 }

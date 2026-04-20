@@ -16,6 +16,7 @@ namespace Sharlayan.Core.JobResources {
     public sealed class RedMageResources : IJobResource {
         public int BlackMana { get; set; }
         public int WhiteMana { get; set; }
+        public int ManaStacks { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }
