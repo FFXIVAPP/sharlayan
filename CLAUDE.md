@@ -38,7 +38,8 @@ Every inner offset (provider `TryAdd` args, multi-hop chains, `Reader.GameState`
 - `RecastItem.Category` / `.Type` both map to `ActionBarSlotNumberArray.ActionType` — FCS names it `ActionType` but the game writes the `ActionCategory` row id there (BRD weaponskills = 47, role/LB = 56).
 - `RecastItem.ActionProc` → `Glows` (steady proc indicator), not `Pulses` (short animation trigger).
 - Eye-check `[3b]`/`[3c]` harness output against in-game UI to verify live values.
-- Genuinely unmapped (no clean FCS equivalent): `ActorItem.ActionStatus` / `DifficultyRank` / `Gathering*` / `GrandCompany*` / `ModelID`; `PlayerInfo` derived attributes (need dynamic Lumina BaseParam indices).
+- Genuinely unmapped (no clean FCS equivalent): `ActorItem.ActionStatus` / `DifficultyRank` / `GatheringInvisible` / `GatheringStatus` / `GrandCompany*` / `ModelID`. `PlayerState` has `GrandCompany`/`_GCRanks` for the local player, but `Character` has no GC field for arbitrary actors. `ModelID` appearance data lives in `DrawDataContainer` (not yet exposed). These all default to 0 and are not consumed by known callers.
+- `PlayerInfo` derived attributes (`Strength`, `CriticalHitRate`, `HPMax`, resistances, etc.) are now fully mapped via `PlayerState._attributes[PlayerAttribute.*]` — see `PlayerInfoMapper.cs`.
 
 ## Versioning policy
 
@@ -54,5 +55,6 @@ Version is `MAJOR.MINOR.PATCH`, stored in [`Sharlayan/version.props`](Sharlayan/
 
 ## What's left
 
-- **Unmapped fields with no clean FCS source** — `ActorItem.{ActionStatus, DifficultyRank, Gathering*, GrandCompany*, ModelID}`, `PlayerInfo` derived attributes (Str/Dex/Crit/etc.) via `PlayerState._attributes + BaseParam`, `BGM.Name` (only `.File` is on the sheet). None of these are consumed by Chromatics currently, so they don't block the migration. Needs Lumina-backed helpers when/if needed.
+- **ActorItem fields with no FCS source** — `ActionStatus`, `DifficultyRank`, `GatheringInvisible`, `GatheringStatus`, `GrandCompany*` (not on `Character` for arbitrary actors), `ModelID` (appearance lives in `DrawDataContainer`, not yet exposed). All default to 0; no known callers need them.
+- **BGM.Name** — the BGM Excel sheet has no Name column; `CurrentBgmFile` (the `.scd` path) is the appropriate field. No further action.
 - **Branch housekeeping** — ~20 `P3-B*` commits, easy to squash per logical unit before PR to `master`. Do this interactively via `git rebase -i`.

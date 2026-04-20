@@ -11,14 +11,14 @@
 //     - Per-job levels: PlayerState._classJobLevels @ 0x8A, FixedSizeArray35<short>.
 //       Index is the ExpArrayIndex from each job's ClassJob sheet row.
 //     - Per-job EXP: PlayerState._classJobExperience @ 0xD0, FixedSizeArray35<int>.
+//     - Derived attributes (Str/Dex/…/Crit/Det/etc.), resource maxima (HPMax/GPMax/CPMax),
+//       combat substats, crafting/gathering stats, elemental and physical resistances:
+//       PlayerState._attributes (FixedSizeArray74<int>) indexed by PlayerAttribute enum
+//       value, which maps 1-to-1 with the game's BaseParam Excel row IDs.
 //
-//   Fields still unmapped (no clean PlayerState equivalent and/or live in Character,
-//   not PlayerState — require different reader path): HPMax, MPMax, CPMax, GPMax,
-//   derived attributes (Strength, Dexterity, ..., CriticalHitRate, Determination,
-//   DirectHit, SkillSpeed, SpellSpeed, Tenacity, Piety, AttackPower, AttackMagicPotency,
-//   HealingMagicPotency, Defense, MagicDefense, Control, Craftmanship, Gathering,
-//   Perception, element/physical resistances, BaseSubstat). These need
-//   PlayerState._attributes indexed by BaseParam row, which is dynamic Lumina data.
+//   Still unmapped: BaseSubstat (no clean FCS enum value), MPMax (not in Core.PlayerInfo),
+//   GrandCompany/GrandCompanyRank (available on PlayerState but not yet exposed in
+//   Core.PlayerInfo — add fields there if consumers need them).
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -74,6 +74,12 @@ namespace Sharlayan.Resources.Mappers {
             int Lvl(int i) => levelsBase + i * sizeof(short);
             int Exp(int i) => expBase + i * sizeof(int);
 
+            // _attributes is FixedSizeArray74<int> at [FieldOffset(0x1A8)].
+            // Each slot is a 4-byte int; the slot index equals the PlayerAttribute enum value,
+            // which maps 1-to-1 with the game's BaseParam Excel row IDs.
+            int attribBase = (int)Marshal.OffsetOf<PlayerState>("_attributes");
+            int Attr(PlayerAttribute a) => attribBase + (int)a * sizeof(int);
+
             return new PlayerInfo {
                 JobID = (int)Marshal.OffsetOf<PlayerState>(nameof(PlayerState.CurrentClassJobId)),
                 BaseStrength = (int)Marshal.OffsetOf<PlayerState>(nameof(PlayerState.BaseStrength)),
@@ -82,6 +88,53 @@ namespace Sharlayan.Resources.Mappers {
                 BaseIntelligence = (int)Marshal.OffsetOf<PlayerState>(nameof(PlayerState.BaseIntelligence)),
                 BaseMind = (int)Marshal.OffsetOf<PlayerState>(nameof(PlayerState.BaseMind)),
                 BasePiety = (int)Marshal.OffsetOf<PlayerState>(nameof(PlayerState.BasePiety)),
+
+                // Derived attributes — PlayerState._attributes[PlayerAttribute.*].
+                Strength     = Attr(PlayerAttribute.Strength),
+                Dexterity    = Attr(PlayerAttribute.Dexterity),
+                Vitality     = Attr(PlayerAttribute.Vitality),
+                Intelligence = Attr(PlayerAttribute.Intelligence),
+                Mind         = Attr(PlayerAttribute.Mind),
+                Piety        = Attr(PlayerAttribute.Piety),
+
+                // Resource maxima.
+                HPMax = Attr(PlayerAttribute.HealthPoints),
+                GPMax = Attr(PlayerAttribute.GatheringPoints),
+                CPMax = Attr(PlayerAttribute.CraftingPoints),
+
+                // Combat substats.
+                Tenacity        = Attr(PlayerAttribute.Tenacity),
+                AttackPower     = Attr(PlayerAttribute.AttackPower),
+                Defense         = Attr(PlayerAttribute.Defense),
+                DirectHit       = Attr(PlayerAttribute.DirectHitRate),
+                MagicDefense    = Attr(PlayerAttribute.MagicDefense),
+                CriticalHitRate = Attr(PlayerAttribute.CriticalHit),
+                Determination   = Attr(PlayerAttribute.Determination),
+                SkillSpeed      = Attr(PlayerAttribute.SkillSpeed),
+                SpellSpeed      = Attr(PlayerAttribute.SpellSpeed),
+
+                // Damage/healing potency.
+                AttackMagicPotency  = Attr(PlayerAttribute.AttackMagicPotency),
+                HealingMagicPotency = Attr(PlayerAttribute.HealingMagicPotency),
+
+                // Elemental resistances.
+                FireResistance      = Attr(PlayerAttribute.FireResistance),
+                IceResistance       = Attr(PlayerAttribute.IceResistance),
+                WindResistance      = Attr(PlayerAttribute.WindResistance),
+                EarthResistance     = Attr(PlayerAttribute.EarthResistance),
+                LightningResistance = Attr(PlayerAttribute.LightningResistance),
+                WaterResistance     = Attr(PlayerAttribute.WaterResistance),
+
+                // Physical resistances.
+                SlashingResistance = Attr(PlayerAttribute.SlashingResistance),
+                PiercingResistance = Attr(PlayerAttribute.PiercingResistance),
+                BluntResistance    = Attr(PlayerAttribute.BluntResistance),
+
+                // Crafting/gathering.
+                Craftmanship = Attr(PlayerAttribute.Craftsmanship),
+                Control      = Attr(PlayerAttribute.Control),
+                Gathering    = Attr(PlayerAttribute.Gathering),
+                Perception   = Attr(PlayerAttribute.Perception),
 
                 // Per-job levels.
                 PGL = Lvl(ExpIdx_PGL), GLD = Lvl(ExpIdx_GLD), MRD = Lvl(ExpIdx_MRD), ARC = Lvl(ExpIdx_ARC),

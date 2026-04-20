@@ -45,6 +45,11 @@ namespace Sharlayan.Tests.Resources.Mappers {
             Assert.True(info.BaseMind > info.BaseIntelligence, nameof(info.BaseMind));
             Assert.True(info.BasePiety > info.BaseMind, nameof(info.BasePiety));
             Assert.True(info.SourceSize > 0, nameof(info.SourceSize));
+            // Derived attributes — now wired to _attributes array.
+            Assert.True(info.Strength > 0, nameof(info.Strength));
+            Assert.True(info.HPMax > 0, nameof(info.HPMax));
+            Assert.True(info.CriticalHitRate > 0, nameof(info.CriticalHitRate));
+            Assert.True(info.Determination > 0, nameof(info.Determination));
         }
 
         [Fact]
@@ -66,21 +71,46 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_DerivedStats_StayZero() {
-            // Derived attributes (Strength/AttackPower/CriticalHitRate/etc.) and resistances
-            // live in PlayerState._attributes indexed by BaseParam — that's dynamic Lumina
-            // data, not a compile-time struct offset. Same for HPMax/MPMax/etc which live on
-            // Character, not PlayerState. Pinned here so a future edit can't silently "map"
-            // them to a stale offset.
+        public void Build_DerivedAttributes_MatchAttributesArrayOffsets() {
+            // PlayerState._attributes is FixedSizeArray74<int> at [FieldOffset(0x1A8)].
+            // Each slot = attribBase + PlayerAttribute_value * 4.
             PlayerInfo info = PlayerInfoMapper.Build();
+            int attribBase = (int)Marshal.OffsetOf<PlayerState>("_attributes");
+            int Attr(PlayerAttribute a) => attribBase + (int)a * sizeof(int);
 
-            Assert.Equal(0, info.Strength);
-            Assert.Equal(0, info.AttackPower);
-            Assert.Equal(0, info.CriticalHitRate);
-            Assert.Equal(0, info.DirectHit);
-            Assert.Equal(0, info.HPMax);
-            Assert.Equal(0, info.CPMax);
-            Assert.Equal(0, info.FireResistance);
+            Assert.Equal(Attr(PlayerAttribute.Strength),          info.Strength);
+            Assert.Equal(Attr(PlayerAttribute.Dexterity),         info.Dexterity);
+            Assert.Equal(Attr(PlayerAttribute.Vitality),          info.Vitality);
+            Assert.Equal(Attr(PlayerAttribute.Intelligence),      info.Intelligence);
+            Assert.Equal(Attr(PlayerAttribute.Mind),              info.Mind);
+            Assert.Equal(Attr(PlayerAttribute.Piety),             info.Piety);
+            Assert.Equal(Attr(PlayerAttribute.HealthPoints),      info.HPMax);
+            Assert.Equal(Attr(PlayerAttribute.GatheringPoints),   info.GPMax);
+            Assert.Equal(Attr(PlayerAttribute.CraftingPoints),    info.CPMax);
+            Assert.Equal(Attr(PlayerAttribute.Tenacity),          info.Tenacity);
+            Assert.Equal(Attr(PlayerAttribute.AttackPower),       info.AttackPower);
+            Assert.Equal(Attr(PlayerAttribute.Defense),           info.Defense);
+            Assert.Equal(Attr(PlayerAttribute.DirectHitRate),     info.DirectHit);
+            Assert.Equal(Attr(PlayerAttribute.MagicDefense),      info.MagicDefense);
+            Assert.Equal(Attr(PlayerAttribute.CriticalHit),       info.CriticalHitRate);
+            Assert.Equal(Attr(PlayerAttribute.Determination),     info.Determination);
+            Assert.Equal(Attr(PlayerAttribute.SkillSpeed),        info.SkillSpeed);
+            Assert.Equal(Attr(PlayerAttribute.SpellSpeed),        info.SpellSpeed);
+            Assert.Equal(Attr(PlayerAttribute.AttackMagicPotency),   info.AttackMagicPotency);
+            Assert.Equal(Attr(PlayerAttribute.HealingMagicPotency),  info.HealingMagicPotency);
+            Assert.Equal(Attr(PlayerAttribute.FireResistance),    info.FireResistance);
+            Assert.Equal(Attr(PlayerAttribute.IceResistance),     info.IceResistance);
+            Assert.Equal(Attr(PlayerAttribute.WindResistance),    info.WindResistance);
+            Assert.Equal(Attr(PlayerAttribute.EarthResistance),   info.EarthResistance);
+            Assert.Equal(Attr(PlayerAttribute.LightningResistance), info.LightningResistance);
+            Assert.Equal(Attr(PlayerAttribute.WaterResistance),   info.WaterResistance);
+            Assert.Equal(Attr(PlayerAttribute.SlashingResistance), info.SlashingResistance);
+            Assert.Equal(Attr(PlayerAttribute.PiercingResistance), info.PiercingResistance);
+            Assert.Equal(Attr(PlayerAttribute.BluntResistance),   info.BluntResistance);
+            Assert.Equal(Attr(PlayerAttribute.Craftsmanship),     info.Craftmanship);
+            Assert.Equal(Attr(PlayerAttribute.Control),           info.Control);
+            Assert.Equal(Attr(PlayerAttribute.Gathering),         info.Gathering);
+            Assert.Equal(Attr(PlayerAttribute.Perception),        info.Perception);
         }
     }
 }
