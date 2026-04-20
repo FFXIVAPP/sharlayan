@@ -9,8 +9,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan {
-    using System.IO;
-
     using Sharlayan.Enums;
     using Sharlayan.Models;
     using Sharlayan.Resources;
@@ -19,13 +17,9 @@ namespace Sharlayan {
         public string CharacterName { get; set; }
         public string GameInstallPath { get; set; }
         public GameLanguage GameLanguage { get; set; } = GameLanguage.English;
-        public GameRegion GameRegion { get; set; } = GameRegion.Global;
         public bool IgnoreGameVersionMismatch { get; set; } = false;
-        public string JSONCacheDirectory { get; set; } = Directory.GetCurrentDirectory();
-        public string PatchVersion { get; set; } = "latest";
         public ProcessModel ProcessModel { get; set; }
         public ResourceProviderKind ResourceProvider { get; set; } = ResourceProviderKind.FFXIVClientStructsDirect;
         public bool ScanAllRegions { get; set; } = false;
-        public bool UseLocalCache { get; set; } = true;
     }
 }

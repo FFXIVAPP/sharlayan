@@ -6,11 +6,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Resources {
-    using System;
-
     public enum ResourceProviderKind {
-        [Obsolete("sharlayan-resources is no longer maintained and its signatures/offsets drift with every FFXIV patch. Use FFXIVClientStructsDirect instead — it's now the default.")]
-        LegacySharlayanResources,
         FFXIVClientStructsDirect,
     }
 }
