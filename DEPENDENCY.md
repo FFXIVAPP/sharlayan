@@ -90,9 +90,13 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 
 ## Reader-level consumers (not offset-mapped)
 
-- **`Reader.GameState.cs`** also reads these via Lumina (NuGet, not FCS):
-  - `Lumina.Excel.Sheets.Weather` — `.Name` for `CurrentWeatherName`
-  - `Lumina.Excel.Sheets.BGM` — `.File` for `CurrentBgmFile`
+- **`Reader.GameState.cs`** reads these via Lumina (NuGet, not FCS):
+  - `Lumina.Excel.Sheets.Weather` — `.Name` for `CurrentWeatherName`.
+  - `Lumina.Excel.Sheets.BGM` — `.File` for `CurrentBgmFile`.
+- **`Reader.Lumina.cs`** exposes generic Lumina lookups for downstream consumers so they don't import Lumina themselves:
+  - `GetZoneName(territoryId, language)` — `TerritoryType` → `PlaceName` join.
+  - `GetExpTable()` — full `ParamGrow` sheet as `level → ExpToNext`.
+  - `GetWeatherName(weatherId, language)` — generic form of the above.
 - **`LuminaXivDatabaseProvider.cs`** reads `Action` / `Status` / `TerritoryType` / `PlaceName` from Lumina for `xivdatabase` content.
 
 ---

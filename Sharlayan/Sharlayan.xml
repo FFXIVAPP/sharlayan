@@ -87,6 +87,27 @@
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmFile">
             <summary>BGM file path from the BGM sheet (e.g. "music/ffxiv/BGM_Field_Gri_Day.scd"); null if unavailable.</summary>
         </member>
+        <member name="M:Sharlayan.Reader.GetZoneName(System.UInt32,System.String)">
+            <summary>
+            Resolve a TerritoryType row id to its PlaceName in the requested language.
+            Accepts "en" / "de" / "fr" / "ja" (case-insensitive). Returns null if Lumina
+            isn't available, the row doesn't exist, or the language isn't supported.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Reader.GetExpTable">
+            <summary>
+            Returns a dictionary mapping character level → total EXP required to reach the
+            next level (ParamGrow.ExpToNext). Empty dictionary if Lumina isn't available.
+            The table is stable across play sessions so callers can cache the result.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Reader.GetWeatherName(System.Byte,System.String)">
+            <summary>
+            Resolve a Weather row id (typically from <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentWeatherId"/>)
+            to its display name in the requested language. Useful if a consumer already has
+            a weather id from somewhere other than <see cref="M:Sharlayan.Reader.GetGameState"/>.
+            </summary>
+        </member>
         <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)">
             <summary>
             Returns the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute"/> value of <paramref name="fieldName"/>
