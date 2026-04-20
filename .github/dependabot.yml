@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Keep Lumina, Newtonsoft.Json, NLog, and ILRepack up-to-date.
+  # Dependabot opens a PR for each bump — you review before it lands, so a
+  # breaking API change (e.g. Lumina 7.x → 8.x) won't silently break the build.
+  - package-ecosystem: nuget
+    directory: /Sharlayan
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      lumina:
+        patterns:
+          - "Lumina*"
+    open-pull-requests-limit: 5
+
+  # Keep GitHub Actions up-to-date (checkout, setup-dotnet, upload-artifact).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

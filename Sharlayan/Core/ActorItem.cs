@@ -85,9 +85,11 @@ namespace Sharlayan.Core {
 
         public bool IsCasting1 { get; set; }
 
-        public bool InCombat => (this.CombatFlags & (1 << 5)) != 0; //(this.CombatFlags & (1 << 1)) != 0;
+        // CharacterData.Flags bit 1 = InCombat (confirmed against FCS bitfield definition).
+        public bool InCombat => (this.CombatFlags & (1 << 1)) != 0;
 
-        public bool IsAggressive => (this.CombatFlags & (1 << 4)) != 0; //(this.CombatFlags & (1 << 0)) != 0;
+        // CharacterData.Flags bit 0 = IsHostile.
+        public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
 
         public bool IsCasting => (this.CombatFlags & (1 << 6)) != 0; //(this.CombatFlags & (1 << 7)) != 0;
 

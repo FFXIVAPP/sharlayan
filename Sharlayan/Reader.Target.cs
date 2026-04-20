@@ -111,20 +111,22 @@ namespace Sharlayan {
                 if (result.TargetInfo.CurrentTargetID > 0) {
                     try {
                         if (this.CanGetEnmityEntities()) {
-                            IntPtr counter = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITY_COUNT_KEY] + this._memoryHandler.Structures.EnmityItem.EnmityCount;
+                            // ENMITYMAP_KEY resolves to UIState.Hate._hateInfo[0] — an array of
+                            // HateInfo (EntityId@0, Enmity@4, size=8). Use HateItem structure, not
+                            // EnmityItem (which maps HaterInfo for the AGROMAP player aggro list).
+                            IntPtr counter = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITY_COUNT_KEY];
                             short enmityCount = this._memoryHandler.GetInt16(counter);
                             IntPtr enmityStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITYMAP_KEY];
 
-                            if (enmityCount > 0 && enmityCount < 16 && enmityStructure.ToInt64() > 0) {
-                                int enmitySourceSize = this._memoryHandler.Structures.EnmityItem.SourceSize;
+                            if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0) {
+                                int enmitySourceSize = this._memoryHandler.Structures.HateItem.SourceSize;
                                 for (uint i = 0; i < enmityCount; i++) {
                                     try {
                                         IntPtr address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
-                                        
+
                                         EnmityItem enmityEntry = new EnmityItem {
-                                            ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.EnmityItem.ID),
-                                            Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
-                                            Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
+                                            ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.HateItem.ID),
+                                            Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.HateItem.Enmity),
                                         };
 
                                         if (enmityEntry.ID <= 0) {

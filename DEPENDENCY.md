@@ -82,7 +82,8 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 | `HotBarItemMapper` | `FFXIV/Client/UI/Misc/RaptureHotbarModule.HotbarSlot.cs` + `FFXIV/Client/System/String/Utf8String.cs` | `HotbarSlot.CommandId` / `PopUpHelp` / `_popUpKeybindHint`; `Utf8String._inlineBuffer` |
 | `RecastItemMapper` | `FFXIV/Client/UI/Arrays/Common/ActionBarSlotNumberArray.cs` | `ActionType` / `ActionId` / `IconId` / `Executable` / `GlobalCoolDownPercentage` / `CurrentCharges` / `Glows` / `ManaCost` / `InRange` |
 | `TargetInfoMapper` | `FFXIV/Client/Game/Control/TargetSystem.cs` + `FFXIV/Client/Game/Character/Character.cs` | `Target` / `TargetObjectId` / `MouseOverTarget` / `FocusTarget` / `PreviousTarget`; `sizeof(Character)` |
-| `EnmityItemMapper` | `FFXIV/Client/Game/UI/Hater.cs` (nested `HaterInfo`) | `_name` / `EntityId` / `Enmity` |
+| `EnmityItemMapper` | `FFXIV/Client/Game/UI/Hater.cs` (nested `HaterInfo`) | `_name` / `EntityId` / `Enmity` — used by `Reader.CurrentPlayer` for AGROMAP (mobs targeting you) |
+| `HateItemMapper` | `FFXIV/Client/Game/UI/Hate.cs` (nested `HateInfo`) | `EntityId` / `Enmity` — used by `Reader.Target` for ENMITYMAP (enmity list on current target) |
 | `JobResourcesMapper` | `FFXIV/Client/Game/Gauge/JobGauges.cs` (all 21 gauges in one file) | Per-gauge fields — see mapper source for the full table (PLD/WAR/DRK/GNB/MNK/DRG/NIN/SAM/RPR/VPR/BRD/MCH/DNC/BLM/SMN/RDM/PCT/WHM/SCH/AST/SGE) |
 | `ChatLogPointersMapper` | `FFXIV/Component/Log/LogModule.cs` | `LogMessageIndex` / `LogMessageData` StdVector pairs |
 

@@ -437,8 +437,10 @@ internal static class Program {
                     Log($"    LocalPlayer.Title      = {dp.Title}   (TitleId — compare against /title list)");
                     Log($"    LocalPlayer.Icon       = {dp.Icon}   (nameplate icon id)");
                     Log($"    LocalPlayer.HitBoxRadius={dp.HitBoxRadius}");
-                    Log($"    LocalPlayer.IsAgroed   = {dp.IsAgroed}   (CharacterData.Flags bit 0 / IsHostile)");
-                    Log($"    LocalPlayer.AgroFlags  = 0x{dp.AgroFlags:X2} CombatFlags=0x{dp.CombatFlags:X2}   (bit 1 = InCombat)");
+                    Log($"    LocalPlayer.IsAgroed   = {dp.IsAgroed}   (CharacterData.Flags bit 1 = InCombat; True when engaged)");
+                    Log($"    LocalPlayer.InCombat   = {dp.InCombat}   (same byte, same bit — should match IsAgroed for local player)");
+                    Log($"    LocalPlayer.IsAggressive= {dp.IsAggressive}   (bit 0 = IsHostile)");
+                    Log($"    LocalPlayer.AgroFlags  = 0x{dp.AgroFlags:X2} CombatFlags=0x{dp.CombatFlags:X2}   (bit0=IsHostile bit1=InCombat)");
                     Log($"    LocalPlayer.InCutscene = {dp.InCutscene}   (ActorItem.InCutscene — currently unmapped in direct, see raw RenderFlags below)");
 
                     // Raw per-actor cutscene-candidate bytes from the CHARMAP pointer array. During
@@ -499,6 +501,17 @@ internal static class Program {
                         if (ti.MouseOverTarget != null) DumpTarget("MouseOverTarget", ti.MouseOverTarget);
                         if (ti.CurrentTarget == null && ti.FocusTarget == null && ti.MouseOverTarget == null) {
                             Log($"    CurrentTargetID = 0x{ti.CurrentTargetID:X8}  (no resolved target — target offscreen or between actor frames)");
+                        }
+                        // Enmity list — populated from UIState.Hate._hateInfo (HateInfo, 8 bytes
+                        // each). Only non-empty when targeting a mob that other entities have hate on.
+                        if (ti.EnmityItems.Count > 0) {
+                            Log($"    EnmityItems ({ti.EnmityItems.Count}):");
+                            foreach (var e in ti.EnmityItems) {
+                                Log($"      ID=0x{e.ID:X8}  Enmity={e.Enmity,8}  Name=\"{e.Name}\"");
+                            }
+                        }
+                        else {
+                            Log($"    EnmityItems: (none — target a mob while in combat to populate)");
                         }
                     }
                 }

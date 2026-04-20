@@ -16,6 +16,8 @@ namespace Sharlayan.Models.Structures {
 
         public EnmityItem EnmityItem { get; set; } = new EnmityItem();
 
+        public HateItem HateItem { get; set; } = new HateItem();
+
         public HotBarItem HotBarItem { get; set; } = new HotBarItem();
 
         public InventoryContainer InventoryContainer { get; set; } = new InventoryContainer();

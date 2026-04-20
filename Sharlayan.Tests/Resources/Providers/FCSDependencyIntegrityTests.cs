@@ -252,6 +252,7 @@ namespace Sharlayan.Tests.Resources.Providers {
             _ = RecastItemMapper.Build();
             _ = TargetInfoMapper.Build();
             _ = EnmityItemMapper.Build();
+            _ = HateItemMapper.Build();
             _ = JobResourcesMapper.Build();
             _ = ChatLogPointersMapper.Build();
         }

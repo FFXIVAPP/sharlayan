@@ -37,7 +37,7 @@ namespace Sharlayan.Tests {
         [InlineData("zh")] // Global sqpack doesn't ship Chinese sheets — fallback to English.
         [InlineData("ko")] // Same for Korean.
         [InlineData("xyz")]
-        public void MapLanguage_UnsupportedOrEmpty_FallsBackToEnglish(string code) {
+        public void MapLanguage_UnsupportedOrEmpty_FallsBackToEnglish(string? code) {
             // Returning English for unknown / unshipped locales is deliberate: callers using
             // GetZoneName/GetWeatherName against a Global install won't get a null name just
             // because they passed a regional language code.
