@@ -19,7 +19,7 @@
 		<Company>SyndicatedLife</Company>
 		<Product>Sharlayan</Product>
 		<Description>Final Fantasy XIV Memory Reading</Description>
-		<Copyright>Copyright © 2007 - 2022 Ryan Wilson</Copyright>
+		<Copyright>Copyright © 2007 - 2026 Ryan Wilson</Copyright>
 		<AssemblyName>Sharlayan</AssemblyName>
 		<RootNamespace>Sharlayan</RootNamespace>
 		<PackageId>Sharlayan</PackageId>
