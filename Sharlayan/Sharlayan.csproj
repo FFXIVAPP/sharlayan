@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<!-- Version is managed in version.props (Major.Minor.Patch.Build). See CLAUDE.md. -->
+	<Import Project="version.props" />
+
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
@@ -13,13 +16,10 @@
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageTags>ffxiv memory tracking</PackageTags>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>9.0.0</Version>
 		<Company>SyndicatedLife</Company>
 		<Product>Sharlayan</Product>
 		<Description>Final Fantasy XIV Memory Reading</Description>
 		<Copyright>Copyright © 2007 - 2022 Ryan Wilson</Copyright>
-		<FileVersion>9.0.0.0</FileVersion>
-		<AssemblyVersion>9.0.0.0</AssemblyVersion>
 		<AssemblyName>Sharlayan</AssemblyName>
 		<RootNamespace>Sharlayan</RootNamespace>
 		<PackageId>Sharlayan</PackageId>
@@ -102,6 +102,12 @@
 	    so downstream consumers pull in one DLL. Merged types are internalized — they stay out
 	    of Sharlayan's public API surface. NuGet runtime deps (Lumina, Newtonsoft.Json, NLog)
 	    remain transitive.
+
+	    The ILRepack.Lib.MSBuild.Task package also ships a default AfterTargets="Build" target
+	    that re-merges everything in $(OutputPath)*.dll on Release builds. This would feed our
+	    already-merged Sharlayan.dll back into ILRepack and produce "Duplicate type" errors.
+	    Placing an ILRepack.targets file alongside the csproj suppresses that default target
+	    (see the !Exists condition in ILRepack.Lib.MSBuild.Task.targets).
 	-->
 	<Target Name="ILRepacker" AfterTargets="Build" Condition="'$(DisableILRepack)' != 'true' AND Exists('$(OutputPath)FFXIVClientStructs.dll')">
 		<ItemGroup>
