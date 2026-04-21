@@ -128,7 +128,7 @@
 
 	<Target Name="CopyPackages" AfterTargets="Pack">
 		<ItemGroup>
-			<PACKAGES Include="$(OutputPath)*.nupkg" />
+			<PACKAGES Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\*.nupkg" />
 		</ItemGroup>
 		<MakeDir Directories="$(MSBuildProjectDirectory)\..\published\" />
 		<Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(MSBuildProjectDirectory)\..\published\" />
