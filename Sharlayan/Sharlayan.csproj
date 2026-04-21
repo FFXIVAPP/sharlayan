@@ -130,6 +130,7 @@
 		<ItemGroup>
 			<PACKAGES Include="$(OutputPath)*.nupkg" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(SolutionDir)published\" />
+		<MakeDir Directories="$(MSBuildProjectDirectory)\..\published\" />
+		<Copy SourceFiles="@(PACKAGES)" DestinationFolder="$(MSBuildProjectDirectory)\..\published\" />
 	</Target>
 </Project>
