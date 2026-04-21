@@ -32,11 +32,11 @@
 	-->
 	<ItemGroup>
 		<Reference Include="FFXIVClientStructs">
-			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\Debug\FFXIVClientStructs.dll</HintPath>
+			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\$(Configuration)\FFXIVClientStructs.dll</HintPath>
 			<Private>true</Private>
 		</Reference>
 		<Reference Include="InteropGenerator.Runtime">
-			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\Debug\InteropGenerator.Runtime.dll</HintPath>
+			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\$(Configuration)\InteropGenerator.Runtime.dll</HintPath>
 			<Private>true</Private>
 		</Reference>
 	</ItemGroup>
