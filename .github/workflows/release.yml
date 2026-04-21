@@ -109,37 +109,28 @@ jobs:
           overwrite: true
 
       # Publish stable releases from master; publish prereleases from the rebuild
-      # branch. Uses NuGet Trusted Publishing (OIDC) — no stored API key needed.
-      # nuget.org must have this repo configured as a trusted publisher for the
-      # Sharlayan package. The OIDC token is exchanged for a short-lived NuGet
-      # API key via the CreateToken endpoint. --skip-duplicate makes re-runs a
-      # no-op on same version.
+      # branch. Uses NuGet Trusted Publishing (OIDC) via the official NuGet/login
+      # action — no stored API key needed. nuget.org must have this repo
+      # configured as a trusted publisher for the Sharlayan package. The
+      # temporary API key is valid for ~1 hour. --skip-duplicate makes re-runs
+      # a no-op on the same version.
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: Icehunter  # nuget.org username (profile name) that owns the Sharlayan package
+
       - name: Publish to NuGet
         shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
-          # 1. Fetch the GitHub OIDC token (audience=nuget.org).
-          $tokenResponse = Invoke-RestMethod `
-              -Uri "$env:ACTIONS_ID_TOKEN_REQUEST_URL&audience=nuget.org" `
-              -Headers @{ Authorization = "bearer $env:ACTIONS_ID_TOKEN_REQUEST_TOKEN" }
-          $oidcToken = $tokenResponse.value
-
-          # 2. Exchange the OIDC token for a short-lived NuGet API key.
-          $body = @{ token = $oidcToken } | ConvertTo-Json
-          $keyResponse = Invoke-RestMethod `
-              -Uri 'https://www.nuget.org/api/v2/oidc/token' `
-              -Method Post `
-              -ContentType 'application/json' `
-              -Body $body
-          $apiKey = $keyResponse.apiKey
-          if (-not $apiKey) { throw 'NuGet OIDC token exchange did not return an apiKey.' }
-
-          # 3. Push packages with the exchanged key.
           $packages = Get-ChildItem -Path .\published\ -Filter *.nupkg
           if (-not $packages) { throw 'No .nupkg files found under .\published\' }
           foreach ($pkg in $packages) {
               Write-Host "==> Publishing $($pkg.Name)"
               dotnet nuget push $pkg.FullName `
                   --skip-duplicate `
-                  --api-key $apiKey `
+                  --api-key $env:NUGET_API_KEY `
                   --source https://api.nuget.org/v3/index.json
           }
