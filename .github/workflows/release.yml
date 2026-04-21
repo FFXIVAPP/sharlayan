@@ -34,10 +34,10 @@ jobs:
 
       # Derive the NuGet version from version.props and the triggering branch:
       #   master              → 9.0.4          (stable)
-      #   sharlayan-9-rebuild → 9.0.4-preview.N  (prerelease; N = run number)
+      #   sharlayan-9-rebuild → 9.0.4-prerelease.N  (prerelease; N = run number)
       #
       # When the rebuild branch is eventually merged into master the stable
-      # release (9.0.4) supersedes all prior 9.0.4-preview.* prereleases —
+      # release (9.0.4) supersedes all prior 9.0.4-prerelease.* packages —
       # standard NuGet SemVer promotion, no special handling needed.
       - name: Determine version
         id: version
@@ -54,7 +54,7 @@ jobs:
           $base   = "$major.$minor.$patch"
           $branch = '${{ github.ref_name }}'
           $isPrerelease = $branch -eq 'sharlayan-9-rebuild'
-          $full   = if ($isPrerelease) { "$base-preview.${{ github.run_number }}" } else { $base }
+          $full   = if ($isPrerelease) { "$base-prerelease.${{ github.run_number }}" } else { $base }
 
           Write-Host "Branch      : $branch"
           Write-Host "Base version: $base"
