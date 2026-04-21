@@ -7,7 +7,7 @@
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<IncludeSymbols>true</IncludeSymbols>
-		<IncludeSource>true</IncludeSource>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Authors>Ryan Wilson</Authors>
 		<PackageLicenseUrl></PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/FFXIVAPP/sharlayan</PackageProjectUrl>
