@@ -92,13 +92,18 @@ jobs:
 
       # Sharlayan.Tests exercises mapper offset derivation and signature extractor
       # math — pure logic, no live FFXIV client required.
+      # -p:GeneratePackageOnBuild=false prevents the test-triggered rebuild of
+      # Sharlayan from packing a second nupkg with the default (non-prerelease)
+      # version from version.props, which would otherwise land in published/
+      # and get pushed to NuGet alongside the correct prerelease.
       - name: Run tests
         shell: pwsh
         run: |
           dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj `
             --configuration Release `
             --nologo `
-            --logger "console;verbosity=normal"
+            --logger "console;verbosity=normal" `
+            -p:GeneratePackageOnBuild=false
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
