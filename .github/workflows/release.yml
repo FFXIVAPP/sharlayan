@@ -1,18 +1,16 @@
 name: Release Sharlayan 9
 
+# Fires on direct pushes to master (stable release) and sharlayan-9-rebuild
+# (prerelease). PRs to master are handled by ci.yml — no publishing there.
 on:
   workflow_dispatch:
   push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+    branches:
+      - master
+      - sharlayan-9-rebuild
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        configuration: [Release]
-
+  build-and-publish:
     runs-on: windows-latest
 
     env:
@@ -20,81 +18,102 @@ jobs:
       NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     steps:
-      # FFXIVClientStructs is a git submodule that build.ps1 expects to be populated
-      # before it hands off to `dotnet build`. submodules: recursive pulls it at
-      # checkout time; fetch-depth: 0 is preserved for version-derivation scripts.
+      # FFXIVClientStructs is a git submodule. submodules: recursive ensures it
+      # is fully initialised; fetch-depth: 0 keeps full history for any version
+      # scripts that inspect git tags.
       - name: Checkout (with submodules)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
 
-      # Sharlayan + Sharlayan.Tests + Sharlayan.Harness all target net10.0; the
-      # FFXIVClientStructs submodule's own projects also target net10.0 / netstandard2.0.
-      # Only the current SDK is needed.
       - name: Install .NET 10 SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      # Extract <Version> from Sharlayan.csproj. Used by the upload-artifact step so
-      # the artifact name tracks the NuGet version being published.
-      - name: Get library version
-        id: get_version
+      # Derive the NuGet version from version.props and the triggering branch:
+      #   master              → 9.0.4          (stable)
+      #   sharlayan-9-rebuild → 9.0.4-preview.N  (prerelease; N = run number)
+      #
+      # When the rebuild branch is eventually merged into master the stable
+      # release (9.0.4) supersedes all prior 9.0.4-preview.* prereleases —
+      # standard NuGet SemVer promotion, no special handling needed.
+      - name: Determine version
+        id: version
         shell: pwsh
         run: |
-          $props = Get-Content -Path .\${{ env.SOLUTION_NAME }}\version.props -Raw
+          $props = Get-Content -Path ".\${{ env.SOLUTION_NAME }}\version.props" -Raw
           $major = [regex]::Match($props, '<VersionMajor>(\d+)').Groups[1].Value
           $minor = [regex]::Match($props, '<VersionMinor>(\d+)').Groups[1].Value
           $patch = [regex]::Match($props, '<VersionPatch>(\d+)').Groups[1].Value
-          if (-not $major -or -not $minor -or -not $patch) { throw 'Could not parse version from version.props' }
-          $version = "$major.$minor.$patch"
-          Write-Host "Library version: $version"
-          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          if (-not $major -or -not $minor -or -not $patch) {
+              throw 'Could not parse version from version.props'
+          }
 
-      # build.ps1 orchestrates:
-      #   1. git submodule sync/update (safe no-op on CI since checkout already pulled).
-      #   2. dotnet build on FFXIVClientStructs.csproj → produces FCS DLLs at the
-      #      location Sharlayan.csproj references via HintPath.
-      #   3. dotnet build on Sharlayan.csproj → ILRepacks FCS into Sharlayan.dll and
-      #      auto-packs the .nupkg (GeneratePackageOnBuild=true). The CopyPackages
-      #      MSBuild target then drops the .nupkg under .\published\ at the sln root.
-      # -SkipSubmoduleUpdate because checkout has already done it; running `git
-      # submodule update --remote` under GITHUB_TOKEN can fail if the submodule URL
-      # is SSH-flavoured in the .gitmodules file.
-      - name: Build (FFXIVClientStructs + Sharlayan + ILRepack + NuGet pack)
+          $base   = "$major.$minor.$patch"
+          $branch = '${{ github.ref_name }}'
+          $isPrerelease = $branch -eq 'sharlayan-9-rebuild'
+          $full   = if ($isPrerelease) { "$base-preview.${{ github.run_number }}" } else { $base }
+
+          Write-Host "Branch      : $branch"
+          Write-Host "Base version: $base"
+          Write-Host "Full version: $full"
+          Write-Host "Prerelease  : $isPrerelease"
+
+          "base=$base"                                   | Out-File $env:GITHUB_OUTPUT -Append
+          "full=$full"                                   | Out-File $env:GITHUB_OUTPUT -Append
+          "is_prerelease=$($isPrerelease.ToString().ToLower())" | Out-File $env:GITHUB_OUTPUT -Append
+
+      # build.ps1:
+      #   1. Builds FFXIVClientStructs (source generators → DLLs at the HintPath
+      #      location Sharlayan.csproj references).
+      #   2. Builds Sharlayan + runs ILRepack (merges FCS into Sharlayan.dll).
+      #   3. Packs the NuGet package (GeneratePackageOnBuild=true) and the
+      #      CopyPackages MSBuild target drops it under .\published\.
+      #
+      # -SkipSubmoduleUpdate: checkout already initialised the submodule; running
+      # `git submodule update --remote` again under GITHUB_TOKEN can fail if the
+      # .gitmodules URL is SSH-flavoured.
+      # -Version: injects the computed SemVer so the .nupkg carries the right id.
+      - name: Build (FFXIVClientStructs → Sharlayan → ILRepack → NuGet pack)
         shell: pwsh
-        run: ./build.ps1 -Configuration ${{ matrix.configuration }} -SkipSubmoduleUpdate
+        run: |
+          ./build.ps1 `
+            -Configuration Release `
+            -SkipSubmoduleUpdate `
+            -Version '${{ steps.version.outputs.full }}'
 
-      # Sharlayan.Harness requires a live FFXIV client (won't run on CI) — the CI test
-      # gate is Sharlayan.Tests, pure mapper/extractor logic. At time of writing: 79
-      # tests across mapper offset derivation + signature extractor math.
+      # Sharlayan.Tests exercises mapper offset derivation and signature extractor
+      # math — pure logic, no live FFXIV client required.
       - name: Run tests
         shell: pwsh
-        run: dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj --configuration ${{ matrix.configuration }} --nologo
+        run: |
+          dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj `
+            --configuration Release `
+            --nologo `
+            --logger "console;verbosity=normal"
 
-      - name: Upload build artifacts
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sharlayan-${{ steps.get_version.outputs.version }}
-          path: |
-            published/
+          name: sharlayan-${{ steps.version.outputs.full }}
+          path: published/
           if-no-files-found: error
           overwrite: true
 
-      # Only publish on actual master pushes — not PR events. --skip-duplicate makes
-      # re-running the workflow on the same version a no-op instead of an error, so
-      # bumping <Version> in Sharlayan.csproj is the trigger for a new NuGet release.
-      - name: Publish NuGet packages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      # Publish stable releases from master; publish prereleases from the rebuild
+      # branch. --skip-duplicate makes re-runs on the same version a no-op rather
+      # than an error (useful if a run is retried after a transient NuGet hiccup).
+      - name: Publish to NuGet
         shell: pwsh
         run: |
           $packages = Get-ChildItem -Path .\published\ -Filter *.nupkg
           if (-not $packages) { throw 'No .nupkg files found under .\published\' }
-          foreach ($package in $packages) {
-            Write-Host "==> dotnet nuget push $($package.Name)"
-            dotnet nuget push $package.FullName `
-              --skip-duplicate `
-              --api-key ${{ env.NUGET_TOKEN }} `
-              --source https://api.nuget.org/v3/index.json
+          foreach ($pkg in $packages) {
+              Write-Host "==> Publishing $($pkg.Name)"
+              dotnet nuget push $pkg.FullName `
+                  --skip-duplicate `
+                  --api-key '${{ env.NUGET_TOKEN }}' `
+                  --source https://api.nuget.org/v3/index.json
           }

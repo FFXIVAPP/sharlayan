@@ -21,6 +21,10 @@
     Build Sharlayan WITHOUT merging FFXIVClientStructs into the output DLL. Leaves the
     dependency DLLs alongside Sharlayan.dll. Useful for debugging reference issues.
 
+.PARAMETER Version
+    Override the NuGet package version. When omitted the version from version.props is
+    used. Accepts any valid SemVer string, e.g. "9.0.4" or "9.0.4-preview.42".
+
 .EXAMPLE
     .\build.ps1
     Full pipeline, Debug configuration.
@@ -32,6 +36,10 @@
 .EXAMPLE
     .\build.ps1 -SkipSubmoduleUpdate
     Skip pulling new FFXIVClientStructs commits.
+
+.EXAMPLE
+    .\build.ps1 -Configuration Release -Version "9.0.4-preview.99"
+    Release build published as a NuGet prerelease.
 #>
 
 [CmdletBinding()]
@@ -41,7 +49,9 @@ param(
 
     [switch]$SkipSubmoduleUpdate,
 
-    [switch]$NoILRepack
+    [switch]$NoILRepack,
+
+    [string]$Version = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -122,6 +132,7 @@ $buildArgs = @(
     '--nologo'
 )
 if ($ilRepackArg) { $buildArgs += $ilRepackArg }
+if ($Version)     { $buildArgs += "-p:Version=$Version" }
 
 dotnet @buildArgs
 if ($LASTEXITCODE -ne 0) { throw 'Sharlayan build failed.' }
