@@ -1,7 +1,7 @@
 name: Release Sharlayan 9
 
-# Fires on direct pushes to master (stable release) and sharlayan-9-rebuild
-# (prerelease). PRs to master are handled by ci.yml — no publishing there.
+# Fires on direct pushes to main (stable release) and sharlayan-9-rebuild
+# (prerelease). PRs to main are handled by ci.yml — no publishing there.
 on:
   workflow_dispatch:
   push:
@@ -39,10 +39,10 @@ jobs:
           dotnet-version: 10.0.x
 
       # Derive the NuGet version from version.props and the triggering branch:
-      #   master              → 9.0.4          (stable)
+      #   main              → 9.0.4          (stable)
       #   sharlayan-9-rebuild → 9.0.4-prerelease.N  (prerelease; N = run number)
       #
-      # When the rebuild branch is eventually merged into master the stable
+      # When the rebuild branch is eventually merged into main the stable
       # release (9.0.4) supersedes all prior 9.0.4-prerelease.* packages —
       # standard NuGet SemVer promotion, no special handling needed.
       - name: Determine version
@@ -113,7 +113,7 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
-      # Publish stable releases from master; publish prereleases from the rebuild
+      # Publish stable releases from main; publish prereleases from the rebuild
       # branch. Uses NuGet Trusted Publishing (OIDC) via the official NuGet/login
       # action — no stored API key needed. nuget.org must have this repo
       # configured as a trusted publisher for the Sharlayan package. The
