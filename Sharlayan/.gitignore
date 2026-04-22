@@ -1,1 +1,6 @@
 *.nupkg
+
+# Claude Code / editor agent local state (also holds CHANGES.md and
+# DESIGN_REFACTOR.md — local-only refactor notes, not committed)
+.claude/
+.fake

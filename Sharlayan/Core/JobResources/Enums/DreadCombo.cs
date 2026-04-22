@@ -11,7 +11,6 @@
 namespace Sharlayan.Core.JobResources.Enums {
     using System;
 
-    [Flags]
     public enum DreadCombo : byte {
         Dreadwinder = 1,
         HuntersCoil = 2,

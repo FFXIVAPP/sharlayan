@@ -18,7 +18,10 @@ namespace Sharlayan.Core {
                 ? this.CastingProgress / this.CastingTime
                 : 0;
 
-        public bool IsAgroed => (this.AgroFlags & 1) > 0;
+        // AgroFlags mirrors CharacterData.Flags; bit 1 is InCombat (= engaged with me).
+        // Bit 0 is IsHostile — not what we want for "aggroed", since training dummies
+        // aren't hostile but are engaged, and hostile mobs at range aren't yet engaged.
+        public bool IsAgroed => (this.AgroFlags & 0b10) > 0;
 
         public bool IsClaimed => this.Status == Actor.Status.Claimed;
 
@@ -82,9 +85,11 @@ namespace Sharlayan.Core {
 
         public bool IsCasting1 { get; set; }
 
-        public bool InCombat => (this.CombatFlags & (1 << 5)) != 0; //(this.CombatFlags & (1 << 1)) != 0;
+        // CharacterData.Flags bit 1 = InCombat (confirmed against FCS bitfield definition).
+        public bool InCombat => (this.CombatFlags & (1 << 1)) != 0;
 
-        public bool IsAggressive => (this.CombatFlags & (1 << 4)) != 0; //(this.CombatFlags & (1 << 0)) != 0;
+        // CharacterData.Flags bit 0 = IsHostile.
+        public bool IsAggressive => (this.CombatFlags & (1 << 0)) != 0;
 
         public bool IsCasting => (this.CombatFlags & (1 << 6)) != 0; //(this.CombatFlags & (1 << 7)) != 0;
 

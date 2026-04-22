@@ -15,7 +15,6 @@ namespace Sharlayan.Models.Structures {
             public int PolyglotCount { get; set; }
             public int Stacks { get; set; }
             public int Timer { get; set; }
-            public int AstralTimer { get; set; }
             public int UmbralHearts { get; set; }
         }
     }

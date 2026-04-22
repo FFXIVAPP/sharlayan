@@ -14,6 +14,7 @@ namespace Sharlayan.Utilities {
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
+    using Sharlayan.Resources;
 
     public static class StatusEffectLookup {
         private static bool _loading;
@@ -44,7 +45,8 @@ namespace Sharlayan.Utilities {
             }
 
             _loading = true;
-            await APIHelper.GetStatusEffects(_statusEffects, configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+            await provider.GetStatusEffectsAsync(_statusEffects, configuration);
             _loading = false;
         }
     }

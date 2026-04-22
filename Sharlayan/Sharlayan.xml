@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sharlayan</name>
+    </assembly>
+    <members>
+        <member name="P:Sharlayan.Core.ChatLogItem.PlayerCharacterName">
+            <summary>
+            character name of player that was loaded when log was detected
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Bytes">
+            <summary>
+            raw bytes from memory
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Code">
+            <summary>
+            alphanumeric chat code
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Combined">
+            <summary>
+            [Code]:[Line] combination string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.IsInternational">
+            <summary>
+            does the text contain non-roman text
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Line">
+            <summary>
+            "(playerName )?messsage" combination string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Message">
+            <summary>
+            message without name of player
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.PlayerName">
+            <summary>
+            player name from message
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.Raw">
+            <summary>
+            raw bytes decoded to string
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.ChatLogItem.TimeStamp">
+            <summary>
+            message timestamp
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.TerritoryLoadState">
+            <summary>GameMain.TerritoryLoadState raw byte: 1 = loading, 2 = loaded, 3 = unloading.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.WatchingCutscene">
+            <summary>True while a cutscene is playing (Conditions.WatchingCutscene / 78).</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.ContentsFinderQueueState">
+            <summary>Raw ContentsFinderQueueInfo.QueueState byte (0=None, 1=Pending, 2=Queued, 3=Ready (popped), 4=Accepted, 5=InContent).</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.DutyFinderBellPopped">
+            <summary>QueueState == 3 — Duty Finder popped but not accepted yet.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.InInstance">
+            <summary>QueueState >= 4 — Accepted (entering) or already inside the instance.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.InstanceState">
+            <summary>Alias preserved for parity with the pre-rebuild Chromatics extension, which exposed this byte directly.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentWeatherId">
+            <summary>WeatherManager.WeatherId — row id in the Weather Excel sheet.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentWeatherName">
+            <summary>Localised name from the Weather sheet; null if GameInstallPath wasn't set or the row is missing.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmId">
+            <summary>Highest-priority scene's PlayingBgmId (walks BGMSystem.Scenes 0..N). 0 if no scene is playing.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmSceneId">
+            <summary>BGMScene row index that's currently playing (0 = Event, 1 = Battle, ..., 11 = Territory). -1 if none.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmFile">
+            <summary>BGM file path from the BGM sheet (e.g. "music/ffxiv/BGM_Field_Gri_Day.scd"); null if unavailable.</summary>
+        </member>
+        <member name="M:Sharlayan.Reader.GetZoneName(System.UInt32,System.String)">
+            <summary>
+            Resolve a TerritoryType row id to its PlaceName in the requested language.
+            Accepts "en" / "de" / "fr" / "ja" (case-insensitive). Returns null if Lumina
+            isn't available, the row doesn't exist, or the language isn't supported.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Reader.GetExpTable">
+            <summary>
+            Returns a dictionary mapping character level → total EXP required to reach the
+            next level (ParamGrow.ExpToNext). Empty dictionary if Lumina isn't available.
+            The table is stable across play sessions so callers can cache the result.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Reader.GetWeatherName(System.Byte,System.String)">
+            <summary>
+            Resolve a Weather row id (typically from <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentWeatherId"/>)
+            to its display name in the requested language. Useful if a consumer already has
+            a weather id from somewhere other than <see cref="M:Sharlayan.Reader.GetGameState"/>.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)">
+            <summary>
+            Returns the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute"/> value of <paramref name="fieldName"/>
+            on type <typeparamref name="T"/>. Works for public and internal/private fields, and
+            for types that <see cref="M:System.Runtime.InteropServices.Marshal.OffsetOf(System.Type,System.String)"/> rejects because they carry managed
+            function pointers (AtkStage, UIModule, RaptureHotbarModule).
+            </summary>
+            <exception cref="T:System.MissingFieldException">Field not found on the type.</exception>
+            <exception cref="T:System.InvalidOperationException">Field exists but has no FieldOffsetAttribute.</exception>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf(System.Type,System.String)">
+            <inheritdoc cref="M:Sharlayan.Resources.Mappers.FieldOffsetReader.OffsetOf``1(System.String)"/>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf``1">
+            <summary>
+            Returns the size declared on <typeparamref name="T"/> via
+            <c>[StructLayout(Size = N)]</c>. Equivalent to <see cref="M:System.Runtime.InteropServices.Marshal.SizeOf``1"/>
+            for blittable types, but also works for FCS types that contain managed function
+            pointers (which <see cref="T:System.Runtime.InteropServices.Marshal"/> can't size).
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf(System.Type)">
+            <inheritdoc cref="M:Sharlayan.Resources.Mappers.FieldOffsetReader.SizeOf``1"/>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.BuildSignature(System.String,Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.StaticAddressInfo,System.Int64)">
+            <summary>
+            Convert an extracted FFXIVClientStructs StaticAddress entry into a Sharlayan Signature.
+            </summary>
+            <param name="sharlayanKey">Scanner key expected by Sharlayan's Reader (e.g. "CHARMAP").</param>
+            <param name="info">The FFXIVClientStructs static-address metadata.</param>
+            <param name="innerOffset">
+            Byte offset inside the resolved struct to reach the field Sharlayan expects. For example
+            CHARMAP is GameObjectManager + 0x20 for the _indexSorted pointer array.
+            </param>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.BuildSignature(System.String,Sharlayan.Resources.Providers.FFXIVClientStructsSignatureExtractor.StaticAddressInfo,System.Int64[])">
+             <summary>
+             Multi-hop variant — used when the Sharlayan target lives behind a chain of pointer
+             fields inside the FCS-resolved struct. Each element after the first becomes an
+             additional PointerPath hop that ResolvePointerPath treats as a pointer dereference
+             (only the first hop does the ASM RIP-follow). The very last offset is a non-deref
+             trailing add, so the returned address = penultimate_ptr + offsetChain[^1].
+            
+             Example: CHATLOG = Framework[isPointer] → UIModule @ Framework+0x2B68 → RaptureLogModule @ UIModule+0x19E0
+               offsetChain = [0x2B68, 0x19E0]
+               final PointerPath = [rewindBack, 0 (deref Framework ptr), 0x2B68 (deref UIModule field), 0x19E0 (trailing add)]
+             </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.LuminaXivDatabaseProvider.ResolveSqpackPath(Sharlayan.SharlayanConfiguration)">
+            <summary>
+            Resolves the sqpack directory path either from the explicit
+            <see cref="P:Sharlayan.SharlayanConfiguration.GameInstallPath"/> override, or (falling back)
+            from the running game's MainModule file path (ffxiv_dx11.exe sits next to sqpack/).
+            </summary>
+        </member>
+    </members>
+</doc>

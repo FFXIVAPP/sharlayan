@@ -12,20 +12,28 @@ namespace Sharlayan {
     using System.Threading.Tasks;
 
     using Sharlayan.Models;
-    using Sharlayan.Utilities;
+    using Sharlayan.Resources;
 
     public static class Signatures {
         public const string AGRO_COUNT_KEY = "AGRO_COUNT";
 
         public const string AGROMAP_KEY = "AGROMAP";
 
+        public const string BGMSYSTEM_KEY = "BGMSYSTEM";
+
         public const string CHARMAP_KEY = "CHARMAP";
 
         public const string CHATLOG_KEY = "CHATLOG";
 
+        public const string CONDITIONS_KEY = "CONDITIONS";
+
+        public const string CONTENTSFINDER_KEY = "CONTENTSFINDER";
+
         public const string ENMITY_COUNT_KEY = "ENMITY_COUNT";
 
         public const string ENMITYMAP_KEY = "ENMITYMAP";
+
+        public const string GAMEMAIN_KEY = "GAMEMAIN";
 
         public const string HOTBAR_KEY = "HOTBAR";
 
@@ -45,10 +53,13 @@ namespace Sharlayan {
 
         public const string TARGET_KEY = "TARGET";
 
+        public const string WEATHER_KEY = "WEATHER";
+
         public const string ZONEINFO_KEY = "ZONEINFO";
 
         public static async Task<Signature[]> Resolve(SharlayanConfiguration configuration) {
-            Signature[] signatures = await APIHelper.GetSignatures(configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+            Signature[] signatures = await provider.GetSignaturesAsync(configuration);
             return signatures;
         }
     }

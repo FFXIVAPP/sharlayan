@@ -12,8 +12,6 @@ namespace Sharlayan {
     using Newtonsoft.Json;
 
     internal static class Constants {
-        public const string DEFAULT_API_BASE_URL = "https://raw.githubusercontent.com/FFXIVAPP/sharlayan-resources/master";
-
         public static readonly string UNKNOWN_LOCALIZED_NAME = "???";
 
         public static readonly string[] ChatAlliance = {

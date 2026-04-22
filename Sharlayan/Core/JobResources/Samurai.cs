@@ -18,6 +18,7 @@ namespace Sharlayan.Core.JobResources {
         public int Kenki { get; set; }
         public int Meditation { get; set; }
         public Iaijutsu Sen { get; set; }
+        public KaeshiAction Kaeshi { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

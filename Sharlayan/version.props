@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <!-- Version components — see CLAUDE.md "Versioning policy" for the rules.
+         Major.Minor: human-only, never changed by build automation or AI.
+         Patch: incremented by Claude/AI on each substantive code change to Sharlayan. -->
+    <VersionMajor>9</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <VersionPatch>5</VersionPatch>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Derived version strings — do not edit these directly. -->
+    <Version>$(VersionMajor).$(VersionMinor).$(VersionPatch)</Version>
+    <AssemblyVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch).0</AssemblyVersion>
+    <FileVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch).0</FileVersion>
+  </PropertyGroup>
+</Project>

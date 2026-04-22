@@ -12,6 +12,7 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class RedMageResources {
             public int BlackMana { get; set; }
+            public int ManaStacks { get; set; }
             public int WhiteMana { get; set; }
         }
     }

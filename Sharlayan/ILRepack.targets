@@ -1,0 +1,5 @@
+<Project>
+  <!-- This file's existence suppresses the ILRepack.Lib.MSBuild.Task package's built-in
+       AfterTargets="Build" ILRepack target (it only runs when this file does NOT exist).
+       Sharlayan.csproj defines its own ILRepacker target which handles the merge correctly. -->
+</Project>

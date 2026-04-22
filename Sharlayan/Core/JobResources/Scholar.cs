@@ -16,6 +16,7 @@ namespace Sharlayan.Core.JobResources {
     public sealed class ScholarResources : IJobResource {
         public int Aetherflow { get; set; }
         public int FaerieGauge { get; set; }
+        public bool DismissedFairy { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

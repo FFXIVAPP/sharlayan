@@ -17,9 +17,10 @@ namespace Sharlayan.Core.JobResources {
     public sealed class SummonerResources : IJobResource {
         public AetherFlags Aether { get; set; }
         public int Attunement { get; set; }
+        public byte ReturnSummon { get; set; }
+        public byte ReturnSummonGlam { get; set; }
         public TimeSpan SummonTimer { get; set; }
         public TimeSpan AttunementTimer { get; set; }
         public TimeSpan Timer { get; set; }
-
     }
 }

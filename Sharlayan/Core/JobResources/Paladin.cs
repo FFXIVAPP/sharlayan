@@ -15,6 +15,8 @@ namespace Sharlayan.Core.JobResources {
 
     public sealed class PaladinResources : IJobResource {
         public int OathGauge { get; set; }
+        public TimeSpan ConfiteorComboTimer { get; set; }
+        public int ConfiteorComboStep { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

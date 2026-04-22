@@ -17,5 +17,7 @@ namespace Sharlayan.Core.JobResources {
         public int BlackBlood { get; set; }
         public bool DarkArts { get; set; }
         public TimeSpan Timer { get; set; }
+        public TimeSpan ShadowTimer { get; set; }
+        public int DeliriumStep { get; set; }
     }
 }

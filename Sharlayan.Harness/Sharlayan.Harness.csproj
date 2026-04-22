@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Sharlayan.Harness</RootNamespace>
+		<AssemblyName>Sharlayan.Harness</AssemblyName>
+		<!--
+		    The harness must reference Sharlayan.dll UNMERGED so the FFXIVClientStructs
+		    types remain externally visible for offset comparison. Run build via
+		    `harness.ps1` at the repo root, which sets -NoILRepack.
+		-->
+		<DisableILRepack>true</DisableILRepack>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Sharlayan\Sharlayan.csproj">
+			<SetTargetFramework>TargetFramework=net10.0</SetTargetFramework>
+		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="FFXIVClientStructs">
+			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\Debug\FFXIVClientStructs.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+		<Reference Include="InteropGenerator.Runtime">
+			<HintPath>..\Sharlayan\FFXIVClientStructs\bin\Debug\InteropGenerator.Runtime.dll</HintPath>
+			<Private>true</Private>
+		</Reference>
+	</ItemGroup>
+</Project>

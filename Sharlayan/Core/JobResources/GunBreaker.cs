@@ -16,6 +16,7 @@ namespace Sharlayan.Core.JobResources {
     public sealed class GunBreakerResources : IJobResource {
         public int Cartridge { get; set; }
         public int ComboStep { get; set; }
+        public TimeSpan MaxTimerDuration { get; set; }
         public TimeSpan Timer { get; set; }
     }
 }

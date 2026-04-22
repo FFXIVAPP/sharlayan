@@ -14,6 +14,7 @@ namespace Sharlayan.Utilities {
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
+    using Sharlayan.Resources;
 
     public static class ZoneLookup {
         private static bool _loading;
@@ -45,7 +46,8 @@ namespace Sharlayan.Utilities {
             }
 
             _loading = true;
-            await APIHelper.GetZones(_zones, configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+            await provider.GetZonesAsync(_zones, configuration);
             _loading = false;
         }
     }

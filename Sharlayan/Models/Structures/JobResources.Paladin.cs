@@ -12,6 +12,8 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class PaladinResources {
             public int OathGauge { get; set; }
+            public int ConfiteorComboTimer { get; set; }
+            public int ConfiteorComboStep { get; set; }
         }
     }
 }

@@ -144,9 +144,10 @@ namespace Sharlayan.Utilities {
 
                         #region Basic Info
 
-                        entry.HPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.HPMax);
-                        entry.GPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.GPMax);
-                        entry.CPMax = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PlayerInfo.CPMax);
+                        // HPMax is an int in _attributes and Core.PlayerInfo — use Int32 so values > 32767 are correct.
+                        entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.HPMax);
+                        entry.GPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GPMax);
+                        entry.CPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.CPMax);
 
                         #endregion
 

@@ -1,74 +1,141 @@
-name: Release .NET Core / .NET Full Framework Library
+name: Release Sharlayan 9
 
+# Fires on direct pushes to master (stable release) and sharlayan-9-rebuild
+# (prerelease). PRs to master are handled by ci.yml — no publishing there.
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches:
+      - master
+      - sharlayan-9-rebuild
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        configuration: [Release]
-
+  build-and-publish:
     runs-on: windows-latest
+
+    # Matches the Environment constraint on the nuget.org trusted publisher.
+    environment: production
+
+    permissions:
+      id-token: write  # required for NuGet trusted publishing (OIDC)
+      contents: read
 
     env:
       SOLUTION_NAME: Sharlayan
-      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
     steps:
-      - name: Checkout
+      # FFXIVClientStructs is a git submodule. submodules: recursive ensures it
+      # is fully initialised; fetch-depth: 0 keeps full history for any version
+      # scripts that inspect git tags.
+      - name: Checkout (with submodules)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
 
-      # Install the .NET Core workload
-      - name: Install .NET Core
+      - name: Install .NET 10 SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: |
-            8.0.x
-            7.0.x
-            6.0.x
+          dotnet-version: 10.0.x
 
-      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
-
-      # Get Library Version
-      - name: Get Library Version
-        id: get_version
+      # Derive the NuGet version from version.props and the triggering branch:
+      #   master              → 9.0.4          (stable)
+      #   sharlayan-9-rebuild → 9.0.4-prerelease.N  (prerelease; N = run number)
+      #
+      # When the rebuild branch is eventually merged into master the stable
+      # release (9.0.4) supersedes all prior 9.0.4-prerelease.* packages —
+      # standard NuGet SemVer promotion, no special handling needed.
+      - name: Determine version
+        id: version
+        shell: pwsh
         run: |
-          $version = [System.Version]::Parse((Get-Content -Path .\${{ env.SOLUTION_NAME }}\${{ env.SOLUTION_NAME }}.csproj -Raw | Select-String -Pattern '<Version>(.*)</Version>').Matches.Groups[1].Value)
-          echo "Library Version: $version"
-          echo "::set-output name=version::$version"
+          $props = Get-Content -Path ".\${{ env.SOLUTION_NAME }}\version.props" -Raw
+          $major = [regex]::Match($props, '<VersionMajor>(\d+)').Groups[1].Value
+          $minor = [regex]::Match($props, '<VersionMinor>(\d+)').Groups[1].Value
+          $patch = [regex]::Match($props, '<VersionPatch>(\d+)').Groups[1].Value
+          if (-not $major -or -not $minor -or -not $patch) {
+              throw 'Could not parse version from version.props'
+          }
 
-      # Restore the application to populate the obj folder with RuntimeIdentifiers
-      - name: Restore the application
-        run: msbuild ${{ env.SOLUTION_NAME }}.sln /t:Restore /p:Configuration=$env:Configuration
-        env:
-          Configuration: ${{ matrix.configuration }}
+          $base   = "$major.$minor.$patch"
+          $branch = '${{ github.ref_name }}'
+          $isPrerelease = $branch -eq 'sharlayan-9-rebuild'
+          $full   = if ($isPrerelease) { "$base-prerelease.${{ github.run_number }}" } else { $base }
 
-      # Build the application
-      - name: Build the application
-        run: msbuild ${{ env.SOLUTION_NAME }}.sln /t:Build /p:Configuration=$env:Configuration /p:WarningLevel=0
-        env:
-          Configuration: ${{ matrix.configuration }}
+          Write-Host "Branch      : $branch"
+          Write-Host "Base version: $base"
+          Write-Host "Full version: $full"
+          Write-Host "Prerelease  : $isPrerelease"
 
-      # Upload the build artifacts
-      - name: Upload build artifacts
+          "base=$base"                                   | Out-File $env:GITHUB_OUTPUT -Append
+          "full=$full"                                   | Out-File $env:GITHUB_OUTPUT -Append
+          "is_prerelease=$($isPrerelease.ToString().ToLower())" | Out-File $env:GITHUB_OUTPUT -Append
+
+      # build.ps1:
+      #   1. Builds FFXIVClientStructs (source generators → DLLs at the HintPath
+      #      location Sharlayan.csproj references).
+      #   2. Builds Sharlayan + runs ILRepack (merges FCS into Sharlayan.dll).
+      #   3. Packs the NuGet package (GeneratePackageOnBuild=true) and the
+      #      CopyPackages MSBuild target drops it under .\published\.
+      #
+      # -SkipSubmoduleUpdate: checkout already initialised the submodule; running
+      # `git submodule update --remote` again under GITHUB_TOKEN can fail if the
+      # .gitmodules URL is SSH-flavoured.
+      # -Version: injects the computed SemVer so the .nupkg carries the right id.
+      - name: Build (FFXIVClientStructs → Sharlayan → ILRepack → NuGet pack)
+        shell: pwsh
+        run: |
+          ./build.ps1 `
+            -Configuration Release `
+            -SkipSubmoduleUpdate `
+            -Version '${{ steps.version.outputs.full }}'
+
+      # Sharlayan.Tests exercises mapper offset derivation and signature extractor
+      # math — pure logic, no live FFXIV client required.
+      # -p:GeneratePackageOnBuild=false prevents the test-triggered rebuild of
+      # Sharlayan from packing a second nupkg with the default (non-prerelease)
+      # version from version.props, which would otherwise land in published/
+      # and get pushed to NuGet alongside the correct prerelease.
+      - name: Run tests
+        shell: pwsh
+        run: |
+          dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj `
+            --configuration Release `
+            --nologo `
+            --logger "console;verbosity=normal" `
+            -p:GeneratePackageOnBuild=false
+
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sharlayan-latest
-          path: |
-            published/
+          name: sharlayan-${{ steps.version.outputs.full }}
+          path: published/
+          if-no-files-found: error
           overwrite: true
 
-      # Publish each package to NuGet
-      - name: Publish each package to NuGet
+      # Publish stable releases from master; publish prereleases from the rebuild
+      # branch. Uses NuGet Trusted Publishing (OIDC) via the official NuGet/login
+      # action — no stored API key needed. nuget.org must have this repo
+      # configured as a trusted publisher for the Sharlayan package. The
+      # temporary API key is valid for ~1 hour. --skip-duplicate makes re-runs
+      # a no-op on the same version.
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: Icehunter  # nuget.org username (profile name) that owns the Sharlayan package
+
+      - name: Publish to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
           $packages = Get-ChildItem -Path .\published\ -Filter *.nupkg
-          foreach ($package in $packages) {
-            dotnet nuget push $package.FullName --skip-duplicate --api-key ${{ env.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+          if (-not $packages) { throw 'No .nupkg files found under .\published\' }
+          foreach ($pkg in $packages) {
+              Write-Host "==> Publishing $($pkg.Name)"
+              dotnet nuget push $pkg.FullName `
+                  --skip-duplicate `
+                  --api-key $env:NUGET_API_KEY `
+                  --source https://api.nuget.org/v3/index.json
           }

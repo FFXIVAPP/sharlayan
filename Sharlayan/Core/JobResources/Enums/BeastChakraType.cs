@@ -11,12 +11,11 @@
 namespace Sharlayan.Core.JobResources.Enums {
     using System;
 
-    [Flags]
     public enum BeastChakraType : byte
     {
         None = 0,
-        Coeurl = 1,
-        OpoOpo = 2,
-        Raptor = 3
+        OpoOpo = 1,
+        Raptor = 2,
+        Coeurl = 3,
     }
 }

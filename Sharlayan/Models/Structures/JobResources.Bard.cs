@@ -14,6 +14,7 @@ namespace Sharlayan.Models.Structures {
             public byte ActiveSong { get; set; }
             public int Repertoire { get; set; }
             public int SoulVoice { get; set; }
+            public int RadiantFinaleCoda { get; set; }
             public int Timer { get; set; }
         }
     }

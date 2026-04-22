@@ -11,9 +11,8 @@
 namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class NinjaResources {
+            public int Kazematoi { get; set; }
             public int NinkiGauge { get; set; }
-            public int Timer { get; set; }
-            public int TimerFlag { get; set; }
         }
     }
 }

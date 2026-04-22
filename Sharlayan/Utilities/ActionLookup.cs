@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ActionLookup.cs" company="SyndicatedLife">
-//   Copyright© 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
+//   Copyrightï¿½ 2007 - 2022 Ryan Wilson <syndicated.life@gmail.com> (https://syndicated.life/)
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
@@ -16,6 +16,7 @@ namespace Sharlayan.Utilities {
 
     using Sharlayan.Models;
     using Sharlayan.Models.XIVDatabase;
+    using Sharlayan.Resources;
 
     public static class ActionLookup {
         private static ConcurrentDictionary<uint, ActionItem> _actions = new ConcurrentDictionary<uint, ActionItem>();
@@ -69,7 +70,8 @@ namespace Sharlayan.Utilities {
             }
 
             _loading = true;
-            await APIHelper.GetActions(_actions, configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+            await provider.GetActionsAsync(_actions, configuration);
             _loading = false;
         }
     }

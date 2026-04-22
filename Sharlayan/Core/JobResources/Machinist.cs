@@ -16,6 +16,8 @@ namespace Sharlayan.Core.JobResources {
     public sealed class MachinistResources : IJobResource {
         public int Battery { get; set; }
         public int Heat { get; set; }
+        public byte LastSummonBatteryPower { get; set; }
+        public bool TimerActive { get; set; }
         public TimeSpan OverheatTimer { get; set; }
         public TimeSpan SummonTimer { get; set; }
         public TimeSpan Timer { get; set; }

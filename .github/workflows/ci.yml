@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - master        # master is covered by release.yml
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # build.ps1 builds FFXIVClientStructs first (produces the DLLs that
+      # Sharlayan.csproj references via HintPath), then builds Sharlayan and
+      # runs ILRepack. -SkipSubmoduleUpdate because checkout already did it.
+      - name: Build
+        shell: pwsh
+        run: ./build.ps1 -Configuration Debug -SkipSubmoduleUpdate
+
+      - name: Test
+        shell: pwsh
+        run: dotnet test Sharlayan.Tests/Sharlayan.Tests.csproj --configuration Debug --nologo --logger "console;verbosity=normal"

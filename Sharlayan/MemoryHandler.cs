@@ -22,6 +22,7 @@ namespace Sharlayan {
 
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
+    using Sharlayan.Resources;
     using Sharlayan.Utilities;
 
     public class MemoryHandler : IDisposable {
@@ -39,15 +40,20 @@ namespace Sharlayan {
 
         public MemoryHandler(SharlayanConfiguration configuration) {
             this.Configuration = configuration;
-            try {
-                this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
+            // Prefer read-only access so Sharlayan can attach without admin when the
+            // game runs at the same integrity level. Only fall back to PROCESS_VM_ALL
+            // if the reduced open fails — and finally to Process.Handle as a last
+            // resort for the legacy behaviour.
+            this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_READ_QUERY, false, (uint) this.Configuration.ProcessModel.ProcessID);
+            if (this.ProcessHandle == IntPtr.Zero) {
+                try {
+                    this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
+                }
+                catch (Exception) {
+                    this.ProcessHandle = this.Configuration.ProcessModel.Process.Handle;
+                }
             }
-            catch (Exception) {
-                this.ProcessHandle = this.Configuration.ProcessModel.Process.Handle;
-            }
-            finally {
-                this.IsAttached = true;
-            }
+            this.IsAttached = true;
 
             this.Configuration.ProcessModel.Process.EnableRaisingEvents = true;
             this.Configuration.ProcessModel.Process.Exited += this.Process_OnExited;
@@ -99,7 +105,7 @@ namespace Sharlayan {
                     UnsafeNativeMethods.CloseHandle(this.ProcessHandle);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 // IGNORED
             }
             finally {
@@ -305,7 +311,8 @@ namespace Sharlayan {
         }
 
         internal async Task ResolveMemoryStructures() {
-            this.Structures = await APIHelper.GetStructures(this.Configuration);
+            IResourceProvider provider = ResourceProviderFactory.Create(this.Configuration);
+            this.Structures = await provider.GetStructuresAsync(this.Configuration);
         }
 
         protected internal virtual void RaiseException(Logger logger, Exception ex) {

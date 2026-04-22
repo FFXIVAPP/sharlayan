@@ -11,6 +11,7 @@
 namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class SamuraiResources {
+            public int Kaeshi { get; set; }
             public int Kenki { get; set; }
             public int Meditation { get; set; }
             public int Sen { get; set; }

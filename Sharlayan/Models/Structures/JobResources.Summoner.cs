@@ -16,8 +16,9 @@ namespace Sharlayan.Models.Structures {
             public int Aether { get; set; }
             public int Attunement { get; set; }
             public int AttunementTimer { get; set; }
+            public int ReturnSummon { get; set; }
+            public int ReturnSummonGlam { get; set; }
             public int SummonTimer { get; set; }
-
         }
     }
 }
