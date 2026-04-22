@@ -22,9 +22,17 @@ namespace Sharlayan.Models.ReadResults {
         /// <summary>GameMain.TerritoryLoadState raw byte: 1 = loading, 2 = loaded, 3 = unloading.</summary>
         public byte TerritoryLoadState { get; internal set; }
 
-        // --- Cutscene ------------------------------------------------------------------
+        // --- Cutscene & teleport -------------------------------------------------------
         /// <summary>True while a cutscene is playing (Conditions.WatchingCutscene / 78).</summary>
         public bool WatchingCutscene { get; internal set; }
+
+        /// <summary>
+        /// True while the player is travelling between zones or entering/exiting an instance
+        /// (Conditions.BetweenAreas or BetweenAreas51). Distinct from WatchingCutscene — a
+        /// genuine cutscene has WatchingCutscene=true and IsTeleporting=false. ActorItem.InCutscene
+        /// (from RenderFlags) fires for both; use IsTeleporting to tell them apart.
+        /// </summary>
+        public bool IsTeleporting { get; internal set; }
 
         // --- Duty Finder & instances ---------------------------------------------------
         /// <summary>Raw ContentsFinderQueueInfo.QueueState byte (0=None, 1=Pending, 2=Queued, 3=Ready (popped), 4=Accepted, 5=InContent).</summary>
