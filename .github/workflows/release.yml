@@ -28,7 +28,7 @@ jobs:
       # is fully initialised; fetch-depth: 0 keeps full history for any version
       # scripts that inspect git tags.
       - name: Checkout (with submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
