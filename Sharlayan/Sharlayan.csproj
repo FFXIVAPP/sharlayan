@@ -55,7 +55,7 @@
 		<PackageReference Include="Lumina.Excel" Version="7.4.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="NLog" Version="5.1.0" />
-		<PackageReference Include="NLog.Schema" Version="5.1.0" />
+		<PackageReference Include="NLog.Schema" Version="6.1.2" />
 		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34" PrivateAssets="all" />
 	</ItemGroup>
 
