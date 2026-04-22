@@ -137,7 +137,12 @@ namespace Sharlayan {
                         for (int i = 0; i < sceneCount; i++) {
                             IntPtr sceneAddr = new IntPtr(first + i * BGMSceneSize);
                             ushort playing = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePlayingBgmIdOffset);
-                            if (playing != 0) {
+                            // BGM id 1 is FFXIV's silence sentinel — a scene playing id=1 is
+                            // actively suppressing audio, not "nothing playing". Skip it so the walk
+                            // falls through to the next-priority scene with real audio (e.g. an Event
+                            // scene parked on silence during a fight would otherwise mask the Battle
+                            // scene's actual track).
+                            if (playing != 0 && playing != 1) {
                                 result.CurrentBgmId = playing;
                                 result.CurrentBgmSceneId = i;
                                 break;

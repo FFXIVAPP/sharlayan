@@ -60,6 +60,14 @@
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.WatchingCutscene">
             <summary>True while a cutscene is playing (Conditions.WatchingCutscene / 78).</summary>
         </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.IsTeleporting">
+            <summary>
+            True while the player is travelling between zones or entering/exiting an instance
+            (Conditions.BetweenAreas or BetweenAreas51). Distinct from WatchingCutscene — a
+            genuine cutscene has WatchingCutscene=true and IsTeleporting=false. ActorItem.InCutscene
+            (from RenderFlags) fires for both; use IsTeleporting to tell them apart.
+            </summary>
+        </member>
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.ContentsFinderQueueState">
             <summary>Raw ContentsFinderQueueInfo.QueueState byte (0=None, 1=Pending, 2=Queued, 3=Ready (popped), 4=Accepted, 5=InContent).</summary>
         </member>
