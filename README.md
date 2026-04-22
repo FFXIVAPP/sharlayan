@@ -77,3 +77,5 @@ Sharlayan's 9.0 rebuild is built on the work of several upstream projects. Each 
 ## License
 
 Sharlayan is MIT-licensed — see [LICENSE.md](LICENSE.md). Not affiliated with or endorsed by Square Enix.
+
+© 2010-2026 SQUARE ENIX CO., LTD. All Rights Reserved. A REALM REBORN is a registered trademark or trademark of Square Enix Co., Ltd. FINAL FANTASY, SQUARE ENIX and the SQUARE ENIX logo are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
