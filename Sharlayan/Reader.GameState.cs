@@ -32,6 +32,8 @@ namespace Sharlayan {
         private static readonly int ConditionsOccupiedInCutSceneEventOffset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.OccupiedInCutSceneEvent));
         private static readonly int ConditionsWatchingCutsceneOffset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.WatchingCutscene));
         private static readonly int ConditionsWatchingCutscene78Offset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.WatchingCutscene78));
+        private static readonly int ConditionsBetweenAreasOffset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.BetweenAreas));
+        private static readonly int ConditionsBetweenAreas51Offset = FieldOffsetReader.OffsetOf<FCSGame.Conditions>(nameof(FCSGame.Conditions.BetweenAreas51));
         private static readonly int ContentsFinderQueueStateOffset =
             FieldOffsetReader.OffsetOf<FCSGameUI.ContentsFinder>(nameof(FCSGameUI.ContentsFinder.QueueInfo)) +
             FieldOffsetReader.OffsetOf<FCSGameUI.ContentsFinderQueueInfo>(nameof(FCSGameUI.ContentsFinderQueueInfo.QueueState));
@@ -80,18 +82,24 @@ namespace Sharlayan {
             // IsReadyToRead: territory is loaded AND the scanner resolved the actor pointer array.
             result.IsReadyToRead = result.TerritoryLoadState == 2 && locations.ContainsKey(Signatures.CHARMAP_KEY);
 
-            // --- Conditions: FCS exposes three cutscene-related flags on the same struct.
+            // --- Conditions: cutscene and teleport flags live on the same struct. ---
             //   OccupiedInCutSceneEvent — explicit cutscene-event condition (quest/story).
-            //   WatchingCutscene        — generic "watching a cutscene" flag.
-            //   WatchingCutscene78      — secondary flag set during instance cutscenes.
-            // OR all three so short unskippable cutscenes (which only trip one) still register.
+            //   WatchingCutscene / 78   — generic cutscene flag; 78 fires for instance cutscenes.
+            //   BetweenAreas / 51       — set during zone transitions and instance entry/exit.
+            //
+            // IsTeleporting uses BetweenAreas|51 only. InCutscene on ActorItem (RenderFlags bit)
+            // fires for both cutscenes AND zone transitions; using IsTeleporting lets callers
+            // distinguish the two: a real cutscene has WatchingCutscene=true, IsTeleporting=false.
             if (locations.ContainsKey(Signatures.CONDITIONS_KEY)) {
                 IntPtr conditions = locations[Signatures.CONDITIONS_KEY];
                 try {
-                    byte occCutscene = this._memoryHandler.GetByte(conditions, ConditionsOccupiedInCutSceneEventOffset);
-                    byte watching58  = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutsceneOffset);
-                    byte watching78  = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutscene78Offset);
+                    byte occCutscene  = this._memoryHandler.GetByte(conditions, ConditionsOccupiedInCutSceneEventOffset);
+                    byte watching58   = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutsceneOffset);
+                    byte watching78   = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutscene78Offset);
+                    byte betweenAreas = this._memoryHandler.GetByte(conditions, ConditionsBetweenAreasOffset);
+                    byte between51    = this._memoryHandler.GetByte(conditions, ConditionsBetweenAreas51Offset);
                     result.WatchingCutscene = occCutscene != 0 || watching58 != 0 || watching78 != 0;
+                    result.IsTeleporting    = betweenAreas != 0 || between51 != 0;
                 }
                 catch { /* ignore */ }
             }

@@ -28,13 +28,13 @@ jobs:
       # is fully initialised; fetch-depth: 0 keeps full history for any version
       # scripts that inspect git tags.
       - name: Checkout (with submodules)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: recursive
 
       - name: Install .NET 10 SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
@@ -106,7 +106,7 @@ jobs:
             -p:GeneratePackageOnBuild=false
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sharlayan-${{ steps.version.outputs.full }}
           path: published/
