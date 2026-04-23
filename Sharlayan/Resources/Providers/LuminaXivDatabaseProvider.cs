@@ -15,7 +15,6 @@
 namespace Sharlayan.Resources.Providers {
     using System;
     using System.Collections.Concurrent;
-    using System.IO;
     using System.Threading.Tasks;
 
     using Lumina;
@@ -43,7 +42,7 @@ namespace Sharlayan.Resources.Providers {
 
         public Task GetActionsAsync(ConcurrentDictionary<uint, ActionItem> actions, SharlayanConfiguration configuration) {
             return Task.Run(() => {
-                GameData gameData = OpenGameData(configuration);
+                GameData gameData = LuminaGameDataCache.Get(configuration);
                 ExcelSheet<NativeAction> en = gameData.Excel.GetSheet<NativeAction>(Language.English);
                 ExcelSheet<NativeAction> jp = gameData.Excel.GetSheet<NativeAction>(Language.Japanese);
                 ExcelSheet<NativeAction> de = gameData.Excel.GetSheet<NativeAction>(Language.German);
@@ -84,7 +83,7 @@ namespace Sharlayan.Resources.Providers {
 
         public Task GetStatusEffectsAsync(ConcurrentDictionary<uint, StatusItem> statusEffects, SharlayanConfiguration configuration) {
             return Task.Run(() => {
-                GameData gameData = OpenGameData(configuration);
+                GameData gameData = LuminaGameDataCache.Get(configuration);
                 ExcelSheet<NativeStatus> en = gameData.Excel.GetSheet<NativeStatus>(Language.English);
                 ExcelSheet<NativeStatus> jp = gameData.Excel.GetSheet<NativeStatus>(Language.Japanese);
                 ExcelSheet<NativeStatus> de = gameData.Excel.GetSheet<NativeStatus>(Language.German);
@@ -107,7 +106,7 @@ namespace Sharlayan.Resources.Providers {
 
         public Task GetZonesAsync(ConcurrentDictionary<uint, MapItem> zones, SharlayanConfiguration configuration) {
             return Task.Run(() => {
-                GameData gameData = OpenGameData(configuration);
+                GameData gameData = LuminaGameDataCache.Get(configuration);
                 ExcelSheet<NativeTerritoryType> territories = gameData.Excel.GetSheet<NativeTerritoryType>();
 
                 ExcelSheet<PlaceName> placeNameEn = gameData.Excel.GetSheet<PlaceName>(Language.English);
@@ -131,44 +130,6 @@ namespace Sharlayan.Resources.Providers {
                     zones.AddOrUpdate(id, item, (_, _) => item);
                 }
             });
-        }
-
-        private static GameData OpenGameData(SharlayanConfiguration configuration) {
-            string sqpackPath = ResolveSqpackPath(configuration);
-            return new GameData(sqpackPath);
-        }
-
-        /// <summary>
-        /// Resolves the sqpack directory path either from the explicit
-        /// <see cref="SharlayanConfiguration.GameInstallPath"/> override, or (falling back)
-        /// from the running game's MainModule file path (ffxiv_dx11.exe sits next to sqpack/).
-        /// </summary>
-        private static string ResolveSqpackPath(SharlayanConfiguration configuration) {
-            if (!string.IsNullOrWhiteSpace(configuration.GameInstallPath)) {
-                string explicitSqpack = Path.Combine(configuration.GameInstallPath, "game", "sqpack");
-                if (Directory.Exists(explicitSqpack)) {
-                    return explicitSqpack;
-                }
-                // Also accept if GameInstallPath is already the game\ folder
-                explicitSqpack = Path.Combine(configuration.GameInstallPath, "sqpack");
-                if (Directory.Exists(explicitSqpack)) {
-                    return explicitSqpack;
-                }
-                throw new DirectoryNotFoundException($"sqpack directory not found under configured GameInstallPath '{configuration.GameInstallPath}'.");
-            }
-
-            string exePath = configuration.ProcessModel?.Process?.MainModule?.FileName
-                             ?? throw new InvalidOperationException("Cannot locate game sqpack: no GameInstallPath set and no running ProcessModel available.");
-
-            string gameDir = Path.GetDirectoryName(exePath)
-                             ?? throw new InvalidOperationException($"Cannot derive game directory from exe path '{exePath}'.");
-
-            string sqpack = Path.Combine(gameDir, "sqpack");
-            if (!Directory.Exists(sqpack)) {
-                throw new DirectoryNotFoundException($"sqpack directory not found at '{sqpack}'.");
-            }
-
-            return sqpack;
         }
 
         private static Localization BuildLocalization(string english, string japanese, string german, string french) {

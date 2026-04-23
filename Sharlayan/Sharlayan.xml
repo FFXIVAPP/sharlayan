@@ -164,11 +164,18 @@
                final PointerPath = [rewindBack, 0 (deref Framework ptr), 0x2B68 (deref UIModule field), 0x19E0 (trailing add)]
              </summary>
         </member>
-        <member name="M:Sharlayan.Resources.Providers.LuminaXivDatabaseProvider.ResolveSqpackPath(Sharlayan.SharlayanConfiguration)">
+        <member name="M:Sharlayan.Resources.Providers.LuminaGameDataCache.GetOrNull(Sharlayan.SharlayanConfiguration)">
             <summary>
-            Resolves the sqpack directory path either from the explicit
-            <see cref="P:Sharlayan.SharlayanConfiguration.GameInstallPath"/> override, or (falling back)
-            from the running game's MainModule file path (ffxiv_dx11.exe sits next to sqpack/).
+            Returns the cached <see cref="T:Lumina.GameData"/> for the configuration's sqpack path,
+            or <c>null</c> if the path can't be resolved or GameData construction fails.
+            Used by per-frame / best-effort callers that must degrade gracefully.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Resources.Providers.LuminaGameDataCache.Get(Sharlayan.SharlayanConfiguration)">
+            <summary>
+            Returns the cached <see cref="T:Lumina.GameData"/> for the configuration's sqpack path,
+            throwing if the path can't be resolved. Used by the xivdatabase provider's bulk
+            loaders where a missing sqpack is a genuine configuration error.
             </summary>
         </member>
     </members>
