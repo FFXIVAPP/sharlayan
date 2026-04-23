@@ -15,13 +15,13 @@
 
 namespace Sharlayan {
     using System;
-    using System.IO;
 
     using FCSGame = FFXIVClientStructs.FFXIV.Client.Game;
     using FCSGameUI = FFXIVClientStructs.FFXIV.Client.Game.UI;
 
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Resources.Mappers;
+    using Sharlayan.Resources.Providers;
 
     public partial class Reader {
         // Every inner offset used by GetGameState is derived at class init via
@@ -45,12 +45,14 @@ namespace Sharlayan {
         private const int StdVectorFirstOffset = 0;
         private const int StdVectorLastOffset = 8;
 
-        // Lumina GameData is lazily constructed on first GetGameState call and cached
-        // for the Reader's lifetime. `_luminaAttempted` prevents re-probing the sqpack
-        // path every frame when GameInstallPath is unset or the sqpack directory can't
-        // be located.
-        private Lumina.GameData _luminaGameData;
-        private bool _luminaAttempted;
+        // Sheet refs resolved once via LuminaGameDataCache and cached for the Reader's
+        // lifetime. Per-frame calls to GetSheet<T>() would still hit Lumina's internal
+        // dictionary + generic dispatch; field reads are effectively free. `_sheetsAttempted`
+        // prevents re-probing sqpack every frame when GameInstallPath is unset or the
+        // Lumina open failed.
+        private Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.Weather> _weatherSheetEn;
+        private Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.BGM> _bgmSheetEn;
+        private bool _sheetsAttempted;
 
         public bool CanGetGameState() {
             // At minimum we need GameMain to read territory-load state. The other keys are
@@ -154,21 +156,13 @@ namespace Sharlayan {
             }
 
             // --- Lumina name resolution (best-effort; silently skipped if sqpack not found) ---
+            this.EnsureLuminaSheets();
             try {
-                Lumina.GameData lumina = this.GetLumina();
-                if (lumina != null) {
-                    if (result.CurrentWeatherId != 0) {
-                        var weatherSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>();
-                        if (weatherSheet.HasRow(result.CurrentWeatherId)) {
-                            result.CurrentWeatherName = weatherSheet.GetRow(result.CurrentWeatherId).Name.ExtractText();
-                        }
-                    }
-                    if (result.CurrentBgmId != 0) {
-                        var bgmSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGM>();
-                        if (bgmSheet.HasRow(result.CurrentBgmId)) {
-                            result.CurrentBgmFile = bgmSheet.GetRow(result.CurrentBgmId).File.ExtractText();
-                        }
-                    }
+                if (this._weatherSheetEn != null && result.CurrentWeatherId != 0 && this._weatherSheetEn.HasRow(result.CurrentWeatherId)) {
+                    result.CurrentWeatherName = this._weatherSheetEn.GetRow(result.CurrentWeatherId).Name.ExtractText();
+                }
+                if (this._bgmSheetEn != null && result.CurrentBgmId != 0 && this._bgmSheetEn.HasRow(result.CurrentBgmId)) {
+                    result.CurrentBgmFile = this._bgmSheetEn.GetRow(result.CurrentBgmId).File.ExtractText();
                 }
             }
             catch { /* Lumina failures shouldn't break the numeric result */ }
@@ -176,36 +170,26 @@ namespace Sharlayan {
             return result;
         }
 
-        private Lumina.GameData GetLumina() {
-            if (this._luminaAttempted) {
-                return this._luminaGameData;
+        // Resolve the EN Weather and BGM sheets once, lazily. Per-frame GetGameState reads
+        // them as fields — no dictionary lookup, no generic dispatch.
+        private void EnsureLuminaSheets() {
+            if (this._sheetsAttempted) {
+                return;
             }
-            this._luminaAttempted = true;
+            this._sheetsAttempted = true;
+            Lumina.GameData lumina = LuminaGameDataCache.GetOrNull(this._memoryHandler.Configuration);
+            if (lumina == null) {
+                return;
+            }
             try {
-                string sqpack = ResolveSqpackPath(this._memoryHandler.Configuration);
-                if (sqpack != null) {
-                    this._luminaGameData = new Lumina.GameData(sqpack);
-                }
+                this._weatherSheetEn = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>();
+                this._bgmSheetEn = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGM>();
             }
-            catch { /* leave cache null; subsequent calls return null without retrying */ }
-            return this._luminaGameData;
+            catch { /* leave fields null; subsequent calls skip the lookup */ }
         }
 
-        // Mirrors LuminaXivDatabaseProvider.ResolveSqpackPath but returns null on any failure
-        // instead of throwing — GetGameState must work even without xivdatabase access.
-        private static string ResolveSqpackPath(SharlayanConfiguration configuration) {
-            if (!string.IsNullOrWhiteSpace(configuration?.GameInstallPath)) {
-                string gameSqpack = Path.Combine(configuration.GameInstallPath, "game", "sqpack");
-                if (Directory.Exists(gameSqpack)) return gameSqpack;
-                string rootSqpack = Path.Combine(configuration.GameInstallPath, "sqpack");
-                if (Directory.Exists(rootSqpack)) return rootSqpack;
-            }
-            string exePath = configuration?.ProcessModel?.Process?.MainModule?.FileName;
-            if (string.IsNullOrWhiteSpace(exePath)) return null;
-            string gameDir = Path.GetDirectoryName(exePath);
-            if (string.IsNullOrWhiteSpace(gameDir)) return null;
-            string guess = Path.Combine(gameDir, "sqpack");
-            return Directory.Exists(guess) ? guess : null;
-        }
+        // Thin accessor retained so Reader.Lumina can resolve language-specific sheets
+        // (zone / weather / exp-table helpers) via the same shared cache.
+        private Lumina.GameData GetLumina() => LuminaGameDataCache.GetOrNull(this._memoryHandler.Configuration);
     }
 }
