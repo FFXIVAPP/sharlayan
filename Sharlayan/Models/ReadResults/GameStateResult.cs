@@ -14,6 +14,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Models.ReadResults {
+    using System.Collections.Generic;
+
     public class GameStateResult {
         // --- Session & readiness -------------------------------------------------------
         public bool IsLoggedIn { get; internal set; }
@@ -55,13 +57,82 @@ namespace Sharlayan.Models.ReadResults {
         public string CurrentWeatherName { get; internal set; }
 
         // --- Music ---------------------------------------------------------------------
-        /// <summary>Highest-priority scene's PlayingBgmId (walks BGMSystem.Scenes 0..N). 0 if no scene is playing.</summary>
+        /// <summary>
+        /// Sourced from <c>Scene.PlayingBgmId</c> on the highest-priority scene currently
+        /// playing audible audio (walks BGMSystem.Scenes 0..N skipping scenes parked on
+        /// id=0 or id=1 silence sentinel). 0 if no scene has audible audio.
+        /// </summary>
         public ushort CurrentBgmId { get; internal set; }
+
+        /// <summary>
+        /// Sourced from <c>Scene.BgmId</c> (the "intended" track) on the same winning scene
+        /// as <see cref="CurrentBgmId"/>. When <c>CurrentBgmTargetId != CurrentBgmId</c> the
+        /// scene is mid-BGMSwitch — useful as a "BGM transition in progress" signal that
+        /// settles at the new value once the swap completes.
+        /// </summary>
+        public ushort CurrentBgmTargetId { get; internal set; }
+
+        /// <summary>
+        /// One <see cref="BgmSceneInfo"/> per slot in <c>BGMSystem.Scenes</c> (currently 12,
+        /// indexed via <see cref="BgmSceneType"/>). Scenes are priority-ordered: index 0
+        /// (Event) wins over index 11 (Territory). The "winning" scene's values are also
+        /// exposed flat as <see cref="CurrentBgmId"/> / <see cref="CurrentBgmTargetId"/> /
+        /// <see cref="CurrentBgmSceneId"/> / <see cref="CurrentBgmFile"/>; this array gives
+        /// downstream consumers visibility into every layer (e.g. the Battle scene track
+        /// while an Event scene is also active).
+        /// <para>
+        /// Empty if BGMSYSTEM didn't resolve. Always 12 elements when populated.
+        /// </para>
+        /// </summary>
+        public IReadOnlyList<BgmSceneInfo> BgmScenes { get; internal set; }
 
         /// <summary>BGMScene row index that's currently playing (0 = Event, 1 = Battle, ..., 11 = Territory). -1 if none.</summary>
         public int CurrentBgmSceneId { get; internal set; } = -1;
 
         /// <summary>BGM file path from the BGM sheet (e.g. "music/ffxiv/BGM_Field_Gri_Day.scd"); null if unavailable.</summary>
         public string CurrentBgmFile { get; internal set; }
+
+        /// <summary>
+        /// Highest non-zero <c>BGMFadeType.FadeInStartTime</c> (seconds) across every entry
+        /// in <see cref="BgmScenes"/>. This is the *delay* between a scene's PlayingBgmId
+        /// becoming non-zero and audio actually starting its volume ramp; the longest such
+        /// delay among all scenes is what determines when the user will hear the new track.
+        /// Zero scenes don't contribute — a single scene with a 0.5s start delay wins over
+        /// many scenes at 0. 0 if all scenes are 0 or sqpack/Lumina isn't available.
+        /// </summary>
+        public float BgmFadeIn { get; internal set; }
+
+        /// <summary>
+        /// Highest non-zero <c>BGMFadeType.ResumeFadeInTime</c> (seconds) across every
+        /// entry in <see cref="BgmScenes"/>. Used by the game when resuming a previously
+        /// paused track rather than starting fresh. Zero entries are skipped. 0 if all
+        /// scenes are 0 or sqpack/Lumina isn't available.
+        /// </summary>
+        public float BgmResume { get; internal set; }
+
+        /// <summary>
+        /// True if any active SoundData entry has IsLoadingSoundResource set. Walked from
+        /// SoundManager.ActiveSoundDataListHead following ISoundData.Next. This is a coarse
+        /// "audio engine is loading something right now" signal — during a BGM transition
+        /// (zone change, scene swap) the new BGM SoundData briefly raises this flag, so it
+        /// works as a proxy for "BGM is transitioning". Returns false during steady-state
+        /// playback. Set to false if SoundManager isn't resolved.
+        /// </summary>
+        public bool AnySoundLoading { get; internal set; }
+
+        /// <summary>
+        /// True when audible audio energy is present on the *music* bus specifically
+        /// (sourced from <c>SoundManager._FFTBlue1</c> — FCS labels Blue as the Music bus,
+        /// distinct from Red=System and Green=SE/Voice/Instruments).
+        /// <para>
+        /// <b>Post-master-volume</b> — this is the speaker output, so muting BGM in-game or
+        /// dropping the slider to 0 will keep this false even when music is playing in the
+        /// audio engine. For a pre-fader signal that ignores user volume settings, consume
+        /// <see cref="BgmScenes"/> directly (a non-zero <c>PlayingBgmId</c> on any scene means
+        /// the audio engine has selected a track regardless of user volume).
+        /// </para>
+        /// Set to false if SoundManager isn't resolved.
+        /// </summary>
+        public bool IsBgmAudible { get; internal set; }
     }
 }

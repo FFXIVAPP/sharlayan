@@ -51,6 +51,8 @@ namespace Sharlayan {
 
         public const string RECAST_KEY = "RECAST";
 
+        public const string SOUNDMANAGER_KEY = "SOUNDMANAGER";
+
         public const string TARGET_KEY = "TARGET";
 
         public const string WEATHER_KEY = "WEATHER";

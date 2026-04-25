@@ -58,6 +58,7 @@ namespace Sharlayan.Tests.Resources.Providers {
             "ContentsFinder",
             "WeatherManager",
             "BGMSystem",
+            "SoundManager",
             "Framework",
             "AtkStage",
         };
@@ -123,6 +124,12 @@ namespace Sharlayan.Tests.Resources.Providers {
         public void PrivateFieldOffset_Utf8String_inlineBuffer_Resolves() {
             AssertPrivateFieldExists<Utf8String>("_inlineBuffer");
         }
+
+        [Fact]
+        public void PrivateFieldOffset_SoundManager_FFTBlue1_Resolves() {
+            AssertPrivateFieldExists<FFXIVClientStructs.FFXIV.Client.Sound.SoundManager>("_FFTBlue1");
+        }
+
 
         [Fact]
         public void PrivateFieldOffset_PlayerState_classJobLevels_Resolves() {

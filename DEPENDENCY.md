@@ -26,7 +26,8 @@ Each of these has a `public static partial Instance()` method decorated with `[S
 | `FFXIV/Client/Game/Conditions.cs` | `Conditions` | `CONDITIONS` | bool array; bits 35 / 58 / 78 for cutscene, 34 for BoundByDuty |
 | `FFXIV/Client/Game/UI/ContentsFinder.cs` | `ContentsFinder` | `CONTENTSFINDER` | `QueueInfo.QueueState` @ +0x75 |
 | `FFXIV/Client/Game/WeatherManager.cs` | `WeatherManager` | `WEATHER` | `WeatherId` @ +0x64 |
-| `FFXIV/Client/Game/BGMSystem.cs` | `BGMSystem` | `BGMSYSTEM` | `Scenes` StdVector @ +0xC0 walked for highest-priority PlayingBgmId; `isPointer=true` |
+| `FFXIV/Client/Game/BGMSystem.cs` | `BGMSystem` | `BGMSYSTEM` | `Scenes` StdVector @ +0xC0 walked: each scene exposes `PlayingBgmId` (+0x0E), `BgmId` (+0x0C), `PreviousBgmId` (+0x10), `PlayState` (+0x50), `EnableCustomFade` (+0x30), `FadeOutTime` (+0x38), `FadeInTime` (+0x3C) into `BgmScenes[]`. Per-scene Lumina preset fades (`Preset*` floats in seconds) sourced from `BGMFade.SceneIn` → `BGMFadeType` (FadeOutTime / FadeInTime / FadeInStartTime / ResumeFadeInTime). Highest-priority non-silence `PlayingBgmId` also flat-mapped to `CurrentBgmId/SceneId/TargetId`. `isPointer=true` |
+| `FFXIV/Client/Sound/SoundManager.cs` | `SoundManager` | `SOUNDMANAGER` | `ActiveSoundDataListHead` @ +0x228 walked via `ISoundData.Next` (+0x18) reading `SoundData.IsLoadingSoundResource` (+0xB8) → `AnySoundLoading`. First 8 floats of private `_FFTBlue1` (+0x1358, post-master-volume music-bus FFT) summed → `IsBgmAudible`. `isPointer=true` |
 | `FFXIV/Client/System/Framework/Framework.cs` | `Framework` | `CHATLOG`, `HOTBAR` | Multi-hop base for UIModule chain (see below); `isPointer=true` |
 | `FFXIV/Component/GUI/AtkStage.cs` | `AtkStage` | `RECAST` | Multi-hop base for NumberArray chain (see below); `isPointer=true` |
 
