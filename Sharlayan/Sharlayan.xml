@@ -54,6 +54,96 @@
             message timestamp
             </summary>
         </member>
+        <member name="T:Sharlayan.Models.ReadResults.BgmSceneType">
+            <summary>
+            Index into <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes"/>. Mirrors the FFXIVClientStructs
+            <c>BGMSystem.Scene.SceneId</c> documentation. <see cref="F:Sharlayan.Models.ReadResults.BgmSceneType.Unknown7"/> and
+            <see cref="F:Sharlayan.Models.ReadResults.BgmSceneType.Unknown8"/> are present for completeness; FCS doesn't have firm names.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.Index">
+            <summary>0..11 — same as <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.SceneType"/> cast to int.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.SceneType">
+            <summary>Named slot — see <see cref="T:Sharlayan.Models.ReadResults.BgmSceneType"/> for the priority order.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.BgmId">
+            <summary>
+            <c>Scene.BgmId</c> — the *intended* track for this scene. May differ from
+            <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayingBgmId"/> mid-BGMSwitch and converges once the swap completes.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayingBgmId">
+            <summary>
+            <c>Scene.PlayingBgmId</c> — the track actually selected on this scene. Note id 0
+            means "no track" and id 1 is FFXIV's silence sentinel; both are treated as
+            not-playing by <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.IsPlaying"/>.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PreviousBgmId">
+            <summary>
+            <c>Scene.PreviousBgmId</c>. FCS comment: "holds BgmId until after BGMSwitch
+            selection" — useful for tracking transitions.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.IsPlaying">
+            <summary>
+            True iff <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayingBgmId"/> is non-zero AND not the silence sentinel
+            (id=1). Cheap convenience over the raw id.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayingBgmFile">
+            <summary>
+            Lumina-resolved file path for <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayingBgmId"/> (e.g.
+            "music/ffxiv/BGM_Field_Gri_Day.scd"). Null when <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.IsPlaying"/> is false
+            or when sqpack/Lumina isn't available.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PlayState">
+            <summary>
+            <c>Scene.PlayState</c> — manual control flag set by <c>BGMSystem.SetBGMPlayState</c>.
+            0 = Paused, 1 = Playing. Note the game does *not* write this during normal
+            playback; expect it to stay 0 for most scenes. Exposed for completeness.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.EnableCustomFade">
+            <summary>
+            <c>Scene.EnableCustomFade</c> — true when the per-scene fade overrides
+            (<see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.FadeOutTime"/> / <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.FadeInTime"/>) are populated. When
+            false, the game uses defaults from the BGMFadeType Excel sheet and the local
+            fade fields stay at 0.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.FadeOutTime">
+            <summary>Per-scene fade-out duration override (ms). Only meaningful when <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.EnableCustomFade"/> is true.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.FadeInTime">
+            <summary>Per-scene fade-in duration override (ms). Only meaningful when <see cref="P:Sharlayan.Models.ReadResults.BgmSceneInfo.EnableCustomFade"/> is true.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PresetFadeOutTime">
+            <summary><c>BGMFadeType.FadeOutTime</c> (seconds) for the preset fade-into-this-scene row.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PresetFadeInTime">
+            <summary>
+            <c>BGMFadeType.FadeInTime</c> (seconds) — duration of the volume ramp once fade-in
+            actually begins.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PresetFadeInStartTime">
+            <summary>
+            <c>BGMFadeType.FadeInStartTime</c> (seconds) — delay between the scene's
+            PlayingBgmId becoming non-zero and the audio starting its ramp. This is the
+            "delayed start" you observe when IsPlaying flips true before audio is heard:
+            audible at <c>(IsPlaying rising edge) + PresetFadeInStartTime</c>, full volume
+            at <c>(rising edge) + PresetFadeInStartTime + PresetFadeInTime</c>.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.BgmSceneInfo.PresetResumeFadeInTime">
+            <summary>
+            <c>BGMFadeType.ResumeFadeInTime</c> (seconds) — used when resuming a previously
+            paused track rather than starting fresh.
+            </summary>
+        </member>
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.TerritoryLoadState">
             <summary>GameMain.TerritoryLoadState raw byte: 1 = loading, 2 = loaded, 3 = unloading.</summary>
         </member>
@@ -87,13 +177,82 @@
             <summary>Localised name from the Weather sheet; null if GameInstallPath wasn't set or the row is missing.</summary>
         </member>
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmId">
-            <summary>Highest-priority scene's PlayingBgmId (walks BGMSystem.Scenes 0..N). 0 if no scene is playing.</summary>
+            <summary>
+            Sourced from <c>Scene.PlayingBgmId</c> on the highest-priority scene currently
+            playing audible audio (walks BGMSystem.Scenes 0..N skipping scenes parked on
+            id=0 or id=1 silence sentinel). 0 if no scene has audible audio.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmTargetId">
+            <summary>
+            Sourced from <c>Scene.BgmId</c> (the "intended" track) on the same winning scene
+            as <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmId"/>. When <c>CurrentBgmTargetId != CurrentBgmId</c> the
+            scene is mid-BGMSwitch — useful as a "BGM transition in progress" signal that
+            settles at the new value once the swap completes.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes">
+            <summary>
+            One <see cref="T:Sharlayan.Models.ReadResults.BgmSceneInfo"/> per slot in <c>BGMSystem.Scenes</c> (currently 12,
+            indexed via <see cref="T:Sharlayan.Models.ReadResults.BgmSceneType"/>). Scenes are priority-ordered: index 0
+            (Event) wins over index 11 (Territory). The "winning" scene's values are also
+            exposed flat as <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmId"/> / <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmTargetId"/> /
+            <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmSceneId"/> / <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmFile"/>; this array gives
+            downstream consumers visibility into every layer (e.g. the Battle scene track
+            while an Event scene is also active).
+            <para>
+            Empty if BGMSYSTEM didn't resolve. Always 12 elements when populated.
+            </para>
+            </summary>
         </member>
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmSceneId">
             <summary>BGMScene row index that's currently playing (0 = Event, 1 = Battle, ..., 11 = Territory). -1 if none.</summary>
         </member>
         <member name="P:Sharlayan.Models.ReadResults.GameStateResult.CurrentBgmFile">
             <summary>BGM file path from the BGM sheet (e.g. "music/ffxiv/BGM_Field_Gri_Day.scd"); null if unavailable.</summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.BgmFadeIn">
+            <summary>
+            Highest non-zero <c>BGMFadeType.FadeInStartTime</c> (seconds) across every entry
+            in <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes"/>. This is the *delay* between a scene's PlayingBgmId
+            becoming non-zero and audio actually starting its volume ramp; the longest such
+            delay among all scenes is what determines when the user will hear the new track.
+            Zero scenes don't contribute — a single scene with a 0.5s start delay wins over
+            many scenes at 0. 0 if all scenes are 0 or sqpack/Lumina isn't available.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.BgmResume">
+            <summary>
+            Highest non-zero <c>BGMFadeType.ResumeFadeInTime</c> (seconds) across every
+            entry in <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes"/>. Used by the game when resuming a previously
+            paused track rather than starting fresh. Zero entries are skipped. 0 if all
+            scenes are 0 or sqpack/Lumina isn't available.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.AnySoundLoading">
+            <summary>
+            True if any active SoundData entry has IsLoadingSoundResource set. Walked from
+            SoundManager.ActiveSoundDataListHead following ISoundData.Next. This is a coarse
+            "audio engine is loading something right now" signal — during a BGM transition
+            (zone change, scene swap) the new BGM SoundData briefly raises this flag, so it
+            works as a proxy for "BGM is transitioning". Returns false during steady-state
+            playback. Set to false if SoundManager isn't resolved.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.ReadResults.GameStateResult.IsBgmAudible">
+            <summary>
+            True when audible audio energy is present on the *music* bus specifically
+            (sourced from <c>SoundManager._FFTBlue1</c> — FCS labels Blue as the Music bus,
+            distinct from Red=System and Green=SE/Voice/Instruments).
+            <para>
+            <b>Post-master-volume</b> — this is the speaker output, so muting BGM in-game or
+            dropping the slider to 0 will keep this false even when music is playing in the
+            audio engine. For a pre-fader signal that ignores user volume settings, consume
+            <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes"/> directly (a non-zero <c>PlayingBgmId</c> on any scene means
+            the audio engine has selected a track regardless of user volume).
+            </para>
+            Set to false if SoundManager isn't resolved.
+            </summary>
         </member>
         <member name="M:Sharlayan.Reader.GetZoneName(System.UInt32,System.String)">
             <summary>

@@ -122,6 +122,7 @@ namespace Sharlayan.Resources.Providers {
             TryAdd(signatures, Signatures.CONTENTSFINDER_KEY, "ContentsFinder", 0);
             TryAdd(signatures, Signatures.WEATHER_KEY,        "WeatherManager", 0);
             TryAdd(signatures, Signatures.BGMSYSTEM_KEY,      "BGMSystem",      0);
+            TryAdd(signatures, Signatures.SOUNDMANAGER_KEY,   "SoundManager",   0);
 
             // --- Multi-hop chains ------------------------------------------------------
             // CHATLOG: Framework (isPointer=true) → UIModule* @ Framework.UIModule → trailing
