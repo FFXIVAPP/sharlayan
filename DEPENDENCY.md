@@ -42,7 +42,7 @@ Each of these has a `public static partial Instance()` method decorated with `[S
 | File | Field | Used offset | Why |
 |---|---|---|---|
 | `FFXIV/Client/System/Framework/Framework.cs` | `Framework.UIModule` | `0x2B68` | Deref hop to `UIModule*` |
-| `FFXIV/Client/UI/UIModule.cs` | `UIModule.RaptureLogModule` | `0x19E0` | Trailing offset to land on RaptureLogModule |
+| `FFXIV/Client/UI/UIModule.cs` | `UIModule.RaptureLogModule` | `0x1AC0` | Trailing offset to land on RaptureLogModule (was `0x19E0`; bumped by FCS "Update UIModule") |
 | `FFXIV/Client/UI/Misc/RaptureLogModule.cs` | (exposed via `FFXIV/Component/Log/LogModule.cs`) | n/a | RaptureLogModule contains a `LogModule` instance Sharlayan parses via `ChatLogPointersMapper` |
 | `FFXIV/Component/Log/LogModule.cs` | `LogModule.LogMessageIndex` / `LogMessageData` | `Marshal.OffsetOf` | Two `StdVector<T>` offsets (First/Last/End) for the ring buffer |
 
@@ -51,7 +51,7 @@ Each of these has a `public static partial Instance()` method decorated with `[S
 | File | Field | Used offset |
 |---|---|---|
 | `FFXIV/Client/System/Framework/Framework.cs` | `Framework.UIModule` | `0x2B68` |
-| `FFXIV/Client/UI/UIModule.cs` | `UIModule.RaptureHotbarModule` | `0x57B80` |
+| `FFXIV/Client/UI/UIModule.cs` | `UIModule.RaptureHotbarModule` | `0x57C60` (was `0x57B80`; bumped by FCS "Update UIModule") |
 | `FFXIV/Client/UI/Misc/RaptureHotbarModule.cs` | `_hotbars` private array | `0xA0` (additive) |
 | `FFXIV/Client/UI/Misc/RaptureHotbarModule.HotbarSlot.cs` | `HotbarSlot.PopUpHelp` / `.CommandId` / `_popUpKeybindHint` | `Marshal.OffsetOf` / `FieldOffsetReader` |
 
