@@ -35,14 +35,25 @@ namespace Sharlayan.Resources.Mappers {
             // Casting & status offsets are BattleChara-relative (0x2790 + field within CastInfo,
             // 0x23B0 for StatusManager). Non-BattleChara actors will read garbage at these
             // offsets, same as the legacy mapping — callers guard on IsCasting1 being truthy.
-            int castInfoBase     = (int)Marshal.OffsetOf<BattleChara>(nameof(BattleChara.CastInfo));
-            int statusManagerOff = (int)Marshal.OffsetOf<BattleChara>(nameof(BattleChara.StatusManager));
-            int ciIsCasting      = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.IsCasting));
-            int ciInterruptible  = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.Interruptible));
-            int ciActionId       = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.ActionId));
-            int ciTargetId       = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.TargetId));
-            int ciCurrentCast    = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.CurrentCastTime));
-            int ciTotalCast      = (int)Marshal.OffsetOf<CastInfo>(nameof(CastInfo.TotalCastTime));
+            // FCS made CastInfo non-marshalable (managed-pointer-bearing field added),
+            // so Marshal.OffsetOf throws even on still-blittable members. FieldOffsetReader
+            // reads the [FieldOffset] attribute via reflection and works regardless of
+            // marshallability — the project's standard fallback for FCS struct evolution.
+            //
+            // CastInfo.IsCasting and CastInfo.Interruptible used to be standalone byte
+            // fields; FCS migrated them to [BitField<bool>] accessors over a single
+            // CastInfo.Flags byte at offset 0 (bit 0 = IsCasting, bit 1 = Interruptible).
+            // We now point IsCasting1/IsCasting2 at the Flags byte; ActorItemResolver does
+            // the per-bit mask. The "still-just-a-byte" semantic is preserved for
+            // IsCasting1 because TryToBoolean returns true for any non-zero byte and bit 0
+            // dominates during a real cast.
+            int castInfoBase     = FieldOffsetReader.OffsetOf<BattleChara>(nameof(BattleChara.CastInfo));
+            int statusManagerOff = FieldOffsetReader.OffsetOf<BattleChara>(nameof(BattleChara.StatusManager));
+            int ciFlags          = FieldOffsetReader.OffsetOf<CastInfo>(nameof(CastInfo.Flags)); // bit 0 = IsCasting, bit 1 = Interruptible
+            int ciActionId       = FieldOffsetReader.OffsetOf<CastInfo>(nameof(CastInfo.ActionId));
+            int ciTargetId       = FieldOffsetReader.OffsetOf<CastInfo>(nameof(CastInfo.TargetId));
+            int ciCurrentCast    = FieldOffsetReader.OffsetOf<CastInfo>(nameof(CastInfo.CurrentCastTime));
+            int ciTotalCast      = FieldOffsetReader.OffsetOf<CastInfo>(nameof(CastInfo.TotalCastTime));
 
             return new ActorItem {
                 // --- GameObject base (offset 0 within Character) ----------------------
@@ -103,8 +114,11 @@ namespace Sharlayan.Resources.Mappers {
                 InCutscene = (int)Marshal.OffsetOf<Character>(nameof(Character.RenderFlags)) + 1,
 
                 // --- BattleChara casting + status (offsets only valid for battle actors) ---
-                IsCasting1      = castInfoBase + ciIsCasting,
-                IsCasting2      = castInfoBase + ciInterruptible,
+                // Both point at the Flags byte; resolver reads it once and bit-tests
+                // (bit 0 → IsCasting, bit 1 → Interruptible). See note above the local
+                // declarations explaining the bitfield migration.
+                IsCasting1      = castInfoBase + ciFlags,
+                IsCasting2      = castInfoBase + ciFlags,
                 CastingID       = castInfoBase + ciActionId,
                 CastingTargetID = castInfoBase + ciTargetId,
                 CastingProgress = castInfoBase + ciCurrentCast,
