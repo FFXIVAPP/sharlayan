@@ -296,15 +296,20 @@ namespace Sharlayan {
             if (lumina == null) {
                 return;
             }
-            try {
-                this._weatherSheetEn = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>();
-                this._bgmSheetEn = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGM>();
-                this._bgmFadeTypeSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGMFadeType>();
+            // Each sheet resolves independently — Lumina.Excel throws
+            // MismatchedColumnHashException when the typed schema hash differs from the
+            // current game's EXD (typical during the window between an FFXIV patch and a
+            // matching Lumina.Excel release). Catching per-sheet keeps the still-valid
+            // sheets usable while the broken one falls back to null.
+            try { this._weatherSheetEn   = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>(); }     catch { }
+            try { this._bgmSheetEn       = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGM>(); }         catch { }
+            try { this._bgmFadeTypeSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGMFadeType>(); } catch { }
 
-                // Build the scene → BGMFadeType lookup once. BGMFade has (SceneOut, SceneIn,
-                // BGMFadeType) triples — we pick the FIRST row whose SceneIn matches each
-                // scene index 0..11. Multiple rows may match (different SceneOut origins);
-                // first match is a pragmatic default that surfaces a representative preset.
+            // Build the scene → BGMFadeType lookup once. BGMFade has (SceneOut, SceneIn,
+            // BGMFadeType) triples — we pick the FIRST row whose SceneIn matches each
+            // scene index 0..11. Multiple rows may match (different SceneOut origins);
+            // first match is a pragmatic default that surfaces a representative preset.
+            try {
                 var bgmFadeSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.BGMFade>();
                 this._scenePresetFadeTypeRowIds = new uint[12];
                 foreach (var row in bgmFadeSheet) {
@@ -315,7 +320,7 @@ namespace Sharlayan {
                     }
                 }
             }
-            catch { /* leave fields null; subsequent calls skip the lookup */ }
+            catch { /* leave _scenePresetFadeTypeRowIds null; preset lookup will skip */ }
         }
 
         // Thin accessor retained so Reader.Lumina can resolve language-specific sheets

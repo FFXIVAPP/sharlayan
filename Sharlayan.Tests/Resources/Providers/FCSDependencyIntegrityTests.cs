@@ -131,6 +131,7 @@ namespace Sharlayan.Tests.Resources.Providers {
         }
 
 
+
         [Fact]
         public void PrivateFieldOffset_PlayerState_classJobLevels_Resolves() {
             AssertPrivateFieldExists<PlayerState>("_classJobLevels");
@@ -197,13 +198,18 @@ namespace Sharlayan.Tests.Resources.Providers {
         }
 
         [Fact]
-        public void HardCodedChainOffset_UIModule_RaptureLogModule_Is_0x19E0() {
-            Assert.Equal(0x19E0, FieldOffsetAttributeValue(typeof(UIModule), "RaptureLogModule"));
+        public void HardCodedChainOffset_UIModule_RaptureLogModule_Is_0x1AC0() {
+            // Bumped from 0x19E0 → 0x1AC0 by FCS commit "Update UIModule" (036e201a2 base).
+            // Runtime reads via FieldOffsetReader so CHATLOG_KEY auto-tracks the move; this
+            // test merely pins the known-good value for the next FCS bump diff.
+            Assert.Equal(0x1AC0, FieldOffsetAttributeValue(typeof(UIModule), "RaptureLogModule"));
         }
 
         [Fact]
-        public void HardCodedChainOffset_UIModule_RaptureHotbarModule_Is_0x57B80() {
-            Assert.Equal(0x57B80, FieldOffsetAttributeValue(typeof(UIModule), "RaptureHotbarModule"));
+        public void HardCodedChainOffset_UIModule_RaptureHotbarModule_Is_0x57C60() {
+            // Bumped from 0x57B80 → 0x57C60 by the same FCS commit ("Update UIModule").
+            // Same +0xE0 shift as RaptureLogModule — fields added before both modules.
+            Assert.Equal(0x57C60, FieldOffsetAttributeValue(typeof(UIModule), "RaptureHotbarModule"));
         }
 
         [Fact]

@@ -126,7 +126,13 @@ namespace Sharlayan.Utilities {
 
                 // entry.Race = source[0x2578]; // ??
                 // entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.IsCasting1 = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsCasting1);
+                // FCS migrated CastInfo.IsCasting / .Interruptible to bit accessors over a
+                // single Flags byte (bit 0 = IsCasting). Mapper points IsCasting1 at the
+                // Flags byte; mask bit 0 here. Behaviour is unchanged from the old standalone
+                // boolean field — any in-progress cast still flips IsCasting1 to true.
+                int isCastingOff = this._memoryHandler.Structures.ActorItem.IsCasting1;
+                entry.IsCasting1 = isCastingOff >= 0 && isCastingOff < source.Length
+                                   && (source[isCastingOff] & 0x01) != 0;
                 if (this._memoryHandler.Structures.ActorItem.AgroFlags >= 0 && this._memoryHandler.Structures.ActorItem.AgroFlags < source.Length) entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
                 if (this._memoryHandler.Structures.ActorItem.CombatFlags >= 0 && this._memoryHandler.Structures.ActorItem.CombatFlags < source.Length) entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
                 if (this._memoryHandler.Structures.ActorItem.DifficultyRank >= 0 && this._memoryHandler.Structures.ActorItem.DifficultyRank < source.Length) entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];
