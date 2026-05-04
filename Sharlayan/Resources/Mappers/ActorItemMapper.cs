@@ -19,6 +19,7 @@
 namespace Sharlayan.Resources.Mappers {
     using System.Runtime.InteropServices;
 
+    using FFXIVClientStructs.FFXIV.Client.Game;
     using FFXIVClientStructs.FFXIV.Client.Game.Character;
     using FFXIVClientStructs.FFXIV.Client.Game.Object;
     using FFXIVClientStructs.FFXIV.Common.Math;
@@ -127,6 +128,15 @@ namespace Sharlayan.Resources.Mappers {
                 // StatusManager._status[60] from there.
                 Status          = statusManagerOff,
 
+                // DefaultStatusEffectOffset → byte offset within Character of the FIRST
+                // Status entry (StatusManager._status[0]). ActorItemResolver does a single
+                // BlockCopy from this offset to scan all status slots, so it must point at
+                // the array's first element, not the StatusManager struct base (which has
+                // an `Owner` pointer at +0). _status is internal; resolved via string-name
+                // lookup so FCS field-offset bumps continue to track automatically.
+                DefaultStatusEffectOffset = statusManagerOff
+                                            + FieldOffsetReader.OffsetOf<StatusManager>("_status"),
+
                 // --- Bookkeeping ----------------------------------------------------
                 // SourceSize tells ActorItemResolver how many bytes to read per actor.
                 // Must match the full Character struct size.
@@ -144,7 +154,7 @@ namespace Sharlayan.Resources.Mappers {
                 // consumers need them:
                 //   ActionStatus, AgroFlags, CastingID, CastingProgress, CastingTargetID,
                 //   CastingTime, ClaimedByID, CombatFlags, DefaultBaseOffset,
-                //   DefaultStatOffset, DefaultStatusEffectOffset, DifficultyRank,
+                //   DefaultStatOffset, DifficultyRank,
                 //   EntityCount, EventObjectType, GatheringInvisible, GatheringStatus,
                 //   GrandCompany, GrandCompanyRank, InCutscene, IsCasting1, IsCasting2,
                 //   ModelID, Status, TargetFlags, TargetType.

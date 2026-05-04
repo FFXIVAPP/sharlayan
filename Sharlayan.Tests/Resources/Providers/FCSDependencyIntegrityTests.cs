@@ -213,6 +213,19 @@ namespace Sharlayan.Tests.Resources.Providers {
         }
 
         [Fact]
+        public void HardCodedChainOffset_StatusManager_status_Is_0x8() {
+            // ActorItemMapper / PartyMemberMapper add this to the StatusManager struct
+            // base to land on the first Status slot. If FCS shifts _status (rare — Owner
+            // pointer at +0 is stable), the resolvers would silently read a wrong region.
+            Assert.Equal(0x8, FieldOffsetAttributeValue(typeof(FFXIVClientStructs.FFXIV.Client.Game.StatusManager), "_status"));
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_StatusManager_status_Resolves() {
+            AssertPrivateFieldExists<FFXIVClientStructs.FFXIV.Client.Game.StatusManager>("_status");
+        }
+
+        [Fact]
         public void HardCodedChainOffset_RaptureHotbarModule_hotbars_Is_0xA0() {
             // _hotbars is internal FixedSizeArray18<Hotbar> at +0xA0. Provider adds +0xA0
             // on top of the RaptureHotbarModule offset to land on _hotbars[0].

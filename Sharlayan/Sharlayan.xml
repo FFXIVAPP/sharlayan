@@ -54,6 +54,22 @@
             message timestamp
             </summary>
         </member>
+        <member name="P:Sharlayan.Core.Interfaces.IStatusItem.StatusNameEnglish">
+            <summary>
+            Always-English name regardless of <see cref="P:Sharlayan.SharlayanConfiguration.GameLanguage"/>.
+            Use for programmatic comparisons against hardcoded English literals (e.g.
+            <c>statuses.Find(s =&gt; s.StatusNameEnglish == "Iron Will")</c>); use
+            <see cref="P:Sharlayan.Core.Interfaces.IStatusItem.StatusName"/> for display.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.StatusItem.StatusNameEnglish">
+            <summary>
+            Always-English name regardless of <see cref="P:Sharlayan.SharlayanConfiguration.GameLanguage"/>.
+            Use for programmatic comparisons against hardcoded English literals (e.g.
+            <c>statuses.Find(s =&gt; s.StatusNameEnglish == "Iron Will")</c>); use
+            <see cref="P:Sharlayan.Core.StatusItem.StatusName"/> for display.
+            </summary>
+        </member>
         <member name="M:Sharlayan.LuminaLookup.WeatherIdFromName(Sharlayan.SharlayanConfiguration,System.String)">
             <summary>Translate a Weather row's localised name (e.g. "Moon Dust") to its universal RowId.</summary>
         </member>
@@ -299,6 +315,15 @@
             Set to false if SoundManager isn't resolved.
             </summary>
         </member>
+        <member name="P:Sharlayan.Models.XIVDatabase.StatusItem.MaxStacks">
+            <summary>
+            Max simultaneous stacks per Lumina's Status sheet (<c>MaxStacks</c> column).
+            0 or 1 means the status doesn't stack — its in-memory <c>Status.Param</c> field
+            encodes something other than a stack count (food/potion id, or unrelated meta
+            for ordinary buffs), so resolvers should leave <c>StatusItem.Stacks</c> at 0
+            rather than surfacing the Param byte as a misleading "stacks" value.
+            </summary>
+        </member>
         <member name="M:Sharlayan.Reader.GetZoneName(System.UInt32,System.String)">
             <summary>
             Resolve a TerritoryType row id to its PlaceName in the requested language.
@@ -380,6 +405,14 @@
             Returns the cached <see cref="T:Lumina.GameData"/> for the configuration's sqpack path,
             throwing if the path can't be resolved. Used by the xivdatabase provider's bulk
             loaders where a missing sqpack is a genuine configuration error.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Utilities.LocalizationHelper.SelectLocalized(Sharlayan.Models.Localization,Sharlayan.Enums.GameLanguage)">
+            <summary>
+            Returns the localised string for <paramref name="language"/>. Falls back to
+            English when the requested language slot is null or when the language enum is
+            <see cref="F:Sharlayan.Enums.GameLanguage.English"/> (the default). Returns null only if the
+            <paramref name="names"/> argument itself is null.
             </summary>
         </member>
     </members>

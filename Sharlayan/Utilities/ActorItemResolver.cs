@@ -206,30 +206,20 @@ namespace Sharlayan.Utilities {
                             Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
                             if (statusInfo != null) {
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
-                                string statusKey = statusInfo.Name.English;
-                                switch (this._memoryHandler.Configuration.GameLanguage) {
-                                    case GameLanguage.French:
-                                        statusKey = statusInfo.Name.French;
-                                        break;
-                                    case GameLanguage.Japanese:
-                                        statusKey = statusInfo.Name.Japanese;
-                                        break;
-                                    case GameLanguage.German:
-                                        statusKey = statusInfo.Name.German;
-                                        break;
-                                    case GameLanguage.Chinese:
-                                        statusKey = statusInfo.Name.Chinese;
-                                        break;
-                                    case GameLanguage.Korean:
-                                        statusKey = statusInfo.Name.Korean;
-                                        break;
+                                statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
+                                statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                // Status.Param means "stack count" only for stacking statuses
+                                // (Lumina Status.MaxStacks > 1). For everything else it's an
+                                // unrelated payload (food/potion id, internal modifier) — zero
+                                // it so consumers don't mistake it for a real stack count.
+                                if (statusInfo.MaxStacks <= 1) {
+                                    statusEntry.Stacks = 0;
                                 }
-
-                                statusEntry.StatusName = statusKey;
                             }
                         }
                         catch (Exception) {
-                            statusEntry.StatusName = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusName        = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusNameEnglish = Constants.UNKNOWN_LOCALIZED_NAME;
                         }
 
                         if (statusEntry.IsValid()) {

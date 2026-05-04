@@ -129,30 +129,19 @@ namespace Sharlayan.Utilities {
                             if (statusEntry.StatusID > 0) {
                                 Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
-                                string statusKey = statusInfo.Name.English;
-                                switch (this._memoryHandler.Configuration.GameLanguage) {
-                                    case GameLanguage.French:
-                                        statusKey = statusInfo.Name.French;
-                                        break;
-                                    case GameLanguage.Japanese:
-                                        statusKey = statusInfo.Name.Japanese;
-                                        break;
-                                    case GameLanguage.German:
-                                        statusKey = statusInfo.Name.German;
-                                        break;
-                                    case GameLanguage.Chinese:
-                                        statusKey = statusInfo.Name.Chinese;
-                                        break;
-                                    case GameLanguage.Korean:
-                                        statusKey = statusInfo.Name.Korean;
-                                        break;
+                                statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
+                                statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                // See ActorItemResolver — Status.Param is only a stack count
+                                // for stacking statuses; zero it out otherwise so consumers
+                                // don't surface random Param bytes as fake stacks.
+                                if (statusInfo.MaxStacks <= 1) {
+                                    statusEntry.Stacks = 0;
                                 }
-
-                                statusEntry.StatusName = statusKey;
                             }
                         }
                         catch (Exception) {
-                            statusEntry.StatusName = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusName        = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusNameEnglish = Constants.UNKNOWN_LOCALIZED_NAME;
                         }
 
                         if (statusEntry.IsValid()) {

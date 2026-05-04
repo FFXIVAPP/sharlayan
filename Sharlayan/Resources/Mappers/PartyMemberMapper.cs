@@ -44,10 +44,14 @@ namespace Sharlayan.Resources.Mappers {
 
                 SourceSize = Marshal.SizeOf<NativePartyMember>(),
 
-                // DefaultStatusEffectOffset is Sharlayan-internal bookkeeping. The native
-                // PartyMember.StatusManager sits at offset 0, which is what the old
-                // Sharlayan resolver would compute for this field. Preserving that:
-                DefaultStatusEffectOffset = (int)Marshal.OffsetOf<NativePartyMember>(nameof(NativePartyMember.StatusManager)),
+                // DefaultStatusEffectOffset → byte offset within NativePartyMember of the
+                // FIRST Status entry (StatusManager._status[0]). PartyMemberResolver does a
+                // single BlockCopy from this offset to scan all status slots, so it must
+                // point at the array's first element, not the StatusManager struct base
+                // (which has an `Owner` pointer at +0). _status is internal; resolved via
+                // string-name lookup so FCS field-offset bumps continue to track.
+                DefaultStatusEffectOffset = (int)Marshal.OffsetOf<NativePartyMember>(nameof(NativePartyMember.StatusManager))
+                                            + FieldOffsetReader.OffsetOf<FFXIVClientStructs.FFXIV.Client.Game.StatusManager>("_status"),
             };
         }
     }

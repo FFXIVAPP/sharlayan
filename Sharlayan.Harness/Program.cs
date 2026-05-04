@@ -513,6 +513,40 @@ internal static class Program {
             log($"    ✗ EyeCheck: {ex.GetType().Name}: {ex.Message}");
         }
 
+        // [3c.1] STATUS LOCALIZATION — prints the local player's currently-active status
+        // entries showing both StatusName (localized per Configuration.GameLanguage) and the
+        // new StatusNameEnglish (always English regardless of language). ActorItem.StatusItems
+        // can hold stale slots (expired Duration=0 entries, or slots whose StatusID is out of
+        // the XIVDatabase range and resolves to "???"); we skip both so the display only
+        // shows what's actually applied right now.
+        try {
+            var dpStatus = handler.Reader.GetCurrentPlayer()?.Entity;
+            if (dpStatus != null) {
+                log(string.Empty);
+                log($"  [3c.1] LOCAL PLAYER STATUSES (GameLanguage={handler.Configuration.GameLanguage})");
+                int shown = 0;
+                if (dpStatus.StatusItems != null) {
+                    foreach (var s in dpStatus.StatusItems) {
+                        if (!s.IsValid()) continue;
+                        // Hard filters: expired slots (Duration <= 0) and IDs the XIVDatabase
+                        // didn't resolve (StatusNameEnglish == "???") are residual / garbage.
+                        if (s.Duration <= 0f) continue;
+                        if (string.IsNullOrEmpty(s.StatusNameEnglish) || s.StatusNameEnglish == Sharlayan.Constants.UNKNOWN_LOCALIZED_NAME) continue;
+                        if (shown++ >= 6) break;
+                        string en = s.StatusNameEnglish;
+                        string loc = s.StatusName ?? "(null)";
+                        log($"    [{s.StatusID,4}] StatusName=\"{loc}\"  StatusNameEnglish=\"{en}\"  Stacks={s.Stacks}  Duration={s.Duration:F1}s");
+                    }
+                }
+                if (shown == 0) {
+                    log("    (no active statuses on local player)");
+                }
+            }
+        }
+        catch (Exception ex) {
+            log($"    ✗ StatusLocalization: {ex.GetType().Name}: {ex.Message}");
+        }
+
         // [3c.2] GameState — validates GAMEMAIN / CONDITIONS / CONTENTSFINDER / WEATHER /
         // BGMSYSTEM signatures + Lumina name lookups in one shot.
         try {
