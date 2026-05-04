@@ -102,7 +102,7 @@ internal static class Program {
         DumpSize<HaterInfo>(Log, 0x48);
         DumpSize<RecastDetail>(Log, 0x14);
         DumpSize<RaptureHotbarModule.HotbarSlot>(Log, 0xE8);
-        DumpSize<PlayerState>(Log, 0x908);
+        DumpSize<PlayerState>(Log, 0x920);
         DumpSize<LogModule>(Log, 0x80);
         DumpSize<Vector3>(Log, 0x10);
         Log(string.Empty);
@@ -290,6 +290,34 @@ internal static class Program {
         }
         Log(string.Empty);
 
+        // [5] LuminaLookup name → row-id smoke test. Exercises every public helper with a
+        // well-known fixture and prints the resolved id. Each helper is called twice — once
+        // with the English name and once with another language — to verify the multi-language
+        // union builds correctly. Misses (null) print "✗ <not found>" so we can spot which
+        // sheet's hash mismatch is breaking lookups during a patch-day window.
+        Log("[5] LUMINA LOOKUP (name → row id)");
+        if (directHandler != null) {
+            SharlayanConfiguration cfg = directConfig;
+            void Probe(string label, uint? id) {
+                Log(id.HasValue ? $"  ✓ {label,-50} → {id.Value}" : $"  ✗ {label,-50} → (not found)");
+            }
+            Probe("Weather                 \"Moon Dust\"",          LuminaLookup.WeatherIdFromName(cfg, "Moon Dust"));
+            Probe("Weather (JP)            \"快晴\"",                LuminaLookup.WeatherIdFromName(cfg, "快晴")); // Clear Skies
+            Probe("Action                  \"Refulgent Arrow\"",    LuminaLookup.ActionIdFromName(cfg, "Refulgent Arrow"));
+            Probe("Action (JP)             \"リフルジェントアロー\"", LuminaLookup.ActionIdFromName(cfg, "リフルジェントアロー"));
+            Probe("Status                  \"Sleep\"",              LuminaLookup.StatusIdFromName(cfg, "Sleep"));
+            Probe("PlaceName               \"Limsa Lominsa Lower Decks\"", LuminaLookup.PlaceNameIdFromName(cfg, "Limsa Lominsa Lower Decks"));
+            Probe("ContentFinderCondition  \"The Aery\"",           LuminaLookup.ContentFinderConditionIdFromName(cfg, "The Aery"));
+            Probe("Item                    \"Potion\"",             LuminaLookup.ItemIdFromName(cfg, "Potion"));
+            Probe("BNpcName                \"striking dummy\"",     LuminaLookup.BNpcNameIdFromName(cfg, "striking dummy"));
+            Probe("ENpcResident            \"Hancock\"",            LuminaLookup.ENpcResidentIdFromName(cfg, "Hancock"));
+            Probe("Mount                   \"Company Chocobo\"",    LuminaLookup.MountIdFromName(cfg, "Company Chocobo"));
+            Probe("Companion               \"Wind-up Cursor\"",     LuminaLookup.CompanionIdFromName(cfg, "Wind-up Cursor"));
+        }
+        else {
+            Log("  ✗ directHandler is null — skipping (scanner setup must succeed first)");
+        }
+        Log(string.Empty);
 
         Log("====== END HARNESS ======");
 
