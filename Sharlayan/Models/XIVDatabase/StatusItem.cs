@@ -13,5 +13,14 @@ namespace Sharlayan.Models.XIVDatabase {
         public bool CompanyAction { get; set; }
 
         public Localization Name { get; set; }
+
+        /// <summary>
+        /// Max simultaneous stacks per Lumina's Status sheet (<c>MaxStacks</c> column).
+        /// 0 or 1 means the status doesn't stack — its in-memory <c>Status.Param</c> field
+        /// encodes something other than a stack count (food/potion id, or unrelated meta
+        /// for ordinary buffs), so resolvers should leave <c>StatusItem.Stacks</c> at 0
+        /// rather than surfacing the Param byte as a misleading "stacks" value.
+        /// </summary>
+        public byte MaxStacks { get; set; }
     }
 }

@@ -98,6 +98,12 @@ namespace Sharlayan.Resources.Providers {
                             de.HasRow(id) ? de.GetRow(id).Name.ExtractText() : string.Empty,
                             fr.HasRow(id) ? fr.GetRow(id).Name.ExtractText() : string.Empty),
                         CompanyAction = row.IsFcBuff,
+                        // MaxStacks lets resolvers distinguish stacking debuffs (where
+                        // Status.Param = stack count) from non-stacking buffs (where Param
+                        // means something else entirely — food/potion id, etc.). Without
+                        // this, Stacks ends up showing arbitrary Param bytes for every
+                        // status as if everything stacks.
+                        MaxStacks = row.MaxStacks,
                     };
                     statusEffects.AddOrUpdate(id, item, (_, _) => item);
                 }

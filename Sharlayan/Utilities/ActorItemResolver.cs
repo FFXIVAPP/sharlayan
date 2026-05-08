@@ -126,7 +126,13 @@ namespace Sharlayan.Utilities {
 
                 // entry.Race = source[0x2578]; // ??
                 // entry.Sex = (Actor.Sex) source[0x2579]; //?
-                entry.IsCasting1 = SharlayanBitConverter.TryToBoolean(source, this._memoryHandler.Structures.ActorItem.IsCasting1);
+                // FCS migrated CastInfo.IsCasting / .Interruptible to bit accessors over a
+                // single Flags byte (bit 0 = IsCasting). Mapper points IsCasting1 at the
+                // Flags byte; mask bit 0 here. Behaviour is unchanged from the old standalone
+                // boolean field — any in-progress cast still flips IsCasting1 to true.
+                int isCastingOff = this._memoryHandler.Structures.ActorItem.IsCasting1;
+                entry.IsCasting1 = isCastingOff >= 0 && isCastingOff < source.Length
+                                   && (source[isCastingOff] & 0x01) != 0;
                 if (this._memoryHandler.Structures.ActorItem.AgroFlags >= 0 && this._memoryHandler.Structures.ActorItem.AgroFlags < source.Length) entry.AgroFlags = source[this._memoryHandler.Structures.ActorItem.AgroFlags];
                 if (this._memoryHandler.Structures.ActorItem.CombatFlags >= 0 && this._memoryHandler.Structures.ActorItem.CombatFlags < source.Length) entry.CombatFlags = source[this._memoryHandler.Structures.ActorItem.CombatFlags];
                 if (this._memoryHandler.Structures.ActorItem.DifficultyRank >= 0 && this._memoryHandler.Structures.ActorItem.DifficultyRank < source.Length) entry.DifficultyRank = source[this._memoryHandler.Structures.ActorItem.DifficultyRank];
@@ -200,30 +206,20 @@ namespace Sharlayan.Utilities {
                             Models.XIVDatabase.StatusItem statusInfo = StatusEffectLookup.GetStatusInfo((uint) statusEntry.StatusID);
                             if (statusInfo != null) {
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
-                                string statusKey = statusInfo.Name.English;
-                                switch (this._memoryHandler.Configuration.GameLanguage) {
-                                    case GameLanguage.French:
-                                        statusKey = statusInfo.Name.French;
-                                        break;
-                                    case GameLanguage.Japanese:
-                                        statusKey = statusInfo.Name.Japanese;
-                                        break;
-                                    case GameLanguage.German:
-                                        statusKey = statusInfo.Name.German;
-                                        break;
-                                    case GameLanguage.Chinese:
-                                        statusKey = statusInfo.Name.Chinese;
-                                        break;
-                                    case GameLanguage.Korean:
-                                        statusKey = statusInfo.Name.Korean;
-                                        break;
+                                statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
+                                statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                // Status.Param means "stack count" only for stacking statuses
+                                // (Lumina Status.MaxStacks > 1). For everything else it's an
+                                // unrelated payload (food/potion id, internal modifier) — zero
+                                // it so consumers don't mistake it for a real stack count.
+                                if (statusInfo.MaxStacks <= 1) {
+                                    statusEntry.Stacks = 0;
                                 }
-
-                                statusEntry.StatusName = statusKey;
                             }
                         }
                         catch (Exception) {
-                            statusEntry.StatusName = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusName        = Constants.UNKNOWN_LOCALIZED_NAME;
+                            statusEntry.StatusNameEnglish = Constants.UNKNOWN_LOCALIZED_NAME;
                         }
 
                         if (statusEntry.IsValid()) {

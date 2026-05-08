@@ -84,7 +84,7 @@ internal static class Program {
         Log(string.Empty);
 
         // [2] FFXIVClientStructs struct sizes — commented out; re-enable for FCS-bump diagnostics.
-        /*
+        
         Log("[2] FFXIVCLIENTSTRUCTS STRUCT SIZES (runtime Marshal.SizeOf)");
         DumpSize<Character>(Log, 0x2370);
         DumpSize<CharacterData>(Log, 0x50);
@@ -102,11 +102,11 @@ internal static class Program {
         DumpSize<HaterInfo>(Log, 0x48);
         DumpSize<RecastDetail>(Log, 0x14);
         DumpSize<RaptureHotbarModule.HotbarSlot>(Log, 0xE8);
-        DumpSize<PlayerState>(Log, 0x908);
+        DumpSize<PlayerState>(Log, 0x920);
         DumpSize<LogModule>(Log, 0x80);
-        DumpSize<Vector3>(Log, 0x0C);
+        DumpSize<Vector3>(Log, 0x10);
         Log(string.Empty);
-        */
+        
 
         // [3] FFXIVClientStructsDirect scanner + reader ----------------------
         SharlayanConfiguration directConfig = new() {
@@ -128,16 +128,16 @@ internal static class Program {
             int directCount = directHandler.Scanner.Locations.Count;
             Log($"  {directCount} location(s) resolved");
             // Address listing — commented out; re-enable to verify all scanner keys resolved.
-            /*
+            
             foreach (string key in directHandler.Scanner.Locations.Keys.OrderBy(k => k)) {
                 IntPtr addr = directHandler.Scanner.Locations[key];
                 Log($"    ✓ {key,-20} 0x{addr.ToInt64():X12}");
             }
-            */
+            
 
             // [3b] End-to-end Reader check — commented out; re-enable to validate
             // CurrentPlayer / Actors / Party reads against the in-game UI.
-            /*
+            
             Log(string.Empty);
             Log("  [3b] READER OUTPUT");
             try {
@@ -176,14 +176,14 @@ internal static class Program {
             catch (Exception ex) {
                 Log($"    ✗ Party: {ex.GetType().Name}: {ex.Message}");
             }
-            */
+            
 
             // [3c] + [3c.2] — extracted so the live-refresh loop below can call the
             // same renderer and keep its output pointing at fresh in-game values.
             RenderEyeCheckAndGameState(directHandler, Log);
 
             // [3d] Chat log — commented out; re-enable to validate Framework→UIModule→RaptureLogModule chain.
-            /*
+            
             Log(string.Empty);
             Log("  [3d] CHAT LOG");
             try {
@@ -210,54 +210,114 @@ internal static class Program {
             catch (Exception ex) {
                 Log($"    ✗ Chat read: {ex.GetType().Name}: {ex.Message}");
             }
-            */
+            
         }
         catch (Exception ex) {
             Log($"  ✗ Direct scanner failed: {ex.GetType().Name}: {ex.Message}");
         }
         Log(string.Empty);
 
-        // [4] Lumina xivdatabase smoke test — commented out; re-enable to validate sqpack access.
-        /*
+        // [4] Lumina xivdatabase smoke test — probes every sheet the rest of the codebase
+        // depends on (xivdatabase + Reader.GameState) and reports each one independently.
+        // A MismatchedColumnHashException on a single sheet is normal during the gap
+        // between an FFXIV patch and a matching Lumina.Excel package release; this block
+        // makes that gap explicit so we know exactly which sheet to wait on.
+
         Log("[4] LUMINA XIVDATABASE VALIDATION");
+        global::Lumina.GameData? lumina = null;
         try {
             string sqpack = Path.Combine(Path.GetDirectoryName(game.MainModule!.FileName)!, "sqpack");
             Log($"  sqpack path : {sqpack}");
             Log($"  exists      : {Directory.Exists(sqpack)}");
+            lumina = new global::Lumina.GameData(sqpack);
+        }
+        catch (Exception ex) {
+            Log($"  ✗ GameData open failed: {ex.GetType().Name}: {ex.Message}");
+        }
 
-            var lumina = new global::Lumina.GameData(sqpack);
-            var action = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.Action>();
-            var status = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.Status>();
-            var territory = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.TerritoryType>();
-            var place = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.PlaceName>();
-
-            Log($"  ✓ Action sheet     : {action.Count} rows");
-            Log($"  ✓ Status sheet     : {status.Count} rows");
-            Log($"  ✓ TerritoryType    : {territory.Count} rows");
-            Log($"  ✓ PlaceName        : {place.Count} rows");
-
-            if (action.HasRow(7)) {
-                Log($"    Action[7].Name     : \"{action.GetRow(7).Name.ExtractText()}\"");
+        if (lumina != null) {
+            // Probe each typed sheet on its own. A MismatchedColumnHashException tells us
+            // which sheet's column layout has shifted in the current game patch but not
+            // yet in the Lumina.Excel package — that's the one blocking name lookups.
+            void ProbeSheet<T>(string label) where T : struct, global::Lumina.Excel.IExcelRow<T> {
+                try {
+                    var sheet = lumina.Excel.GetSheet<T>();
+                    Log($"  ✓ {label,-15} : {sheet.Count} rows");
+                }
+                catch (Exception ex) {
+                    string msg = ex.Message.Replace("\n", " ").Trim();
+                    if (msg.Length > 110) msg = msg.Substring(0, 107) + "…";
+                    Log($"  ✗ {label,-15} : {ex.GetType().Name}: {msg}");
+                }
             }
+
+            // Sheets used by LuminaXivDatabaseProvider (xivdatabase actions/statuses/zones).
+            ProbeSheet<global::Lumina.Excel.Sheets.Action>("Action");
+            ProbeSheet<global::Lumina.Excel.Sheets.Status>("Status");
+            ProbeSheet<global::Lumina.Excel.Sheets.TerritoryType>("TerritoryType");
+            ProbeSheet<global::Lumina.Excel.Sheets.PlaceName>("PlaceName");
+            // Sheets used by Reader.GameState (live weather + BGM + fade presets).
+            ProbeSheet<global::Lumina.Excel.Sheets.Weather>("Weather");
+            ProbeSheet<global::Lumina.Excel.Sheets.BGM>("BGM");
+            ProbeSheet<global::Lumina.Excel.Sheets.BGMFade>("BGMFade");
+            ProbeSheet<global::Lumina.Excel.Sheets.BGMFadeType>("BGMFadeType");
+
+            // Sample lookups — best-effort, only run when the relevant sheets resolved.
+            try {
+                var action = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.Action>();
+                if (action.HasRow(7)) {
+                    Log($"    Action[7].Name     : \"{action.GetRow(7).Name.ExtractText()}\"");
+                }
+            }
+            catch { }
             if (directHandler != null) {
                 try {
                     var cp = directHandler.Reader.GetCurrentPlayer();
                     uint tid = cp?.Entity?.MapTerritory ?? 0;
-                    if (tid != 0 && territory.HasRow(tid)) {
-                        uint pnId = territory.GetRow(tid).PlaceName.RowId;
-                        if (place.HasRow(pnId)) {
-                            Log($"    Current territory[{tid}].PlaceName = \"{place.GetRow(pnId).Name.ExtractText()}\"");
+                    if (tid != 0) {
+                        var territory = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.TerritoryType>();
+                        var place     = lumina.Excel.GetSheet<global::Lumina.Excel.Sheets.PlaceName>();
+                        if (territory.HasRow(tid)) {
+                            uint pnId = territory.GetRow(tid).PlaceName.RowId;
+                            if (place.HasRow(pnId)) {
+                                Log($"    Current territory[{tid}].PlaceName = \"{place.GetRow(pnId).Name.ExtractText()}\"");
+                            }
                         }
                     }
                 }
-                catch { }
+                catch { /* one of the sheets above failed to resolve; already logged */ }
             }
         }
-        catch (Exception ex) {
-            Log($"  ✗ Lumina failed: {ex.GetType().Name}: {ex.Message}");
+        Log(string.Empty);
+
+        // [5] LuminaLookup name → row-id smoke test. Exercises every public helper with a
+        // well-known fixture and prints the resolved id. Each helper is called twice — once
+        // with the English name and once with another language — to verify the multi-language
+        // union builds correctly. Misses (null) print "✗ <not found>" so we can spot which
+        // sheet's hash mismatch is breaking lookups during a patch-day window.
+        Log("[5] LUMINA LOOKUP (name → row id)");
+        if (directHandler != null) {
+            SharlayanConfiguration cfg = directConfig;
+            void Probe(string label, uint? id) {
+                Log(id.HasValue ? $"  ✓ {label,-50} → {id.Value}" : $"  ✗ {label,-50} → (not found)");
+            }
+            Probe("Weather                 \"Moon Dust\"",          LuminaLookup.WeatherIdFromName(cfg, "Moon Dust"));
+            Probe("Weather (JP)            \"快晴\"",                LuminaLookup.WeatherIdFromName(cfg, "快晴")); // Clear Skies
+            Probe("Action                  \"Refulgent Arrow\"",    LuminaLookup.ActionIdFromName(cfg, "Refulgent Arrow"));
+            Probe("Action (JP)             \"リフルジェントアロー\"", LuminaLookup.ActionIdFromName(cfg, "リフルジェントアロー"));
+            Probe("Status                  \"Sleep\"",              LuminaLookup.StatusIdFromName(cfg, "Sleep"));
+            Probe("PlaceName               \"Limsa Lominsa Lower Decks\"", LuminaLookup.PlaceNameIdFromName(cfg, "Limsa Lominsa Lower Decks"));
+            Probe("ContentFinderCondition  \"The Aery\"",           LuminaLookup.ContentFinderConditionIdFromName(cfg, "The Aery"));
+            Probe("Item                    \"Potion\"",             LuminaLookup.ItemIdFromName(cfg, "Potion"));
+            Probe("BNpcName                \"striking dummy\"",     LuminaLookup.BNpcNameIdFromName(cfg, "striking dummy"));
+            Probe("ENpcResident            \"Hancock\"",            LuminaLookup.ENpcResidentIdFromName(cfg, "Hancock"));
+            Probe("Mount                   \"Company Chocobo\"",    LuminaLookup.MountIdFromName(cfg, "Company Chocobo"));
+            Probe("Companion               \"Wind-up Cursor\"",     LuminaLookup.CompanionIdFromName(cfg, "Wind-up Cursor"));
+        }
+        else {
+            Log("  ✗ directHandler is null — skipping (scanner setup must succeed first)");
         }
         Log(string.Empty);
-        */
 
         Log("====== END HARNESS ======");
 
@@ -327,7 +387,7 @@ internal static class Program {
     private static void RenderEyeCheckAndGameState(MemoryHandler handler, Action<string> log) {
         // [3c] Eye-check values — commented out; re-enable to surface LocalPlayer / actors /
         // target / hotbar / job-resource fields for manual UI verification.
-        /*
+        
         try {
             var dp = handler.Reader.GetCurrentPlayer()?.Entity;
             if (dp != null) {
@@ -452,7 +512,40 @@ internal static class Program {
         catch (Exception ex) {
             log($"    ✗ EyeCheck: {ex.GetType().Name}: {ex.Message}");
         }
-        */
+
+        // [3c.1] STATUS LOCALIZATION — prints the local player's currently-active status
+        // entries showing both StatusName (localized per Configuration.GameLanguage) and the
+        // new StatusNameEnglish (always English regardless of language). ActorItem.StatusItems
+        // can hold stale slots (expired Duration=0 entries, or slots whose StatusID is out of
+        // the XIVDatabase range and resolves to "???"); we skip both so the display only
+        // shows what's actually applied right now.
+        try {
+            var dpStatus = handler.Reader.GetCurrentPlayer()?.Entity;
+            if (dpStatus != null) {
+                log(string.Empty);
+                log($"  [3c.1] LOCAL PLAYER STATUSES (GameLanguage={handler.Configuration.GameLanguage})");
+                int shown = 0;
+                if (dpStatus.StatusItems != null) {
+                    foreach (var s in dpStatus.StatusItems) {
+                        if (!s.IsValid()) continue;
+                        // Hard filters: expired slots (Duration <= 0) and IDs the XIVDatabase
+                        // didn't resolve (StatusNameEnglish == "???") are residual / garbage.
+                        if (s.Duration <= 0f) continue;
+                        if (string.IsNullOrEmpty(s.StatusNameEnglish) || s.StatusNameEnglish == Sharlayan.Constants.UNKNOWN_LOCALIZED_NAME) continue;
+                        if (shown++ >= 6) break;
+                        string en = s.StatusNameEnglish;
+                        string loc = s.StatusName ?? "(null)";
+                        log($"    [{s.StatusID,4}] StatusName=\"{loc}\"  StatusNameEnglish=\"{en}\"  Stacks={s.Stacks}  Duration={s.Duration:F1}s");
+                    }
+                }
+                if (shown == 0) {
+                    log("    (no active statuses on local player)");
+                }
+            }
+        }
+        catch (Exception ex) {
+            log($"    ✗ StatusLocalization: {ex.GetType().Name}: {ex.Message}");
+        }
 
         // [3c.2] GameState — validates GAMEMAIN / CONDITIONS / CONTENTSFINDER / WEATHER /
         // BGMSYSTEM signatures + Lumina name lookups in one shot.

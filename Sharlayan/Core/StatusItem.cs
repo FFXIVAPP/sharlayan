@@ -26,6 +26,14 @@ namespace Sharlayan.Core {
 
         public string StatusName { get; set; }
 
+        /// <summary>
+        /// Always-English name regardless of <see cref="SharlayanConfiguration.GameLanguage"/>.
+        /// Use for programmatic comparisons against hardcoded English literals (e.g.
+        /// <c>statuses.Find(s =&gt; s.StatusNameEnglish == "Iron Will")</c>); use
+        /// <see cref="StatusName"/> for display.
+        /// </summary>
+        public string StatusNameEnglish { get; set; }
+
         public ActorItem TargetEntity { get; set; }
 
         public string TargetName { get; set; }
