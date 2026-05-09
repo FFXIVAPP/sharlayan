@@ -2,9 +2,6 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/FFXIVAPP/sharlayan/ci.yml?branch=main&label=CI)](https://github.com/FFXIVAPP/sharlayan/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/actions/workflow/status/FFXIVAPP/sharlayan/release.yml?branch=main&label=release)](https://github.com/FFXIVAPP/sharlayan/actions/workflows/release.yml)
-[![Github All Releases](https://img.shields.io/github/downloads/FFXIVAPP/sharlayan/total.svg)](https://github.com/FFXIVAPP/sharlayan/releases)
-[![Github Latest Release Downloads](https://img.shields.io/github/downloads/FFXIVAPP/sharlayan/latest/total.svg)](https://github.com/FFXIVAPP/sharlayan/releases/latest)
-[![Latest Release](https://img.shields.io/github/release/FFXIVAPP/sharlayan.svg)](https://github.com/FFXIVAPP/sharlayan/releases/latest)
 [![NuGet](https://img.shields.io/nuget/v/Sharlayan.svg?label=nuget)](https://www.nuget.org/packages/Sharlayan/)
 [![NuGet Pre-release](https://img.shields.io/nuget/vpre/Sharlayan.svg?label=nuget%20pre-release)](https://www.nuget.org/packages/Sharlayan/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Sharlayan.svg)](https://www.nuget.org/packages/Sharlayan/)
