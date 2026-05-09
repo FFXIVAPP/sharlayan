@@ -1,5 +1,12 @@
 # Sharlayan
 
+[![CI](https://img.shields.io/github/actions/workflow/status/FFXIVAPP/sharlayan/ci.yml?branch=main&label=CI)](https://github.com/FFXIVAPP/sharlayan/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/actions/workflow/status/FFXIVAPP/sharlayan/release.yml?branch=main&label=release)](https://github.com/FFXIVAPP/sharlayan/actions/workflows/release.yml)
+[![NuGet](https://img.shields.io/nuget/v/Sharlayan.svg?label=nuget)](https://www.nuget.org/packages/Sharlayan/)
+[![NuGet Pre-release](https://img.shields.io/nuget/vpre/Sharlayan.svg?label=nuget%20pre-release)](https://www.nuget.org/packages/Sharlayan/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Sharlayan.svg)](https://www.nuget.org/packages/Sharlayan/)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/sbXGYmNTuE)
+
 Out-of-process memory reader for **Final Fantasy XIV** (Windows, DirectX 11). Originally a component of FFXIVAPP, Sharlayan has since been split into its own library. It exposes a stable C# API for reading game state (the player, party, actors, hotbars, chat log, inventory, job gauges, etc.) without injecting into the game process.
 
 ## What's new in 9.0
@@ -7,9 +14,9 @@ Out-of-process memory reader for **Final Fantasy XIV** (Windows, DirectX 11). Or
 The long-dead [sharlayan-resources](https://github.com/FFXIVAPP/sharlayan-resources) JSON feed is gone. Signatures, struct offsets, and game-data lookups now come from two actively maintained upstreams:
 
 - **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** (vendored as a git submodule and ILRepacked into `Sharlayan.dll`) provides the game struct layouts and `[StaticAddress]` byte patterns.
-- **[Lumina](https://github.com/NotAdam/Lumina)** reads `sqpack` directly for `xivdatabase` content — action names, status effects, territory/map rows — so the library no longer ships a separate JSON mirror of the game's Excel data.
+- **[Lumina](https://github.com/NotAdam/Lumina)** reads `sqpack` directly for `xivdatabase` content - action names, status effects, territory/map rows - so the library no longer ships a separate JSON mirror of the game's Excel data.
 
-The resulting provider (`FFXIVClientStructsDirect`) is the default; `LegacySharlayanResources` remains available as an opt-in fallback but is marked `[Obsolete]`.
+`FFXIVClientStructsDirect` is the default provider. The legacy JSON-feed-backed provider was removed in the 9.0 rebuild; there is no fallback path.
 
 ## Installation
 
@@ -35,7 +42,7 @@ SharlayanConfiguration configuration = new() {
 
 MemoryHandler handler = SharlayanMemoryManager.Instance.AddHandler(configuration);
 
-// FFXIV's anti-tamper (ACG) blocks PROCESS_VM_READ from non-elevated processes —
+// FFXIV's anti-tamper (ACG) blocks PROCESS_VM_READ from non-elevated processes -
 // your consumer must run as Administrator or AddHandler will fail to attach.
 ```
 
@@ -43,7 +50,7 @@ Reading:
 
 ```csharp
 var player = handler.Reader.GetCurrentPlayer().Entity;
-Console.WriteLine($"{player.Name} — {player.Job} Lv.{player.Level} HP {player.HPCurrent}/{player.HPMax}");
+Console.WriteLine($"{player.Name} - {player.Job} Lv.{player.Level} HP {player.HPCurrent}/{player.HPMax}");
 
 var actors  = handler.Reader.GetActors();        // PCs, NPCs, monsters
 var party   = handler.Reader.GetPartyMembers();
@@ -58,7 +65,7 @@ When switching processes:
 SharlayanMemoryManager.Instance.RemoveHandler(configuration.ProcessModel);
 ```
 
-Custom signature overrides (unusual — the built-in set covers every `Reader.*` surface) go through `configuration.ResourceProvider` by implementing `IResourceProvider`, not by hand-editing JSON in the working directory.
+Custom signature overrides (unusual - the built-in set covers every `Reader.*` surface) go through `configuration.ResourceProvider` by implementing `IResourceProvider`, not by hand-editing JSON in the working directory.
 
 ## Harness
 
@@ -68,14 +75,14 @@ Custom signature overrides (unusual — the built-in set covers every `Reader.*`
 
 Sharlayan's 9.0 rebuild is built on the work of several upstream projects. Each retains its own license notice inside `Sharlayan/FFXIVClientStructs/LICENSE` and the respective NuGet packages; the MIT terms below reproduce as required:
 
-- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** — MIT, © 2021–2023 aers. Provides every game struct layout and the `[StaticAddress]` signatures Sharlayan resolves at runtime.
-- **[Lumina](https://github.com/NotAdam/Lumina)** and **Lumina.Excel** — MIT, © NotAdam and contributors. `sqpack` / Excel data loader used for actions, statuses, and territory data.
-- **[Newtonsoft.Json](https://www.newtonsoft.com/json)** — MIT, © James Newton-King. JSON serialisation for snapshotted legacy data.
-- **[NLog](https://nlog-project.org/)** — BSD-3-Clause, © NLog authors.
-- **[ILRepack](https://github.com/gluck/il-repack)** — Apache 2.0. Merges `FFXIVClientStructs.dll` + `InteropGenerator.Runtime.dll` into `Sharlayan.dll` at build time.
+- **[FFXIVClientStructs](https://github.com/aers/FFXIVClientStructs)** - MIT, © 2021-2026 aers. Provides every game struct layout and the `[StaticAddress]` signatures Sharlayan resolves at runtime.
+- **[Lumina](https://github.com/NotAdam/Lumina)** and **Lumina.Excel** - MIT, © NotAdam and contributors. `sqpack` / Excel data loader used for actions, statuses, and territory data.
+- **[Newtonsoft.Json](https://www.newtonsoft.com/json)** - MIT, © James Newton-King. JSON serialisation for snapshotted legacy data.
+- **[NLog](https://nlog-project.org/)** - BSD-3-Clause, © NLog authors.
+- **[ILRepack](https://github.com/gluck/il-repack)** - Apache 2.0. Merges `FFXIVClientStructs.dll` + `InteropGenerator.Runtime.dll` into `Sharlayan.dll` at build time.
 
 ## License
 
-Sharlayan is MIT-licensed — see [LICENSE.md](LICENSE.md). Not affiliated with or endorsed by Square Enix.
+Sharlayan is MIT-licensed - see [LICENSE.md](LICENSE.md). Not affiliated with or endorsed by Square Enix.
 
 © 2010-2026 SQUARE ENIX CO., LTD. All Rights Reserved. A REALM REBORN is a registered trademark or trademark of Square Enix Co., Ltd. FINAL FANTASY, SQUARE ENIX and the SQUARE ENIX logo are registered trademarks or trademarks of Square Enix Holdings Co., Ltd.
