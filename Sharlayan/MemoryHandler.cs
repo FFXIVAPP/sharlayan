@@ -20,6 +20,7 @@ namespace Sharlayan {
 
     using NLog;
 
+    using Sharlayan.Memory;
     using Sharlayan.Models;
     using Sharlayan.Models.Structures;
     using Sharlayan.Resources;
@@ -40,19 +41,13 @@ namespace Sharlayan {
 
         public MemoryHandler(SharlayanConfiguration configuration) {
             this.Configuration = configuration;
-            // Prefer read-only access so Sharlayan can attach without admin when the
-            // game runs at the same integrity level. Only fall back to PROCESS_VM_ALL
-            // if the reduced open fails — and finally to Process.Handle as a last
-            // resort for the legacy behaviour.
-            this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_READ_QUERY, false, (uint) this.Configuration.ProcessModel.ProcessID);
-            if (this.ProcessHandle == IntPtr.Zero) {
-                try {
-                    this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
-                }
-                catch (Exception) {
-                    this.ProcessHandle = this.Configuration.ProcessModel.Process.Handle;
-                }
-            }
+            // Phase 9.1.0: all platform-specific OpenProcess / CloseHandle / RPM /
+            // VirtualQueryEx calls now live behind IProcessMemoryAccessor. Selection
+            // is OS-driven via the factory; the Windows implementation preserves the
+            // exact "read-only first, fall back to all-access, finally Process.Handle"
+            // attach sequence used pre-refactor.
+            this.Accessor = ProcessMemoryAccessorFactory.Create();
+            this.Accessor.Attach(configuration);
             this.IsAttached = true;
 
             this.Configuration.ProcessModel.Process.EnableRaisingEvents = true;
@@ -93,7 +88,21 @@ namespace Sharlayan {
 
         public Scanner Scanner { get; }
 
-        internal IntPtr ProcessHandle { get; set; }
+        /// <summary>
+        /// Platform handle passed through from the active <see cref="IProcessMemoryAccessor"/>.
+        /// On Windows this is the kernel32 process handle; on Linux this will be
+        /// <see cref="IntPtr.Zero"/> (Linux uses the PID directly via process_vm_readv).
+        /// Existing internal callers continue to work via the property setter on the
+        /// accessor side.
+        /// </summary>
+        internal IntPtr ProcessHandle => this.Accessor?.ProcessHandle ?? IntPtr.Zero;
+
+        /// <summary>
+        /// Platform-neutral memory access primitives (open / read / region enumeration).
+        /// Constructed via <see cref="ProcessMemoryAccessorFactory.Create"/> so the
+        /// concrete type is selected by OS at runtime.
+        /// </summary>
+        internal IProcessMemoryAccessor Accessor { get; private set; }
 
         internal StructuresContainer Structures { get; set; } = new StructuresContainer();
 
@@ -101,12 +110,10 @@ namespace Sharlayan {
 
         public void Dispose() {
             try {
-                if (this.IsAttached) {
-                    UnsafeNativeMethods.CloseHandle(this.ProcessHandle);
-                }
+                this.Accessor?.Dispose();
             }
             catch (Exception) {
-                // IGNORED
+                // IGNORED — historical swallow behaviour preserved.
             }
             finally {
                 this.IsAttached = false;
@@ -163,12 +170,11 @@ namespace Sharlayan {
         }
 
         public IntPtr GetStaticAddress(long offset) {
-            ProcessModule processMainModule = this.Configuration.ProcessModel.Process.MainModule;
-            if (processMainModule != null) {
-                return new IntPtr(processMainModule.BaseAddress.ToInt64() + offset);
-            }
-
-            return IntPtr.Zero;
+            // Routed through the accessor so the Linux backend can resolve
+            // ffxiv_dx11.exe via /proc/<pid>/maps with min(start - file_offset)
+            // instead of relying on Process.MainModule (which would point at wine64).
+            IntPtr baseAddress = this.Accessor?.GetMainModuleBaseAddress() ?? IntPtr.Zero;
+            return baseAddress == IntPtr.Zero ? IntPtr.Zero : new IntPtr(baseAddress.ToInt64() + offset);
         }
 
         public string GetString(IntPtr address, long offset = 0, int size = 256) {
@@ -215,11 +221,15 @@ namespace Sharlayan {
         }
 
         public T GetStructure<T>(IntPtr address, int offset = 0) {
-            IntPtr buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            UnsafeNativeMethods.ReadProcessMemory(this.Configuration.ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out IntPtr bytesRead);
-            T retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
-            Marshal.FreeCoTaskMem(buffer);
-            return retValue;
+            int size = Marshal.SizeOf(typeof(T));
+            IntPtr buffer = Marshal.AllocCoTaskMem(size);
+            try {
+                this.Accessor?.ReadBytes(address + offset, buffer, size);
+                return (T) Marshal.PtrToStructure(buffer, typeof(T));
+            }
+            finally {
+                Marshal.FreeCoTaskMem(buffer);
+            }
         }
 
         public ushort GetUInt16(IntPtr address, long offset = 0) {
@@ -245,7 +255,7 @@ namespace Sharlayan {
         }
 
         public bool Peek(IntPtr address, byte[] buffer) {
-            return UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out IntPtr bytesRead);
+            return this.Accessor != null && this.Accessor.ReadBytes(address, buffer);
         }
 
         public IntPtr ReadPointer(IntPtr address, long offset = 0) {

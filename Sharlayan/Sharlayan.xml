@@ -115,6 +115,101 @@
             ignore this.
             </summary>
         </member>
+        <member name="P:Sharlayan.MemoryHandler.ProcessHandle">
+            <summary>
+            Platform handle passed through from the active <see cref="T:Sharlayan.Memory.IProcessMemoryAccessor"/>.
+            On Windows this is the kernel32 process handle; on Linux this will be
+            <see cref="F:System.IntPtr.Zero"/> (Linux uses the PID directly via process_vm_readv).
+            Existing internal callers continue to work via the property setter on the
+            accessor side.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.MemoryHandler.Accessor">
+            <summary>
+            Platform-neutral memory access primitives (open / read / region enumeration).
+            Constructed via <see cref="M:Sharlayan.Memory.ProcessMemoryAccessorFactory.Create"/> so the
+            concrete type is selected by OS at runtime.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Memory.IProcessMemoryAccessor.IsAttached">
+            <summary>
+            True once <see cref="M:Sharlayan.Memory.IProcessMemoryAccessor.Attach(Sharlayan.SharlayanConfiguration)"/> has run and a usable read primitive is in
+            place; false once <see cref="M:System.IDisposable.Dispose"/> has been invoked.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Memory.IProcessMemoryAccessor.ProcessHandle">
+            <summary>
+            Opaque platform handle — kept for legacy callers that read
+            <see cref="P:Sharlayan.MemoryHandler.ProcessHandle"/> directly. Returns the Win32
+            process handle on Windows; expected to be <see cref="F:System.IntPtr.Zero"/> on
+            platforms where no equivalent handle exists (Linux uses the PID directly).
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.Attach(Sharlayan.SharlayanConfiguration)">
+            <summary>
+            Open the target process for memory reads. Implementations should request
+            read-only access first and only escalate to all-access if the read-only
+            open fails — staying read-only avoids elevation prompts on Windows and
+            minimises permission requirements on Linux.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.ReadBytes(System.IntPtr,System.Byte[],System.Int32)">
+            <summary>
+            Read <paramref name="length"/> bytes starting at <paramref name="address"/>
+            in the target process into <paramref name="buffer"/>. Returns true on
+            success. A short read (fewer bytes returned than requested) MUST be
+            reported as failure — callers that need page-bounded partial reads will
+            be served by a future <c>ReadBytesPaged</c> overload introduced alongside
+            the Linux backend in 9.1.1.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.ReadBytes(System.IntPtr,System.Byte[])">
+            <summary>
+            Convenience overload that reads <c>buffer.Length</c> bytes.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.ReadBytes(System.IntPtr,System.IntPtr,System.Int32)">
+            <summary>
+            Read into an unmanaged buffer. Provided for the legacy
+            <see cref="M:Sharlayan.MemoryHandler.GetStructure``1(System.IntPtr,System.Int32)"/> path which Marshal.PtrToStructure
+            over a pinned region. New code should prefer the byte-buffer overload.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.EnumerateScannableRegions">
+            <summary>
+            Walk the process address space and yield every region the Scanner may scan
+            for byte signatures — committed, writable, not page-guarded, not backed by
+            a system module the host knows about.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.GetMainModuleBaseAddress">
+            <summary>
+            Base virtual address of the target process's main module (the FFXIV
+            executable). On Windows this is <c>Process.MainModule.BaseAddress</c>;
+            the Linux implementation will resolve <c>ffxiv_dx11.exe</c> from
+            <c>/proc/&lt;pid&gt;/maps</c> using <c>min(start - file_offset)</c>
+            across all mappings of that file.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Memory.IProcessMemoryAccessor.GetMainModuleSize">
+            <summary>
+            Total mapped size of the main module. Used by Scanner.FindExtendedSignatures
+            as the search end. On Linux this is <c>max(end) - base</c> across the file's
+            mappings.
+            </summary>
+        </member>
+        <member name="T:Sharlayan.Memory.ScannableRegion">
+            <summary>
+            A range of process memory the Scanner may walk while searching for byte signatures.
+            Returned by <see cref="M:Sharlayan.Memory.IProcessMemoryAccessor.EnumerateScannableRegions"/>.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Memory.ScannableRegion.BaseAddress">
+            <summary>Inclusive lower bound of the region in process address space.</summary>
+        </member>
+        <member name="P:Sharlayan.Memory.ScannableRegion.RegionSize">
+            <summary>Total bytes in the region. Region spans <c>[BaseAddress, BaseAddress + RegionSize)</c>.</summary>
+        </member>
         <member name="T:Sharlayan.Models.ReadResults.BgmSceneType">
             <summary>
             Index into <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.BgmScenes"/>. Mirrors the FFXIVClientStructs

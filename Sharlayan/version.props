@@ -4,8 +4,8 @@
          Major.Minor: human-only, never changed by build automation or AI.
          Patch: incremented by Claude/AI on each substantive code change to Sharlayan. -->
     <VersionMajor>9</VersionMajor>
-    <VersionMinor>0</VersionMinor>
-    <VersionPatch>30</VersionPatch>
+    <VersionMinor>1</VersionMinor>
+    <VersionPatch>0</VersionPatch>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Derived version strings — do not edit these directly. -->

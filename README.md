@@ -2,7 +2,7 @@
 
 Out-of-process memory reader for **Final Fantasy XIV** (Windows, DirectX 11). Originally a component of FFXIVAPP, Sharlayan has since been split into its own library. It exposes a stable C# API for reading game state (the player, party, actors, hotbars, chat log, inventory, job gauges, etc.) without injecting into the game process.
 
-## What's new in 9.0
+## What's new in 9.x
 
 The long-dead [sharlayan-resources](https://github.com/FFXIVAPP/sharlayan-resources) JSON feed is gone. Signatures, struct offsets, and game-data lookups now come from two actively maintained upstreams:
 

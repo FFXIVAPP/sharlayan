@@ -19,26 +19,11 @@ namespace Sharlayan {
 
     using NLog;
 
+    using Sharlayan.Memory;
     using Sharlayan.Models;
 
     public sealed class Scanner {
-        private const int MemCommit = 0x1000;
-
-        private const int PageExecuteReadwrite = 0x40;
-
-        private const int PageExecuteWritecopy = 0x80;
-
-        private const int PageGuard = 0x100;
-
-        private const int PageNoAccess = 0x01;
-
-        private const int PageReadwrite = 0x04;
-
-        private const int PageWritecopy = 0x08;
-
         private const int WildCardChar = 63;
-
-        private const int Writable = PageReadwrite | PageWritecopy | PageExecuteReadwrite | PageExecuteWritecopy | PageGuard;
 
         private const int BufferSize = 0x1200;
 
@@ -46,7 +31,11 @@ namespace Sharlayan {
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION> _regions;
+        // Phase 9.1.0: regions are now sourced from IProcessMemoryAccessor.EnumerateScannableRegions
+        // — each backend (Windows kernel32, eventually Linux /proc/<pid>/maps) applies its own
+        // committed/writable filter before exposing entries, so the raw protect-flag constants
+        // (MemCommit / PageGuard / PageReadwrite / etc.) no longer need to live here.
+        private List<ScannableRegion> _regions;
 
         public Scanner(MemoryHandler memoryHandler) {
             this._memoryHandler = memoryHandler;
@@ -125,12 +114,16 @@ namespace Sharlayan {
         private void FindExtendedSignatures(IEnumerable<Signature> signatures, bool scanAllRegions) {
             List<Signature> notFound = new List<Signature>(signatures);
 
-            if (this._memoryHandler.Configuration.ProcessModel.Process.MainModule == null) {
+            // Sourced through the accessor so the Linux backend can resolve
+            // ffxiv_dx11.exe via /proc/<pid>/maps using min(start - file_offset)
+            // across all of its mappings, instead of relying on Process.MainModule
+            // (which on Linux+Wine returns wine64, not the FFXIV PE image).
+            IntPtr baseAddress = this._memoryHandler.Accessor?.GetMainModuleBaseAddress() ?? IntPtr.Zero;
+            long mainModuleSize = this._memoryHandler.Accessor?.GetMainModuleSize() ?? 0;
+            if (baseAddress == IntPtr.Zero || mainModuleSize <= 0) {
                 return;
             }
-
-            IntPtr baseAddress = this._memoryHandler.Configuration.ProcessModel.Process.MainModule.BaseAddress;
-            IntPtr searchEnd = IntPtr.Add(baseAddress, this._memoryHandler.Configuration.ProcessModel.Process.MainModule.ModuleMemorySize);
+            IntPtr searchEnd = new IntPtr(baseAddress.ToInt64() + mainModuleSize);
             IntPtr searchStart = baseAddress;
 
             this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
@@ -139,9 +132,9 @@ namespace Sharlayan {
                 return;
             }
 
-            foreach (UnsafeNativeMethods.MEMORY_BASIC_INFORMATION region in this._regions) {
+            foreach (ScannableRegion region in this._regions) {
                 baseAddress = region.BaseAddress;
-                searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize.ToInt64());
+                searchEnd = new IntPtr(baseAddress.ToInt64() + region.RegionSize);
                 searchStart = baseAddress;
 
                 this.ResolveLocations(baseAddress, searchStart, searchEnd, ref notFound);
@@ -173,32 +166,18 @@ namespace Sharlayan {
 
         private void LoadRegions() {
             try {
-                this._regions = new List<UnsafeNativeMethods.MEMORY_BASIC_INFORMATION>();
-                IntPtr address = IntPtr.Zero;
-                while (true) {
-                    UnsafeNativeMethods.MEMORY_BASIC_INFORMATION info = new UnsafeNativeMethods.MEMORY_BASIC_INFORMATION();
-                    int result = UnsafeNativeMethods.VirtualQueryEx(this._memoryHandler.ProcessHandle, address, out info, (uint) Marshal.SizeOf(info));
-                    if (result == 0) {
-                        break;
+                this._regions = new List<ScannableRegion>();
+                if (this._memoryHandler.Accessor == null) {
+                    return;
+                }
+                // Backend yields committed/writable/non-page-guarded regions; the
+                // is-system-module filter stays here because it depends on the
+                // cross-platform Process.Modules list MemoryHandler tracks.
+                foreach (ScannableRegion region in this._memoryHandler.Accessor.EnumerateScannableRegions()) {
+                    if (this._memoryHandler.IsSystemModule(region.BaseAddress)) {
+                        continue;
                     }
-
-                    if (!this._memoryHandler.IsSystemModule(info.BaseAddress) && (info.State & MemCommit) != 0 && (info.Protect & Writable) != 0 && (info.Protect & PageGuard) == 0) {
-                        this._regions.Add(info);
-                    }
-                    else {
-                        this._memoryHandler.RaiseException(Logger, new Exception(info.ToString()));
-                    }
-
-                    unchecked {
-                        switch (IntPtr.Size) {
-                            case sizeof(int):
-                                address = new IntPtr(info.BaseAddress.ToInt32() + info.RegionSize.ToInt32());
-                                break;
-                            default:
-                                address = new IntPtr(info.BaseAddress.ToInt64() + info.RegionSize.ToInt64());
-                                break;
-                        }
-                    }
+                    this._regions.Add(region);
                 }
             }
             catch (Exception ex) {
@@ -218,7 +197,7 @@ namespace Sharlayan {
                         regionSize = (IntPtr) (searchEnd.ToInt64() - searchStart.ToInt64());
                     }
 
-                    if (UnsafeNativeMethods.ReadProcessMemory(this._memoryHandler.ProcessHandle, searchStart, buffer, regionSize, out IntPtr _)) {
+                    if (this._memoryHandler.Accessor != null && this._memoryHandler.Accessor.ReadBytes(searchStart, buffer, regionSize.ToInt32())) {
                         foreach (Signature unresolvedSignature in unresolvedSignatures) {
                             int index = this.FindSuperSignature(buffer, this.SignatureToByte(unresolvedSignature.Value, WildCardChar));
                             if (index < 0) {
