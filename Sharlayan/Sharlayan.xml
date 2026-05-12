@@ -407,6 +407,14 @@
             loaders where a missing sqpack is a genuine configuration error.
             </summary>
         </member>
+        <member name="M:Sharlayan.Resources.Providers.LuminaXivDatabaseProvider.TryGetSheet``1(Lumina.GameData,Lumina.Data.Language,System.String)">
+            <summary>
+            Wraps <see cref="M:Lumina.Excel.ExcelModule.GetSheet``1(System.Nullable{Lumina.Data.Language},System.String)"/> so callers can decide
+            per-language whether a missing sheet is fatal. Returns null on
+            <see cref="T:Lumina.Excel.Exceptions.UnsupportedLanguageException"/> (the typical "install has stripped Excel
+            headers" case); any other exception still bubbles since it indicates a real fault.
+            </summary>
+        </member>
         <member name="M:Sharlayan.Utilities.LocalizationHelper.SelectLocalized(Sharlayan.Models.Localization,Sharlayan.Enums.GameLanguage)">
             <summary>
             Returns the localised string for <paramref name="language"/>. Falls back to
