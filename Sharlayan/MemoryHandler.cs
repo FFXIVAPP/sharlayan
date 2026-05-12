@@ -66,6 +66,11 @@ namespace Sharlayan {
             if (this._isNewInstance) {
                 this._isNewInstance = false;
 
+                // Observe the fire-and-forget task. Without this, any exception raised by
+                // ResolveMemoryStructures / ActionLookup / StatusEffectLookup / ZoneLookup
+                // becomes an UnobservedTaskException at GC time and crashes the host AppDomain
+                // (default TaskScheduler behaviour). Faults get surfaced via OnException so
+                // consumers can log / display them instead.
                 Task.Run(
                     async () => {
                         await this.ResolveMemoryStructures();
@@ -73,14 +78,28 @@ namespace Sharlayan {
                         await ActionLookup.Resolve(this.Configuration);
                         await StatusEffectLookup.Resolve(this.Configuration);
                         await ZoneLookup.Resolve(this.Configuration);
-                    });
+                    })
+                    .ContinueWith(
+                        t => {
+                            Logger.Error(t.Exception, "Background resource resolution faulted.");
+                            this.RaiseException(Logger, t.Exception);
+                        },
+                        TaskContinuationOptions.OnlyOnFaulted);
             }
 
+            // Same fire-and-forget shape as above; same continuation guard so a faulting
+            // signature scan doesn't escape as an UnobservedTaskException either.
             Task.Run(
                 async () => {
                     Signature[] signatures = await Signatures.Resolve(this.Configuration);
                     this.Scanner.LoadOffsets(signatures, this.Configuration.ScanAllRegions);
-                });
+                })
+                .ContinueWith(
+                    t => {
+                        Logger.Error(t.Exception, "Background signature resolution faulted.");
+                        this.RaiseException(Logger, t.Exception);
+                    },
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
 
         public SharlayanConfiguration Configuration { get; set; }
