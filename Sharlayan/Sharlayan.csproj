@@ -51,7 +51,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Lumina" Version="7.4.0" />
+		<PackageReference Include="Lumina" Version="7.5.0" />
 		<PackageReference Include="Lumina.Excel" Version="7.4.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="NLog" Version="6.1.3" />
