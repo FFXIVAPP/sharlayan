@@ -37,7 +37,13 @@ namespace Sharlayan {
         public CurrentPlayerResult GetCurrentPlayer() {
             CurrentPlayerResult result = new CurrentPlayerResult();
 
-            result.Entity = this.GetCurrentPlayerEntity();
+            // FFXIV zeroes the local-player slot in GameObjectManager for 1–3 reads during
+            // any zone transition while the actor table rebuilds. The latch holds the
+            // last-known Entity over that transient window so downstream consumers don't
+            // see Entity flip to null mid-zone. Threshold is SharlayanConfiguration.LoggedInLatchTicks
+            // (default 10); set to 0 to disable.
+            ActorItem live = this.GetCurrentPlayerEntity();
+            result.Entity = this._loggedInStateLatch.Apply(live);
             result.PlayerInfo = this.GetPlayerInfo();
 
             return result;
