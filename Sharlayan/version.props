@@ -5,7 +5,7 @@
          Patch: incremented by Claude/AI on each substantive code change to Sharlayan. -->
     <VersionMajor>9</VersionMajor>
     <VersionMinor>0</VersionMinor>
-    <VersionPatch>35</VersionPatch>
+    <VersionPatch>36</VersionPatch>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Derived version strings — do not edit these directly. -->
