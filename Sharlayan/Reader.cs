@@ -44,7 +44,10 @@ namespace Sharlayan {
             this._playerInfoResolver = new PlayerInfoResolver(this._memoryHandler);
             this._partyMemberResolver = new PartyMemberResolver(this._memoryHandler, this._pcWorkerDelegate, this._npcWorkerDelegate, this._monsterWorkerDelegate);
             this._jobResourceResolver = new JobResourceResolver(this._memoryHandler);
+            this._loggedInStateLatch = new LoggedInStateLatch(this._memoryHandler.Configuration?.LoggedInLatchTicks ?? 0);
         }
+
+        private readonly LoggedInStateLatch _loggedInStateLatch;
 
         private MemoryHandler _memoryHandler { get; }
 

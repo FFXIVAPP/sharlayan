@@ -415,12 +415,42 @@
             headers" case); any other exception still bubbles since it indicates a real fault.
             </summary>
         </member>
+        <member name="P:Sharlayan.SharlayanConfiguration.LoggedInLatchTicks">
+            <summary>
+            Maximum number of consecutive <c>GetCurrentPlayer()</c> calls that may return a
+            transient null Entity before the Reader stops latching the last-known value and
+            lets null surface. Zero (or negative) disables the latch entirely.
+            <para>
+            FFXIV zeroes the local-player slot in GameObjectManager for 1–3 reads during any
+            zone transition while the actor table rebuilds. Latching the last-known Entity
+            over that window keeps <see cref="P:Sharlayan.Models.ReadResults.GameStateResult.IsLoggedIn"/>
+            and <see cref="P:Sharlayan.Models.ReadResults.CurrentPlayerResult.Entity"/> stable across the
+            transition. A genuine logout still surfaces once the underlying read has been null
+            for more than this many consecutive calls.
+            </para>
+            <para>
+            Default is 10. At a 5 Hz poll cadence (Chromatics' default) this gives roughly a
+            2-second decay; at 10 Hz roughly 1 second. Tune to your consumer's cadence — you
+            want enough headroom to cover the 1–3 tick transient window without making a real
+            logout take noticeably long to register.
+            </para>
+            </summary>
+        </member>
         <member name="M:Sharlayan.Utilities.LocalizationHelper.SelectLocalized(Sharlayan.Models.Localization,Sharlayan.Enums.GameLanguage)">
             <summary>
             Returns the localised string for <paramref name="language"/>. Falls back to
             English when the requested language slot is null or when the language enum is
             <see cref="F:Sharlayan.Enums.GameLanguage.English"/> (the default). Returns null only if the
             <paramref name="names"/> argument itself is null.
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Utilities.LoggedInStateLatch.Apply(Sharlayan.Core.ActorItem)">
+            <summary>
+            Returns <paramref name="live"/> when it represents a present local player
+            (non-null Entity with non-zero ID). Otherwise returns the most recently cached
+            present Entity if the latch hasn't expired, falling through to <paramref name="live"/>
+            (typically null) once the underlying read has stayed absent for more than
+            <c>maxConsecutiveAbsent</c> consecutive calls.
             </summary>
         </member>
     </members>
