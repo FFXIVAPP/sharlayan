@@ -458,8 +458,13 @@ internal static class Program {
                     if (ti.CurrentTarget == null && ti.FocusTarget == null && ti.MouseOverTarget == null) {
                         log($"    CurrentTargetID = 0x{ti.CurrentTargetID:X8}  (no resolved target — target offscreen or between actor frames)");
                     }
+                    // TargetInfo.EnmityItems is the player's hate list as seen through the
+                    // target lens — Reader.Target.cs only populates it when CurrentTargetID > 0.
+                    // The dedicated [3c.3] section below reads the same underlying table
+                    // (ENMITYMAP / UIState.Hate._hateInfo) directly so the harness can verify
+                    // it even with no target.
                     if (ti.EnmityItems.Count > 0) {
-                        log($"    EnmityItems ({ti.EnmityItems.Count}):");
+                        log($"    EnmityItems via TargetInfo ({ti.EnmityItems.Count}) — populated because CurrentTargetID=0x{ti.CurrentTargetID:X8}:");
                         foreach (var e in ti.EnmityItems) {
                             log($"      ID=0x{e.ID:X8}  Enmity={e.Enmity,8}  Name=\"{e.Name}\"");
                         }
@@ -545,6 +550,144 @@ internal static class Program {
         }
         catch (Exception ex) {
             log($"    ✗ StatusLocalization: {ex.GetType().Name}: {ex.Message}");
+        }
+
+        // [3c.3] ENMITY TABLES — surfaces both enmity-related signatures in one section so
+        // they're visible regardless of whether the player currently has a target. Two
+        // distinct lists exist on UIState:
+        //
+        //   AGRO list   (UIState.Hater._haters, HaterCount)   AGROMAP_KEY / AGRO_COUNT_KEY
+        //     "Who is aggro'd ON the player" — entities whose hate list contains the
+        //     player. Reader.CurrentPlayer surfaces this on PlayerInfo.EnmityItems.
+        //
+        //   HATE list   (UIState.Hate._hateInfo, HateArrayLength)   ENMITYMAP_KEY / ENMITY_COUNT_KEY
+        //     "Who the player is fighting" — the player's own hate table.
+        //     Reader.GetTargetInfo surfaces this on TargetInfo.EnmityItems but ONLY when
+        //     CurrentTargetID > 0, which makes the data invisible when the player has no
+        //     target. Here we read ENMITYMAP directly so the table is always shown.
+        //
+        // Capability flags and raw counter/pointer values are logged alongside so a stripped
+        // scan (one of the four keys missing) is obvious. Names are looked up against
+        // GetActors() so hate entries — which carry only ID/Enmity in memory — show a label.
+        try {
+            log(string.Empty);
+            log("  [3c.3] ENMITY TABLES");
+            log($"    CanGetAgroEntities  = {handler.Reader.CanGetAgroEntities()}   (AGROMAP_KEY + AGRO_COUNT_KEY)");
+            log($"    CanGetEnmityEntities= {handler.Reader.CanGetEnmityEntities()}  (ENMITYMAP_KEY + ENMITY_COUNT_KEY)");
+
+            // Unified id → name lookup across PCs/NPCs/Monsters. The hate table stores only
+            // ID + Enmity; we walk the actor map to label entries the player would recognise.
+            Dictionary<uint, string> nameById = new();
+            try {
+                var actorsForLookup = handler.Reader.GetActors();
+                if (actorsForLookup != null) {
+                    foreach (var (id, a) in actorsForLookup.CurrentPCs)      { if (a != null && !nameById.ContainsKey(id)) nameById[id] = a.Name; }
+                    foreach (var (id, a) in actorsForLookup.CurrentNPCs)     { if (a != null && !nameById.ContainsKey(id)) nameById[id] = a.Name; }
+                    foreach (var (id, a) in actorsForLookup.CurrentMonsters) { if (a != null && !nameById.ContainsKey(id)) nameById[id] = a.Name; }
+                }
+            }
+            catch (Exception ex) {
+                log($"    (actor-table name lookup unavailable: {ex.GetType().Name}: {ex.Message})");
+            }
+
+            // ---- AGGRO LIST -----------------------------------------------------------
+            // PlayerInfo.EnmityItems is the canonical surface for this list (already
+            // resolves names by walking PCs/NPCs/Monsters inside Reader.CurrentPlayer).
+            // We also log the raw counter value so an unexpected 0 vs. !=0 mismatch
+            // against the surface count is easy to spot.
+            try {
+                short rawAgroCount = -1;
+                if (handler.Scanner.Locations.TryGetValue(Sharlayan.Signatures.AGRO_COUNT_KEY, out var agroCountAddr)) {
+                    try { rawAgroCount = handler.GetInt16(agroCountAddr); } catch { /* leave -1 */ }
+                }
+                var pi = handler.Reader.GetCurrentPlayer()?.PlayerInfo;
+                int surfaceCount = pi?.EnmityItems?.Count ?? 0;
+                log($"    AGGRO list (entities aggro'd on player) — surface count={surfaceCount}  raw HaterCount={rawAgroCount}");
+                if (surfaceCount == 0) {
+                    log("      (empty — nothing is currently aggro'd on you)");
+                }
+                else {
+                    int i = 0;
+                    foreach (var e in pi!.EnmityItems!) {
+                        log($"      [{i++,2}] ID=0x{e.ID:X8}  Enmity={e.Enmity,10}  Name=\"{e.Name}\"");
+                    }
+                }
+            }
+            catch (Exception ex) {
+                log($"    ✗ AGGRO list: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            // ---- HATE LIST ------------------------------------------------------------
+            // Direct memory walk over ENMITYMAP so the harness shows entries regardless of
+            // whether the player currently has a target. Matches Reader.Target.cs's
+            // iteration: HateItem layout (ID @ +0, Enmity @ +4, size from StructuresContainer)
+            // resolves automatically from FCS via FieldOffsetReader at provider init.
+            try {
+                if (handler.Reader.CanGetEnmityEntities()) {
+                    IntPtr counterAddr = handler.Scanner.Locations[Sharlayan.Signatures.ENMITY_COUNT_KEY];
+                    IntPtr tableAddr   = handler.Scanner.Locations[Sharlayan.Signatures.ENMITYMAP_KEY];
+                    short hateCount    = handler.GetInt16(counterAddr);
+                    int itemSize       = handler.Structures.HateItem.SourceSize;
+
+                    log($"    HATE  list (player's own hate table) — raw HateArrayLength={hateCount}  itemSize=0x{itemSize:X}  tableAddr=0x{tableAddr.ToInt64():X}");
+                    if (hateCount <= 0) {
+                        log("      (empty — you are not engaged with anything)");
+                    }
+                    else if (hateCount > 32) {
+                        log($"      (count {hateCount} looks corrupt — capping at 32 for display)");
+                        hateCount = 32;
+                    }
+                    for (uint i = 0; i < (uint)hateCount; i++) {
+                        try {
+                            IntPtr addr = new IntPtr(tableAddr.ToInt64() + i * itemSize);
+                            uint id     = handler.GetUInt32(addr, handler.Structures.HateItem.ID);
+                            uint enmity = handler.GetUInt32(addr + handler.Structures.HateItem.Enmity);
+                            if (id == 0) continue;
+                            string name = nameById.TryGetValue(id, out var n) ? n : "<not in actor table>";
+                            log($"      [{i,2}] ID=0x{id:X8}  Enmity={enmity,10}  Name=\"{name}\"");
+                        }
+                        catch (Exception ex) {
+                            log($"      [{i,2}] ✗ {ex.GetType().Name}: {ex.Message}");
+                        }
+                    }
+                }
+                else {
+                    log("    HATE  list: ENMITYMAP / ENMITY_COUNT signature didn't scan — skipped");
+                }
+            }
+            catch (Exception ex) {
+                log($"    ✗ HATE list: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            // ---- ENGAGED ACTORS (per-actor IsAgroed / InCombat) -----------------------
+            // Quick eye-check that ActorItem.IsAgroed (CharacterData.Flags bit 1) lights up
+            // for actors the player is fighting. Walks CurrentMonsters + CurrentNPCs and
+            // prints anything flagged combat — independent of either enmity table.
+            try {
+                var actorsForCombat = handler.Reader.GetActors();
+                if (actorsForCombat != null) {
+                    var engaged = actorsForCombat.CurrentMonsters.Values
+                        .Concat(actorsForCombat.CurrentNPCs.Values)
+                        .Where(a => a != null && (a.IsAgroed || a.InCombat))
+                        .Take(10)
+                        .ToList();
+                    log($"    Engaged actors (IsAgroed || InCombat) — {engaged.Count} shown:");
+                    if (engaged.Count == 0) {
+                        log("      (none — no actor in the table has the combat flag set)");
+                    }
+                    else {
+                        foreach (var a in engaged) {
+                            log($"      - {a.Name,-24} ID=0x{a.ID:X8} HP={a.HPCurrent}/{a.HPMax} IsAgroed={a.IsAgroed} InCombat={a.InCombat} ClaimedByID=0x{a.ClaimedByID:X8}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                log($"    ✗ Engaged actors: {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+        catch (Exception ex) {
+            log($"    ✗ Enmity tables: {ex.GetType().Name}: {ex.Message}");
         }
 
         // [3c.2] GameState — validates GAMEMAIN / CONDITIONS / CONTENTSFINDER / WEATHER /
