@@ -10,14 +10,13 @@
 
 namespace Sharlayan.Core.JobResources {
     using System;
-    using System.Collections.Generic;
 
     using Sharlayan.Core.Interfaces;
     using Sharlayan.Core.JobResources.Enums;
 
     public sealed class DancerResources : IJobResource {
         public DanceStep CurrentStep =>
-            this.Steps.Count <= this.StepIndex
+            this.Steps.Length <= this.StepIndex
                 ? 0
                 : this.Steps[this.StepIndex];
 
@@ -25,7 +24,7 @@ namespace Sharlayan.Core.JobResources {
         public int FourFoldFeathers { get; set; }
         public int StepIndex { get; set; }
 
-        public List<DanceStep> Steps { get; set; }
+        public DanceStep[] Steps { get; set; } = Array.Empty<DanceStep>();
         public TimeSpan Timer { get; set; }
     }
 }

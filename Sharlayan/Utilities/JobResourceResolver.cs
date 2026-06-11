@@ -10,8 +10,6 @@
 
 namespace Sharlayan.Utilities {
     using System;
-    using System.Collections.Generic;
-    using Newtonsoft.Json.Linq;
 
     using NLog;
 
@@ -31,7 +29,7 @@ namespace Sharlayan.Utilities {
             AstrologianResources resource = new AstrologianResources();
 
             short cards = BitConverter.ToInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Astrologian.Cards);
-            resource.DrawnCards = new List<AstrologianCard> {
+            resource.DrawnCards = new[] {
                 (AstrologianCard)(0xF & (cards >> 0)),
                 (AstrologianCard)(0xF & (cards >> 4)),
                 (AstrologianCard)(0xF & (cards >> 8)),
@@ -82,26 +80,14 @@ namespace Sharlayan.Utilities {
             resource.Esprit = sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Esprit];
             resource.StepIndex = sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.StepIndex];
 
-            DanceStep[] steps = {
-                (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step1],
-                (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step2],
-                (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step3],
-                (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step4],
-            };
+            DanceStep step1 = (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step1];
+            DanceStep step2 = (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step2];
+            DanceStep step3 = (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step3];
+            DanceStep step4 = (DanceStep) sourceBytes[this._memoryHandler.Structures.JobResources.Dancer.Step4];
 
-            resource.Steps = steps[2] > 0
-                                 ? new List<DanceStep> {
-                                     steps[0],
-                                     steps[1],
-                                     steps[2],
-                                     steps[3],
-                                     0,
-                                 }
-                                 : new List<DanceStep> {
-                                     steps[0],
-                                     steps[1],
-                                     0,
-                                 };
+            resource.Steps = step3 > 0
+                                 ? new DanceStep[] { step1, step2, step3, step4, 0 }
+                                 : new DanceStep[] { step1, step2, 0 };
 
             return resource;
         }
@@ -159,7 +145,6 @@ namespace Sharlayan.Utilities {
             resource.BeastChakra1 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra1];
             resource.BeastChakra2 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra2];
             resource.BeastChakra3 = (BeastChakraType)sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakra3];
-            resource.BeastChakra = new[] { resource.BeastChakra1, resource.BeastChakra2, resource.BeastChakra3 };
             byte beastStacks = sourceBytes[this._memoryHandler.Structures.JobResources.Monk.BeastChakraStacks];
             resource.OpoOpoStacks = beastStacks & 3;
             resource.RaptorStacks = (beastStacks >> 2) & 3;

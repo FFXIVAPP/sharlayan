@@ -9,11 +9,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Models.ReadResults {
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     using Sharlayan.Core;
 
     public class InventoryResult {
-        public ConcurrentBag<InventoryContainer> InventoryContainers { get; internal set; } = new ConcurrentBag<InventoryContainer>();
+        public List<InventoryContainer> InventoryContainers { get; internal set; } = new List<InventoryContainer>(24);
     }
 }

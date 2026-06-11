@@ -19,7 +19,9 @@ namespace Sharlayan.Core.JobResources {
         public BeastChakraType BeastChakra1 { get; set; }
         public BeastChakraType BeastChakra2 { get; set; }
         public BeastChakraType BeastChakra3 { get; set; }
-        public BeastChakraType[] BeastChakra { get; set; }
+
+        // Computed on access; the per-poll resolve no longer allocates this array.
+        public BeastChakraType[] BeastChakra => new[] { this.BeastChakra1, this.BeastChakra2, this.BeastChakra3 };
         public int OpoOpoStacks { get; set; }
         public int RaptorStacks { get; set; }
         public int CoeurlStacks { get; set; }

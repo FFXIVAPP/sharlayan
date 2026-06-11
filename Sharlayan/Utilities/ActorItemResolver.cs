@@ -10,6 +10,7 @@
 
 namespace Sharlayan.Utilities {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
 
     using NLog;
@@ -21,6 +22,12 @@ namespace Sharlayan.Utilities {
 
     internal class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        // Fallback names for nameless actors, keyed by type id so the interpolated
+        // string is built once per distinct id instead of once per actor per poll.
+        // Key spaces are bounded (EventObjectTypeID is ushort, TypeID is byte).
+        private static readonly ConcurrentDictionary<uint, string> _eventObjectFallbackNames = new ConcurrentDictionary<uint, string>();
+        private static readonly ConcurrentDictionary<uint, string> _typeIDFallbackNames = new ConcurrentDictionary<uint, string>();
 
         private MemoryHandler _memoryHandler;
 
@@ -247,10 +254,20 @@ namespace Sharlayan.Utilities {
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {
                     if (entry.Type == Actor.Type.EventObject) {
-                        entry.Name = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                        if (!_eventObjectFallbackNames.TryGetValue(entry.EventObjectTypeID, out string fallbackName)) {
+                            fallbackName = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                            _eventObjectFallbackNames.TryAdd(entry.EventObjectTypeID, fallbackName);
+                        }
+
+                        entry.Name = fallbackName;
                     }
                     else {
-                        entry.Name = $"{nameof(entry.TypeID)}: {entry.TypeID}";
+                        if (!_typeIDFallbackNames.TryGetValue(entry.TypeID, out string fallbackName)) {
+                            fallbackName = $"{nameof(entry.TypeID)}: {entry.TypeID}";
+                            _typeIDFallbackNames.TryAdd(entry.TypeID, fallbackName);
+                        }
+
+                        entry.Name = fallbackName;
                     }
                 }
             }

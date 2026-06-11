@@ -21,6 +21,12 @@ namespace Sharlayan {
         // Torn reads can return arbitrarily large values, so cap at 600 to stay safe.
         private const int _inventoryMaxSlots = 600;
 
+        // Shared zero-filled arrays handed out for items with no materia (the common case),
+        // so the per-item arrays are only allocated when an item actually has melds.
+        // Treat as read-only: both are length 5 to keep caller indexing intact.
+        private static readonly Inventory.MateriaType[] _emptyMateriaTypes = new Inventory.MateriaType[5];
+        private static readonly byte[] _emptyMateriaRanks = new byte[5];
+
         const int _inventoryCount = 74;
 
         public bool CanGetInventory() {
@@ -104,6 +110,25 @@ namespace Sharlayan {
                         int mType = this._memoryHandler.Structures.InventoryItem.MateriaType;
                         int mRank = this._memoryHandler.Structures.InventoryItem.MateriaRank;
 
+                        // Most items carry no melds; share the zero arrays unless any
+                        // materia byte (5 ushort types + 5 byte ranks) is non-zero.
+                        bool hasMateria = false;
+                        for (int m = 0; m < 10; m++) {
+                            if (slotBytes[slotIndex + mType + m] != 0) {
+                                hasMateria = true;
+                                break;
+                            }
+                        }
+
+                        if (!hasMateria) {
+                            for (int m = 0; m < 5; m++) {
+                                if (slotBytes[slotIndex + mRank + m] != 0) {
+                                    hasMateria = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         container.InventoryItems.Add(
                             new InventoryItem {
                                 Slot = BitConverter.ToUInt16(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.Slot),
@@ -115,20 +140,24 @@ namespace Sharlayan {
                                 // F56: _materia is FixedSizeArray5<ushort>; each element is 2 bytes.
                                 // Read as ushort so materia IDs > 255 (Dawntrail grade VIII/IX/X) are
                                 // preserved correctly. Stride of +2 between elements was already correct.
-                                MateriaTypes = new[] {
-                                    (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + mType),
-                                    (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 2 + mType),
-                                    (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 4 + mType),
-                                    (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 6 + mType),
-                                    (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 8 + mType),
-                                },
-                                MateriaRanks = new[] {
-                                    slotBytes[slotIndex + mRank],
-                                    slotBytes[slotIndex + 1 + mRank],
-                                    slotBytes[slotIndex + 2 + mRank],
-                                    slotBytes[slotIndex + 3 + mRank],
-                                    slotBytes[slotIndex + 4 + mRank],
-                                },
+                                MateriaTypes = hasMateria
+                                    ? new[] {
+                                        (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + mType),
+                                        (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 2 + mType),
+                                        (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 4 + mType),
+                                        (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 6 + mType),
+                                        (Inventory.MateriaType) BitConverter.ToUInt16(slotBytes, slotIndex + 8 + mType),
+                                    }
+                                    : _emptyMateriaTypes,
+                                MateriaRanks = hasMateria
+                                    ? new[] {
+                                        slotBytes[slotIndex + mRank],
+                                        slotBytes[slotIndex + 1 + mRank],
+                                        slotBytes[slotIndex + 2 + mRank],
+                                        slotBytes[slotIndex + 3 + mRank],
+                                        slotBytes[slotIndex + 4 + mRank],
+                                    }
+                                    : _emptyMateriaRanks,
                                 DyeID = slotBytes[slotIndex + this._memoryHandler.Structures.InventoryItem.DyeID],
                                 GlamourID = BitConverter.ToUInt32(slotBytes, slotIndex + this._memoryHandler.Structures.InventoryItem.GlamourID),
                             });
