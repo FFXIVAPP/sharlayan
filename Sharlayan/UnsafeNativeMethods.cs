@@ -34,7 +34,8 @@ namespace Sharlayan {
         public static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool),] bool bInheritHandle, uint dwProcessId);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true),]
-        public static extern int CloseHandle(IntPtr hObject);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true),]
         public static extern bool ReadProcessMemory(IntPtr processHandle, IntPtr lpBaseAddress, [In,] [Out,] byte[] lpBuffer, IntPtr regionSize, out IntPtr lpNumberOfBytesRead);

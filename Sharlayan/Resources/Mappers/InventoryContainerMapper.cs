@@ -24,6 +24,7 @@ namespace Sharlayan.Resources.Mappers {
             return new SharlayanInventoryContainer {
                 ID = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Type)),
                 Amount = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Size)),
+                SourceSize = Marshal.SizeOf<NativeInventoryContainer>(),
             };
         }
     }

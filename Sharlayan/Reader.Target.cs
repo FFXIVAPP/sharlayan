@@ -49,9 +49,11 @@ namespace Sharlayan {
 
                     uint currentTargetID = SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.TargetInfo.CurrentID);
 
+                    (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
+
                     if (currentTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(currentTargetAddress);
+                            ActorItem entry = this.GetTargetActorItemFromSource(currentTargetAddress, mapID, mapIndex, mapTerritory);
                             currentTargetID = entry.ID;
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
@@ -65,7 +67,7 @@ namespace Sharlayan {
 
                     if (mouseOverTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(mouseOverTargetAddress);
+                            ActorItem entry = this.GetTargetActorItemFromSource(mouseOverTargetAddress, mapID, mapIndex, mapTerritory);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.MouseOverTarget = entry;
@@ -78,7 +80,7 @@ namespace Sharlayan {
 
                     if (focusTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(focusTargetAddress);
+                            ActorItem entry = this.GetTargetActorItemFromSource(focusTargetAddress, mapID, mapIndex, mapTerritory);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.FocusTarget = entry;
@@ -91,7 +93,7 @@ namespace Sharlayan {
 
                     if (previousTargetAddress > 0) {
                         try {
-                            ActorItem entry = this.GetTargetActorItemFromSource(previousTargetAddress);
+                            ActorItem entry = this.GetTargetActorItemFromSource(previousTargetAddress, mapID, mapIndex, mapTerritory);
                             if (entry.IsValid) {
                                 result.TargetsFound = true;
                                 result.TargetInfo.PreviousTarget = entry;
@@ -115,7 +117,7 @@ namespace Sharlayan {
                             // HateInfo (EntityId@0, Enmity@4, size=8). Use HateItem structure, not
                             // EnmityItem (which maps HaterInfo for the AGROMAP player aggro list).
                             IntPtr counter = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITY_COUNT_KEY];
-                            short enmityCount = this._memoryHandler.GetInt16(counter);
+                            int enmityCount = this._memoryHandler.GetInt32(counter);
                             IntPtr enmityStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.ENMITYMAP_KEY];
 
                             if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0) {
@@ -137,12 +139,7 @@ namespace Sharlayan {
                                             ActorItem pc = this._pcWorkerDelegate.GetActorItem(enmityEntry.ID);
                                             ActorItem npc = this._npcWorkerDelegate.GetActorItem(enmityEntry.ID);
                                             ActorItem monster = this._monsterWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            try {
-                                                enmityEntry.Name = (pc ?? npc).Name ?? monster.Name;
-                                            }
-                                            catch (Exception ex) {
-                                                this._memoryHandler.RaiseException(Logger, ex);
-                                            }
+                                            enmityEntry.Name = pc?.Name ?? npc?.Name ?? monster?.Name ?? string.Empty;
                                         }
 
                                         result.TargetInfo.EnmityItems.Add(enmityEntry);
@@ -169,7 +166,7 @@ namespace Sharlayan {
             return result;
         }
 
-        private ActorItem GetTargetActorItemFromSource(long address) {
+        private ActorItem GetTargetActorItemFromSource(long address, uint mapID, uint mapIndex, uint mapTerritory) {
             ActorItem entry;
 
             IntPtr targetAddress = new IntPtr(address);
@@ -186,8 +183,6 @@ namespace Sharlayan {
                     entry.EventObjectTypeID = EventObjectTypeID;
                     entry.EventObjectType = EventObjectType;
                 }
-
-                (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
 
                 entry.MapID = mapID;
                 entry.MapIndex = mapIndex;

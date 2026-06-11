@@ -11,7 +11,6 @@
 namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using NLog;
 
@@ -22,8 +21,6 @@ namespace Sharlayan.Utilities {
 
     internal class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly List<StatusItem> _foundStatuses;
 
         private MemoryHandler _memoryHandler;
 
@@ -38,11 +35,10 @@ namespace Sharlayan.Utilities {
             this._pcWorkerDelegate = pcWorkerDelegate;
             this._npcWorkerDelegate = npcWorkerDelegate;
             this._monsterWorkerDelegate = monsterWorkerDelegate;
-            this._foundStatuses = new List<StatusItem>();
         }
 
         public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
-            this._foundStatuses.Clear();
+            List<StatusItem> foundStatuses = new List<StatusItem>();
 
             ActorItem entry = existingActorItem ?? new ActorItem();
 
@@ -178,7 +174,14 @@ namespace Sharlayan.Utilities {
                         short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
                         uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
+                        StatusItem statusEntry = null;
+                        for (int s = 0; s < entry.StatusItems.Count; s++) {
+                            StatusItem si = entry.StatusItems[s];
+                            if (si.CasterID == casterID && si.StatusID == statusID) {
+                                statusEntry = si;
+                                break;
+                            }
+                        }
 
                         if (statusEntry == null) {
                             statusEntry = new StatusItem();
@@ -227,7 +230,7 @@ namespace Sharlayan.Utilities {
                                 entry.StatusItems.Add(statusEntry);
                             }
 
-                            this._foundStatuses.Add(statusEntry);
+                            foundStatuses.Add(statusEntry);
                         }
                     }
                 }
@@ -239,7 +242,7 @@ namespace Sharlayan.Utilities {
                     this._memoryHandler.BufferPool.Return(statusMap);
                 }
 
-                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
+                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
 
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {

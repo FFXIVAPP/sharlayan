@@ -22,7 +22,10 @@ namespace Sharlayan {
 
         public MemoryHandler AddHandler(SharlayanConfiguration configuration) {
             MemoryHandler memoryHandler = new MemoryHandler(configuration);
-            return this._memoryHandlers.AddOrUpdate(configuration.ProcessModel.ProcessID, memoryHandler, (k, v) => memoryHandler);
+            return this._memoryHandlers.AddOrUpdate(configuration.ProcessModel.ProcessID, memoryHandler, (k, oldHandler) => {
+                oldHandler.Dispose();
+                return memoryHandler;
+            });
         }
 
         public MemoryHandler GetHandler(int processID) {

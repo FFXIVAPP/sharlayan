@@ -27,10 +27,22 @@ namespace Sharlayan.Utilities {
             ChatLogItem chatLogEntry = new ChatLogItem();
             try {
                 chatLogEntry.Bytes = raw;
-                chatLogEntry.TimeStamp = UnixTimeStampToDateTime(int.Parse(ByteArrayToString(raw.Take(4).Reverse().ToArray()), NumberStyles.HexNumber));
-                chatLogEntry.Code = ByteArrayToString(raw.Skip(4).Take(2).Reverse().ToArray());
-                chatLogEntry.Raw = Encoding.UTF8.GetString(raw.ToArray());
-                byte[] cleanable = raw.Skip(8).ToArray();
+                byte[] timestampBytes = new byte[4];
+                timestampBytes[0] = raw[3];
+                timestampBytes[1] = raw[2];
+                timestampBytes[2] = raw[1];
+                timestampBytes[3] = raw[0];
+                chatLogEntry.TimeStamp = UnixTimeStampToDateTime(int.Parse(ByteArrayToString(timestampBytes), NumberStyles.HexNumber));
+                byte[] codeBytes = new byte[2];
+                codeBytes[0] = raw[5];
+                codeBytes[1] = raw[4];
+                chatLogEntry.Code = ByteArrayToString(codeBytes);
+                chatLogEntry.Raw = Encoding.UTF8.GetString(raw);
+                int cleanableLength = raw.Length > 8 ? raw.Length - 8 : 0;
+                byte[] cleanable = new byte[cleanableLength];
+                if (cleanableLength > 0) {
+                    Buffer.BlockCopy(raw, 8, cleanable, 0, cleanableLength);
+                }
                 string cleaned = ChatCleaner.ProcessFullLine(chatLogEntry.Code, cleanable);
                 if (cleaned.StartsWith(STARTS_WITH_CHECK)) {
                     cleaned = cleaned.Substring(1);
@@ -51,8 +63,11 @@ namespace Sharlayan.Utilities {
                 chatLogEntry.Combined = $"{chatLogEntry.Code}:{chatLogEntry.Line}";
 
                 if (Constants.ChatPublic.Contains(chatLogEntry.Code)) {
-                    chatLogEntry.PlayerName = chatLogEntry.Line.Substring(0, chatLogEntry.Line.IndexOf(INDEX_CHECK, StringComparison.OrdinalIgnoreCase));
-                    chatLogEntry.Message = chatLogEntry.Message.Replace($"{chatLogEntry.PlayerName}: ", string.Empty);
+                    int sepIdx = chatLogEntry.Line.IndexOf(INDEX_CHECK, StringComparison.OrdinalIgnoreCase);
+                    if (sepIdx >= 0) {
+                        chatLogEntry.PlayerName = chatLogEntry.Line.Substring(0, sepIdx);
+                        chatLogEntry.Message = chatLogEntry.Message.Replace($"{chatLogEntry.PlayerName}: ", string.Empty);
+                    }
                 }
             }
             catch (Exception) {
@@ -65,7 +80,7 @@ namespace Sharlayan.Utilities {
         private static string ByteArrayToString(byte[] raw) {
             StringBuilder hex = new StringBuilder(raw.Length * 2);
             foreach (byte b in raw) {
-                hex.AppendFormat($"{b:X2}");
+                hex.AppendFormat("{0:X2}", b);
             }
 
             return hex.ToString();

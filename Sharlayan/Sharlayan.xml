@@ -104,8 +104,8 @@
             <summary>
             Lower-level entry point: given a sheet row type and a name selector, return the
             row id whose name matches. Useful for callers that need a sheet not exposed by
-            the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> so
-            each unique row type gets one lookup table built across all 4 languages.
+            the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> and
+            sqpack path so each unique (row type, game install) pair gets one lookup table.
             </summary>
         </member>
         <member name="M:Sharlayan.LuminaLookup.ClearCache">

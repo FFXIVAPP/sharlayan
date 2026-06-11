@@ -69,15 +69,15 @@ namespace Sharlayan.Resources.Mappers {
 
         public static PlayerInfo Build() {
             // Levels are shorts packed contiguously; EXP are ints.
-            int levelsBase = (int)Marshal.OffsetOf<PlayerState>("_classJobLevels");
-            int expBase    = (int)Marshal.OffsetOf<PlayerState>("_classJobExperience");
+            int levelsBase = FieldOffsetReader.OffsetOf<PlayerState>("_classJobLevels");
+            int expBase    = FieldOffsetReader.OffsetOf<PlayerState>("_classJobExperience");
             int Lvl(int i) => levelsBase + i * sizeof(short);
             int Exp(int i) => expBase + i * sizeof(int);
 
             // _attributes is FixedSizeArray74<int> at [FieldOffset(0x1A8)].
             // Each slot is a 4-byte int; the slot index equals the PlayerAttribute enum value,
             // which maps 1-to-1 with the game's BaseParam Excel row IDs.
-            int attribBase = (int)Marshal.OffsetOf<PlayerState>("_attributes");
+            int attribBase = FieldOffsetReader.OffsetOf<PlayerState>("_attributes");
             int Attr(PlayerAttribute a) => attribBase + (int)a * sizeof(int);
 
             return new PlayerInfo {
@@ -144,7 +144,8 @@ namespace Sharlayan.Resources.Mappers {
                 MIN = Lvl(ExpIdx_MIN), BTN = Lvl(ExpIdx_BTN), FSH = Lvl(ExpIdx_FSH),
                 ACN = Lvl(ExpIdx_ACN), ROG = Lvl(ExpIdx_ROG), MCH = Lvl(ExpIdx_MCH), DRK = Lvl(ExpIdx_DRK),
                 AST = Lvl(ExpIdx_AST), SAM = Lvl(ExpIdx_SAM), RDM = Lvl(ExpIdx_RDM), BLU = Lvl(ExpIdx_BLU),
-                GNB = Lvl(ExpIdx_GNB), DNC = Lvl(ExpIdx_DNC), VPR = Lvl(ExpIdx_VPR), PCT = Lvl(ExpIdx_PCT),
+                GNB = Lvl(ExpIdx_GNB), DNC = Lvl(ExpIdx_DNC), RPR = Lvl(ExpIdx_RPR), SGE = Lvl(ExpIdx_SGE),
+                VPR = Lvl(ExpIdx_VPR), PCT = Lvl(ExpIdx_PCT),
 
                 // Per-job EXP.
                 PGL_CurrentEXP = Exp(ExpIdx_PGL), GLD_CurrentEXP = Exp(ExpIdx_GLD), MRD_CurrentEXP = Exp(ExpIdx_MRD),
@@ -156,9 +157,10 @@ namespace Sharlayan.Resources.Mappers {
                 ACN_CurrentEXP = Exp(ExpIdx_ACN), ROG_CurrentEXP = Exp(ExpIdx_ROG), MCH_CurrentEXP = Exp(ExpIdx_MCH),
                 DRK_CurrentEXP = Exp(ExpIdx_DRK), AST_CurrentEXP = Exp(ExpIdx_AST), SAM_CurrentEXP = Exp(ExpIdx_SAM),
                 RDM_CurrentEXP = Exp(ExpIdx_RDM), BLU_CurrentEXP = Exp(ExpIdx_BLU), GNB_CurrentEXP = Exp(ExpIdx_GNB),
-                DNC_CurrentEXP = Exp(ExpIdx_DNC), VPR_CurrentEXP = Exp(ExpIdx_VPR), PCT_CurrentEXP = Exp(ExpIdx_PCT),
+                DNC_CurrentEXP = Exp(ExpIdx_DNC), RPR_CurrentEXP = Exp(ExpIdx_RPR), SGE_CurrentEXP = Exp(ExpIdx_SGE),
+                VPR_CurrentEXP = Exp(ExpIdx_VPR), PCT_CurrentEXP = Exp(ExpIdx_PCT),
 
-                SourceSize = Marshal.SizeOf<PlayerState>(),
+                SourceSize = FieldOffsetReader.SizeOf<PlayerState>(),
             };
         }
     }

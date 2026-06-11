@@ -48,15 +48,20 @@ namespace Sharlayan.Core {
         }
 
         public float Distance2D(Coordinate coordinate) {
-            return (float) Math.Sqrt(Math.Pow(this.X - coordinate.X, 2) + Math.Pow(this.Y - coordinate.Y, 2));
+            double dx = this.X - coordinate.X;
+            double dy = this.Y - coordinate.Y;
+            return (float) Math.Sqrt(dx * dx + dy * dy);
         }
 
         public float DistanceTo(Coordinate coordinate) {
-            return (float) Math.Sqrt(Math.Pow(this.X - coordinate.X, 2) + Math.Pow(this.Y - coordinate.Y, 2) + Math.Pow(this.Z - coordinate.Z, 2));
+            double dx = this.X - coordinate.X;
+            double dy = this.Y - coordinate.Y;
+            double dz = this.Z - coordinate.Z;
+            return (float) Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
         public Coordinate Normalize() {
-            float length = (float) Math.Sqrt(Math.Pow(this.X, 2) + Math.Pow(this.Y, 2) + Math.Pow(this.Z, 2));
+            float length = (float) Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
             return new Coordinate {
                 X = this.X / length,
                 Y = this.Y / length,

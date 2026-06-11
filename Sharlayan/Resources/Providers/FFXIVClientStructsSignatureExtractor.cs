@@ -140,10 +140,15 @@ namespace Sharlayan.Resources.Providers {
                         // expressible via Sharlayan's PointerPath today and are skipped.
                         ushort rel = attr.RelativeFollowOffsets.Length > 0 ? attr.RelativeFollowOffsets[0] : (ushort)0;
                         StaticAddressInfo info = new StaticAddressInfo(attr.Signature, rel, attr.IsPointer, t.FullName ?? t.Name);
-                        cache[t.Name] = info;
+                        // Use TryAdd for the short name so the first [StaticAddress] method wins
+                        // when a type has more than one, or two types share an unqualified name.
+                        cache.TryAdd(t.Name, info);
                         if (t.FullName != null) {
+                            // Fully-qualified key is always unique — safe to overwrite.
                             cache[t.FullName] = info;
                         }
+                        // Only one [StaticAddress] per type is supported; stop after the first match.
+                        break;
                     }
                 }
             }

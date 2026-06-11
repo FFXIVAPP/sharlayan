@@ -22,6 +22,8 @@ namespace Sharlayan.Tests.Resources.Providers {
     using FFXIVClientStructs.FFXIV.Client.Game;
     using FFXIVClientStructs.FFXIV.Client.Game.UI;
     using FFXIVClientStructs.FFXIV.Client.System.Framework;
+
+    using NativeInventoryContainer = FFXIVClientStructs.FFXIV.Client.Game.InventoryContainer;
     using FFXIVClientStructs.FFXIV.Client.System.String;
     using FFXIVClientStructs.FFXIV.Client.UI;
     using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
@@ -281,6 +283,20 @@ namespace Sharlayan.Tests.Resources.Providers {
             _ = HateItemMapper.Build();
             _ = JobResourcesMapper.Build();
             _ = ChatLogPointersMapper.Build();
+        }
+
+        // ------------------------------------------------------------------------------
+        // InventoryContainer stride — the mapper's SourceSize must equal the FCS struct
+        // size so Reader.Inventory uses the correct per-container byte stride.
+        // ------------------------------------------------------------------------------
+
+        [Fact]
+        public void InventoryContainerMapper_SourceSize_MatchesFCSStructSize() {
+            // InventoryContainer is [StructLayout(Size = 0x20)] — 32 bytes.
+            // If FCS ever resizes the struct the mapper must be updated to match.
+            int expected = Marshal.SizeOf<NativeInventoryContainer>();
+            Assert.Equal(32, expected); // document the current known-good value
+            Assert.Equal(expected, InventoryContainerMapper.Build().SourceSize);
         }
 
         // ------------------------------------------------------------------------------

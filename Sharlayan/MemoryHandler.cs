@@ -104,7 +104,12 @@ namespace Sharlayan {
 
         public SharlayanConfiguration Configuration { get; set; }
 
-        internal bool IsAttached { get; set; }
+        private volatile bool _isAttached;
+
+        internal bool IsAttached {
+            get => this._isAttached;
+            set => this._isAttached = value;
+        }
 
         public Reader Reader { get; set; }
 
@@ -143,10 +148,16 @@ namespace Sharlayan {
 
         public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
 
+        [ThreadStatic]
+        private static byte[] _singleByteBuffer;
+
         public byte GetByte(IntPtr address, long offset = 0) {
-            byte[] data = new byte[1];
-            this.Peek(new IntPtr(address.ToInt64() + offset), data);
-            return data[0];
+            if (_singleByteBuffer == null) {
+                _singleByteBuffer = new byte[1];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _singleByteBuffer);
+            return _singleByteBuffer[0];
         }
 
         public byte[] GetByteArray(IntPtr address, int length) {
@@ -159,22 +170,44 @@ namespace Sharlayan {
             this.Peek(address, destination);
         }
 
+        public void GetByteArray(IntPtr address, byte[] destination, int count) {
+            this.Peek(address, destination, count);
+        }
+
+        [ThreadStatic]
+        private static byte[] _twoByteBuffer;
+
+        [ThreadStatic]
+        private static byte[] _fourByteBuffer;
+
+        [ThreadStatic]
+        private static byte[] _eightByteBuffer;
+
         public short GetInt16(IntPtr address, long offset = 0) {
-            byte[] value = new byte[2];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToInt16(value, 0);
+            if (_twoByteBuffer == null) {
+                _twoByteBuffer = new byte[2];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer);
+            return SharlayanBitConverter.TryToInt16(_twoByteBuffer, 0);
         }
 
         public int GetInt32(IntPtr address, long offset = 0) {
-            byte[] value = new byte[4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToInt32(value, 0);
+            if (_fourByteBuffer == null) {
+                _fourByteBuffer = new byte[4];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer);
+            return SharlayanBitConverter.TryToInt32(_fourByteBuffer, 0);
         }
 
         public long GetInt64(IntPtr address, long offset = 0) {
-            byte[] value = new byte[8];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToInt64(value, 0);
+            if (_eightByteBuffer == null) {
+                _eightByteBuffer = new byte[8];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            return SharlayanBitConverter.TryToInt64(_eightByteBuffer, 0);
         }
 
         public long GetInt64FromBytes(byte[] source, int index = 0) {
@@ -191,24 +224,29 @@ namespace Sharlayan {
         }
 
         public string GetString(IntPtr address, long offset = 0, int size = 256) {
-            byte[] bytes = new byte[size];
-            this.Peek(new IntPtr(address.ToInt64() + offset), bytes);
-            int realSize = 0;
-            for (int i = 0; i < size; i++) {
-                if (bytes[i] != 0) {
-                    continue;
+            byte[] bytes = this.BufferPool.Rent(size);
+            try {
+                // Rented buffers can exceed `size`; read exactly `size` bytes as before.
+                this.Peek(new IntPtr(address.ToInt64() + offset), bytes, size);
+                int realSize = 0;
+                for (int i = 0; i < size; i++) {
+                    if (bytes[i] != 0) {
+                        continue;
+                    }
+
+                    realSize = i;
+                    break;
                 }
 
-                realSize = i;
-                break;
+                return Encoding.UTF8.GetString(bytes, 0, realSize);
             }
-
-            Array.Resize(ref bytes, realSize);
-            return Encoding.UTF8.GetString(bytes);
+            finally {
+                this.BufferPool.Return(bytes);
+            }
         }
 
         public string GetStringFromBytes(byte[] source, int offset = 0, int size = 256) {
-            if (!source.Any()) {
+            if (source.Length == 0) {
                 return string.Empty;
             }
 
@@ -217,11 +255,9 @@ namespace Sharlayan {
                 size = safeSize;
             }
 
-            byte[] bytes = new byte[size];
-            Array.Copy(source, offset, bytes, 0, size);
             int realSize = 0;
             for (int i = 0; i < size; i++) {
-                if (bytes[i] != 0) {
+                if (source[offset + i] != 0) {
                     continue;
                 }
 
@@ -229,34 +265,45 @@ namespace Sharlayan {
                 break;
             }
 
-            Array.Resize(ref bytes, realSize);
-            return Encoding.UTF8.GetString(bytes);
+            return Encoding.UTF8.GetString(source, offset, realSize);
         }
 
         public T GetStructure<T>(IntPtr address, int offset = 0) {
             IntPtr buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
-            UnsafeNativeMethods.ReadProcessMemory(this.Configuration.ProcessModel.Process.Handle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out IntPtr bytesRead);
-            T retValue = (T) Marshal.PtrToStructure(buffer, typeof(T));
-            Marshal.FreeCoTaskMem(buffer);
-            return retValue;
+            try {
+                UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out IntPtr _);
+                return (T) Marshal.PtrToStructure(buffer, typeof(T));
+            }
+            finally {
+                Marshal.FreeCoTaskMem(buffer);
+            }
         }
 
         public ushort GetUInt16(IntPtr address, long offset = 0) {
-            byte[] value = new byte[4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToUInt16(value, 0);
+            if (_twoByteBuffer == null) {
+                _twoByteBuffer = new byte[2];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer);
+            return SharlayanBitConverter.TryToUInt16(_twoByteBuffer, 0);
         }
 
         public uint GetUInt32(IntPtr address, long offset = 0) {
-            byte[] value = new byte[4];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToUInt32(value, 0);
+            if (_fourByteBuffer == null) {
+                _fourByteBuffer = new byte[4];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer);
+            return SharlayanBitConverter.TryToUInt32(_fourByteBuffer, 0);
         }
 
         public ulong GetUInt64(IntPtr address, long offset = 0) {
-            byte[] value = new byte[8];
-            this.Peek(new IntPtr(address.ToInt64() + offset), value);
-            return SharlayanBitConverter.TryToUInt32(value, 0);
+            if (_eightByteBuffer == null) {
+                _eightByteBuffer = new byte[8];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            return SharlayanBitConverter.TryToUInt64(_eightByteBuffer, 0);
         }
 
         public ulong GetUInt64FromBytes(byte[] source, int index = 0) {
@@ -267,10 +314,19 @@ namespace Sharlayan {
             return UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address, buffer, new IntPtr(buffer.Length), out IntPtr bytesRead);
         }
 
+        // Count-bounded overload for pooled buffers, which may be larger than the
+        // amount of process memory the caller actually wants to read.
+        public bool Peek(IntPtr address, byte[] buffer, int count) {
+            return UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address, buffer, new IntPtr(count), out IntPtr bytesRead);
+        }
+
         public IntPtr ReadPointer(IntPtr address, long offset = 0) {
-            byte[] win64 = new byte[8];
-            this.Peek(new IntPtr(address.ToInt64() + offset), win64);
-            return new IntPtr(SharlayanBitConverter.TryToInt64(win64, 0));
+            if (_eightByteBuffer == null) {
+                _eightByteBuffer = new byte[8];
+            }
+
+            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            return new IntPtr(SharlayanBitConverter.TryToInt64(_eightByteBuffer, 0));
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false) {

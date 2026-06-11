@@ -71,6 +71,9 @@ internal static class Program {
             return 1;
         }
         Process game = candidates[0];
+        for (int i = 1; i < candidates.Length; i++) {
+            candidates[i].Dispose();
+        }
         Log($"  ✓ {ProcessName} PID {game.Id}");
         try {
             Log($"  ✓ MainModule : {game.MainModule?.FileName}");
@@ -329,12 +332,19 @@ internal static class Program {
         // Live refresh — the one-shot report above is the snapshot for the file;
         // this loop lets the user watch eye-check values change in-game. Skipped
         // when --once is passed (CI / single-shot usage).
-        if (runOnce || directHandler == null) {
+        try {
+            if (runOnce || directHandler == null) {
+                return 0;
+            }
+
+            await RunLiveRefreshLoop(directHandler, liveIntervalMs);
             return 0;
         }
-
-        await RunLiveRefreshLoop(directHandler, liveIntervalMs);
-        return 0;
+        finally {
+            if (directHandler != null) {
+                SharlayanMemoryManager.Instance.RemoveHandler(directHandler.Configuration.ProcessModel.ProcessID);
+            }
+        }
     }
 
     private static async Task RunLiveRefreshLoop(MemoryHandler handler, int intervalMs) {
@@ -765,10 +775,11 @@ internal static class Program {
         }
 
         public void End() {
-            for (int i = _thisFrameLineCount; i < _previousLineCount; i++) {
-                WriteLine(string.Empty);
+            int contentLines = this._thisFrameLineCount;
+            for (int i = contentLines; i < this._previousLineCount; i++) {
+                this.WriteLine(string.Empty);
             }
-            _previousLineCount = Math.Max(_previousLineCount, _thisFrameLineCount);
+            this._previousLineCount = contentLines;
             Console.CursorVisible = true;
         }
 

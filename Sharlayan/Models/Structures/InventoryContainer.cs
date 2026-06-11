@@ -13,5 +13,7 @@ namespace Sharlayan.Models.Structures {
         public int Amount { get; set; }
 
         public int ID { get; set; }
+
+        public int SourceSize { get; set; }
     }
 }

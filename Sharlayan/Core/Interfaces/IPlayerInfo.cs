@@ -186,9 +186,17 @@ namespace Sharlayan.Core.Interfaces {
 
         int ROG_CurrentEXP { get; set; }
 
+        byte RPR { get; set; }
+
+        int RPR_CurrentEXP { get; set; }
+
         byte SAM { get; set; }
 
         int SAM_CurrentEXP { get; set; }
+
+        byte SGE { get; set; }
+
+        int SGE_CurrentEXP { get; set; }
 
         short SkillSpeed { get; set; }
 

@@ -37,7 +37,7 @@ namespace Sharlayan {
             IntPtr partyCountyAddress = this._memoryHandler.Scanner.Locations[Signatures.PARTYCOUNT_KEY];
 
             foreach (KeyValuePair<uint, PartyMember> kvp in this._partyWorkerDelegate.PartyMembers) {
-                result.RemovedPartyMembers.TryAdd(kvp.Key, kvp.Value.Clone());
+                result.RemovedPartyMembers.TryAdd(kvp.Key, kvp.Value);
             }
 
             try {
@@ -69,12 +69,12 @@ namespace Sharlayan {
                                 newEntry = true;
                             }
 
-                            PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(partyMemberMap, existing);
-                            if (!entry.IsValid) {
+                            if (existing != null) {
                                 continue;
                             }
 
-                            if (existing != null) {
+                            PartyMember entry = this._partyMemberResolver.ResolvePartyMemberFromBytes(partyMemberMap, existing);
+                            if (!entry.IsValid) {
                                 continue;
                             }
 

@@ -176,9 +176,17 @@ namespace Sharlayan.Models.Structures {
 
         public int ROG_CurrentEXP { get; set; }
 
+        public int RPR { get; set; }
+
+        public int RPR_CurrentEXP { get; set; }
+
         public int SAM { get; set; }
 
         public int SAM_CurrentEXP { get; set; }
+
+        public int SGE { get; set; }
+
+        public int SGE_CurrentEXP { get; set; }
 
         public int PCT { get; set; }
 

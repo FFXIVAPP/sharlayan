@@ -22,6 +22,10 @@ namespace Sharlayan {
     public partial class Reader {
         private const string UNRESOLVED = "UNRESOLVED";
 
+        private readonly object _chatLogLock = new object();
+
+        private List<byte[]> _chatLogBufferList = new List<byte[]>();
+
         public bool CanGetChatLog() {
             bool canRead = this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.CHATLOG_KEY);
             if (canRead) {
@@ -38,6 +42,7 @@ namespace Sharlayan {
                 return result;
             }
 
+            lock (this._chatLogLock) {
             this._chatLogReader.PreviousArrayIndex = previousArrayIndex;
             this._chatLogReader.PreviousOffset = previousOffset;
 
@@ -47,7 +52,7 @@ namespace Sharlayan {
                 return result;
             }
 
-            List<byte[]> bufferList = new List<byte[]>();
+            this._chatLogBufferList.Clear();
 
             try {
                 this._chatLogReader.ChatLogPointers = new ChatLogPointers {
@@ -69,30 +74,31 @@ namespace Sharlayan {
                         this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
                     }
                     else {
+                        this._chatLogReader.EnsureArrayIndexes();
                         if (currentArrayIndex < this._chatLogReader.PreviousArrayIndex) {
                             IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000);
-                            bufferList.AddRange(bufferEntries);
+                            this._chatLogBufferList.AddRange(bufferEntries);
                             this._chatLogReader.PreviousOffset = 0;
                             this._chatLogReader.PreviousArrayIndex = 0;
                         }
 
                         if (this._chatLogReader.PreviousArrayIndex < currentArrayIndex) {
                             IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, (int) currentArrayIndex);
-                            bufferList.AddRange(bufferEntries);
+                            this._chatLogBufferList.AddRange(bufferEntries);
                         }
 
                         this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
                     }
                 }
 
-                
+
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
             }
 
-            foreach (byte[] bytes in bufferList) {
-                if (!bytes.Any()) {
+            foreach (byte[] bytes in this._chatLogBufferList) {
+                if (bytes.Length == 0) {
                     continue;
                 }
 
@@ -115,6 +121,7 @@ namespace Sharlayan {
             result.PreviousOffset = this._chatLogReader.PreviousOffset;
 
             return result;
+            } // end lock
         }
     }
 }

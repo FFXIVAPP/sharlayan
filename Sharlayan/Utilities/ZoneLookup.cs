@@ -17,7 +17,7 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Resources;
 
     public static class ZoneLookup {
-        private static bool _loading;
+        private static volatile bool _loading;
 
         private static ConcurrentDictionary<uint, MapItem> _zones = new ConcurrentDictionary<uint, MapItem>();
 

@@ -11,7 +11,6 @@
 namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using NLog;
 
@@ -22,8 +21,6 @@ namespace Sharlayan.Utilities {
 
     internal class PartyMemberResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly List<StatusItem> _foundStatuses;
 
         private MemoryHandler _memoryHandler;
 
@@ -38,11 +35,10 @@ namespace Sharlayan.Utilities {
             this._pcWorkerDelegate = pcWorkerDelegate;
             this._npcWorkerDelegate = npcWorkerDelegate;
             this._monsterWorkerDelegate = monsterWorkerDelegate;
-            this._foundStatuses = new List<StatusItem>();
         }
 
         public PartyMember ResolvePartyMemberFromBytes(byte[] source, ActorItem actorItem = null) {
-            this._foundStatuses.Clear();
+            List<StatusItem> foundStatuses = new List<StatusItem>();
 
             if (actorItem != null) {
                 PartyMember memberFromActorItem = new PartyMember {
@@ -78,7 +74,7 @@ namespace Sharlayan.Utilities {
                     entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
                     entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
                     entry.Y = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Y);
-                    entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Z);
+                    entry.Coordinate = new Coordinate(entry.X, entry.Z, entry.Y);
                     entry.ID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.PartyMember.ID);
                     entry.UUID = Guid.NewGuid().ToString();
                     entry.Name = this._memoryHandler.GetStringFromBytes(source, this._memoryHandler.Structures.PartyMember.Name);
@@ -99,7 +95,14 @@ namespace Sharlayan.Utilities {
                         short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
                         uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
+                        StatusItem statusEntry = null;
+                        for (int s = 0; s < entry.StatusItems.Count; s++) {
+                            StatusItem si = entry.StatusItems[s];
+                            if (si.CasterID == casterID && si.StatusID == statusID) {
+                                statusEntry = si;
+                                break;
+                            }
+                        }
 
                         if (statusEntry == null) {
                             statusEntry = new StatusItem();
@@ -112,8 +115,6 @@ namespace Sharlayan.Utilities {
                         statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
                         statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
                         statusEntry.CasterID = casterID;
-
-                        this._foundStatuses.Add(statusEntry);
 
                         try {
                             ActorItem pc = this._pcWorkerDelegate.GetActorItem(statusEntry.CasterID);
@@ -149,7 +150,7 @@ namespace Sharlayan.Utilities {
                                 entry.StatusItems.Add(statusEntry);
                             }
 
-                            this._foundStatuses.Add(statusEntry);
+                            foundStatuses.Add(statusEntry);
                         }
                     }
                 }
@@ -161,7 +162,7 @@ namespace Sharlayan.Utilities {
                     this._memoryHandler.BufferPool.Return(statusMap);
                 }
 
-                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
+                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
