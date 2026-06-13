@@ -218,6 +218,8 @@ namespace Sharlayan.Utilities {
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                                 statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
                                 statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                statusEntry.StatusCategory    = statusInfo.StatusCategory;
+                                statusEntry.CanDispel         = statusInfo.CanDispel;
                                 // Status.Param means "stack count" only for stacking statuses
                                 // (Lumina Status.MaxStacks > 1). For everything else it's an
                                 // unrelated payload (food/potion id, internal modifier) — zero

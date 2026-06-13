@@ -132,6 +132,8 @@ namespace Sharlayan.Utilities {
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                                 statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
                                 statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                statusEntry.StatusCategory    = statusInfo.StatusCategory;
+                                statusEntry.CanDispel         = statusInfo.CanDispel;
                                 // See ActorItemResolver — Status.Param is only a stack count
                                 // for stacking statuses; zero it out otherwise so consumers
                                 // don't surface random Param bytes as fake stacks.

@@ -12,13 +12,25 @@ namespace Sharlayan.Core.Interfaces {
     public interface IStatusItem {
         uint CasterID { get; set; }
 
+        /// <summary>True for detrimental effects removable with Esuna (Lumina Status sheet <c>CanDispel</c>).</summary>
+        bool CanDispel { get; set; }
+
         float Duration { get; set; }
 
+        /// <summary>True when <see cref="StatusCategory"/> == 1 — beneficial (enhancement).</summary>
+        bool IsBeneficial { get; }
+
         bool IsCompanyAction { get; set; }
+
+        /// <summary>True when <see cref="StatusCategory"/> == 2 — detrimental (enfeeblement).</summary>
+        bool IsDetrimental { get; }
 
         ActorItem SourceEntity { get; set; }
 
         byte Stacks { get; set; }
+
+        /// <summary>Raw Lumina <c>StatusCategory</c> byte: 1 = beneficial, 2 = detrimental, 0 = neither/unresolved.</summary>
+        byte StatusCategory { get; set; }
 
         short StatusID { get; set; }
 
