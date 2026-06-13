@@ -11,7 +11,6 @@
 namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Web;
@@ -42,22 +41,30 @@ namespace Sharlayan.Utilities {
         private static readonly Regex SpecialReplacementRegex = new Regex(@"[�]", RegexOptions.Compiled);
 
         public static string ProcessFullLine(string code, byte[] bytes) {
-            string line = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(bytes.ToArray())).Replace("  ", " ");
+            string line = HttpUtility.HtmlDecode(Encoding.UTF8.GetString(bytes)).Replace("  ", " ");
             try {
                 List<byte> newList = new List<byte>();
-                for (int x = 0; x < bytes.Count(); x++) {
+                for (int x = 0; x < bytes.Length; x++) {
                     switch (bytes[x]) {
                         case 2:
                             // special in-game replacements/wrappers
                             // 2 46 5 7 242 2 210 3
                             // 2 29 1 3
                             // remove them
+                            if (x + 2 >= bytes.Length) {
+                                break;
+                            }
+
                             byte length = bytes[x + 2];
                             int limit = length - 1;
                             if (length > 1) {
                                 x = x + 3 + limit;
                             }
                             else {
+                                if (x + 4 >= bytes.Length) {
+                                    break;
+                                }
+
                                 x = x + 4;
                                 newList.Add(32);
                                 newList.Add(bytes[x]);
@@ -137,8 +144,8 @@ namespace Sharlayan.Utilities {
                     }
                 }
 
-                cleaned = Regex.Replace(cleaned, @"[\r\n]+", string.Empty);
-                cleaned = Regex.Replace(cleaned, @"[\x00-\x1F]+", string.Empty);
+                cleaned = NewLineRegex.Replace(cleaned, string.Empty);
+                cleaned = NoPrintingCharactersRegex.Replace(cleaned, string.Empty);
                 line = cleaned;
             }
             catch (Exception) {

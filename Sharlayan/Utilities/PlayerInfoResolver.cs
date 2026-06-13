@@ -71,6 +71,9 @@ namespace Sharlayan.Utilities {
                         entry.DNC = source[this._memoryHandler.Structures.PlayerInfo.DNC];
                         entry.GNB = source[this._memoryHandler.Structures.PlayerInfo.GNB];
 
+                        entry.RPR = source[this._memoryHandler.Structures.PlayerInfo.RPR];
+                        entry.SGE = source[this._memoryHandler.Structures.PlayerInfo.SGE];
+
                         entry.VPR = source[this._memoryHandler.Structures.PlayerInfo.VPR];
                         entry.PCT = source[this._memoryHandler.Structures.PlayerInfo.PCT];
 
@@ -113,6 +116,9 @@ namespace Sharlayan.Utilities {
 
                         entry.DNC_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.DNC_CurrentEXP);
                         entry.GNB_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.GNB_CurrentEXP);
+
+                        entry.RPR_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.RPR_CurrentEXP);
+                        entry.SGE_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.SGE_CurrentEXP);
 
                         entry.VPR_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.VPR_CurrentEXP);
                         entry.PCT_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.PCT_CurrentEXP);

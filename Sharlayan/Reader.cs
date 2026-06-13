@@ -17,17 +17,17 @@ namespace Sharlayan {
 
         private ChatLogReader _chatLogReader;
 
-        private ChatLogWorkerDelegate _chatLogWorkerDelegate = new ChatLogWorkerDelegate();
+        private ChatLogWorkerDelegate _chatLogWorkerDelegate;
 
         private JobResourceResolver _jobResourceResolver;
 
-        private MonsterWorkerDelegate _monsterWorkerDelegate = new MonsterWorkerDelegate();
+        private MonsterWorkerDelegate _monsterWorkerDelegate;
 
-        private NPCWorkerDelegate _npcWorkerDelegate = new NPCWorkerDelegate();
+        private NPCWorkerDelegate _npcWorkerDelegate;
 
-        private PartyWorkerDelegate _partyWorkerDelegate = new PartyWorkerDelegate();
+        private PartyWorkerDelegate _partyWorkerDelegate;
 
-        private PCWorkerDelegate _pcWorkerDelegate = new PCWorkerDelegate();
+        private PCWorkerDelegate _pcWorkerDelegate;
 
         public Reader(MemoryHandler memoryHandler) {
             this._memoryHandler = memoryHandler;

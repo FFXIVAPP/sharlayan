@@ -11,7 +11,6 @@
 namespace Sharlayan.Utilities {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using NLog;
 
@@ -60,13 +59,11 @@ namespace Sharlayan.Utilities {
         public IEnumerable<byte[]> ResolveEntries(int offset, int length) {
             List<byte[]> entries = new List<byte[]>();
 
-            this.EnsureArrayIndexes();
-
             for (int i = offset; i < length; i++) {
                 int currentOffset = this.Indexes[i];
 
                 byte[] entry = this.ResolveEntry(this.PreviousOffset, currentOffset);
-                if (entry.Any()) {
+                if (entry.Length > 0) {
                     entries.Add(entry);
                 }
 
@@ -85,17 +82,11 @@ namespace Sharlayan.Utilities {
                 return result;
             }
 
-            byte[] buffer = this._memoryHandler.BufferPool.Rent(size);
-
             try {
-                this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.LogStart + offset), buffer);
-                Buffer.BlockCopy(buffer, 0, result, 0, size);
+                this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.LogStart + offset), result);
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
-            }
-            finally {
-                this._memoryHandler.BufferPool.Return(buffer);
             }
 
             return result;

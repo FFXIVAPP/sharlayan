@@ -9,11 +9,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Models.ReadResults {
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
     using Sharlayan.Core;
 
     public class ActionResult {
-        public ConcurrentBag<ActionContainer> ActionContainers { get; internal set; } = new ConcurrentBag<ActionContainer>();
+        public List<ActionContainer> ActionContainers { get; internal set; } = new List<ActionContainer>(20);
     }
 }

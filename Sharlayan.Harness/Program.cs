@@ -71,6 +71,9 @@ internal static class Program {
             return 1;
         }
         Process game = candidates[0];
+        for (int i = 1; i < candidates.Length; i++) {
+            candidates[i].Dispose();
+        }
         Log($"  ✓ {ProcessName} PID {game.Id}");
         try {
             Log($"  ✓ MainModule : {game.MainModule?.FileName}");
@@ -329,12 +332,19 @@ internal static class Program {
         // Live refresh — the one-shot report above is the snapshot for the file;
         // this loop lets the user watch eye-check values change in-game. Skipped
         // when --once is passed (CI / single-shot usage).
-        if (runOnce || directHandler == null) {
+        try {
+            if (runOnce || directHandler == null) {
+                return 0;
+            }
+
+            await RunLiveRefreshLoop(directHandler, liveIntervalMs);
             return 0;
         }
-
-        await RunLiveRefreshLoop(directHandler, liveIntervalMs);
-        return 0;
+        finally {
+            if (directHandler != null) {
+                SharlayanMemoryManager.Instance.RemoveHandler(directHandler.Configuration.ProcessModel.ProcessID);
+            }
+        }
     }
 
     private static async Task RunLiveRefreshLoop(MemoryHandler handler, int intervalMs) {
@@ -518,38 +528,84 @@ internal static class Program {
             log($"    ✗ EyeCheck: {ex.GetType().Name}: {ex.Message}");
         }
 
-        // [3c.1] STATUS LOCALIZATION — prints the local player's currently-active status
-        // entries showing both StatusName (localized per Configuration.GameLanguage) and the
-        // new StatusNameEnglish (always English regardless of language). ActorItem.StatusItems
-        // can hold stale slots (expired Duration=0 entries, or slots whose StatusID is out of
-        // the XIVDatabase range and resolves to "???"); we skip both so the display only
-        // shows what's actually applied right now.
+        // [3c.1] STATUS EFFECTS — prints currently-active status entries for the local
+        // player, the current target, and party members. Shows both StatusName (localized
+        // per Configuration.GameLanguage) and StatusNameEnglish, plus the category fields
+        // sourced from Lumina's Status sheet: StatusCategory (raw byte), IsBeneficial /
+        // IsDetrimental (derived), and CanDispel (Esuna-able). The target dump is the
+        // easiest place to eye-check IsDetrimental — apply a DoT to a striking dummy and
+        // it should show [D]; food/self-buffs on the player should show [B].
+        // ActorItem.StatusItems can hold stale slots (expired Duration=0 entries, or slots
+        // whose StatusID is out of the XIVDatabase range and resolves to "???"); we skip
+        // both so the display only shows what's actually applied right now.
         try {
-            var dpStatus = handler.Reader.GetCurrentPlayer()?.Entity;
-            if (dpStatus != null) {
-                log(string.Empty);
-                log($"  [3c.1] LOCAL PLAYER STATUSES (GameLanguage={handler.Configuration.GameLanguage})");
+            // Shared per-entry dump. Returns lines printed so callers can show an
+            // "(empty)" placeholder. Keeps local-player / target / party output identical.
+            int DumpStatuses(string label, IEnumerable<Sharlayan.Core.StatusItem>? statuses, int cap = 8) {
+                log($"    {label}:");
                 int shown = 0;
-                if (dpStatus.StatusItems != null) {
-                    foreach (var s in dpStatus.StatusItems) {
+                if (statuses != null) {
+                    foreach (var s in statuses) {
                         if (!s.IsValid()) continue;
                         // Hard filters: expired slots (Duration <= 0) and IDs the XIVDatabase
                         // didn't resolve (StatusNameEnglish == "???") are residual / garbage.
-                        if (s.Duration <= 0f) continue;
-                        if (string.IsNullOrEmpty(s.StatusNameEnglish) || s.StatusNameEnglish == Sharlayan.Constants.UNKNOWN_LOCALIZED_NAME) continue;
-                        if (shown++ >= 6) break;
-                        string en = s.StatusNameEnglish;
-                        string loc = s.StatusName ?? "(null)";
-                        log($"    [{s.StatusID,4}] StatusName=\"{loc}\"  StatusNameEnglish=\"{en}\"  Stacks={s.Stacks}  Duration={s.Duration:F1}s");
+                        // Exception: permanent statuses (tank stances, chocobo buffs) read
+                        // Duration <= 0 but carry a resolved name — keep those.
+                        bool resolved = !string.IsNullOrEmpty(s.StatusNameEnglish) && s.StatusNameEnglish != Sharlayan.Constants.UNKNOWN_LOCALIZED_NAME;
+                        if (!resolved) continue;
+                        if (shown++ >= cap) break;
+                        // B = beneficial (StatusCategory 1), D = detrimental (2), - = neither (0).
+                        string cat = s.IsBeneficial ? "B" : s.IsDetrimental ? "D" : "-";
+                        log($"      [{s.StatusID,4}] [{cat}] \"{s.StatusName}\" (en \"{s.StatusNameEnglish}\")  StatusCategory={s.StatusCategory}  IsBeneficial={s.IsBeneficial}  IsDetrimental={s.IsDetrimental}  CanDispel={s.CanDispel}  Stacks={s.Stacks}  Duration={s.Duration:F1}s");
                     }
                 }
                 if (shown == 0) {
-                    log("    (no active statuses on local player)");
+                    log("      (none active)");
                 }
+                return shown;
+            }
+
+            log(string.Empty);
+            log($"  [3c.1] STATUS EFFECTS (GameLanguage={handler.Configuration.GameLanguage})  [B]=beneficial [D]=detrimental [-]=neither");
+
+            var dpStatus = handler.Reader.GetCurrentPlayer()?.Entity;
+            DumpStatuses($"LocalPlayer \"{dpStatus?.Name}\"", dpStatus?.StatusItems);
+
+            // Current target — debuffs the player applies (DoTs, Vulnerability Up, ...)
+            // land here, so this is where IsDetrimental / CanDispel actually light up.
+            try {
+                var targetStatus = handler.Reader.GetTargetInfo()?.TargetInfo?.CurrentTarget;
+                if (targetStatus != null) {
+                    DumpStatuses($"CurrentTarget \"{targetStatus.Name}\"", targetStatus.StatusItems);
+                }
+                else {
+                    log("    CurrentTarget: (no target)");
+                }
+            }
+            catch (Exception ex) {
+                log($"    ✗ Target statuses: {ex.GetType().Name}: {ex.Message}");
+            }
+
+            // Party members (excluding the local player, who is also in the party list).
+            try {
+                if (handler.Reader.CanGetPartyMembers()) {
+                    var party = handler.Reader.GetPartyMembers()?.PartyMembers;
+                    if (party != null) {
+                        int dumped = 0;
+                        foreach (var (id, member) in party) {
+                            if (member == null || (dpStatus != null && id == dpStatus.ID)) continue;
+                            if (dumped++ >= 3) break; // cap — light-party-sized sample is enough for an eye-check
+                            DumpStatuses($"Party \"{member.Name}\"", member.StatusItems, cap: 4);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                log($"    ✗ Party statuses: {ex.GetType().Name}: {ex.Message}");
             }
         }
         catch (Exception ex) {
-            log($"    ✗ StatusLocalization: {ex.GetType().Name}: {ex.Message}");
+            log($"    ✗ StatusEffects: {ex.GetType().Name}: {ex.Message}");
         }
 
         // [3c.3] ENMITY TABLES — surfaces both enmity-related signatures in one section so
@@ -765,10 +821,11 @@ internal static class Program {
         }
 
         public void End() {
-            for (int i = _thisFrameLineCount; i < _previousLineCount; i++) {
-                WriteLine(string.Empty);
+            int contentLines = this._thisFrameLineCount;
+            for (int i = contentLines; i < this._previousLineCount; i++) {
+                this.WriteLine(string.Empty);
             }
-            _previousLineCount = Math.Max(_previousLineCount, _thisFrameLineCount);
+            this._previousLineCount = contentLines;
             Console.CursorVisible = true;
         }
 

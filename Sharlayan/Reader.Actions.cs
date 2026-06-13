@@ -133,7 +133,7 @@ namespace Sharlayan {
 
                     ActionItem item = new ActionItem {
                         Name = name,
-                        ID = SharlayanBitConverter.TryToInt16(hotbarMap, this._memoryHandler.Structures.HotBarItem.ID),
+                        ID = (int)SharlayanBitConverter.TryToUInt32(hotbarMap, this._memoryHandler.Structures.HotBarItem.ID),
                         KeyBinds = this._memoryHandler.GetStringFromBytes(hotbarMap, this._memoryHandler.Structures.HotBarItem.KeyBinds),
                         Slot = slot,
                     };

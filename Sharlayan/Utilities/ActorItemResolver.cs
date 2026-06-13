@@ -10,8 +10,8 @@
 
 namespace Sharlayan.Utilities {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Linq;
 
     using NLog;
 
@@ -23,7 +23,11 @@ namespace Sharlayan.Utilities {
     internal class ActorItemResolver {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly List<StatusItem> _foundStatuses;
+        // Fallback names for nameless actors, keyed by type id so the interpolated
+        // string is built once per distinct id instead of once per actor per poll.
+        // Key spaces are bounded (EventObjectTypeID is ushort, TypeID is byte).
+        private static readonly ConcurrentDictionary<uint, string> _eventObjectFallbackNames = new ConcurrentDictionary<uint, string>();
+        private static readonly ConcurrentDictionary<uint, string> _typeIDFallbackNames = new ConcurrentDictionary<uint, string>();
 
         private MemoryHandler _memoryHandler;
 
@@ -38,11 +42,10 @@ namespace Sharlayan.Utilities {
             this._pcWorkerDelegate = pcWorkerDelegate;
             this._npcWorkerDelegate = npcWorkerDelegate;
             this._monsterWorkerDelegate = monsterWorkerDelegate;
-            this._foundStatuses = new List<StatusItem>();
         }
 
         public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
-            this._foundStatuses.Clear();
+            List<StatusItem> foundStatuses = new List<StatusItem>();
 
             ActorItem entry = existingActorItem ?? new ActorItem();
 
@@ -178,7 +181,14 @@ namespace Sharlayan.Utilities {
                         short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
                         uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
 
-                        StatusItem statusEntry = entry.StatusItems.FirstOrDefault(x => x.CasterID == casterID && x.StatusID == statusID);
+                        StatusItem statusEntry = null;
+                        for (int s = 0; s < entry.StatusItems.Count; s++) {
+                            StatusItem si = entry.StatusItems[s];
+                            if (si.CasterID == casterID && si.StatusID == statusID) {
+                                statusEntry = si;
+                                break;
+                            }
+                        }
 
                         if (statusEntry == null) {
                             statusEntry = new StatusItem();
@@ -208,6 +218,8 @@ namespace Sharlayan.Utilities {
                                 statusEntry.IsCompanyAction = statusInfo.CompanyAction;
                                 statusEntry.StatusName        = LocalizationHelper.SelectLocalized(statusInfo.Name, this._memoryHandler.Configuration.GameLanguage);
                                 statusEntry.StatusNameEnglish = statusInfo.Name?.English ?? Constants.UNKNOWN_LOCALIZED_NAME;
+                                statusEntry.StatusCategory    = statusInfo.StatusCategory;
+                                statusEntry.CanDispel         = statusInfo.CanDispel;
                                 // Status.Param means "stack count" only for stacking statuses
                                 // (Lumina Status.MaxStacks > 1). For everything else it's an
                                 // unrelated payload (food/potion id, internal modifier) — zero
@@ -227,7 +239,7 @@ namespace Sharlayan.Utilities {
                                 entry.StatusItems.Add(statusEntry);
                             }
 
-                            this._foundStatuses.Add(statusEntry);
+                            foundStatuses.Add(statusEntry);
                         }
                     }
                 }
@@ -239,15 +251,25 @@ namespace Sharlayan.Utilities {
                     this._memoryHandler.BufferPool.Return(statusMap);
                 }
 
-                entry.StatusItems.RemoveAll(x => !this._foundStatuses.Contains(x));
+                entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
 
                 // handle empty names
                 if (string.IsNullOrEmpty(entry.Name)) {
                     if (entry.Type == Actor.Type.EventObject) {
-                        entry.Name = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                        if (!_eventObjectFallbackNames.TryGetValue(entry.EventObjectTypeID, out string fallbackName)) {
+                            fallbackName = $"{nameof(entry.EventObjectTypeID)}: {entry.EventObjectTypeID}";
+                            _eventObjectFallbackNames.TryAdd(entry.EventObjectTypeID, fallbackName);
+                        }
+
+                        entry.Name = fallbackName;
                     }
                     else {
-                        entry.Name = $"{nameof(entry.TypeID)}: {entry.TypeID}";
+                        if (!_typeIDFallbackNames.TryGetValue(entry.TypeID, out string fallbackName)) {
+                            fallbackName = $"{nameof(entry.TypeID)}: {entry.TypeID}";
+                            _typeIDFallbackNames.TryAdd(entry.TypeID, fallbackName);
+                        }
+
+                        entry.Name = fallbackName;
                     }
                 }
             }

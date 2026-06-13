@@ -39,14 +39,11 @@ namespace Sharlayan {
                 return result;
             }
 
-            IntPtr targetAddress = IntPtr.Zero;
-
             int limit = this._memoryHandler.Structures.ActorItem.EntityCount;
             int sourceSize = this._memoryHandler.Structures.ActorItem.SourceSize;
 
             byte[] characterAddressMap = this._memoryHandler.BufferPool.Rent(8 * limit);
             byte[] sourceMap = this._memoryHandler.BufferPool.Rent(sourceSize);
-            byte[] targetInfoMap = this._memoryHandler.BufferPool.Rent(128);
 
             try {
                 this._memoryHandler.GetByteArray(this._memoryHandler.Scanner.Locations[Signatures.CHARMAP_KEY], characterAddressMap);
@@ -74,17 +71,10 @@ namespace Sharlayan {
                     this._uniqueCharacterAddresses[characterAddress] = characterAddress;
                 }
 
-                foreach (KeyValuePair<uint, ActorItem> kvp in this._monsterWorkerDelegate.ActorItems) {
-                    result.RemovedMonsters.TryAdd(kvp.Key, kvp.Value.Clone());
-                }
-
-                foreach (KeyValuePair<uint, ActorItem> kvp in this._npcWorkerDelegate.ActorItems) {
-                    result.RemovedNPCs.TryAdd(kvp.Key, kvp.Value.Clone());
-                }
-
-                foreach (KeyValuePair<uint, ActorItem> kvp in this._pcWorkerDelegate.ActorItems) {
-                    result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
-                }
+                // Track IDs seen this scan to determine removals lazily after the loop.
+                HashSet<uint> presentMonsterIDs = new HashSet<uint>();
+                HashSet<uint> presentNPCIDs = new HashSet<uint>();
+                HashSet<uint> presentPCIDs = new HashSet<uint>();
 
                 (uint mapID, uint mapIndex, uint mapTerritory) = this.GetMapInfo();
 
@@ -102,21 +92,17 @@ namespace Sharlayan {
 
                         switch (Type) {
                             case Actor.Type.Monster:
-                                if (result.RemovedMonsters.ContainsKey(ID)) {
-                                    result.RemovedMonsters.TryRemove(ID, out ActorItem removedMonster);
-                                    existing = this._monsterWorkerDelegate.GetActorItem(ID);
-                                }
-                                else {
+                                presentMonsterIDs.Add(ID);
+                                existing = this._monsterWorkerDelegate.GetActorItem(ID);
+                                if (existing == null) {
                                     newEntry = true;
                                 }
 
                                 break;
                             case Actor.Type.PC:
-                                if (result.RemovedPCs.ContainsKey(ID)) {
-                                    result.RemovedPCs.TryRemove(ID, out ActorItem removedPC);
-                                    existing = this._pcWorkerDelegate.GetActorItem(ID);
-                                }
-                                else {
+                                presentPCIDs.Add(ID);
+                                existing = this._pcWorkerDelegate.GetActorItem(ID);
+                                if (existing == null) {
                                     newEntry = true;
                                 }
 
@@ -124,21 +110,17 @@ namespace Sharlayan {
                             case Actor.Type.NPC:
                             case Actor.Type.Aetheryte:
                             case Actor.Type.EventObject:
-                                if (result.RemovedNPCs.ContainsKey(NPCID2)) {
-                                    result.RemovedNPCs.TryRemove(NPCID2, out ActorItem removedNPC);
-                                    existing = this._npcWorkerDelegate.GetActorItem(NPCID2);
-                                }
-                                else {
+                                presentNPCIDs.Add(NPCID2);
+                                existing = this._npcWorkerDelegate.GetActorItem(NPCID2);
+                                if (existing == null) {
                                     newEntry = true;
                                 }
 
                                 break;
                             default:
-                                if (result.RemovedNPCs.ContainsKey(ID)) {
-                                    result.RemovedNPCs.TryRemove(ID, out ActorItem removedNPC);
-                                    existing = this._npcWorkerDelegate.GetActorItem(ID);
-                                }
-                                else {
+                                presentNPCIDs.Add(ID);
+                                existing = this._npcWorkerDelegate.GetActorItem(ID);
+                                if (existing == null) {
                                     newEntry = true;
                                 }
 
@@ -156,7 +138,7 @@ namespace Sharlayan {
                         }
 
                         if (entry.Type == Actor.Type.EventObject) {
-                            (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(targetAddress);
+                            (ushort EventObjectTypeID, Actor.EventObjectType EventObjectType) = this.GetEventObjectType(characterAddress);
                             entry.EventObjectTypeID = EventObjectTypeID;
                             entry.EventObjectType = EventObjectType;
                         }
@@ -164,13 +146,6 @@ namespace Sharlayan {
                         entry.MapID = mapID;
                         entry.MapIndex = mapIndex;
                         entry.MapTerritory = mapTerritory;
-
-                        if (isFirstEntry) {
-                            if (targetAddress.ToInt64() > 0) {
-                                this._memoryHandler.GetByteArray(targetAddress, targetInfoMap);
-                                entry.TargetID = (int) SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.ActorItem.ID);
-                            }
-                        }
 
                         if (!entry.IsValid) {
                             result.NewMonsters.TryRemove(entry.ID, out ActorItem _);
@@ -211,6 +186,25 @@ namespace Sharlayan {
                     }
                     catch (Exception ex) {
                         this._memoryHandler.RaiseException(Logger, ex);
+                    }
+                }
+
+                // Clone only the actors genuinely absent from this scan into the Removed sets.
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._monsterWorkerDelegate.ActorItems) {
+                    if (!presentMonsterIDs.Contains(kvp.Key)) {
+                        result.RemovedMonsters.TryAdd(kvp.Key, kvp.Value.Clone());
+                    }
+                }
+
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._npcWorkerDelegate.ActorItems) {
+                    if (!presentNPCIDs.Contains(kvp.Key)) {
+                        result.RemovedNPCs.TryAdd(kvp.Key, kvp.Value.Clone());
+                    }
+                }
+
+                foreach (KeyValuePair<uint, ActorItem> kvp in this._pcWorkerDelegate.ActorItems) {
+                    if (!presentPCIDs.Contains(kvp.Key)) {
+                        result.RemovedPCs.TryAdd(kvp.Key, kvp.Value.Clone());
                     }
                 }
 
@@ -264,7 +258,6 @@ namespace Sharlayan {
             finally {
                 this._memoryHandler.BufferPool.Return(characterAddressMap);
                 this._memoryHandler.BufferPool.Return(sourceMap);
-                this._memoryHandler.BufferPool.Return(targetInfoMap);
             }
 
             result.CurrentMonsters = this._monsterWorkerDelegate.ActorItems;

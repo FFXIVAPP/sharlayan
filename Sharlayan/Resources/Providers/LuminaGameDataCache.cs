@@ -27,7 +27,7 @@ namespace Sharlayan.Resources.Providers {
     using Lumina;
 
     internal static class LuminaGameDataCache {
-        private static readonly ConcurrentDictionary<string, GameData> _cache = new ConcurrentDictionary<string, GameData>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, Lazy<GameData>> _cache = new ConcurrentDictionary<string, Lazy<GameData>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Returns the cached <see cref="GameData"/> for the configuration's sqpack path,
@@ -40,7 +40,7 @@ namespace Sharlayan.Resources.Providers {
                 return null;
             }
             try {
-                return _cache.GetOrAdd(sqpack, CreateGameData);
+                return _cache.GetOrAdd(sqpack, k => new Lazy<GameData>(() => CreateGameData(k))).Value;
             }
             catch {
                 return null;
@@ -54,7 +54,7 @@ namespace Sharlayan.Resources.Providers {
         /// </summary>
         public static GameData Get(SharlayanConfiguration configuration) {
             string sqpack = ResolveSqpackPathStrict(configuration);
-            return _cache.GetOrAdd(sqpack, CreateGameData);
+            return _cache.GetOrAdd(sqpack, k => new Lazy<GameData>(() => CreateGameData(k))).Value;
         }
 
         private static GameData CreateGameData(string sqpack) {
@@ -74,7 +74,13 @@ namespace Sharlayan.Resources.Providers {
                 string rootSqpack = Path.Combine(configuration.GameInstallPath, "sqpack");
                 if (Directory.Exists(rootSqpack)) return rootSqpack;
             }
-            string exePath = configuration?.ProcessModel?.Process?.MainModule?.FileName;
+            string exePath;
+            try {
+                exePath = configuration?.ProcessModel?.Process?.MainModule?.FileName;
+            }
+            catch {
+                return null;
+            }
             if (string.IsNullOrWhiteSpace(exePath)) return null;
             string gameDir = Path.GetDirectoryName(exePath);
             if (string.IsNullOrWhiteSpace(gameDir)) return null;

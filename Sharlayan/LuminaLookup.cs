@@ -28,14 +28,17 @@ namespace Sharlayan {
     using Lumina.Excel;
     using Lumina.Excel.Sheets;
 
+    using System.IO;
+
     using Sharlayan.Resources.Providers;
 
     public static class LuminaLookup {
-        // One name→row-id dictionary per sheet type. Process-wide cache (not Reader-scoped)
+        // One name→row-id dictionary per (sheet type, sqpack path) pair. Process-wide cache
         // because the underlying Lumina GameData is also process-wide via LuminaGameDataCache.
-        // Keyed on the typeof(T) Excel row struct.
-        private static readonly ConcurrentDictionary<Type, IReadOnlyDictionary<string, uint>> _cache =
-            new ConcurrentDictionary<Type, IReadOnlyDictionary<string, uint>>();
+        // Keyed on (Type, string) so two distinct game installs in the same process each get
+        // their own lookup table (F26).
+        private static readonly ConcurrentDictionary<(Type, string), IReadOnlyDictionary<string, uint>> _cache =
+            new ConcurrentDictionary<(Type, string), IReadOnlyDictionary<string, uint>>();
 
         // FFXIV's four primary client languages. We probe each in turn and union the results
         // so callers can pass a name from any language and get the same row id back.
@@ -89,16 +92,41 @@ namespace Sharlayan {
         /// <summary>
         /// Lower-level entry point: given a sheet row type and a name selector, return the
         /// row id whose name matches. Useful for callers that need a sheet not exposed by
-        /// the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> so
-        /// each unique row type gets one lookup table built across all 4 languages.
+        /// the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> and
+        /// sqpack path so each unique (row type, game install) pair gets one lookup table.
         /// </summary>
         public static uint? FindRowId<T>(SharlayanConfiguration configuration, string name, Func<T, string> nameSelector)
             where T : struct, IExcelRow<T> {
             if (string.IsNullOrEmpty(name) || configuration == null || nameSelector == null) {
                 return null;
             }
-            IReadOnlyDictionary<string, uint> dict = _cache.GetOrAdd(typeof(T), _ => BuildLookup(configuration, nameSelector));
+            // F26: include sqpack path in the cache key so two distinct game installs in the
+            // same process each get their own lookup table.
+            string sqpack = ResolveSqpackKey(configuration);
+            IReadOnlyDictionary<string, uint> dict = _cache.GetOrAdd((typeof(T), sqpack), _ => BuildLookup(configuration, nameSelector));
             return dict.TryGetValue(name, out uint id) ? id : (uint?)null;
+        }
+
+        // Derive the cache key string from the configuration's sqpack path using the same
+        // resolution logic as LuminaGameDataCache (explicit GameInstallPath first, then the
+        // running process's MainModule directory). Returns an empty string if unresolvable
+        // so the lookup still works as a single shared bucket for the common single-install case.
+        private static string ResolveSqpackKey(SharlayanConfiguration configuration) {
+            if (!string.IsNullOrWhiteSpace(configuration?.GameInstallPath)) {
+                string gameSqpack = Path.Combine(configuration.GameInstallPath, "game", "sqpack");
+                if (Directory.Exists(gameSqpack)) return gameSqpack.ToLowerInvariant();
+                string rootSqpack = Path.Combine(configuration.GameInstallPath, "sqpack");
+                if (Directory.Exists(rootSqpack)) return rootSqpack.ToLowerInvariant();
+            }
+            try {
+                string exePath = configuration?.ProcessModel?.Process?.MainModule?.FileName;
+                if (!string.IsNullOrWhiteSpace(exePath)) {
+                    string guess = Path.Combine(Path.GetDirectoryName(exePath) ?? string.Empty, "sqpack");
+                    if (Directory.Exists(guess)) return guess.ToLowerInvariant();
+                }
+            }
+            catch { }
+            return string.Empty;
         }
 
         /// <summary>

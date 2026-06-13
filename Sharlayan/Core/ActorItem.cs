@@ -162,6 +162,7 @@ namespace Sharlayan.Core {
                         Stacks = statusItem.Stacks,
                         StatusID = statusItem.StatusID,
                         StatusName = statusItem.StatusName,
+                        StatusNameEnglish = statusItem.StatusNameEnglish,
                         TargetName = statusItem.TargetName,
                     });
             }

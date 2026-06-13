@@ -56,14 +56,11 @@ namespace Sharlayan {
                 return result;
             }
 
-            IntPtr targetAddress = IntPtr.Zero;
-
             int limit = this._memoryHandler.Structures.ActorItem.EntityCount;
             int sourceSize = this._memoryHandler.Structures.ActorItem.SourceSize;
 
             byte[] characterAddressMap = this._memoryHandler.BufferPool.Rent(8);
             byte[] sourceMap = this._memoryHandler.BufferPool.Rent(sourceSize);
-            byte[] targetInfoMap = this._memoryHandler.BufferPool.Rent(128);
 
             try {
                 this._memoryHandler.GetByteArray(this._memoryHandler.Scanner.Locations[Signatures.CHARMAP_KEY], characterAddressMap);
@@ -80,11 +77,6 @@ namespace Sharlayan {
                     result.MapID = mapID;
                     result.MapIndex = mapIndex;
                     result.MapTerritory = mapTerritory;
-
-                    if (targetAddress.ToInt64() > 0) {
-                        this._memoryHandler.GetByteArray(targetAddress, targetInfoMap);
-                        result.TargetID = (int) SharlayanBitConverter.TryToUInt32(targetInfoMap, this._memoryHandler.Structures.ActorItem.ID);
-                    }
                 }
             }
             catch (Exception ex) {
@@ -93,7 +85,6 @@ namespace Sharlayan {
             finally {
                 this._memoryHandler.BufferPool.Return(characterAddressMap);
                 this._memoryHandler.BufferPool.Return(sourceMap);
-                this._memoryHandler.BufferPool.Return(targetInfoMap);
             }
 
             return result;
@@ -125,7 +116,7 @@ namespace Sharlayan {
                 }
 
                 if (this.CanGetAgroEntities()) {
-                    short agroCount = this._memoryHandler.GetInt16(this._memoryHandler.Scanner.Locations[Signatures.AGRO_COUNT_KEY]);
+                    int agroCount = this._memoryHandler.GetInt32(this._memoryHandler.Scanner.Locations[Signatures.AGRO_COUNT_KEY]);
                     IntPtr agroStructure = (IntPtr) this._memoryHandler.Scanner.Locations[Signatures.AGROMAP_KEY];
 
                     if (agroCount > 0 && agroCount < 32 && agroStructure.ToInt64() > 0) {

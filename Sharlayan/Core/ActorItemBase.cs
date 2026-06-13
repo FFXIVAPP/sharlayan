@@ -89,13 +89,13 @@ namespace Sharlayan.Core {
             float distanceX = (float) Math.Abs(compare.X - this.X);
             float distanceY = (float) Math.Abs(compare.Y - this.Y);
             float distanceZ = (float) Math.Abs(compare.Z - this.Z);
-            return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2) + Math.Pow(distanceZ, 2));
+            return (float) Math.Sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
         }
 
         public float GetHorizontalDistanceTo(ActorItem compare) {
             float distanceX = (float) Math.Abs(compare.X - this.X);
             float distanceY = (float) Math.Abs(compare.Y - this.Y);
-            return (float) Math.Sqrt(Math.Pow(distanceX, 2) + Math.Pow(distanceY, 2));
+            return (float) Math.Sqrt(distanceX * distanceX + distanceY * distanceY);
         }
 
         private double safeDivide(double a, double b) {

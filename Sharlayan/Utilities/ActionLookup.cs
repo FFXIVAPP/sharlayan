@@ -21,7 +21,7 @@ namespace Sharlayan.Utilities {
     public static class ActionLookup {
         private static ConcurrentDictionary<uint, ActionItem> _actions = new ConcurrentDictionary<uint, ActionItem>();
 
-        private static bool _loading;
+        private static volatile bool _loading;
 
         private static ActionItem DefaultActionInfo = new ActionItem {
             Name = new Localization {
@@ -39,18 +39,10 @@ namespace Sharlayan.Utilities {
         private static List<ActionItem> _healingOverTimeActions;
 
         public static List<ActionItem> DamageOverTimeActions() {
-            if (_damageOverTimeActions.Any()) {
-                return _damageOverTimeActions;
-            }
-
             return _damageOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsDamageOverTime).Select(kvp => kvp.Value).ToList();
         }
 
         public static List<ActionItem> HealingOverTimeActions() {
-            if (_healingOverTimeActions.Any()) {
-                return _healingOverTimeActions;
-            }
-
             return _healingOverTimeActions ??= _actions.Where(kvp => kvp.Value.IsHealingOverTime).Select(kvp => kvp.Value).ToList();
         }
 

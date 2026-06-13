@@ -54,12 +54,51 @@
             message timestamp
             </summary>
         </member>
+        <member name="P:Sharlayan.Core.Interfaces.IStatusItem.CanDispel">
+            <summary>True for detrimental effects removable with Esuna (Lumina Status sheet <c>CanDispel</c>).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.Interfaces.IStatusItem.IsBeneficial">
+            <summary>True when <see cref="P:Sharlayan.Core.Interfaces.IStatusItem.StatusCategory"/> == 1 — beneficial (enhancement).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.Interfaces.IStatusItem.IsDetrimental">
+            <summary>True when <see cref="P:Sharlayan.Core.Interfaces.IStatusItem.StatusCategory"/> == 2 — detrimental (enfeeblement).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.Interfaces.IStatusItem.StatusCategory">
+            <summary>Raw Lumina <c>StatusCategory</c> byte: 1 = beneficial, 2 = detrimental, 0 = neither/unresolved.</summary>
+        </member>
         <member name="P:Sharlayan.Core.Interfaces.IStatusItem.StatusNameEnglish">
             <summary>
             Always-English name regardless of <see cref="P:Sharlayan.SharlayanConfiguration.GameLanguage"/>.
             Use for programmatic comparisons against hardcoded English literals (e.g.
             <c>statuses.Find(s =&gt; s.StatusNameEnglish == "Iron Will")</c>); use
             <see cref="P:Sharlayan.Core.Interfaces.IStatusItem.StatusName"/> for display.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.StatusItem.CanDispel">
+            <summary>
+            True for detrimental effects removable with Esuna (Lumina Status sheet
+            <c>CanDispel</c> column — the statuses drawn with a white bar above the
+            icon in-game). Always false when <see cref="P:Sharlayan.Core.StatusItem.IsDetrimental"/> is false.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.StatusItem.IsBeneficial">
+            <summary>
+            True when <see cref="P:Sharlayan.Core.StatusItem.StatusCategory"/> == 1 — a beneficial effect
+            (enhancement; green/up-arrow icon border in the game UI).
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.StatusItem.IsDetrimental">
+            <summary>
+            True when <see cref="P:Sharlayan.Core.StatusItem.StatusCategory"/> == 2 — a detrimental effect
+            (enfeeblement; red/down-arrow icon border in the game UI).
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.StatusItem.StatusCategory">
+            <summary>
+            Raw Lumina Status sheet <c>StatusCategory</c> byte: 1 = beneficial,
+            2 = detrimental, 0 = neither (system statuses, or the status id didn't
+            resolve against XIVDatabase). Prefer the <see cref="P:Sharlayan.Core.StatusItem.IsBeneficial"/> /
+            <see cref="P:Sharlayan.Core.StatusItem.IsDetrimental"/> conveniences unless you need the raw value.
             </summary>
         </member>
         <member name="P:Sharlayan.Core.StatusItem.StatusNameEnglish">
@@ -104,8 +143,8 @@
             <summary>
             Lower-level entry point: given a sheet row type and a name selector, return the
             row id whose name matches. Useful for callers that need a sheet not exposed by
-            the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> so
-            each unique row type gets one lookup table built across all 4 languages.
+            the dedicated helpers above. The cache is keyed on <typeparamref name="T"/> and
+            sqpack path so each unique (row type, game install) pair gets one lookup table.
             </summary>
         </member>
         <member name="M:Sharlayan.LuminaLookup.ClearCache">
@@ -322,6 +361,20 @@
             encodes something other than a stack count (food/potion id, or unrelated meta
             for ordinary buffs), so resolvers should leave <c>StatusItem.Stacks</c> at 0
             rather than surfacing the Param byte as a misleading "stacks" value.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.XIVDatabase.StatusItem.StatusCategory">
+            <summary>
+            Lumina Status sheet <c>StatusCategory</c> column: 1 = beneficial (enhancement —
+            green/up-arrow border in the game UI), 2 = detrimental (enfeeblement — red/down-arrow),
+            0 = neither (system statuses). This is the same discriminator the game's own
+            party-list / status HUD uses to colour the icon border.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Models.XIVDatabase.StatusItem.CanDispel">
+            <summary>
+            Lumina Status sheet <c>CanDispel</c> column — true for detrimental effects
+            removable with Esuna (the ones drawn with a white bar above the icon in-game).
             </summary>
         </member>
         <member name="M:Sharlayan.Reader.GetZoneName(System.UInt32,System.String)">

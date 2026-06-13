@@ -119,6 +119,10 @@ namespace Sharlayan.Resources.Providers {
                         // this, Stacks ends up showing arbitrary Param bytes for every
                         // status as if everything stacks.
                         MaxStacks = row.MaxStacks,
+                        // 1 = beneficial, 2 = detrimental, 0 = neither — same discriminator
+                        // the game UI uses for the green/red status icon border.
+                        StatusCategory = row.StatusCategory,
+                        CanDispel = row.CanDispel,
                     };
                     statusEffects.AddOrUpdate(id, item, (_, _) => item);
                 }

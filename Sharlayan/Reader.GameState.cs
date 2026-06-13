@@ -23,6 +23,7 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Resources.Mappers;
     using Sharlayan.Resources.Providers;
+    using Sharlayan.Utilities;
 
     public partial class Reader {
         // Every inner offset used by GetGameState is derived at class init via
@@ -77,6 +78,21 @@ namespace Sharlayan {
         private uint[] _scenePresetFadeTypeRowIds;
         private Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.BGMFadeType> _bgmFadeTypeSheet;
         private bool _sheetsAttempted;
+        // F88: cache resolved ExtractText() results keyed by row id — these strings are stable
+        // within a zone (weather/BGM rarely change) so caching avoids per-poll allocations.
+        private uint _cachedWeatherId;
+        private string _cachedWeatherName;
+        private ushort _cachedBgmId;
+        private string _cachedBgmFile;
+        // Per-scene BGM file cache: scene PlayingBgmId → file path string.
+        private ushort[] _cachedSceneBgmIds;
+        private string[] _cachedSceneBgmFiles;
+        // F20: pre-allocated FFT scratch buffer — avoids a new byte[32] on every GetGameState poll.
+        private readonly byte[] _fftScratch = new byte[BgmAudibleBinCount * sizeof(float)];
+        // F21: pre-allocated BgmSceneInfo array and per-scene objects — overwritten in place each frame
+        // instead of re-allocating. Capped at 12 (documented maximum scene count).
+        private const int MaxBgmScenes = 12;
+        private readonly BgmSceneInfo[] _bgmSceneCache = new BgmSceneInfo[MaxBgmScenes];
 
         public bool CanGetGameState() {
             // At minimum we need GameMain to read territory-load state. The other keys are
@@ -99,12 +115,33 @@ namespace Sharlayan {
                 try { result.TerritoryLoadState = this._memoryHandler.GetByte(gameMain, GameMainTerritoryLoadStateOffset); } catch { /* ignore, leave default */ }
             }
 
-            // IsLoggedIn: CurrentPlayer.Entity resolves with a non-zero entity ID.
-            try {
-                var cp = this.GetCurrentPlayer()?.Entity;
-                result.IsLoggedIn = cp != null && cp.ID != 0u;
+            // IsLoggedIn (F86): derive from the CHARMAP pointer (8-byte RPM) rather than the
+            // full GetCurrentPlayer() pipeline (2 RPM reads + full actor resolution). A non-zero
+            // pointer means the local player slot is populated. When the pointer is transiently
+            // zero during a zone transition the latch's cached actor keeps IsLoggedIn true for
+            // up to LoggedInLatchTicks — same observable behaviour as the previous GetCurrentPlayer()
+            // path because GetCurrentPlayer itself goes through the same latch.
+            if (locations.ContainsKey(Signatures.CHARMAP_KEY)) {
+                try {
+                    byte[] charmapBuf = this._memoryHandler.BufferPool.Rent(8);
+                    try {
+                        this._memoryHandler.GetByteArray(locations[Signatures.CHARMAP_KEY], charmapBuf);
+                        long charPtr = SharlayanBitConverter.TryToInt64(charmapBuf, 0);
+                        if (charPtr != 0) {
+                            result.IsLoggedIn = true;
+                        }
+                        else {
+                            // Pointer is zero — still logged-in during zone transitions if the
+                            // latch is holding a cached actor (mirrors the old GetCurrentPlayer path).
+                            result.IsLoggedIn = this._loggedInStateLatch.Cached != null;
+                        }
+                    }
+                    finally {
+                        this._memoryHandler.BufferPool.Return(charmapBuf);
+                    }
+                }
+                catch { /* treat as logged-out on any read failure */ }
             }
-            catch { /* not-yet-loaded characters raise; treat as logged-out */ }
             // IsReadyToRead: territory is loaded AND the scanner resolved the actor pointer array.
             result.IsReadyToRead = result.TerritoryLoadState == 2 && locations.ContainsKey(Signatures.CHARMAP_KEY);
 
@@ -161,14 +198,31 @@ namespace Sharlayan {
                     long last  = this._memoryHandler.GetInt64(bgmSystem, BGMSystemScenesOffset + StdVectorLastOffset);
                     if (first != 0 && last > first) {
                         int sceneCount = (int)((last - first) / BGMSceneSize);
-                        if (sceneCount > 12) sceneCount = 12; // cap — 12 documented scene types.
-                        var scenes = new BgmSceneInfo[sceneCount];
+                        if (sceneCount > MaxBgmScenes) sceneCount = MaxBgmScenes; // cap — 12 documented scene types.
+                        // F21: use the pre-allocated BgmSceneInfo cache; overwrite fields in place
+                        // rather than allocating a new array and new objects every poll.
                         for (int i = 0; i < sceneCount; i++) {
                             IntPtr sceneAddr = new IntPtr(first + i * BGMSceneSize);
-                            BgmSceneInfo info = new BgmSceneInfo {
-                                Index = i,
-                                SceneType = (BgmSceneType)i,
-                            };
+                            // Lazily create the BgmSceneInfo object on first use only.
+                            BgmSceneInfo info = this._bgmSceneCache[i] ?? (this._bgmSceneCache[i] = new BgmSceneInfo());
+                            info.Index = i;
+                            info.SceneType = (BgmSceneType)i;
+                            // Reset all fields so a failed read leaves type defaults, not stale data
+                            // from the previous frame. Preset fields reset here; raw scene fields below.
+                            info.PresetFadeOutTime = 0;
+                            info.PresetFadeInTime = 0;
+                            info.PresetFadeInStartTime = 0;
+                            info.PresetResumeFadeInTime = 0;
+                            info.PlayingBgmFile = null;
+                            // Raw scene fields — reset before try/catch reads so a read failure
+                            // leaves 0/false rather than a stale value from a previous poll frame.
+                            info.PlayingBgmId    = 0;
+                            info.BgmId           = 0;
+                            info.PreviousBgmId   = 0;
+                            info.PlayState       = 0;
+                            info.EnableCustomFade = false;
+                            info.FadeOutTime     = 0;
+                            info.FadeInTime      = 0;
                             try { info.PlayingBgmId      = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePlayingBgmIdOffset); } catch { }
                             try { info.BgmId             = this._memoryHandler.GetUInt16(sceneAddr, BGMSceneBgmIdOffset); }        catch { }
                             try { info.PreviousBgmId    = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePreviousBgmIdOffset); } catch { }
@@ -176,7 +230,6 @@ namespace Sharlayan {
                             try { info.EnableCustomFade  = this._memoryHandler.GetByte(sceneAddr, BGMSceneEnableCustomFadeOffset) != 0; } catch { }
                             try { info.FadeOutTime       = this._memoryHandler.GetUInt32(sceneAddr, BGMSceneFadeOutTimeOffset); } catch { }
                             try { info.FadeInTime        = this._memoryHandler.GetUInt32(sceneAddr, BGMSceneFadeInTimeOffset); }  catch { }
-                            scenes[i] = info;
 
                             // BGM id 1 is FFXIV's silence sentinel — a scene playing id=1 is
                             // actively suppressing audio, not "nothing playing". Skip it so the
@@ -189,6 +242,11 @@ namespace Sharlayan {
                                 result.CurrentBgmTargetId = info.BgmId;
                             }
                         }
+                        // F21: create one array per poll (not 12 BgmSceneInfo objects), copy
+                        // references from the pre-allocated cache. Callers see exactly sceneCount
+                        // entries so .Count / indexing behavior is unchanged from the original.
+                        BgmSceneInfo[] scenes = new BgmSceneInfo[sceneCount];
+                        Array.Copy(this._bgmSceneCache, scenes, sceneCount);
                         result.BgmScenes = scenes;
                     }
                 }
@@ -224,10 +282,11 @@ namespace Sharlayan {
                 // pre-fader signal can consume Scene.PlayingBgmId on result.BgmScenes instead.
                 try {
                     IntPtr fftAddr = new IntPtr(soundManager.ToInt64() + SoundManagerFFTBlue1Offset);
-                    byte[] fftBytes = this._memoryHandler.GetByteArray(fftAddr, BgmAudibleBinCount * sizeof(float));
+                    // F20: reuse the pre-allocated scratch buffer to avoid a new byte[32] per poll.
+                    this._memoryHandler.GetByteArray(fftAddr, this._fftScratch);
                     float energy = 0f;
                     for (int i = 0; i < BgmAudibleBinCount; i++) {
-                        energy += Math.Abs(BitConverter.ToSingle(fftBytes, i * sizeof(float)));
+                        energy += Math.Abs(BitConverter.ToSingle(this._fftScratch, i * sizeof(float)));
                     }
                     result.IsBgmAudible = energy > BgmAudibleEpsilon;
                 }
@@ -238,17 +297,43 @@ namespace Sharlayan {
             this.EnsureLuminaSheets();
             try {
                 if (this._weatherSheetEn != null && result.CurrentWeatherId != 0 && this._weatherSheetEn.HasRow(result.CurrentWeatherId)) {
-                    result.CurrentWeatherName = this._weatherSheetEn.GetRow(result.CurrentWeatherId).Name.ExtractText();
+                    // F88: only call ExtractText() when the weather id has changed; reuse cached string otherwise.
+                    if (result.CurrentWeatherId != this._cachedWeatherId) {
+                        this._cachedWeatherId = result.CurrentWeatherId;
+                        this._cachedWeatherName = this._weatherSheetEn.GetRow(result.CurrentWeatherId).Name.ExtractText();
+                    }
+                    result.CurrentWeatherName = this._cachedWeatherName;
                 }
                 if (this._bgmSheetEn != null && result.CurrentBgmId != 0 && this._bgmSheetEn.HasRow(result.CurrentBgmId)) {
-                    result.CurrentBgmFile = this._bgmSheetEn.GetRow(result.CurrentBgmId).File.ExtractText();
+                    // F88: only call ExtractText() when the BGM id has changed.
+                    if (result.CurrentBgmId != this._cachedBgmId) {
+                        this._cachedBgmId = result.CurrentBgmId;
+                        this._cachedBgmFile = this._bgmSheetEn.GetRow(result.CurrentBgmId).File.ExtractText();
+                    }
+                    result.CurrentBgmFile = this._cachedBgmFile;
                 }
                 // Per-scene file + preset-fade resolution.
                 if (result.BgmScenes != null) {
+                    // F88: ensure per-scene BGM file cache arrays are sized for the current scene count.
+                    int sceneCount = result.BgmScenes.Count;
+                    if (this._cachedSceneBgmIds == null || this._cachedSceneBgmIds.Length < sceneCount) {
+                        this._cachedSceneBgmIds = new ushort[sceneCount];
+                        this._cachedSceneBgmFiles = new string[sceneCount];
+                    }
                     foreach (BgmSceneInfo info in result.BgmScenes) {
                         if (info == null) continue;
                         if (this._bgmSheetEn != null && info.IsPlaying && this._bgmSheetEn.HasRow(info.PlayingBgmId)) {
-                            info.PlayingBgmFile = this._bgmSheetEn.GetRow(info.PlayingBgmId).File.ExtractText();
+                            int idx = info.Index;
+                            if (idx >= 0 && idx < this._cachedSceneBgmIds.Length) {
+                                if (info.PlayingBgmId != this._cachedSceneBgmIds[idx]) {
+                                    this._cachedSceneBgmIds[idx] = info.PlayingBgmId;
+                                    this._cachedSceneBgmFiles[idx] = this._bgmSheetEn.GetRow(info.PlayingBgmId).File.ExtractText();
+                                }
+                                info.PlayingBgmFile = this._cachedSceneBgmFiles[idx];
+                            }
+                            else {
+                                info.PlayingBgmFile = this._bgmSheetEn.GetRow(info.PlayingBgmId).File.ExtractText();
+                            }
                         }
                         // BGMFade preset lookup — scene → first matching BGMFadeType.
                         if (this._bgmFadeTypeSheet != null && this._scenePresetFadeTypeRowIds != null

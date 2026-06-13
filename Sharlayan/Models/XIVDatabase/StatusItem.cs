@@ -22,5 +22,19 @@ namespace Sharlayan.Models.XIVDatabase {
         /// rather than surfacing the Param byte as a misleading "stacks" value.
         /// </summary>
         public byte MaxStacks { get; set; }
+
+        /// <summary>
+        /// Lumina Status sheet <c>StatusCategory</c> column: 1 = beneficial (enhancement —
+        /// green/up-arrow border in the game UI), 2 = detrimental (enfeeblement — red/down-arrow),
+        /// 0 = neither (system statuses). This is the same discriminator the game's own
+        /// party-list / status HUD uses to colour the icon border.
+        /// </summary>
+        public byte StatusCategory { get; set; }
+
+        /// <summary>
+        /// Lumina Status sheet <c>CanDispel</c> column — true for detrimental effects
+        /// removable with Esuna (the ones drawn with a white bar above the icon in-game).
+        /// </summary>
+        public bool CanDispel { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Resources;
 
     public static class StatusEffectLookup {
-        private static bool _loading;
+        private static volatile bool _loading;
 
         private static ConcurrentDictionary<uint, StatusItem> _statusEffects = new ConcurrentDictionary<uint, StatusItem>();
 

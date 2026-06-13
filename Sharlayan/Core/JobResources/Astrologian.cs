@@ -10,13 +10,12 @@
 
 namespace Sharlayan.Core.JobResources {
     using System;
-    using System.Collections.Generic;
 
     using Sharlayan.Core.Interfaces;
     using Sharlayan.Core.JobResources.Enums;
 
     public sealed class AstrologianResources : IJobResource {
-        public List<AstrologianCard> DrawnCards { get; set; } = new List<AstrologianCard>();
+        public AstrologianCard[] DrawnCards { get; set; } = Array.Empty<AstrologianCard>();
         public AstrologianCard CurrentArcana { get; set; }
         public AstrologianDraw DrawType { get; set; }
         public TimeSpan Timer { get; set; }

@@ -133,7 +133,7 @@ namespace Sharlayan.Core.Enums {
             //Unknown27008 = 27008,
         }
 
-        public enum MateriaType : byte {
+        public enum MateriaType : ushort {
             None = 0,
 
             Cracked,

@@ -20,7 +20,19 @@ namespace Sharlayan {
     using System;
     using System.Collections.Generic;
 
+    using Lumina.Data;
+
     public partial class Reader {
+        // F27: cache per-language sheet handles after first GetSheet<T> call so subsequent
+        // GetZoneName / GetWeatherName calls avoid Lumina's internal dictionary + generic dispatch.
+        // Dictionaries keyed on Language enum — populated lazily on first use of each language.
+        private readonly Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.TerritoryType>> _territorySheets =
+            new Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.TerritoryType>>();
+        private readonly Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.PlaceName>> _placeNameSheets =
+            new Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.PlaceName>>();
+        private readonly Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.Weather>> _weatherSheets =
+            new Dictionary<Language, Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.Weather>>();
+
         /// <summary>
         /// Resolve a TerritoryType row id to its PlaceName in the requested language.
         /// Accepts "en" / "de" / "fr" / "ja" (case-insensitive). Returns null if Lumina
@@ -30,14 +42,19 @@ namespace Sharlayan {
             Lumina.GameData lumina = this.GetLumina();
             if (lumina == null || territoryId == 0) return null;
             try {
-                Lumina.Data.Language lang = MapLanguage(language);
-                var territorySheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.TerritoryType>(lang);
-                if (!territorySheet.HasRow(territoryId)) return null;
+                Language lang = MapLanguage(language);
+                if (!this._territorySheets.TryGetValue(lang, out Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.TerritoryType> territorySheet)) {
+                    try { territorySheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.TerritoryType>(lang); } catch { }
+                    this._territorySheets[lang] = territorySheet;
+                }
+                if (!this._placeNameSheets.TryGetValue(lang, out Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.PlaceName> placeSheet)) {
+                    try { placeSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.PlaceName>(lang); } catch { }
+                    this._placeNameSheets[lang] = placeSheet;
+                }
+                if (territorySheet == null || !territorySheet.HasRow(territoryId)) return null;
                 var terri = territorySheet.GetRow(territoryId);
                 uint placeNameId = terri.PlaceName.RowId;
-                if (placeNameId == 0) return null;
-                var placeSheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.PlaceName>(lang);
-                if (!placeSheet.HasRow(placeNameId)) return null;
+                if (placeNameId == 0 || placeSheet == null || !placeSheet.HasRow(placeNameId)) return null;
                 return placeSheet.GetRow(placeNameId).Name.ExtractText();
             }
             catch {
@@ -75,8 +92,12 @@ namespace Sharlayan {
             Lumina.GameData lumina = this.GetLumina();
             if (lumina == null || weatherId == 0) return null;
             try {
-                var sheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>(MapLanguage(language));
-                if (!sheet.HasRow(weatherId)) return null;
+                Language lang = MapLanguage(language);
+                if (!this._weatherSheets.TryGetValue(lang, out Lumina.Excel.ExcelSheet<Lumina.Excel.Sheets.Weather> sheet)) {
+                    try { sheet = lumina.Excel.GetSheet<Lumina.Excel.Sheets.Weather>(lang); } catch { }
+                    this._weatherSheets[lang] = sheet;
+                }
+                if (sheet == null || !sheet.HasRow(weatherId)) return null;
                 return sheet.GetRow(weatherId).Name.ExtractText();
             }
             catch {

@@ -8,6 +8,7 @@
 namespace Sharlayan.Tests.Resources.Mappers {
     using System.Runtime.InteropServices;
 
+    using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
     using FFXIVClientStructs.FFXIV.Client.UI.Arrays.Common;
 
     using Sharlayan.Models.Structures;
@@ -91,10 +92,10 @@ namespace Sharlayan.Tests.Resources.Mappers {
 
         [Fact]
         public void Build_ContainerSize_MatchesActionBarBarNumberArraySize() {
-            // Each ActionBarBarNumberArray is 272 × 4 bytes (12 slots × 68 + other bar state).
-            // RECAST_KEY + type × ContainerSize must land at bars[type]._slots base.
+            // ContainerSize must equal the FCS struct size so RECAST_KEY + type × ContainerSize
+            // lands at bars[type]._slots base. Derived from FCS directly so layout drift fails.
             RecastItem item = RecastItemMapper.Build();
-            Assert.Equal(272 * sizeof(int), item.ContainerSize);
+            Assert.Equal(Marshal.SizeOf<ActionBarNumberArray.ActionBarBarNumberArray>(), item.ContainerSize);
         }
 
         [Fact]
