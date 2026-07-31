@@ -37,8 +37,12 @@ namespace Sharlayan.Utilities {
             this._monsterWorkerDelegate = monsterWorkerDelegate;
         }
 
+        // F97: reused across calls (resolution is single-threaded per Reader poll).
+        private readonly HashSet<StatusItem> _foundStatuses = new HashSet<StatusItem>(ReferenceEqualityComparer.Instance);
+
         public PartyMember ResolvePartyMemberFromBytes(byte[] source, ActorItem actorItem = null) {
-            List<StatusItem> foundStatuses = new List<StatusItem>();
+            HashSet<StatusItem> foundStatuses = this._foundStatuses;
+            foundStatuses.Clear();
 
             if (actorItem != null) {
                 PartyMember memberFromActorItem = new PartyMember {
@@ -67,9 +71,7 @@ namespace Sharlayan.Utilities {
                 const int limit = 15;
                 int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
 
-                byte[] statusesMap = this._memoryHandler.BufferPool.Rent(statusSize * limit);
-                byte[] statusMap = this._memoryHandler.BufferPool.Rent(statusSize);
-
+                // F97: statuses parse directly from `source` — see ActorItemResolver.
                 try {
                     entry.X = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.X);
                     entry.Z = SharlayanBitConverter.TryToSingle(source, this._memoryHandler.Structures.PartyMember.Z);
@@ -86,14 +88,13 @@ namespace Sharlayan.Utilities {
                     entry.HPMax = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PartyMember.HPMax);
                     entry.MPCurrent = SharlayanBitConverter.TryToInt16(source, this._memoryHandler.Structures.PartyMember.MPCurrent);
 
-                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
                     for (int i = 0; i < limit; i++) {
                         bool isNewStatus = false;
 
-                        Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
+                        int statusBase = defaultStatusEffectOffset + i * statusSize;
 
-                        short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
-                        uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
+                        short statusID = SharlayanBitConverter.TryToInt16(source, statusBase + this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(source, statusBase + this._memoryHandler.Structures.StatusItem.CasterID);
 
                         StatusItem statusEntry = null;
                         for (int s = 0; s < entry.StatusItems.Count; s++) {
@@ -112,8 +113,9 @@ namespace Sharlayan.Utilities {
                         statusEntry.TargetEntity = null;
                         statusEntry.TargetName = entry.Name;
                         statusEntry.StatusID = statusID;
-                        statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
-                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        int stacksOffset = statusBase + this._memoryHandler.Structures.StatusItem.Stacks;
+                        statusEntry.Stacks = stacksOffset >= 0 && stacksOffset < source.Length ? source[stacksOffset] : (byte) 0;
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(source, statusBase + this._memoryHandler.Structures.StatusItem.Duration);
                         statusEntry.CasterID = casterID;
 
                         try {
@@ -158,10 +160,6 @@ namespace Sharlayan.Utilities {
                 }
                 catch (Exception ex) {
                     this._memoryHandler.RaiseException(Logger, ex);
-                }
-                finally {
-                    this._memoryHandler.BufferPool.Return(statusesMap);
-                    this._memoryHandler.BufferPool.Return(statusMap);
                 }
 
                 entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));

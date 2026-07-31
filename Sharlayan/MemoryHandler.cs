@@ -170,12 +170,20 @@ namespace Sharlayan {
             return data;
         }
 
+        // F78: destination buffers are pooled and reused across actors/polls — zero
+        // them on a failed read so the caller parses an empty record instead of the
+        // PREVIOUS occupant's bytes (e.g. a failed per-actor read silently duplicating
+        // the prior actor).
         public void GetByteArray(IntPtr address, byte[] destination) {
-            this.Peek(address, destination);
+            if (!this.Peek(address, destination)) {
+                Array.Clear(destination, 0, destination.Length);
+            }
         }
 
         public void GetByteArray(IntPtr address, byte[] destination, int count) {
-            this.Peek(address, destination, count);
+            if (!this.Peek(address, destination, count)) {
+                Array.Clear(destination, 0, count);
+            }
         }
 
         [ThreadStatic]

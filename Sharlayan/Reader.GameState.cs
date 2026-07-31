@@ -155,13 +155,27 @@ namespace Sharlayan {
             if (locations.ContainsKey(Signatures.CONDITIONS_KEY)) {
                 IntPtr conditions = locations[Signatures.CONDITIONS_KEY];
                 try {
-                    byte occCutscene  = this._memoryHandler.GetByte(conditions, ConditionsOccupiedInCutSceneEventOffset);
-                    byte watching58   = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutsceneOffset);
-                    byte watching78   = this._memoryHandler.GetByte(conditions, ConditionsWatchingCutscene78Offset);
-                    byte betweenAreas = this._memoryHandler.GetByte(conditions, ConditionsBetweenAreasOffset);
-                    byte between51    = this._memoryHandler.GetByte(conditions, ConditionsBetweenAreas51Offset);
-                    result.WatchingCutscene = occCutscene != 0 || watching58 != 0 || watching78 != 0;
-                    result.IsTeleporting    = betweenAreas != 0 || between51 != 0;
+                    // F99: one small bulk read spanning all five flag bytes instead of
+                    // five single-byte syscalls; the flags are also captured from the
+                    // same moment rather than five separate reads of mutating memory.
+                    int conditionsSpan = (int) Math.Max(
+                        Math.Max(ConditionsOccupiedInCutSceneEventOffset, ConditionsWatchingCutsceneOffset),
+                        Math.Max(ConditionsWatchingCutscene78Offset, Math.Max(ConditionsBetweenAreasOffset, ConditionsBetweenAreas51Offset))) + 1;
+                    byte[] conditionsMap = this._memoryHandler.BufferPool.Rent(conditionsSpan);
+                    try {
+                        if (this._memoryHandler.Peek(conditions, conditionsMap, conditionsSpan)) {
+                            byte occCutscene  = conditionsMap[ConditionsOccupiedInCutSceneEventOffset];
+                            byte watching58   = conditionsMap[ConditionsWatchingCutsceneOffset];
+                            byte watching78   = conditionsMap[ConditionsWatchingCutscene78Offset];
+                            byte betweenAreas = conditionsMap[ConditionsBetweenAreasOffset];
+                            byte between51    = conditionsMap[ConditionsBetweenAreas51Offset];
+                            result.WatchingCutscene = occCutscene != 0 || watching58 != 0 || watching78 != 0;
+                            result.IsTeleporting    = betweenAreas != 0 || between51 != 0;
+                        }
+                    }
+                    finally {
+                        this._memoryHandler.BufferPool.Return(conditionsMap);
+                    }
                 }
                 catch { /* ignore */ }
             }

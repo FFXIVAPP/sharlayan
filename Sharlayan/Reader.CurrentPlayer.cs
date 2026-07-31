@@ -121,16 +121,28 @@ namespace Sharlayan {
 
                     if (agroCount > 0 && agroCount < 32 && agroStructure.ToInt64() > 0) {
                         int agroSourceSize = this._memoryHandler.Structures.EnmityItem.SourceSize;
-                        for (uint i = 0; i < agroCount; i++) {
-                            IntPtr address = new IntPtr(agroStructure.ToInt64() + i * agroSourceSize);
-                            EnmityItem agroEntry = new EnmityItem {
-                                ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.EnmityItem.ID),
-                                Name = this._memoryHandler.GetString(address + this._memoryHandler.Structures.EnmityItem.Name),
-                                Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.EnmityItem.Enmity),
-                            };
-                            if (agroEntry.ID > 0) {
-                                result.EnmityItems.Add(agroEntry);
+                        // F98: the HaterInfo array is contiguous — one bulk read instead
+                        // of 3 syscalls per entry (up to ~96/poll, including a 256-byte
+                        // string read per entry).
+                        int agroByteCount = agroCount * agroSourceSize;
+                        byte[] agroMap = this._memoryHandler.BufferPool.Rent(agroByteCount);
+                        try {
+                            if (this._memoryHandler.Peek(agroStructure, agroMap, agroByteCount)) {
+                                for (int i = 0; i < agroCount; i++) {
+                                    int entryBase = i * agroSourceSize;
+                                    EnmityItem agroEntry = new EnmityItem {
+                                        ID = SharlayanBitConverter.TryToUInt32(agroMap, entryBase + this._memoryHandler.Structures.EnmityItem.ID),
+                                        Name = this._memoryHandler.GetStringFromBytes(agroMap, entryBase + this._memoryHandler.Structures.EnmityItem.Name),
+                                        Enmity = SharlayanBitConverter.TryToUInt32(agroMap, entryBase + this._memoryHandler.Structures.EnmityItem.Enmity),
+                                    };
+                                    if (agroEntry.ID > 0) {
+                                        result.EnmityItems.Add(agroEntry);
+                                    }
+                                }
                             }
+                        }
+                        finally {
+                            this._memoryHandler.BufferPool.Return(agroMap);
                         }
                     }
                 }

@@ -46,27 +46,37 @@ namespace Sharlayan {
                 return result;
             }
 
+            // F96: resolve the two multi-hop pointer chains ONCE per poll. Each
+            // Locations[] access re-walks the chain with fresh syscalls (HOTBAR ~4 hops,
+            // RECAST ~7); the 20 container reads below previously re-resolved both
+            // chains per container - hundreds of redundant syscalls per second.
+            IntPtr hotbarAddress = this._memoryHandler.Scanner.Locations[Signatures.HOTBAR_KEY];
+            IntPtr recastAddress = this._memoryHandler.Scanner.Locations[Signatures.RECAST_KEY];
+            if (hotbarAddress == IntPtr.Zero || recastAddress == IntPtr.Zero) {
+                return result;
+            }
+
             try {
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_1));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_2));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_3));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_4));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_5));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_6));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_7));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_8));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_9));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_10));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_1));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_2));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_3));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_4));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_5));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_6));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_7));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_8));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.PETBAR));
-                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_PETBAR));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_1, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_2, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_3, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_4, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_5, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_6, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_7, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_8, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_9, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.HOTBAR_10, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_1, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_2, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_3, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_4, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_5, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_6, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_7, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_HOTBAR_8, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.PETBAR, hotbarAddress, recastAddress));
+                result.ActionContainers.Add(this.GetHotBarRecast(Action.Container.CROSS_PETBAR, hotbarAddress, recastAddress));
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
@@ -75,15 +85,12 @@ namespace Sharlayan {
             return result;
         }
 
-        private ActionContainer GetHotBarRecast(Action.Container type) {
+        private ActionContainer GetHotBarRecast(Action.Container type, IntPtr hotbarAddress, IntPtr recastAddress) {
             bool canUseKeyBinds = false;
 
             ActionContainer container = new ActionContainer {
                 ContainerType = type,
             };
-
-            IntPtr hotbarAddress = this._memoryHandler.Scanner.Locations[Signatures.HOTBAR_KEY];
-            IntPtr recastAddress = this._memoryHandler.Scanner.Locations[Signatures.RECAST_KEY];
 
             int hotbarContainerSize = this._memoryHandler.Structures.HotBarItem.ContainerSize;
             int recastContainerSize = this._memoryHandler.Structures.RecastItem.ContainerSize;

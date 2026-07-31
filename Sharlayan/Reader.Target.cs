@@ -122,31 +122,37 @@ namespace Sharlayan {
 
                             if (enmityCount > 0 && enmityCount < 32 && enmityStructure.ToInt64() > 0) {
                                 int enmitySourceSize = this._memoryHandler.Structures.HateItem.SourceSize;
-                                for (uint i = 0; i < enmityCount; i++) {
-                                    try {
-                                        IntPtr address = new IntPtr(enmityStructure.ToInt64() + i * enmitySourceSize);
+                                // F98: HateInfo entries are contiguous (8 bytes each) — one
+                                // bulk read instead of 2 syscalls per entry.
+                                int enmityByteCount = enmityCount * enmitySourceSize;
+                                byte[] enmityMap = this._memoryHandler.BufferPool.Rent(enmityByteCount);
+                                try {
+                                    if (this._memoryHandler.Peek(enmityStructure, enmityMap, enmityByteCount)) {
+                                        for (int i = 0; i < enmityCount; i++) {
+                                            int entryBase = i * enmitySourceSize;
 
-                                        EnmityItem enmityEntry = new EnmityItem {
-                                            ID = this._memoryHandler.GetUInt32(address, this._memoryHandler.Structures.HateItem.ID),
-                                            Enmity = this._memoryHandler.GetUInt32(address + this._memoryHandler.Structures.HateItem.Enmity),
-                                        };
+                                            EnmityItem enmityEntry = new EnmityItem {
+                                                ID = SharlayanBitConverter.TryToUInt32(enmityMap, entryBase + this._memoryHandler.Structures.HateItem.ID),
+                                                Enmity = SharlayanBitConverter.TryToUInt32(enmityMap, entryBase + this._memoryHandler.Structures.HateItem.Enmity),
+                                            };
 
-                                        if (enmityEntry.ID <= 0) {
-                                            continue;
+                                            if (enmityEntry.ID <= 0) {
+                                                continue;
+                                            }
+
+                                            if (string.IsNullOrWhiteSpace(enmityEntry.Name)) {
+                                                ActorItem pc = this._pcWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                                ActorItem npc = this._npcWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                                ActorItem monster = this._monsterWorkerDelegate.GetActorItem(enmityEntry.ID);
+                                                enmityEntry.Name = pc?.Name ?? npc?.Name ?? monster?.Name ?? string.Empty;
+                                            }
+
+                                            result.TargetInfo.EnmityItems.Add(enmityEntry);
                                         }
-
-                                        if (string.IsNullOrWhiteSpace(enmityEntry.Name)) {
-                                            ActorItem pc = this._pcWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            ActorItem npc = this._npcWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            ActorItem monster = this._monsterWorkerDelegate.GetActorItem(enmityEntry.ID);
-                                            enmityEntry.Name = pc?.Name ?? npc?.Name ?? monster?.Name ?? string.Empty;
-                                        }
-
-                                        result.TargetInfo.EnmityItems.Add(enmityEntry);
                                     }
-                                    catch (Exception ex) {
-                                        this._memoryHandler.RaiseException(Logger, ex);
-                                    }
+                                }
+                                finally {
+                                    this._memoryHandler.BufferPool.Return(enmityMap);
                                 }
                             }
                         }

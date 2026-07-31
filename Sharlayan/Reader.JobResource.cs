@@ -15,13 +15,26 @@ namespace Sharlayan {
     using Sharlayan.Models.ReadResults;
     using Sharlayan.Models.Structures;
 
+    using Actor = Sharlayan.Core.Enums.Actor;
+
     public partial class Reader {
         public bool CanGetJobResources() {
             return this._memoryHandler.Scanner.Locations.ContainsKey(Signatures.JOBRESOURCES_KEY);
         }
 
         public JobResourceResult GetJobResources() {
-            JobResources structure = this._memoryHandler.Structures.JobResources;
+            return this.GetJobResourcesCore(null);
+        }
+
+        // F100: single-job overload for polling consumers — the parameterless variant
+        // resolves and allocates all 21 gauges every call even though only the current
+        // job's gauge is ever relevant. Pass Actor.Job.Unknown/unmatched to get an
+        // empty container.
+        public JobResourceResult GetJobResources(Actor.Job job) {
+            return this.GetJobResourcesCore(job);
+        }
+
+        private JobResourceResult GetJobResourcesCore(Actor.Job? job) {
             JobResourceResult result = new JobResourceResult();
 
             if (!this.CanGetJobResources() || !this._memoryHandler.IsAttached) {
@@ -45,28 +58,30 @@ namespace Sharlayan {
             try {
                 this._memoryHandler.GetByteArray(jobResourcesAddress, jobResourcesMap);
 
-                result.JobResourcesContainer.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Bard = this._jobResourceResolver.ResolveBardFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Dancer = this._jobResourceResolver.ResolveDancerFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.DarkKnight = this._jobResourceResolver.ResolveDarkKnightFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Dragoon = this._jobResourceResolver.ResolveDragoonFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.GunBreaker = this._jobResourceResolver.ResolveGunBreakerFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Machinist = this._jobResourceResolver.ResolveMachinistFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Monk = this._jobResourceResolver.ResolveMonkFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Ninja = this._jobResourceResolver.ResolveNinjaFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Paladin = this._jobResourceResolver.ResolvePaladinFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.RedMage = this._jobResourceResolver.ResolveRedMageFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Samurai = this._jobResourceResolver.ResolveSamuraiFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Scholar = this._jobResourceResolver.ResolveScholarFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Summoner = this._jobResourceResolver.ResolveSummonerFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Warrior = this._jobResourceResolver.ResolveWarriorFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Sage = this._jobResourceResolver.ResolveSageFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Reaper = this._jobResourceResolver.ResolveReaperFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Viper = this._jobResourceResolver.ResolveViperFromBytes(jobResourcesMap);
-                result.JobResourcesContainer.Pictomancer = this._jobResourceResolver.ResolvePictomancerFromBytes(jobResourcesMap);
+                JobResourcesContainer c = result.JobResourcesContainer;
+                bool all = job == null;
 
+                if (all || job == Actor.Job.AST) c.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.BRD) c.Bard = this._jobResourceResolver.ResolveBardFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.BLM) c.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.DNC) c.Dancer = this._jobResourceResolver.ResolveDancerFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.DRK) c.DarkKnight = this._jobResourceResolver.ResolveDarkKnightFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.DRG) c.Dragoon = this._jobResourceResolver.ResolveDragoonFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.GNB) c.GunBreaker = this._jobResourceResolver.ResolveGunBreakerFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.MCH) c.Machinist = this._jobResourceResolver.ResolveMachinistFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.MNK) c.Monk = this._jobResourceResolver.ResolveMonkFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.NIN) c.Ninja = this._jobResourceResolver.ResolveNinjaFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.PLD) c.Paladin = this._jobResourceResolver.ResolvePaladinFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.RDM) c.RedMage = this._jobResourceResolver.ResolveRedMageFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.SAM) c.Samurai = this._jobResourceResolver.ResolveSamuraiFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.SCH) c.Scholar = this._jobResourceResolver.ResolveScholarFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.SMN) c.Summoner = this._jobResourceResolver.ResolveSummonerFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.WAR) c.Warrior = this._jobResourceResolver.ResolveWarriorFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.WHM) c.WhiteMage = this._jobResourceResolver.ResolveWhiteMageFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.SGE) c.Sage = this._jobResourceResolver.ResolveSageFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.RPR) c.Reaper = this._jobResourceResolver.ResolveReaperFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.VPR) c.Viper = this._jobResourceResolver.ResolveViperFromBytes(jobResourcesMap);
+                if (all || job == Actor.Job.PCT) c.Pictomancer = this._jobResourceResolver.ResolvePictomancerFromBytes(jobResourcesMap);
             }
             catch (Exception ex) {
                 this._memoryHandler.RaiseException(Logger, ex);
