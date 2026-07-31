@@ -92,7 +92,6 @@ namespace Sharlayan {
         // F21: pre-allocated BgmSceneInfo array and per-scene objects — overwritten in place each frame
         // instead of re-allocating. Capped at 12 (documented maximum scene count).
         private const int MaxBgmScenes = 12;
-        private readonly BgmSceneInfo[] _bgmSceneCache = new BgmSceneInfo[MaxBgmScenes];
 
         public bool CanGetGameState() {
             // At minimum we need GameMain to read territory-load state. The other keys are
@@ -199,55 +198,49 @@ namespace Sharlayan {
                     if (first != 0 && last > first) {
                         int sceneCount = (int)((last - first) / BGMSceneSize);
                         if (sceneCount > MaxBgmScenes) sceneCount = MaxBgmScenes; // cap — 12 documented scene types.
-                        // F21: use the pre-allocated BgmSceneInfo cache; overwrite fields in place
-                        // rather than allocating a new array and new objects every poll.
-                        for (int i = 0; i < sceneCount; i++) {
-                            IntPtr sceneAddr = new IntPtr(first + i * BGMSceneSize);
-                            // Lazily create the BgmSceneInfo object on first use only.
-                            BgmSceneInfo info = this._bgmSceneCache[i] ?? (this._bgmSceneCache[i] = new BgmSceneInfo());
-                            info.Index = i;
-                            info.SceneType = (BgmSceneType)i;
-                            // Reset all fields so a failed read leaves type defaults, not stale data
-                            // from the previous frame. Preset fields reset here; raw scene fields below.
-                            info.PresetFadeOutTime = 0;
-                            info.PresetFadeInTime = 0;
-                            info.PresetFadeInStartTime = 0;
-                            info.PresetResumeFadeInTime = 0;
-                            info.PlayingBgmFile = null;
-                            // Raw scene fields — reset before try/catch reads so a read failure
-                            // leaves 0/false rather than a stale value from a previous poll frame.
-                            info.PlayingBgmId    = 0;
-                            info.BgmId           = 0;
-                            info.PreviousBgmId   = 0;
-                            info.PlayState       = 0;
-                            info.EnableCustomFade = false;
-                            info.FadeOutTime     = 0;
-                            info.FadeInTime      = 0;
-                            try { info.PlayingBgmId      = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePlayingBgmIdOffset); } catch { }
-                            try { info.BgmId             = this._memoryHandler.GetUInt16(sceneAddr, BGMSceneBgmIdOffset); }        catch { }
-                            try { info.PreviousBgmId    = this._memoryHandler.GetUInt16(sceneAddr, BGMScenePreviousBgmIdOffset); } catch { }
-                            try { info.PlayState         = (byte)this._memoryHandler.GetUInt32(sceneAddr, BGMScenePlayStateOffset); } catch { }
-                            try { info.EnableCustomFade  = this._memoryHandler.GetByte(sceneAddr, BGMSceneEnableCustomFadeOffset) != 0; } catch { }
-                            try { info.FadeOutTime       = this._memoryHandler.GetUInt32(sceneAddr, BGMSceneFadeOutTimeOffset); } catch { }
-                            try { info.FadeInTime        = this._memoryHandler.GetUInt32(sceneAddr, BGMSceneFadeInTimeOffset); }  catch { }
+                        // F89 (replaces F21): one bulk read of the contiguous Scene vector
+                        // instead of up to 7 syscalls per scene (~84/poll), parsed like the
+                        // actor/inventory readers. Each poll returns FRESH BgmSceneInfo
+                        // instances — the previous in-place-mutated cache meant a consumer
+                        // holding last poll's result saw its snapshot silently change.
+                        int scenesByteCount = sceneCount * BGMSceneSize;
+                        byte[] scenesMap = this._memoryHandler.BufferPool.Rent(scenesByteCount);
+                        try {
+                            if (this._memoryHandler.Peek(new IntPtr(first), scenesMap, scenesByteCount)) {
+                                BgmSceneInfo[] scenes = new BgmSceneInfo[sceneCount];
+                                for (int i = 0; i < sceneCount; i++) {
+                                    int sceneIndex = i * BGMSceneSize;
+                                    BgmSceneInfo info = new BgmSceneInfo {
+                                        Index = i,
+                                        SceneType = (BgmSceneType)i,
+                                        PlayingBgmId = SharlayanBitConverter.TryToUInt16(scenesMap, sceneIndex + BGMScenePlayingBgmIdOffset),
+                                        BgmId = SharlayanBitConverter.TryToUInt16(scenesMap, sceneIndex + BGMSceneBgmIdOffset),
+                                        PreviousBgmId = SharlayanBitConverter.TryToUInt16(scenesMap, sceneIndex + BGMScenePreviousBgmIdOffset),
+                                        PlayState = (byte)SharlayanBitConverter.TryToUInt32(scenesMap, sceneIndex + BGMScenePlayStateOffset),
+                                        EnableCustomFade = SharlayanBitConverter.TryToBoolean(scenesMap, sceneIndex + BGMSceneEnableCustomFadeOffset),
+                                        FadeOutTime = SharlayanBitConverter.TryToUInt32(scenesMap, sceneIndex + BGMSceneFadeOutTimeOffset),
+                                        FadeInTime = SharlayanBitConverter.TryToUInt32(scenesMap, sceneIndex + BGMSceneFadeInTimeOffset),
+                                    };
+                                    scenes[i] = info;
 
-                            // BGM id 1 is FFXIV's silence sentinel — a scene playing id=1 is
-                            // actively suppressing audio, not "nothing playing". Skip it so the
-                            // priority walk falls through to the next-priority scene with real
-                            // audio (e.g. an Event scene parked on silence during a fight would
-                            // otherwise mask the Battle scene's actual track).
-                            if (result.CurrentBgmId == 0 && info.PlayingBgmId != 0 && info.PlayingBgmId != 1) {
-                                result.CurrentBgmId      = info.PlayingBgmId;
-                                result.CurrentBgmSceneId = i;
-                                result.CurrentBgmTargetId = info.BgmId;
+                                    // BGM id 1 is FFXIV's silence sentinel — a scene playing id=1 is
+                                    // actively suppressing audio, not "nothing playing". Skip it so the
+                                    // priority walk falls through to the next-priority scene with real
+                                    // audio (e.g. an Event scene parked on silence during a fight would
+                                    // otherwise mask the Battle scene's actual track).
+                                    if (result.CurrentBgmId == 0 && info.PlayingBgmId != 0 && info.PlayingBgmId != 1) {
+                                        result.CurrentBgmId      = info.PlayingBgmId;
+                                        result.CurrentBgmSceneId = i;
+                                        result.CurrentBgmTargetId = info.BgmId;
+                                    }
+                                }
+
+                                result.BgmScenes = scenes;
                             }
                         }
-                        // F21: create one array per poll (not 12 BgmSceneInfo objects), copy
-                        // references from the pre-allocated cache. Callers see exactly sceneCount
-                        // entries so .Count / indexing behavior is unchanged from the original.
-                        BgmSceneInfo[] scenes = new BgmSceneInfo[sceneCount];
-                        Array.Copy(this._bgmSceneCache, scenes, sceneCount);
-                        result.BgmScenes = scenes;
+                        finally {
+                            this._memoryHandler.BufferPool.Return(scenesMap);
+                        }
                     }
                 }
                 catch { /* ignore */ }

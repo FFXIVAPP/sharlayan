@@ -46,9 +46,13 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_SourceSize_MatchesCharacterStructSize() {
+        public void Build_SourceSize_MatchesBattleCharaStructSize() {
+            // F83: CastInfo/StatusManager offsets are BattleChara-relative and sit beyond
+            // sizeof(Character), so the per-actor read buffer must be sized from
+            // BattleChara — sizing from Character only worked via ArrayPool rounding.
             ActorItem actorItem = ActorItemMapper.Build();
-            Assert.Equal(Marshal.SizeOf<Character>(), actorItem.SourceSize);
+            Assert.Equal(FieldOffsetReader.SizeOf<BattleChara>(), actorItem.SourceSize);
+            Assert.True(actorItem.SourceSize > Marshal.SizeOf<Character>(), "BattleChara must be larger than Character");
         }
 
         [Fact]
@@ -100,7 +104,6 @@ namespace Sharlayan.Tests.Resources.Mappers {
             Assert.True(actorItem.CastingTime > 0, nameof(actorItem.CastingTime));
             Assert.True(actorItem.IsCasting1 > 0, nameof(actorItem.IsCasting1));
             Assert.True(actorItem.IsCasting2 > 0, nameof(actorItem.IsCasting2));
-            Assert.True(actorItem.Status > 0, nameof(actorItem.Status));
             Assert.True(actorItem.ClaimedByID > 0, nameof(actorItem.ClaimedByID));
             Assert.True(actorItem.AgroFlags > 0, nameof(actorItem.AgroFlags));
             Assert.True(actorItem.CombatFlags > 0, nameof(actorItem.CombatFlags));
@@ -111,20 +114,23 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_StillUnmappedFields_StayAtZero() {
+        public void Build_StillUnmappedFields_UseNegativeSentinel() {
             // No clean FCS equivalent — PlayerState-sourced data for the local player only
             // (GrandCompany), computed values (DifficultyRank, ActionStatus), or nested
-            // structs that haven't been wired yet. If any of these become non-zero via a
-            // future edit, this test fails and forces the author to update intentionally.
+            // structs that haven't been wired yet. F82: unmapped = -1 so resolver bounds
+            // guards skip the read entirely (offset 0 would silently read the vtable
+            // byte). If any of these change via a future edit, this test fails and
+            // forces the author to update intentionally.
             ActorItem actorItem = ActorItemMapper.Build();
 
-            Assert.Equal(0, actorItem.ActionStatus);
-            Assert.Equal(0, actorItem.ModelID);
-            Assert.Equal(0, actorItem.DifficultyRank);
-            Assert.Equal(0, actorItem.GatheringInvisible);
-            Assert.Equal(0, actorItem.GatheringStatus);
-            Assert.Equal(0, actorItem.GrandCompany);
-            Assert.Equal(0, actorItem.GrandCompanyRank);
+            Assert.Equal(-1, actorItem.ActionStatus);
+            Assert.Equal(-1, actorItem.ModelID);
+            Assert.Equal(-1, actorItem.DifficultyRank);
+            Assert.Equal(-1, actorItem.GatheringInvisible);
+            Assert.Equal(-1, actorItem.GatheringStatus);
+            Assert.Equal(-1, actorItem.GrandCompany);
+            Assert.Equal(-1, actorItem.GrandCompanyRank);
+            Assert.Equal(-1, actorItem.Status);
         }
     }
 }

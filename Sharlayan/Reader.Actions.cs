@@ -22,7 +22,11 @@ namespace Sharlayan {
     using Action = Sharlayan.Core.Enums.Action;
 
     public partial class Reader {
-        private readonly ConcurrentDictionary<string, (string, string, string, List<string>)> _hotbarActionCache = new ConcurrentDictionary<string, (string, string, string, List<string>)>();
+        // F85: keyed by the raw keybind hint; holds only values that are pure
+        // functions of that string (parsed keybind text, action key, modifiers).
+        // The action NAME must never be cached — it identifies whatever action
+        // currently occupies the bound slot and changes on job/hotbar-page swaps.
+        private readonly ConcurrentDictionary<string, (string, string, List<string>)> _hotbarActionCache = new ConcurrentDictionary<string, (string, string, List<string>)>();
 
         private readonly Regex KeyBindsRegex = new Regex(@"[\[\]]", RegexOptions.Compiled);
 
@@ -140,25 +144,29 @@ namespace Sharlayan {
 
                     if (canUseKeyBinds) {
                         if (!string.IsNullOrWhiteSpace(item.KeyBinds)) {
-                            // keep a cache based on the keybinds key, users will typically not change this so there isn't a concern about going through and handling those changes
-                            if (this._hotbarActionCache.TryGetValue(item.KeyBinds, out (string itemName, string itemKeyBinds, string itemActionKey, List<string> itemModifiers) cached)) {
-                                item.Name = cached.itemName;
+                            string rawKeyBinds = item.KeyBinds;
+
+                            // F85: the name always comes from the live read (strip the
+                            // keybind suffix the game appends). The previous code copied
+                            // the cached name over it, so after a job or hotbar-page swap
+                            // every bound slot kept its pre-swap action name for the
+                            // lifetime of the process.
+                            item.Name = item.Name.Replace($" {rawKeyBinds}", string.Empty);
+
+                            if (this._hotbarActionCache.TryGetValue(rawKeyBinds, out (string itemKeyBinds, string itemActionKey, List<string> itemModifiers) cached)) {
                                 item.KeyBinds = cached.itemKeyBinds;
                                 item.ActionKey = cached.itemActionKey;
                                 item.Modifiers.AddRange(cached.itemModifiers);
                             }
                             else {
-                                string key = item.KeyBinds;
-                                string itemName = item.Name.Replace($" {item.KeyBinds}", string.Empty);
                                 // Raw KeyBinds from _popUpKeybindHint is " [Ctrl+Alt+0]". KeyBindsRegex
                                 // strips '[' and ']' → " Ctrl+Alt+0"; Trim removes the leading space
                                 // so the final public value is "Ctrl+Alt+0" (consumer-friendly).
-                                string itemKeyBinds = this.KeyBindsRegex.Replace(item.KeyBinds, string.Empty).Trim();
+                                string itemKeyBinds = this.KeyBindsRegex.Replace(rawKeyBinds, string.Empty).Trim();
                                 string itemActionKey = string.Empty;
 
                                 List<string> itemModifiers = new List<string>();
 
-                                item.Name = itemName;
                                 item.KeyBinds = itemKeyBinds;
 
                                 string[] buttons = item.KeyBinds.Split(
@@ -171,7 +179,7 @@ namespace Sharlayan {
                                 for (int t = 0; t < buttons.Length; t++) {
                                     buttons[t] = buttons[t].Trim();
                                 }
-                                if (buttons.Any()) {
+                                if (buttons.Length > 0) {
                                     item.ActionKey = itemActionKey = buttons[buttons.Length - 1];
                                 }
 
@@ -183,7 +191,7 @@ namespace Sharlayan {
                                     item.Modifiers.AddRange(itemModifiers);
                                 }
 
-                                this._hotbarActionCache.TryAdd(key, (itemName, itemKeyBinds, itemActionKey, itemModifiers));
+                                this._hotbarActionCache.TryAdd(rawKeyBinds, (itemKeyBinds, itemActionKey, itemModifiers));
                             }
                         }
                     }

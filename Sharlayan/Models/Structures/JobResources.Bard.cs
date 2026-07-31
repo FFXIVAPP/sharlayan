@@ -11,7 +11,9 @@
 namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public sealed class BardResources {
-            public byte ActiveSong { get; set; }
+            // F88: this is a byte OFFSET into the gauge struct like every sibling —
+            // int, so a future FCS layout push past 255 can't silently truncate.
+            public int ActiveSong { get; set; }
             public int Repertoire { get; set; }
             public int SoulVoice { get; set; }
             public int RadiantFinaleCoda { get; set; }

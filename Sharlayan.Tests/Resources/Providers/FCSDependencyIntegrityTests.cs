@@ -312,7 +312,7 @@ namespace Sharlayan.Tests.Resources.Providers {
         public void InventoryItemMapper_SourceSize_MatchesFCSStructSize() {
             // F76: InventoryItem is [StructLayout(Size = 0x48)] — 72 bytes. Reader.Inventory
             // uses this as the per-slot stride (previously a hardcoded 56).
-            int expected = Marshal.SizeOf<FFXIVClientStructs.FFXIV.Client.Game.InventoryItem>();
+            int expected = Marshal.SizeOf<InventoryItem>();
             Assert.Equal(72, expected); // document the current known-good value
             Assert.Equal(expected, InventoryItemMapper.Build().SourceSize);
         }

@@ -10,6 +10,7 @@
 
 namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Sharlayan.Models;
@@ -17,7 +18,11 @@ namespace Sharlayan.Utilities {
     using Sharlayan.Resources;
 
     public static class StatusEffectLookup {
-        private static volatile bool _loading;
+        // F81: 0 = idle, 1 = in flight. Interlocked so concurrent callers can't
+        // double-load; try/finally so a provider exception (e.g. Lumina throwing
+        // during the patch/Lumina-release window) can't wedge the flag and
+        // permanently no-op every future resolve.
+        private static int _loading;
 
         private static ConcurrentDictionary<uint, StatusItem> _statusEffects = new ConcurrentDictionary<uint, StatusItem>();
 
@@ -40,14 +45,17 @@ namespace Sharlayan.Utilities {
         }
 
         internal static async Task Resolve(SharlayanConfiguration configuration) {
-            if (_loading) {
+            if (Interlocked.CompareExchange(ref _loading, 1, 0) != 0) {
                 return;
             }
 
-            _loading = true;
-            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
-            await provider.GetStatusEffectsAsync(_statusEffects, configuration);
-            _loading = false;
+            try {
+                IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+                await provider.GetStatusEffectsAsync(_statusEffects, configuration);
+            }
+            finally {
+                Interlocked.Exchange(ref _loading, 0);
+            }
         }
     }
 }

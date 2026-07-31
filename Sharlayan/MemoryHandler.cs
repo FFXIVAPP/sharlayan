@@ -200,15 +200,24 @@ namespace Sharlayan {
         }
 
         public int GetInt32(IntPtr address, long offset = 0) {
+            this.TryGetInt32(new IntPtr(address.ToInt64() + offset), out int value);
+            return value;
+        }
+
+        // Failure-distinguishing variant for callers where a legitimate 0 and a failed
+        // read must not be conflated (e.g. the ASM-signature displacement hop).
+        internal bool TryGetInt32(IntPtr address, out int value) {
             if (_fourByteBuffer == null) {
                 _fourByteBuffer = new byte[4];
             }
 
-            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer)) {
-                return 0;
+            if (!this.Peek(address, _fourByteBuffer)) {
+                value = 0;
+                return false;
             }
 
-            return SharlayanBitConverter.TryToInt32(_fourByteBuffer, 0);
+            value = SharlayanBitConverter.TryToInt32(_fourByteBuffer, 0);
+            return true;
         }
 
         public long GetInt64(IntPtr address, long offset = 0) {
@@ -382,7 +391,13 @@ namespace Sharlayan {
                     }
 
                     if (IsASMSignature) {
-                        nextAddress = baseAddress + this.GetInt32(new IntPtr(baseAddress.ToInt64())) + 4;
+                        // Same failure handling as the pointer branch: a failed
+                        // displacement read aborts instead of continuing from base+0+4.
+                        if (!this.TryGetInt32(new IntPtr(baseAddress.ToInt64()), out int displacement)) {
+                            return IntPtr.Zero;
+                        }
+
+                        nextAddress = baseAddress + displacement + 4;
                         IsASMSignature = false;
                     }
                     else {

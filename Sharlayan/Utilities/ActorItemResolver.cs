@@ -94,7 +94,9 @@ namespace Sharlayan.Utilities {
                 if (this._memoryHandler.Structures.ActorItem.TargetFlags >= 0 && this._memoryHandler.Structures.ActorItem.TargetFlags < source.Length) entry.TargetFlags = source[this._memoryHandler.Structures.ActorItem.TargetFlags]; // ??
                 if (this._memoryHandler.Structures.ActorItem.GatheringInvisible >= 0 && this._memoryHandler.Structures.ActorItem.GatheringInvisible < source.Length) entry.GatheringInvisible = source[this._memoryHandler.Structures.ActorItem.GatheringInvisible]; // ??
                 entry.ModelID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ModelID);
-                entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
+                // F82: guarded like the sibling raw-byte fields — ActionStatus is -1
+                // (unmapped) so the read is skipped and the ID stays 0.
+                if (this._memoryHandler.Structures.ActorItem.ActionStatus >= 0 && this._memoryHandler.Structures.ActorItem.ActionStatus < source.Length) entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
