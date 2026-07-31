@@ -1,17 +1,31 @@
 name: Release Sharlayan 9
 
-# Fires on direct pushes to main (stable release) and sharlayan-9-rebuild
-# (prerelease). PRs to main are handled by ci.yml — no publishing there.
+# Pushes/merges to main publish a STABLE release. Pull requests targeting main
+# publish a PRERELEASE (X.Y.Z-prerelease.N) — but only when the PR comes from a
+# branch in this repo and is authored by a maintainer (Icehunter or
+# logicallysynced); other PRs build via ci.yml only and publish nothing.
+# (The old model keyed prerelease off the sharlayan-9-rebuild branch, which
+# stopped producing prereleases when that branch was deleted on merge.)
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - sharlayan-9-rebuild
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-publish:
     runs-on: windows-latest
+
+    # Maintainer gate for prerelease publishing from PRs: same-repo head only
+    # (forks get no OIDC token anyway) and an explicit author allowlist. Push
+    # and manual dispatch runs are unaffected.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       contains(fromJSON('["Icehunter", "logicallysynced"]'), github.event.pull_request.user.login))
 
     # Matches the Environment constraint on the nuget.org trusted publisher.
     environment: production
@@ -38,13 +52,12 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      # Derive the NuGet version from version.props and the triggering branch:
-      #   main              → 9.0.4          (stable)
-      #   sharlayan-9-rebuild → 9.0.4-prerelease.N  (prerelease; N = run number)
+      # Derive the NuGet version from version.props and the trigger:
+      #   push to main / workflow_dispatch → 9.2.0                (stable)
+      #   pull_request into main           → 9.2.0-prerelease.N   (N = run number)
       #
-      # When the rebuild branch is eventually merged into main the stable
-      # release (9.0.4) supersedes all prior 9.0.4-prerelease.* packages —
-      # standard NuGet SemVer promotion, no special handling needed.
+      # The eventual stable release supersedes all prior X.Y.Z-prerelease.*
+      # packages — standard NuGet SemVer promotion, no special handling needed.
       - name: Determine version
         id: version
         shell: pwsh
@@ -59,7 +72,7 @@ jobs:
 
           $base   = "$major.$minor.$patch"
           $branch = '${{ github.ref_name }}'
-          $isPrerelease = $branch -eq 'sharlayan-9-rebuild'
+          $isPrerelease = '${{ github.event_name }}' -eq 'pull_request'
           $full   = if ($isPrerelease) { "$base-prerelease.${{ github.run_number }}" } else { $base }
 
           Write-Host "Branch      : $branch"
@@ -113,8 +126,8 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
-      # Publish stable releases from main; publish prereleases from the rebuild
-      # branch. Uses NuGet Trusted Publishing (OIDC) via the official NuGet/login
+      # Publish stable releases from main pushes; publish prereleases from
+      # maintainer PRs. Uses NuGet Trusted Publishing (OIDC) via the official NuGet/login
       # action — no stored API key needed. nuget.org must have this repo
       # configured as a trusted publisher for the Sharlayan package. The
       # temporary API key is valid for ~1 hour. --skip-duplicate makes re-runs
