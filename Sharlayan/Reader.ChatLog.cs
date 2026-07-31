@@ -105,6 +105,13 @@ namespace Sharlayan {
                     }
                     else {
                         this._chatLogReader.EnsureArrayIndexes();
+                        // F90: clamp here too — an unclamped torn value would persist as
+                        // PreviousArrayIndex below, and the next (untorn) poll would take
+                        // the ring-wrapped branch and replay already-delivered entries.
+                        if (currentArrayIndex > this._chatLogReader.Indexes.Count) {
+                            currentArrayIndex = this._chatLogReader.Indexes.Count;
+                        }
+
                         if (currentArrayIndex < this._chatLogReader.PreviousArrayIndex) {
                             IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(this._chatLogReader.PreviousArrayIndex, 1000);
                             this._chatLogBufferList.AddRange(bufferEntries);
