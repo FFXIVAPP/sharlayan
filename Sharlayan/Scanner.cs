@@ -164,14 +164,27 @@ namespace Sharlayan {
         }
 
         private int FindSuperSignature(byte[] buffer, byte[] pattern) {
-            if (pattern.Length > buffer.Length) {
+            return this.FindSuperSignature(buffer, pattern, buffer.Length);
+        }
+
+        // F80: searchLength bounds the scan to the bytes actually fetched this
+        // iteration. The chunk buffer is reused across regions, so on a final/partial
+        // chunk the tail still holds bytes from the previous (different-address)
+        // region — scanning the full buffer could spuriously match a signature there
+        // and resolve a key to a wrong address.
+        private int FindSuperSignature(byte[] buffer, byte[] pattern, int searchLength) {
+            if (searchLength > buffer.Length) {
+                searchLength = buffer.Length;
+            }
+
+            if (pattern.Length > searchLength) {
                 return -1;
             }
 
             int[] badShift = BuildBadShiftTable(pattern);
             int offset = 0;
             int last = pattern.Length - 1;
-            int maxoffset = buffer.Length - pattern.Length;
+            int maxoffset = searchLength - pattern.Length;
             while (offset <= maxoffset) {
                 int position;
                 for (position = last; pattern[position] == buffer[position + offset] || pattern[position] == WildCardChar; position--) {
@@ -234,7 +247,7 @@ namespace Sharlayan {
                     if (UnsafeNativeMethods.ReadProcessMemory(this._memoryHandler.ProcessHandle, searchStart, buffer, regionSize, out IntPtr _)) {
                         for (int i = 0; i < unresolvedSignatures.Count; i++) {
                             Signature unresolvedSignature = unresolvedSignatures[i];
-                            int index = this.FindSuperSignature(buffer, unresolvedPatterns[i]);
+                            int index = this.FindSuperSignature(buffer, unresolvedPatterns[i], (int) regionSize.ToInt64());
                             if (index < 0) {
                                 tempSigs.Add(unresolvedSignature);
                                 tempPatterns.Add(unresolvedPatterns[i]);
