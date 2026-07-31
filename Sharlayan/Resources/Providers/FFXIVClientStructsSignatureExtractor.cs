@@ -114,12 +114,16 @@ namespace Sharlayan.Resources.Providers {
         private static Dictionary<string, StaticAddressInfo> BuildCache() {
             Dictionary<string, StaticAddressInfo> cache = new Dictionary<string, StaticAddressInfo>(StringComparer.Ordinal);
             Assembly fcsAssembly = typeof(InteropGenerator.Runtime.Attributes.StaticAddressAttribute).Assembly;
-            // After ILRepack, FFXIVClientStructs types end up inside Sharlayan.dll; but if that
-            // assembly doesn't carry them (e.g. harness referencing unmerged builds), also scan
-            // any loaded assembly named FFXIVClientStructs.
-            List<Assembly> probe = new List<Assembly> { fcsAssembly };
+            // F95: force-load the assembly that actually carries the [StaticAddress] types by
+            // referencing one of them. In merged builds this resolves to Sharlayan.dll (types
+            // internalized by ILRepack); in unmerged builds (tests, harness against raw
+            // outputs) it loads FFXIVClientStructs.dll. The previous probe only scanned
+            // ALREADY-loaded assemblies, so the cache silently built empty when nothing had
+            // touched an FCS type before the first TryGet — a test-ordering time bomb.
+            Assembly structsAssembly = typeof(FFXIVClientStructs.FFXIV.Client.System.Framework.Framework).Assembly;
+            List<Assembly> probe = new List<Assembly> { fcsAssembly, structsAssembly };
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()) {
-                if (a != fcsAssembly && a.GetName().Name is "FFXIVClientStructs" or "Sharlayan") {
+                if (a != fcsAssembly && a != structsAssembly && a.GetName().Name is "FFXIVClientStructs" or "Sharlayan") {
                     probe.Add(a);
                 }
             }

@@ -66,7 +66,7 @@ namespace Sharlayan.Resources.Mappers {
                 HitBoxRadius = (int)Marshal.OffsetOf<Character>(nameof(Character.HitboxRadius)),
                 Fate = (int)Marshal.OffsetOf<Character>(nameof(Character.FateId)),
                 NPCID1 = (int)Marshal.OffsetOf<Character>(nameof(Character.BaseId)),
-                Distance = (int)Marshal.OffsetOf<Character>(nameof(Character.YalmDistanceFromPlayerX)),
+                Distance = (int)Marshal.OffsetOf<Character>(nameof(Character.CurrentDistance)),
 
                 // Position vector — Y and Z intentionally swapped vs. the C++ struct layout.
                 // See class header for rationale.

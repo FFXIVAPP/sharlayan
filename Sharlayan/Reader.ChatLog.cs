@@ -24,6 +24,10 @@ namespace Sharlayan {
 
         private readonly object _chatLogLock = new object();
 
+        // F91: precompiled like KeyBindsRegex — previously an inline static
+        // Regex.IsMatch per chat line.
+        private static readonly Regex ChatCodeRegex = new Regex(@"[\w\d]{4}::?.+", RegexOptions.Compiled);
+
         private List<byte[]> _chatLogBufferList = new List<byte[]>();
 
         public bool CanGetChatLog() {
@@ -55,21 +59,47 @@ namespace Sharlayan {
             this._chatLogBufferList.Clear();
 
             try {
-                this._chatLogReader.ChatLogPointers = new ChatLogPointers {
-                    LineCount = this._memoryHandler.GetUInt32(chatPointerAddress),
-                    OffsetArrayStart = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayStart),
-                    OffsetArrayPos = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayPos),
-                    OffsetArrayEnd = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.OffsetArrayEnd),
-                    LogStart = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogStart),
-                    LogNext = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogNext),
-                    LogEnd = this._memoryHandler.GetInt64(chatPointerAddress, this._memoryHandler.Structures.ChatLogPointers.LogEnd),
-                };
+                // F92 (was 7 scalar syscalls): LineCount sits at offset 0 and both
+                // StdVector triplets are small fixed offsets into the same LogModule —
+                // one bulk read covers the whole span, and the pointer set is captured
+                // from a single moment instead of 7 reads of mutating memory.
+                Models.Structures.ChatLogPointers pointerOffsets = this._memoryHandler.Structures.ChatLogPointers;
+                int pointersSpan = (int) Math.Max(pointerOffsets.OffsetArrayEnd, pointerOffsets.LogEnd) + 8;
+                byte[] pointersMap = this._memoryHandler.BufferPool.Rent(pointersSpan);
+                try {
+                    if (!this._memoryHandler.Peek(chatPointerAddress, pointersMap, pointersSpan)) {
+                        // Failed read: zeroed pointers -> currentArrayIndex 0 -> no entries this poll.
+                        this._chatLogReader.ChatLogPointers = new ChatLogPointers();
+                    }
+                    else {
+                        this._chatLogReader.ChatLogPointers = new ChatLogPointers {
+                            LineCount = SharlayanBitConverter.TryToUInt32(pointersMap, 0),
+                            OffsetArrayStart = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.OffsetArrayStart),
+                            OffsetArrayPos = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.OffsetArrayPos),
+                            OffsetArrayEnd = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.OffsetArrayEnd),
+                            LogStart = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.LogStart),
+                            LogNext = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.LogNext),
+                            LogEnd = SharlayanBitConverter.TryToInt64(pointersMap, (int) pointerOffsets.LogEnd),
+                        };
+                    }
+                }
+                finally {
+                    this._memoryHandler.BufferPool.Return(pointersMap);
+                }
 
                 long currentArrayIndex = (this._chatLogReader.ChatLogPointers.OffsetArrayPos - this._chatLogReader.ChatLogPointers.OffsetArrayStart) / 4;
                 if (currentArrayIndex > 0) {
                     if (this._chatLogReader.ChatLogFirstRun) {
                         this._chatLogReader.EnsureArrayIndexes();
                         this._chatLogReader.ChatLogFirstRun = false;
+                        // F90: the two pointer fields are read non-atomically from live
+                        // memory — clamp before indexing the fixed 1000-entry table (an
+                        // out-of-range index previously threw AND left ChatLogFirstRun
+                        // false, so first-run initialization never retried properly).
+                        if (currentArrayIndex > this._chatLogReader.Indexes.Count) {
+                            currentArrayIndex = this._chatLogReader.Indexes.Count;
+                        }
+
                         this._chatLogReader.PreviousOffset = this._chatLogReader.Indexes[(int) currentArrayIndex - 1];
                         this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
                     }
@@ -108,7 +138,7 @@ namespace Sharlayan {
                     // assign logged user for this instance to chatLogEntry
                     chatLogEntry.PlayerCharacterName = this._pcWorkerDelegate.CurrentUser?.Name ?? UNRESOLVED;
 
-                    if (Regex.IsMatch(chatLogEntry.Combined, @"[\w\d]{4}::?.+")) {
+                    if (ChatCodeRegex.IsMatch(chatLogEntry.Combined)) {
                         result.ChatLogItems.Enqueue(chatLogEntry);
                     }
                 }
