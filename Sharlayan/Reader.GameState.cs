@@ -88,6 +88,8 @@ namespace Sharlayan {
         private ushort[] _cachedSceneBgmIds;
         private string[] _cachedSceneBgmFiles;
         // F20: pre-allocated FFT scratch buffer — avoids a new byte[32] on every GetGameState poll.
+        // Fail-closed: GetByteArray zeroes this on a failed read (F78), so IsBgmAudible
+        // reports false for that tick rather than replaying the previous poll's bins.
         private readonly byte[] _fftScratch = new byte[BgmAudibleBinCount * sizeof(float)];
         // F21: pre-allocated BgmSceneInfo array and per-scene objects — overwritten in place each frame
         // instead of re-allocating. Capped at 12 (documented maximum scene count).

@@ -12,8 +12,10 @@
 .PARAMETER Configuration
     Debug (default) or Release.
 
-.PARAMETER SkipSubmoduleUpdate
-    Pass-through to build.ps1. Default: skip (so you aren't pulling upstream mid-session).
+.PARAMETER PullSubmodule
+    Run build.ps1's submodule sync/update step, which checks out the SHA pinned in the
+    superproject (it does NOT pull upstream HEAD — bump the pin explicitly to update).
+    Default: skip the step and build the submodule working tree as-is.
 
 .EXAMPLE
     .\harness.ps1

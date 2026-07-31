@@ -44,12 +44,15 @@ namespace Sharlayan.Utilities {
             this._monsterWorkerDelegate = monsterWorkerDelegate;
         }
 
-        // F97: reused across calls (resolution is single-threaded per Reader poll) —
-        // previously a fresh List per actor per poll, with O(n²) Contains scans.
-        private readonly HashSet<StatusItem> _foundStatuses = new HashSet<StatusItem>(ReferenceEqualityComparer.Instance);
+        // F97: reused across calls — previously a fresh List per actor per poll, with
+        // O(n²) Contains scans. ThreadStatic (not an instance field): the resolver is
+        // shared by GetActors/GetCurrentPlayer/GetTargetInfo, and nothing in the public
+        // API forbids a consumer polling those from different threads.
+        [ThreadStatic]
+        private static HashSet<StatusItem> _foundStatusesCache;
 
         public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
-            HashSet<StatusItem> foundStatuses = this._foundStatuses;
+            HashSet<StatusItem> foundStatuses = _foundStatusesCache ??= new HashSet<StatusItem>(ReferenceEqualityComparer.Instance);
             foundStatuses.Clear();
 
             ActorItem entry = existingActorItem ?? new ActorItem();
