@@ -299,6 +299,24 @@ namespace Sharlayan.Tests.Resources.Providers {
             Assert.Equal(expected, InventoryContainerMapper.Build().SourceSize);
         }
 
+        [Fact]
+        public void InventoryContainerMapper_Items_MatchesFCSOffset() {
+            // F75: the slot-array pointer lives at Items (0x08); offset 0 is the vtable.
+            // Reader.Inventory reads the per-container item array base from this offset.
+            int expected = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Items));
+            Assert.Equal(8, expected); // document the current known-good value
+            Assert.Equal(expected, InventoryContainerMapper.Build().Items);
+        }
+
+        [Fact]
+        public void InventoryItemMapper_SourceSize_MatchesFCSStructSize() {
+            // F76: InventoryItem is [StructLayout(Size = 0x48)] — 72 bytes. Reader.Inventory
+            // uses this as the per-slot stride (previously a hardcoded 56).
+            int expected = Marshal.SizeOf<FFXIVClientStructs.FFXIV.Client.Game.InventoryItem>();
+            Assert.Equal(72, expected); // document the current known-good value
+            Assert.Equal(expected, InventoryItemMapper.Build().SourceSize);
+        }
+
         // ------------------------------------------------------------------------------
         // Helpers
         // ------------------------------------------------------------------------------

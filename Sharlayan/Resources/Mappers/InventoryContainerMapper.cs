@@ -24,6 +24,9 @@ namespace Sharlayan.Resources.Mappers {
             return new SharlayanInventoryContainer {
                 ID = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Type)),
                 Amount = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Size)),
+                // F75: the container's slot-array pointer lives at Items (0x08) — offset 0
+                // is the vtable pointer. Reading the array base from 0 yielded garbage items.
+                Items = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Items)),
                 SourceSize = Marshal.SizeOf<NativeInventoryContainer>(),
             };
         }

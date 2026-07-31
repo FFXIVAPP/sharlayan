@@ -58,7 +58,11 @@ namespace Sharlayan {
                 IntPtr inventoryAddress = new IntPtr(this._memoryHandler.GetInt64(this._memoryHandler.Scanner.Locations[Signatures.INVENTORY_KEY]));
                 this._memoryHandler.GetByteArray(inventoryAddress, inventoryMap, _inventoryCount * inventoryByteCount);
 
-                int itemByteCount = 56;
+                // F76: FCS-derived per-slot stride (0x48); was hardcoded 56.
+                int itemByteCount = this._memoryHandler.Structures.InventoryItem.SourceSize;
+                if (itemByteCount <= 0) {
+                    return result;
+                }
 
                 for (int i = 0; i < _inventoryCount; i++) {
                     int bagIndex = i * inventoryByteCount;
@@ -84,7 +88,8 @@ namespace Sharlayan {
                         continue;
                     }
 
-                    IntPtr inventorySlotAddress = new IntPtr(this._memoryHandler.GetInt64FromBytes(inventoryMap, bagIndex));
+                    // F75: slot-array pointer is at Items (0x08); offset 0 is the vtable pointer.
+                    IntPtr inventorySlotAddress = new IntPtr(this._memoryHandler.GetInt64FromBytes(inventoryMap, bagIndex + this._memoryHandler.Structures.InventoryContainer.Items));
 
                     // F19: reuse one pooled buffer for every container's slot data.
                     // A failed read previously yielded a zeroed fresh array (empty items);
