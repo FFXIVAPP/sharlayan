@@ -20,12 +20,16 @@ jobs:
     runs-on: windows-latest
 
     # Maintainer gate for prerelease publishing from PRs: same-repo head only
-    # (forks get no OIDC token anyway) and an explicit author allowlist. Push
-    # and manual dispatch runs are unaffected.
+    # (forks get no OIDC token anyway), the PR author must be allowlisted, AND
+    # the actor who triggered this run (the pusher, on synchronize events) must
+    # be allowlisted — author alone would let any collaborator publish by
+    # pushing to a maintainer-authored PR branch. Push and manual dispatch runs
+    # are unaffected.
     if: >-
       github.event_name != 'pull_request' ||
       (github.event.pull_request.head.repo.full_name == github.repository &&
-       contains(fromJSON('["Icehunter", "logicallysynced"]'), github.event.pull_request.user.login))
+       contains(fromJSON('["Icehunter", "logicallysynced"]'), github.event.pull_request.user.login) &&
+       contains(fromJSON('["Icehunter", "logicallysynced"]'), github.actor))
 
     # Matches the Environment constraint on the nuget.org trusted publisher.
     environment: production
@@ -44,6 +48,10 @@ jobs:
       - name: Checkout (with submodules)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          # On pull_request, pin the PR HEAD rather than the default ephemeral
+          # merge ref — the published prerelease must be exactly the pushed
+          # code, not a synthetic merge with whatever main's tip happens to be.
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || '' }}
           fetch-depth: 0
           submodules: recursive
 
