@@ -17,7 +17,12 @@ namespace Sharlayan.Utilities {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
+            // F101: None, never Auto — Auto lets a $type property in untrusted JSON
+            // instantiate arbitrary types during deserialization (a well-known RCE
+            // vector). Nothing in Sharlayan needs polymorphic type resolution; this
+            // helper ships public in the NuGet, so downstream callers inherit the
+            // default.
+            TypeNameHandling = TypeNameHandling.None,
         };
 
         public static T Deserialize<T>(string value) {

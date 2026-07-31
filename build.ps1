@@ -88,7 +88,11 @@ if (-not $SkipSubmoduleUpdate) {
         git submodule sync --recursive
         if ($LASTEXITCODE -ne 0) { throw 'git submodule sync failed.' }
 
-        git submodule update --init --recursive --remote -- Sharlayan/FFXIVClientStructs
+        # No --remote: check out the SHA pinned in the superproject index. Tracking the
+        # remote branch head pulled unreviewed upstream commits into an elevated
+        # build/run session and contradicted the pinned-submodule model. Bump the pin
+        # explicitly (git -C Sharlayan/FFXIVClientStructs checkout <sha> && git add).
+        git submodule update --init --recursive -- Sharlayan/FFXIVClientStructs
         if ($LASTEXITCODE -ne 0) { throw 'git submodule update failed.' }
     }
     finally {
