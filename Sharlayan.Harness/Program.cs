@@ -70,7 +70,8 @@ internal static class Program {
             if (outFilePath != null) await File.WriteAllTextAsync(outFilePath, report.ToString());
             return 1;
         }
-        Process game = candidates[0];
+        // Disposed when Main exits (the MemoryHandler holds it for the whole run).
+        using Process game = candidates[0];
         for (int i = 1; i < candidates.Length; i++) {
             candidates[i].Dispose();
         }

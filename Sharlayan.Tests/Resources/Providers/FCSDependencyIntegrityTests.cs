@@ -16,6 +16,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace Sharlayan.Tests.Resources.Providers {
+    using System;
     using System.Reflection;
     using System.Runtime.InteropServices;
 
@@ -38,6 +39,16 @@ namespace Sharlayan.Tests.Resources.Providers {
     using Xunit;
 
     using NativePartyMember = FFXIVClientStructs.FFXIV.Client.Game.Group.PartyMember;
+
+    // Aliases for the pinned-size theory below; each matches the type its mapper sizes from.
+    using NativeBattleChara = FFXIVClientStructs.FFXIV.Client.Game.Character.BattleChara;
+    using NativeCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
+    using NativeTargetSystem = FFXIVClientStructs.FFXIV.Client.Game.Control.TargetSystem;
+    using NativeStatus = FFXIVClientStructs.FFXIV.Client.Game.Status;
+    using NativeHaterInfo = FFXIVClientStructs.FFXIV.Client.Game.UI.HaterInfo;
+    using NativeHateInfo = FFXIVClientStructs.FFXIV.Client.Game.UI.HateInfo;
+    using NativeJobGaugeManager = FFXIVClientStructs.FFXIV.Client.Game.JobGaugeManager;
+    using NativeActionBarSlot = FFXIVClientStructs.FFXIV.Client.UI.Arrays.Common.ActionBarSlotNumberArray;
 
     public class FCSDependencyIntegrityTests {
         // ------------------------------------------------------------------------------
@@ -115,6 +126,14 @@ namespace Sharlayan.Tests.Resources.Providers {
         [Fact]
         public void PrivateFieldOffset_DancerGauge_danceSteps_Resolves() {
             AssertPrivateFieldExists<FFXIVClientStructs.FFXIV.Client.Game.Gauge.DancerGauge>("_danceSteps");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_PlayerState_attributes_Resolves() {
+            // Backs every derived PlayerInfo attribute (Strength, CriticalHitRate,
+            // HPMax, resistances) via PlayerInfoMapper's _attributes base + PlayerAttribute
+            // index arithmetic.
+            AssertPrivateFieldExists<PlayerState>("_attributes");
         }
 
         [Fact]
@@ -297,6 +316,71 @@ namespace Sharlayan.Tests.Resources.Providers {
             int expected = Marshal.SizeOf<NativeInventoryContainer>();
             Assert.Equal(32, expected); // document the current known-good value
             Assert.Equal(expected, InventoryContainerMapper.Build().SourceSize);
+        }
+
+        [Fact]
+        public void InventoryContainerMapper_Items_MatchesFCSOffset() {
+            // F75: the slot-array pointer lives at Items (0x08); offset 0 is the vtable.
+            // Reader.Inventory reads the per-container item array base from this offset.
+            int expected = (int)Marshal.OffsetOf<NativeInventoryContainer>(nameof(NativeInventoryContainer.Items));
+            Assert.Equal(8, expected); // document the current known-good value
+            Assert.Equal(expected, InventoryContainerMapper.Build().Items);
+        }
+
+        [Fact]
+        public void InventoryItemMapper_SourceSize_MatchesFCSStructSize() {
+            // F76: InventoryItem is [StructLayout(Size = 0x48)] — 72 bytes. Reader.Inventory
+            // uses this as the per-slot stride (previously a hardcoded 56).
+            int expected = Marshal.SizeOf<InventoryItem>();
+            Assert.Equal(72, expected); // document the current known-good value
+            Assert.Equal(expected, InventoryItemMapper.Build().SourceSize);
+        }
+
+        // ------------------------------------------------------------------------------
+        // Struct sizes that size read buffers. Unlike FieldOffsetReader.OffsetOf (which
+        // throws MissingFieldException on a rename, so AllMappers_Build_DoesNotThrow
+        // catches it), SizeOf/Marshal.SizeOf just returns whatever the new value is —
+        // a struct that SHRINKS upstream would silently truncate every read of that
+        // type with no other test failing. Pin the known-good values so a size change
+        // is a deliberate, reviewed edit.
+        //
+        // Bump a value here only after confirming the corresponding Reader still reads
+        // the whole record, and update DEPENDENCY.md in the same change.
+        // ------------------------------------------------------------------------------
+
+        public static readonly TheoryData<string, int> PinnedStructSizes = new() {
+            { "BattleChara", 0x3810 },              // ActorItemMapper.SourceSize — per-actor buffer
+            { "Character", 0x2370 },                // TargetInfoMapper.Size
+            { "TargetSystem", 0x6EF0 },             // TargetInfoMapper.SourceSize
+            { "PartyMember", 0x490 },               // PartyMemberMapper.SourceSize
+            { "Status", 0x10 },                     // StatusItemMapper.SourceSize — per-status stride
+            { "HaterInfo", 0x48 },                  // EnmityItemMapper.SourceSize — agro list stride
+            { "HateInfo", 0x08 },                   // HateItemMapper.SourceSize — hate list stride
+            { "JobGaugeManager", 0x60 },            // JobResourcesMapper.SourceSize
+            { "HotbarSlot", 0xE8 },                 // HotBarItemMapper.ItemSize — per-slot stride
+            { "ActionBarSlotNumberArray", 17 * 4 }, // RecastItemMapper.ItemSize — per-slot stride
+        };
+
+        [Theory]
+        [MemberData(nameof(PinnedStructSizes))]
+        public void FCSStructSizes_MatchPinnedValues(string typeName, int expectedSize) {
+            Type type = typeName switch {
+                "BattleChara" => typeof(NativeBattleChara),
+                "Character" => typeof(NativeCharacter),
+                "TargetSystem" => typeof(NativeTargetSystem),
+                "PartyMember" => typeof(NativePartyMember),
+                "Status" => typeof(NativeStatus),
+                "HaterInfo" => typeof(NativeHaterInfo),
+                "HateInfo" => typeof(NativeHateInfo),
+                "JobGaugeManager" => typeof(NativeJobGaugeManager),
+                "HotbarSlot" => typeof(RaptureHotbarModule.HotbarSlot),
+                "ActionBarSlotNumberArray" => typeof(NativeActionBarSlot),
+                _ => throw new ArgumentOutOfRangeException(nameof(typeName), typeName, "Unmapped type name"),
+            };
+
+            // FieldOffsetReader.SizeOf reads [StructLayout(Size)] and falls back to
+            // Marshal.SizeOf — the same path the mappers use.
+            Assert.Equal(expectedSize, FieldOffsetReader.SizeOf(type));
         }
 
         // ------------------------------------------------------------------------------

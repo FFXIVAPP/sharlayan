@@ -44,8 +44,16 @@ namespace Sharlayan.Utilities {
             this._monsterWorkerDelegate = monsterWorkerDelegate;
         }
 
+        // F97: reused across calls — previously a fresh List per actor per poll, with
+        // O(n²) Contains scans. ThreadStatic (not an instance field): the resolver is
+        // shared by GetActors/GetCurrentPlayer/GetTargetInfo, and nothing in the public
+        // API forbids a consumer polling those from different threads.
+        [ThreadStatic]
+        private static HashSet<StatusItem> _foundStatusesCache;
+
         public ActorItem ResolveActorFromBytes(byte[] source, bool isCurrentUser = false, ActorItem existingActorItem = null) {
-            List<StatusItem> foundStatuses = new List<StatusItem>();
+            HashSet<StatusItem> foundStatuses = _foundStatusesCache ??= new HashSet<StatusItem>(ReferenceEqualityComparer.Instance);
+            foundStatuses.Clear();
 
             ActorItem entry = existingActorItem ?? new ActorItem();
 
@@ -94,7 +102,9 @@ namespace Sharlayan.Utilities {
                 if (this._memoryHandler.Structures.ActorItem.TargetFlags >= 0 && this._memoryHandler.Structures.ActorItem.TargetFlags < source.Length) entry.TargetFlags = source[this._memoryHandler.Structures.ActorItem.TargetFlags]; // ??
                 if (this._memoryHandler.Structures.ActorItem.GatheringInvisible >= 0 && this._memoryHandler.Structures.ActorItem.GatheringInvisible < source.Length) entry.GatheringInvisible = source[this._memoryHandler.Structures.ActorItem.GatheringInvisible]; // ??
                 entry.ModelID = SharlayanBitConverter.TryToUInt32(source, this._memoryHandler.Structures.ActorItem.ModelID);
-                entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
+                // F82: guarded like the sibling raw-byte fields — ActionStatus is -1
+                // (unmapped) so the read is skipped and the ID stays 0.
+                if (this._memoryHandler.Structures.ActorItem.ActionStatus >= 0 && this._memoryHandler.Structures.ActorItem.ActionStatus < source.Length) entry.ActionStatusID = source[this._memoryHandler.Structures.ActorItem.ActionStatus];
                 entry.ActionStatus = (Actor.ActionStatus) entry.ActionStatusID;
 
                 // 0x17D - 0 = Green name, 4 = non-agro (yellow name)
@@ -167,19 +177,19 @@ namespace Sharlayan.Utilities {
 
                 int statusSize = this._memoryHandler.Structures.StatusItem.SourceSize;
 
-                byte[] statusesMap = this._memoryHandler.BufferPool.Rent(statusSize * limit);
-                byte[] statusMap = this._memoryHandler.BufferPool.Rent(statusSize);
-
+                // F97: parse each status directly from `source` — the per-actor
+                // statusesMap/statusMap rents, the bulk BlockCopy, and the per-status
+                // BlockCopy were pure copying overhead (plus a forced Array.Clear on
+                // every pooled return), repeated for potentially hundreds of actors
+                // per poll. TryTo* bounds checks make direct reads safe.
                 try {
-                    Buffer.BlockCopy(source, defaultStatusEffectOffset, statusesMap, 0, limit * statusSize);
-
                     for (int i = 0; i < limit; i++) {
                         bool isNewStatus = false;
 
-                        Buffer.BlockCopy(statusesMap, i * statusSize, statusMap, 0, statusSize);
+                        int statusBase = defaultStatusEffectOffset + i * statusSize;
 
-                        short statusID = SharlayanBitConverter.TryToInt16(statusMap, this._memoryHandler.Structures.StatusItem.StatusID);
-                        uint casterID = SharlayanBitConverter.TryToUInt32(statusMap, this._memoryHandler.Structures.StatusItem.CasterID);
+                        short statusID = SharlayanBitConverter.TryToInt16(source, statusBase + this._memoryHandler.Structures.StatusItem.StatusID);
+                        uint casterID = SharlayanBitConverter.TryToUInt32(source, statusBase + this._memoryHandler.Structures.StatusItem.CasterID);
 
                         StatusItem statusEntry = null;
                         for (int s = 0; s < entry.StatusItems.Count; s++) {
@@ -198,8 +208,9 @@ namespace Sharlayan.Utilities {
                         statusEntry.TargetEntity = entry;
                         statusEntry.TargetName = entry.Name;
                         statusEntry.StatusID = statusID;
-                        statusEntry.Stacks = statusMap[this._memoryHandler.Structures.StatusItem.Stacks];
-                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(statusMap, this._memoryHandler.Structures.StatusItem.Duration);
+                        int stacksOffset = statusBase + this._memoryHandler.Structures.StatusItem.Stacks;
+                        statusEntry.Stacks = stacksOffset >= 0 && stacksOffset < source.Length ? source[stacksOffset] : (byte) 0;
+                        statusEntry.Duration = SharlayanBitConverter.TryToSingle(source, statusBase + this._memoryHandler.Structures.StatusItem.Duration);
                         statusEntry.CasterID = casterID;
 
                         try {
@@ -246,11 +257,8 @@ namespace Sharlayan.Utilities {
                 catch (Exception ex) {
                     this._memoryHandler.RaiseException(Logger, ex);
                 }
-                finally {
-                    this._memoryHandler.BufferPool.Return(statusesMap);
-                    this._memoryHandler.BufferPool.Return(statusMap);
-                }
 
+                // F97: HashSet Contains is O(1); with the old List this line was O(n²).
                 entry.StatusItems.RemoveAll(x => !foundStatuses.Contains(x));
 
                 // handle empty names

@@ -1,10 +1,12 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-    Build Sharlayan with the latest FFXIVClientStructs from the submodule.
+    Build Sharlayan with the pinned FFXIVClientStructs from the submodule.
 
 .DESCRIPTION
-    1. Ensures the FFXIVClientStructs git submodule is initialised and up-to-date.
+    1. Ensures the FFXIVClientStructs git submodule is initialised and checked out
+       at the SHA pinned in the superproject (never the upstream branch head — bump
+       the pin explicitly with git -C Sharlayan/FFXIVClientStructs checkout <sha>).
     2. Builds FFXIVClientStructs (runs its source generators, produces DLLs).
     3. Copies FFXIVClientStructs.dll + InteropGenerator.Runtime.dll into the location
        Sharlayan.csproj references.
@@ -14,8 +16,9 @@
     Debug or Release. Default: Debug.
 
 .PARAMETER SkipSubmoduleUpdate
-    Skip git submodule sync/update. Useful during iterative local development when you
-    want to test against a pinned FFXIVClientStructs state without pulling upstream.
+    Skip git submodule sync/update entirely. Useful during iterative local development
+    when the submodule working tree is already where you want it (e.g. testing an
+    unpinned checkout).
 
 .PARAMETER NoILRepack
     Build Sharlayan WITHOUT merging FFXIVClientStructs into the output DLL. Leaves the
@@ -35,7 +38,7 @@
 
 .EXAMPLE
     .\build.ps1 -SkipSubmoduleUpdate
-    Skip pulling new FFXIVClientStructs commits.
+    Skip the submodule sync/update step entirely.
 
 .EXAMPLE
     .\build.ps1 -Configuration Release -Version "9.0.4-preview.99"
@@ -88,7 +91,11 @@ if (-not $SkipSubmoduleUpdate) {
         git submodule sync --recursive
         if ($LASTEXITCODE -ne 0) { throw 'git submodule sync failed.' }
 
-        git submodule update --init --recursive --remote -- Sharlayan/FFXIVClientStructs
+        # No --remote: check out the SHA pinned in the superproject index. Tracking the
+        # remote branch head pulled unreviewed upstream commits into an elevated
+        # build/run session and contradicted the pinned-submodule model. Bump the pin
+        # explicitly (git -C Sharlayan/FFXIVClientStructs checkout <sha> && git add).
+        git submodule update --init --recursive -- Sharlayan/FFXIVClientStructs
         if ($LASTEXITCODE -ne 0) { throw 'git submodule update failed.' }
     }
     finally {

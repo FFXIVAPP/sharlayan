@@ -25,57 +25,64 @@ namespace Sharlayan.Utilities {
             this._memoryHandler = memoryHandler;
         }
 
+        // F87: total read — a single bad offset (e.g. after an FCS layout bump) zeroes
+        // just that field instead of throwing into the method-level catch and losing
+        // every field resolved after it for the poll.
+        private static byte ReadByte(byte[] source, int offset) {
+            return offset >= 0 && offset < source.Length ? source[offset] : (byte) 0;
+        }
+
         public PlayerInfo ResolvePlayerFromBytes(byte[] source) {
             PlayerInfo entry = new PlayerInfo();
             try {
                 switch (this._memoryHandler.Configuration.GameLanguage) {
                     default:
-                        entry.JobID = source[this._memoryHandler.Structures.PlayerInfo.JobID];
+                        entry.JobID = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.JobID);
                         entry.Job = (Actor.Job) entry.JobID;
 
                         #region Job Levels
 
-                        entry.PGL = source[this._memoryHandler.Structures.PlayerInfo.PGL];
-                        entry.GLD = source[this._memoryHandler.Structures.PlayerInfo.GLD];
-                        entry.MRD = source[this._memoryHandler.Structures.PlayerInfo.MRD];
-                        entry.ARC = source[this._memoryHandler.Structures.PlayerInfo.ARC];
-                        entry.LNC = source[this._memoryHandler.Structures.PlayerInfo.LNC];
-                        entry.THM = source[this._memoryHandler.Structures.PlayerInfo.THM];
-                        entry.CNJ = source[this._memoryHandler.Structures.PlayerInfo.CNJ];
+                        entry.PGL = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.PGL);
+                        entry.GLD = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.GLD);
+                        entry.MRD = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.MRD);
+                        entry.ARC = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.ARC);
+                        entry.LNC = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.LNC);
+                        entry.THM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.THM);
+                        entry.CNJ = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.CNJ);
 
-                        entry.CPT = source[this._memoryHandler.Structures.PlayerInfo.CPT];
-                        entry.BSM = source[this._memoryHandler.Structures.PlayerInfo.BSM];
-                        entry.ARM = source[this._memoryHandler.Structures.PlayerInfo.ARM];
-                        entry.GSM = source[this._memoryHandler.Structures.PlayerInfo.GSM];
-                        entry.LTW = source[this._memoryHandler.Structures.PlayerInfo.LTW];
-                        entry.WVR = source[this._memoryHandler.Structures.PlayerInfo.WVR];
-                        entry.ALC = source[this._memoryHandler.Structures.PlayerInfo.ALC];
-                        entry.CUL = source[this._memoryHandler.Structures.PlayerInfo.CUL];
+                        entry.CPT = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.CPT);
+                        entry.BSM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.BSM);
+                        entry.ARM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.ARM);
+                        entry.GSM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.GSM);
+                        entry.LTW = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.LTW);
+                        entry.WVR = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.WVR);
+                        entry.ALC = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.ALC);
+                        entry.CUL = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.CUL);
 
-                        entry.MIN = source[this._memoryHandler.Structures.PlayerInfo.MIN];
-                        entry.BTN = source[this._memoryHandler.Structures.PlayerInfo.BTN];
-                        entry.FSH = source[this._memoryHandler.Structures.PlayerInfo.FSH];
+                        entry.MIN = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.MIN);
+                        entry.BTN = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.BTN);
+                        entry.FSH = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.FSH);
 
-                        entry.ACN = source[this._memoryHandler.Structures.PlayerInfo.ACN];
-                        entry.ROG = source[this._memoryHandler.Structures.PlayerInfo.ROG];
+                        entry.ACN = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.ACN);
+                        entry.ROG = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.ROG);
 
-                        entry.MCH = source[this._memoryHandler.Structures.PlayerInfo.MCH];
-                        entry.DRK = source[this._memoryHandler.Structures.PlayerInfo.DRK];
-                        entry.AST = source[this._memoryHandler.Structures.PlayerInfo.AST];
+                        entry.MCH = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.MCH);
+                        entry.DRK = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.DRK);
+                        entry.AST = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.AST);
 
-                        entry.SAM = source[this._memoryHandler.Structures.PlayerInfo.SAM];
-                        entry.RDM = source[this._memoryHandler.Structures.PlayerInfo.RDM];
+                        entry.SAM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.SAM);
+                        entry.RDM = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.RDM);
 
-                        entry.BLU = source[this._memoryHandler.Structures.PlayerInfo.BLU];
+                        entry.BLU = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.BLU);
 
-                        entry.DNC = source[this._memoryHandler.Structures.PlayerInfo.DNC];
-                        entry.GNB = source[this._memoryHandler.Structures.PlayerInfo.GNB];
+                        entry.DNC = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.DNC);
+                        entry.GNB = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.GNB);
 
-                        entry.RPR = source[this._memoryHandler.Structures.PlayerInfo.RPR];
-                        entry.SGE = source[this._memoryHandler.Structures.PlayerInfo.SGE];
+                        entry.RPR = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.RPR);
+                        entry.SGE = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.SGE);
 
-                        entry.VPR = source[this._memoryHandler.Structures.PlayerInfo.VPR];
-                        entry.PCT = source[this._memoryHandler.Structures.PlayerInfo.PCT];
+                        entry.VPR = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.VPR);
+                        entry.PCT = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.PCT);
 
                         #endregion
 

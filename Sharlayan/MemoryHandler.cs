@@ -41,17 +41,14 @@ namespace Sharlayan {
         public MemoryHandler(SharlayanConfiguration configuration) {
             this.Configuration = configuration;
             // Prefer read-only access so Sharlayan can attach without admin when the
-            // game runs at the same integrity level. Only fall back to PROCESS_VM_ALL
-            // if the reduced open fails — and finally to Process.Handle as a last
-            // resort for the legacy behaviour.
+            // game runs at the same integrity level; fall back to PROCESS_VM_ALL if
+            // the reduced open fails. (A former third fallback to Process.Handle was
+            // unreachable — the OpenProcess P/Invoke returns Zero rather than throwing —
+            // and would have aliased a handle the Process object owns, so Dispose()'s
+            // CloseHandle could double-close it. F77: removed.)
             this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_READ_QUERY, false, (uint) this.Configuration.ProcessModel.ProcessID);
             if (this.ProcessHandle == IntPtr.Zero) {
-                try {
-                    this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
-                }
-                catch (Exception) {
-                    this.ProcessHandle = this.Configuration.ProcessModel.Process.Handle;
-                }
+                this.ProcessHandle = UnsafeNativeMethods.OpenProcess(UnsafeNativeMethods.ProcessAccessFlags.PROCESS_VM_ALL, false, (uint) this.Configuration.ProcessModel.ProcessID);
             }
             this.IsAttached = true;
 
@@ -148,6 +145,10 @@ namespace Sharlayan {
 
         public event MemoryLocationsFoundEvent OnMemoryLocationsFound = delegate { };
 
+        // F78: the [ThreadStatic] scalar buffers below are shared by every same-width
+        // read on a thread and are never cleared. Each accessor must check Peek's
+        // result and return 0 on failure — otherwise a transient ReadProcessMemory
+        // failure silently yields the bytes of the previous, unrelated read.
         [ThreadStatic]
         private static byte[] _singleByteBuffer;
 
@@ -156,7 +157,10 @@ namespace Sharlayan {
                 _singleByteBuffer = new byte[1];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _singleByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _singleByteBuffer)) {
+                return 0;
+            }
+
             return _singleByteBuffer[0];
         }
 
@@ -166,12 +170,20 @@ namespace Sharlayan {
             return data;
         }
 
+        // F78: destination buffers are pooled and reused across actors/polls — zero
+        // them on a failed read so the caller parses an empty record instead of the
+        // PREVIOUS occupant's bytes (e.g. a failed per-actor read silently duplicating
+        // the prior actor).
         public void GetByteArray(IntPtr address, byte[] destination) {
-            this.Peek(address, destination);
+            if (!this.Peek(address, destination)) {
+                Array.Clear(destination, 0, destination.Length);
+            }
         }
 
         public void GetByteArray(IntPtr address, byte[] destination, int count) {
-            this.Peek(address, destination, count);
+            if (!this.Peek(address, destination, count)) {
+                Array.Clear(destination, 0, count);
+            }
         }
 
         [ThreadStatic]
@@ -188,17 +200,32 @@ namespace Sharlayan {
                 _twoByteBuffer = new byte[2];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer)) {
+                return 0;
+            }
+
             return SharlayanBitConverter.TryToInt16(_twoByteBuffer, 0);
         }
 
         public int GetInt32(IntPtr address, long offset = 0) {
+            this.TryGetInt32(new IntPtr(address.ToInt64() + offset), out int value);
+            return value;
+        }
+
+        // Failure-distinguishing variant for callers where a legitimate 0 and a failed
+        // read must not be conflated (e.g. the ASM-signature displacement hop).
+        internal bool TryGetInt32(IntPtr address, out int value) {
             if (_fourByteBuffer == null) {
                 _fourByteBuffer = new byte[4];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer);
-            return SharlayanBitConverter.TryToInt32(_fourByteBuffer, 0);
+            if (!this.Peek(address, _fourByteBuffer)) {
+                value = 0;
+                return false;
+            }
+
+            value = SharlayanBitConverter.TryToInt32(_fourByteBuffer, 0);
+            return true;
         }
 
         public long GetInt64(IntPtr address, long offset = 0) {
@@ -206,7 +233,10 @@ namespace Sharlayan {
                 _eightByteBuffer = new byte[8];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer)) {
+                return 0;
+            }
+
             return SharlayanBitConverter.TryToInt64(_eightByteBuffer, 0);
         }
 
@@ -269,9 +299,15 @@ namespace Sharlayan {
         }
 
         public T GetStructure<T>(IntPtr address, int offset = 0) {
-            IntPtr buffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(T)));
+            int size = Marshal.SizeOf(typeof(T));
+            IntPtr buffer = Marshal.AllocCoTaskMem(size);
             try {
-                UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address + offset, buffer, new IntPtr(Marshal.SizeOf(typeof(T))), out IntPtr _);
+                // F78: AllocCoTaskMem does not zero-initialize — on a failed read,
+                // marshalling would return a struct built from uninitialized heap bytes.
+                if (!UnsafeNativeMethods.ReadProcessMemory(this.ProcessHandle, address + offset, buffer, new IntPtr(size), out IntPtr _)) {
+                    return default;
+                }
+
                 return (T) Marshal.PtrToStructure(buffer, typeof(T));
             }
             finally {
@@ -284,7 +320,10 @@ namespace Sharlayan {
                 _twoByteBuffer = new byte[2];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _twoByteBuffer)) {
+                return 0;
+            }
+
             return SharlayanBitConverter.TryToUInt16(_twoByteBuffer, 0);
         }
 
@@ -293,7 +332,10 @@ namespace Sharlayan {
                 _fourByteBuffer = new byte[4];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _fourByteBuffer)) {
+                return 0;
+            }
+
             return SharlayanBitConverter.TryToUInt32(_fourByteBuffer, 0);
         }
 
@@ -302,7 +344,10 @@ namespace Sharlayan {
                 _eightByteBuffer = new byte[8];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer)) {
+                return 0;
+            }
+
             return SharlayanBitConverter.TryToUInt64(_eightByteBuffer, 0);
         }
 
@@ -325,25 +370,49 @@ namespace Sharlayan {
                 _eightByteBuffer = new byte[8];
             }
 
-            this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer);
+            if (!this.Peek(new IntPtr(address.ToInt64() + offset), _eightByteBuffer)) {
+                return IntPtr.Zero;
+            }
+
             return new IntPtr(SharlayanBitConverter.TryToInt64(_eightByteBuffer, 0));
         }
 
         public IntPtr ResolvePointerPath(IEnumerable<long> path, IntPtr baseAddress, bool IsASMSignature = false) {
+            // F79: only baseAddress is ever returned, so dereferencing on the final
+            // hop was a wasted ReadProcessMemory syscall on every resolution — skip it.
+            // F78: a null pointer mid-chain now aborts the walk instead of continuing
+            // from a garbage address.
             IntPtr nextAddress = baseAddress;
-            foreach (long offset in path) {
+            using IEnumerator<long> hops = path.GetEnumerator();
+            bool hasHop = hops.MoveNext();
+            while (hasHop) {
+                long offset = hops.Current;
+                hasHop = hops.MoveNext();
                 try {
                     baseAddress = new IntPtr(nextAddress.ToInt64() + offset);
                     if (baseAddress == IntPtr.Zero) {
                         return IntPtr.Zero;
                     }
 
+                    if (!hasHop) {
+                        break;
+                    }
+
                     if (IsASMSignature) {
-                        nextAddress = baseAddress + this.GetInt32(new IntPtr(baseAddress.ToInt64())) + 4;
+                        // Same failure handling as the pointer branch: a failed
+                        // displacement read aborts instead of continuing from base+0+4.
+                        if (!this.TryGetInt32(new IntPtr(baseAddress.ToInt64()), out int displacement)) {
+                            return IntPtr.Zero;
+                        }
+
+                        nextAddress = baseAddress + displacement + 4;
                         IsASMSignature = false;
                     }
                     else {
                         nextAddress = this.ReadPointer(baseAddress);
+                        if (nextAddress == IntPtr.Zero) {
+                            return IntPtr.Zero;
+                        }
                     }
                 }
                 catch {

@@ -63,7 +63,7 @@ namespace Sharlayan.Resources.Mappers {
 
         private static JobResources.BardResources BuildBard() {
             return new JobResources.BardResources {
-                ActiveSong = (byte)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SongFlags)),
+                ActiveSong = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SongFlags)),
                 Repertoire = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.Repertoire)),
                 SoulVoice = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.SoulVoice)),
                 RadiantFinaleCoda = (int)Marshal.OffsetOf<BardGauge>(nameof(BardGauge.RadiantFinaleCoda)),

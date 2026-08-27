@@ -66,7 +66,7 @@ namespace Sharlayan.Resources.Mappers {
                 HitBoxRadius = (int)Marshal.OffsetOf<Character>(nameof(Character.HitboxRadius)),
                 Fate = (int)Marshal.OffsetOf<Character>(nameof(Character.FateId)),
                 NPCID1 = (int)Marshal.OffsetOf<Character>(nameof(Character.BaseId)),
-                Distance = (int)Marshal.OffsetOf<Character>(nameof(Character.YalmDistanceFromPlayerX)),
+                Distance = (int)Marshal.OffsetOf<Character>(nameof(Character.CurrentDistance)),
 
                 // Position vector — Y and Z intentionally swapped vs. the C++ struct layout.
                 // See class header for rationale.
@@ -124,9 +124,13 @@ namespace Sharlayan.Resources.Mappers {
                 CastingTargetID = castInfoBase + ciTargetId,
                 CastingProgress = castInfoBase + ciCurrentCast,
                 CastingTime     = castInfoBase + ciTotalCast,
-                // Status offset = base of BattleChara.StatusManager; consumers iterate
-                // StatusManager._status[60] from there.
-                Status          = statusManagerOff,
+                // F82: legacy Status was a per-actor state byte (Claimed/Idle/Crafting…)
+                // with no clean FCS equivalent. It was previously aliased to the base of
+                // BattleChara.StatusManager, whose first field is an Owner *pointer* — the
+                // resolver then surfaced that pointer's low byte as the actor's Status.
+                // -1 = unmapped: the resolver's `>= 0` guard skips the read and StatusID
+                // stays 0, matching the documented behaviour for unmapped fields.
+                Status          = -1,
 
                 // DefaultStatusEffectOffset → byte offset within Character of the FIRST
                 // Status entry (StatusManager._status[0]). ActorItemResolver does a single
@@ -138,26 +142,33 @@ namespace Sharlayan.Resources.Mappers {
                                             + FieldOffsetReader.OffsetOf<StatusManager>("_status"),
 
                 // --- Bookkeeping ----------------------------------------------------
-                // SourceSize tells ActorItemResolver how many bytes to read per actor.
-                // Must match the full Character struct size.
-                SourceSize = Marshal.SizeOf<Character>(),
+                // F83: SourceSize tells ActorItemResolver how many bytes to read per
+                // actor. CastInfo (0x2790+) and StatusManager (0x23B0+) offsets above are
+                // BattleChara-relative and sit BEYOND sizeof(Character) (0x2370) — sizing
+                // from Character only worked because ArrayPool bucket rounding padded the
+                // rented buffer. Size from BattleChara so the contract is explicit.
+                // (Marshal.SizeOf<BattleChara>() throws — CastInfo is non-marshalable —
+                // so read the [StructLayout(Size)] via FieldOffsetReader.)
+                SourceSize = FieldOffsetReader.SizeOf<BattleChara>(),
 
                 // EntityCount is the loop limit used by Reader.GetActors — number of
                 // 8-byte pointer slots to read from the CHARMAP pointer array. Matches
                 // FCS' GameObjectManager.ObjectArrays._indexSorted: FixedSizeArray819.
                 EntityCount = 819,
 
-                // The following Sharlayan fields have no clean direct equivalent in
-                // FFXIVClientStructs' Character type at this time. Leaving them at
-                // default(int)=0 preserves the legacy "field absent from JSON" behaviour,
-                // and the existing resolvers tolerate the zero case. Revisit when
-                // consumers need them:
-                //   ActionStatus, AgroFlags, CastingID, CastingProgress, CastingTargetID,
-                //   CastingTime, ClaimedByID, CombatFlags, DefaultBaseOffset,
-                //   DefaultStatOffset, DifficultyRank,
-                //   EntityCount, EventObjectType, GatheringInvisible, GatheringStatus,
-                //   GrandCompany, GrandCompanyRank, InCutscene, IsCasting1, IsCasting2,
-                //   ModelID, Status, TargetFlags, TargetType.
+                // F82: the following Sharlayan fields have no clean direct equivalent in
+                // FFXIVClientStructs' Character/BattleChara at this time. -1 = unmapped:
+                // the resolver's `>= 0` bounds guards skip the read (and the TryTo*
+                // helpers return default for negative offsets), so each surfaces as 0:
+                //   ActionStatus, DifficultyRank, GatheringInvisible, GatheringStatus,
+                //   GrandCompany, GrandCompanyRank, ModelID, Status.
+                ActionStatus = -1,
+                DifficultyRank = -1,
+                GatheringInvisible = -1,
+                GatheringStatus = -1,
+                GrandCompany = -1,
+                GrandCompanyRank = -1,
+                ModelID = -1,
             };
         }
     }

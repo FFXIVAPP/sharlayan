@@ -74,12 +74,12 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 
 | Mapper | FCS file(s) | Fields consumed |
 |---|---|---|
-| `ActorItemMapper` | `FFXIV/Client/Game/Object/GameObject.cs` + `FFXIV/Client/Game/Character/Character.cs` + `FFXIV/Client/Game/Character/CharacterData.cs` + `FFXIV/Client/Game/Character/BattleChara.cs` + `FFXIV/Client/Game/Character/CastInfo.cs` + `FFXIV/Common/Math/Vector3.cs` | GameObject `_name`, Character `EntityId` / `OwnerId` / `ObjectKind` / `Rotation` / `HitboxRadius` / `FateId` / `BaseId` / `YalmDistanceFromPlayerX` / `Position` / `Health` / `MaxHealth` / `Mana` / `GatheringPoints` / `MaxGatheringPoints` / `CraftingPoints` / `MaxCraftingPoints` / `TitleId` / `ClassJob` / `Level` / `Icon` / `GMRank` / `TargetId` / `NameId` / `CombatTaggerId` / `TargetableStatus` / `EventId` / `RenderFlags` / `Flags`; BattleChara `CastInfo` / `StatusManager`; CastInfo `IsCasting` / `Interruptible` / `ActionId` / `TargetId` / `CurrentCastTime` / `TotalCastTime` |
+| `ActorItemMapper` | `FFXIV/Client/Game/Object/GameObject.cs` + `FFXIV/Client/Game/Character/Character.cs` + `FFXIV/Client/Game/Character/CharacterData.cs` + `FFXIV/Client/Game/Character/BattleChara.cs` + `FFXIV/Client/Game/Character/CastInfo.cs` + `FFXIV/Common/Math/Vector3.cs` | GameObject `_name`, Character `EntityId` / `OwnerId` / `ObjectKind` / `Rotation` / `HitboxRadius` / `FateId` / `BaseId` / `CurrentDistance` / `Position` / `Health` / `MaxHealth` / `Mana` / `GatheringPoints` / `MaxGatheringPoints` / `CraftingPoints` / `MaxCraftingPoints` / `TitleId` / `ClassJob` / `Level` / `Icon` / `GMRank` / `TargetId` / `NameId` / `CombatTaggerId` / `TargetableStatus` / `EventId` / `RenderFlags` / `Flags`; BattleChara `CastInfo` / `StatusManager`, `SourceSize` = `FieldOffsetReader.SizeOf<BattleChara>()` (per-actor read size; CastInfo/StatusManager offsets exceed `sizeof(Character)`); CastInfo `IsCasting` / `Interruptible` / `ActionId` / `TargetId` / `CurrentCastTime` / `TotalCastTime`; unmapped fields (`ActionStatus`/`DifficultyRank`/`Gathering*`/`GrandCompany*`/`ModelID`/`Status`) = `-1` sentinel |
 | `PartyMemberMapper` | `FFXIV/Client/Game/Group/PartyMember.cs` + `FFXIV/Common/Math/Vector3.cs` | `CurrentHP` / `MaxHP` / `CurrentMP` / `EntityId` / `_name` / `ClassJob` / `Level` / `Position` / `StatusManager` |
-| `PlayerInfoMapper` | `FFXIV/Client/Game/UI/PlayerState.cs` | `CurrentClassJobId`, `BaseStrength` / `BaseDexterity` / `BaseVitality` / `BaseIntelligence` / `BaseMind` / `BasePiety`, `_classJobLevels` + `_classJobExperience` (string-name reflection); `RPR` (ExpIdx 28) and `SGE` (ExpIdx 29) wired via `_classJobLevels` / `_classJobExperience`, same pattern as `VPR`/`PCT` |
+| `PlayerInfoMapper` | `FFXIV/Client/Game/UI/PlayerState.cs` | `CurrentClassJobId`, `BaseStrength` / `BaseDexterity` / `BaseVitality` / `BaseIntelligence` / `BaseMind` / `BasePiety`, `_classJobLevels` + `_classJobExperience` + `_attributes` (string-name reflection; `_attributes` backs every derived attribute — Strength, CriticalHitRate, HPMax, resistances — via base offset + `PlayerAttribute` index); `RPR` (ExpIdx 28) and `SGE` (ExpIdx 29) wired via `_classJobLevels` / `_classJobExperience`, same pattern as `VPR`/`PCT` |
 | `StatusItemMapper` | `FFXIV/Client/Game/StatusManager.cs` (nested `Status` struct) | `StatusId` / `Param` / `RemainingTime` / `SourceObject` |
-| `InventoryItemMapper` | `FFXIV/Client/Game/InventoryItem.cs` | `Slot` / `ItemId` / `Quantity` / `SpiritbondOrCollectability` / `Condition` / `Flags` / `_materia` / `_materiaGrades` / `_stains` / `GlamourId` |
-| `InventoryContainerMapper` | `FFXIV/Client/Game/InventoryContainer.cs` | `Type` / `Size` / `SourceSize` = `Marshal.SizeOf<InventoryContainer>()` (expected 32 / 0x20) |
+| `InventoryItemMapper` | `FFXIV/Client/Game/InventoryItem.cs` | `Slot` / `ItemId` / `Quantity` / `SpiritbondOrCollectability` / `Condition` / `Flags` / `_materia` / `_materiaGrades` / `_stains` / `GlamourId`; `SourceSize` = `Marshal.SizeOf<InventoryItem>()` (expected 72 / 0x48, per-slot stride) |
+| `InventoryContainerMapper` | `FFXIV/Client/Game/InventoryContainer.cs` | `Type` / `Size` / `Items` (slot-array pointer, expected 0x08 — offset 0 is the vtable) / `SourceSize` = `Marshal.SizeOf<InventoryContainer>()` (expected 32 / 0x20) |
 | `HotBarItemMapper` | `FFXIV/Client/UI/Misc/RaptureHotbarModule.HotbarSlot.cs` + `FFXIV/Client/System/String/Utf8String.cs` | `HotbarSlot.CommandId` / `PopUpHelp` / `_popUpKeybindHint`; `Utf8String._inlineBuffer` |
 | `RecastItemMapper` | `FFXIV/Client/UI/Arrays/Common/ActionBarSlotNumberArray.cs` | `ActionType` / `ActionId` / `IconId` / `Executable` / `GlobalCoolDownPercentage` / `CurrentCharges` / `Glows` / `ManaCost` / `InRange` |
 | `TargetInfoMapper` | `FFXIV/Client/Game/Control/TargetSystem.cs` + `FFXIV/Client/Game/Character/Character.cs` | `Target` / `TargetObjectId` / `MouseOverTarget` / `FocusTarget` / `PreviousTarget`; `sizeof(Character)` |
@@ -89,6 +89,29 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 | `ChatLogPointersMapper` | `FFXIV/Component/Log/LogModule.cs` | `LogMessageIndex` / `LogMessageData` StdVector pairs |
 
 ---
+
+### Pinned FCS struct sizes
+
+`FieldOffsetReader.SizeOf` / `Marshal.SizeOf` return whatever the current struct declares — unlike
+`OffsetOf`, they never throw. A struct that SHRINKS upstream would silently truncate every read of
+that type with no test failing, so `FCSStructSizes_MatchPinnedValues` in
+`Sharlayan.Tests/Resources/Providers/FCSDependencyIntegrityTests.cs` pins the known-good values below.
+Change one only after confirming the corresponding Reader still reads the whole record.
+
+| FCS type | Size | Sizes what |
+|----------|------|------------|
+| `BattleChara` | `0x3810` | `ActorItemMapper.SourceSize` — per-actor read buffer |
+| `Character` | `0x2370` | `TargetInfoMapper.Size` |
+| `TargetSystem` | `0x6EF0` | `TargetInfoMapper.SourceSize` |
+| `Group/PartyMember` | `0x490` | `PartyMemberMapper.SourceSize` |
+| `StatusManager.Status` | `0x10` | `StatusItemMapper.SourceSize` — per-status stride |
+| `HaterInfo` | `0x48` | `EnmityItemMapper.SourceSize` — agro list stride |
+| `HateInfo` | `0x08` | `HateItemMapper.SourceSize` — hate list stride |
+| `JobGaugeManager` | `0x60` | `JobResourcesMapper.SourceSize` |
+| `RaptureHotbarModule.HotbarSlot` | `0xE8` | `HotBarItemMapper.ItemSize` — per-slot stride |
+| `ActionBarSlotNumberArray` | `17 * 4` | `RecastItemMapper.ItemSize` — per-slot stride |
+| `InventoryContainer` | `0x20` | `InventoryContainerMapper.SourceSize` — per-container stride |
+| `InventoryItem` | `0x48` | `InventoryItemMapper.SourceSize` — per-slot stride |
 
 ## Reader-level consumers (not offset-mapped)
 

@@ -12,6 +12,7 @@ namespace Sharlayan.Utilities {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Sharlayan.Models;
@@ -21,7 +22,11 @@ namespace Sharlayan.Utilities {
     public static class ActionLookup {
         private static ConcurrentDictionary<uint, ActionItem> _actions = new ConcurrentDictionary<uint, ActionItem>();
 
-        private static volatile bool _loading;
+        // F81: 0 = idle, 1 = in flight. Interlocked so concurrent callers can't
+        // double-load; try/finally so a provider exception (e.g. Lumina throwing
+        // during the patch/Lumina-release window) can't wedge the flag and
+        // permanently no-op every future resolve.
+        private static int _loading;
 
         private static ActionItem DefaultActionInfo = new ActionItem {
             Name = new Localization {
@@ -57,14 +62,17 @@ namespace Sharlayan.Utilities {
         }
 
         internal static async Task Resolve(SharlayanConfiguration configuration) {
-            if (_loading) {
+            if (Interlocked.CompareExchange(ref _loading, 1, 0) != 0) {
                 return;
             }
 
-            _loading = true;
-            IResourceProvider provider = ResourceProviderFactory.Create(configuration);
-            await provider.GetActionsAsync(_actions, configuration);
-            _loading = false;
+            try {
+                IResourceProvider provider = ResourceProviderFactory.Create(configuration);
+                await provider.GetActionsAsync(_actions, configuration);
+            }
+            finally {
+                Interlocked.Exchange(ref _loading, 0);
+            }
         }
     }
 }

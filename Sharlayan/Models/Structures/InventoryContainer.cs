@@ -14,6 +14,8 @@ namespace Sharlayan.Models.Structures {
 
         public int ID { get; set; }
 
+        public int Items { get; set; }
+
         public int SourceSize { get; set; }
     }
 }

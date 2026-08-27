@@ -56,8 +56,27 @@ namespace Sharlayan.Utilities {
             }
         }
 
+        // F90: hard ceiling on a single chat entry. offset/length both come from int32s
+        // read out of live game memory, so a torn read can make (length - offset) huge —
+        // this runs in an elevated process, and the unclamped `new byte[size]` could
+        // allocate up to ~2GB from one bad frame. Real entries are far below 16KB.
+        private const int MaxEntrySize = 0x4000;
+
+        private static readonly byte[] EmptyEntry = new byte[0];
+
         public IEnumerable<byte[]> ResolveEntries(int offset, int length) {
             List<byte[]> entries = new List<byte[]>();
+
+            // F90: clamp to the actual index window — callers derive both bounds from
+            // non-atomic reads of mutating memory, and a torn pair previously indexed
+            // past Indexes.Count and aborted the whole batch mid-walk.
+            if (offset < 0) {
+                offset = 0;
+            }
+
+            if (length > this.Indexes.Count) {
+                length = this.Indexes.Count;
+            }
 
             for (int i = offset; i < length; i++) {
                 int currentOffset = this.Indexes[i];
@@ -76,11 +95,13 @@ namespace Sharlayan.Utilities {
         private byte[] ResolveEntry(int offset, int length) {
             int size = length - offset;
 
-            byte[] result = new byte[size];
-
-            if (size == 0) {
-                return result;
+            // F90: negative (ring wraparound / stale index) or absurd sizes are torn
+            // data, not entries — skip rather than throw or allocate huge.
+            if (size <= 0 || size > MaxEntrySize) {
+                return EmptyEntry;
             }
+
+            byte[] result = new byte[size];
 
             try {
                 this._memoryHandler.GetByteArray(new IntPtr(this.ChatLogPointers.LogStart + offset), result);

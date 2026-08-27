@@ -39,6 +39,10 @@ namespace Sharlayan.Resources.Mappers {
                 DyeID = FieldOffsetReader.OffsetOf<NativeInventoryItem>("_stains"),
 
                 GlamourID = (int)Marshal.OffsetOf<NativeInventoryItem>(nameof(NativeInventoryItem.GlamourId)),
+
+                // F76: per-slot stride derived from FCS (0x48) — Reader.Inventory previously
+                // hardcoded 56, misaligning every slot after index 0.
+                SourceSize = Marshal.SizeOf<NativeInventoryItem>(),
             };
         }
     }

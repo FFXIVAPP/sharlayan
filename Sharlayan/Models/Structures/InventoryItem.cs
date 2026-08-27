@@ -29,5 +29,7 @@ namespace Sharlayan.Models.Structures {
         public int SB { get; set; }
 
         public int Slot { get; set; }
+
+        public int SourceSize { get; set; }
     }
 }

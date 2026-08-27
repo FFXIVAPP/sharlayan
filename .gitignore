@@ -129,5 +129,10 @@ harness-report*.txt
 # Claude Code / editor agent local state (also holds CHANGES.md and
 # DESIGN_REFACTOR.md — local-only refactor notes, not committed)
 .claude/
+
+# Superpowers plugin working files (plans, scratch notes, worktrees)
+docs/superpowers/
+.superpowers/
+.worktrees/
 .fake
 CLAUDE.md

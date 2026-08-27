@@ -25,6 +25,17 @@ namespace Sharlayan.Utilities {
 
         public static ChatLogItem Process(byte[] raw) {
             ChatLogItem chatLogEntry = new ChatLogItem();
+
+            // F93: entries shorter than the 4-byte timestamp + 2-byte code header are
+            // torn reads. Previously raw[0..5] threw, the catch swallowed it, and the
+            // null Combined then threw again at the caller's regex check — two swallowed
+            // exceptions per malformed entry. Return an explicitly-empty entry instead.
+            if (raw == null || raw.Length < 6) {
+                chatLogEntry.Bytes = raw ?? new byte[0];
+                chatLogEntry.Combined = string.Empty;
+                return chatLogEntry;
+            }
+
             try {
                 chatLogEntry.Bytes = raw;
                 byte[] timestampBytes = new byte[4];
@@ -73,6 +84,9 @@ namespace Sharlayan.Utilities {
             catch (Exception) {
                 // IGNORED
             }
+
+            // F93: never hand back a null Combined — the caller regex-matches it.
+            chatLogEntry.Combined ??= string.Empty;
 
             return chatLogEntry;
         }
