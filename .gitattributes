@@ -3,6 +3,14 @@
 # conversion noise.
 * text=auto eol=lf
 
+# Tracked files that a Windows tool regenerates with CRLF on every build:
+# NLog.xsd is dropped by the NLog.Schema package on restore, Sharlayan.xml is
+# emitted by csc. Under the blanket eol=lf above they showed as modified after
+# every build with no content change. Stored LF, checked out CRLF so the
+# working copy matches what the generators write and `git status` stays clean.
+Sharlayan/NLog.xsd     text eol=crlf
+Sharlayan/Sharlayan.xml text eol=crlf
+
 # Custom for Visual Studio
 *.cs     diff=csharp
 *.sln    merge=union
