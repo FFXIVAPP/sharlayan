@@ -196,6 +196,10 @@ namespace Sharlayan.Models.Structures {
 
         public int VPR_CurrentEXP { get; set; }
 
+        public int BST { get; set; }
+
+        public int BST_CurrentEXP { get; set; }
+
         public int SkillSpeed { get; set; }
 
         public int SlashingResistance { get; set; }

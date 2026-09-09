@@ -31,7 +31,7 @@ namespace Sharlayan.Resources.Mappers {
 
     internal static class PlayerInfoMapper {
         // ExpArrayIndex values from the ClassJob Excel sheet. Stable since Shadowbringers
-        // (new jobs get appended — VPR=30, PCT=31 in Dawntrail). Ordered here by index
+        // (new jobs get appended — VPR=30, PCT=31 in Dawntrail, BST=32 in 7.56). Ordered here by index
         // value to make insertions at the tail obvious. Base classes only — combat jobs
         // (PLD/WAR/MNK/...) share their base class's index, so we don't list them twice.
         private const int ExpIdx_PGL = 0;
@@ -66,6 +66,7 @@ namespace Sharlayan.Resources.Mappers {
         private const int ExpIdx_SGE = 29;
         private const int ExpIdx_VPR = 30;
         private const int ExpIdx_PCT = 31;
+        private const int ExpIdx_BST = 32; // beastmaster (limited job, 7.56)
 
         public static PlayerInfo Build() {
             // Levels are shorts packed contiguously; EXP are ints.
@@ -145,7 +146,7 @@ namespace Sharlayan.Resources.Mappers {
                 ACN = Lvl(ExpIdx_ACN), ROG = Lvl(ExpIdx_ROG), MCH = Lvl(ExpIdx_MCH), DRK = Lvl(ExpIdx_DRK),
                 AST = Lvl(ExpIdx_AST), SAM = Lvl(ExpIdx_SAM), RDM = Lvl(ExpIdx_RDM), BLU = Lvl(ExpIdx_BLU),
                 GNB = Lvl(ExpIdx_GNB), DNC = Lvl(ExpIdx_DNC), RPR = Lvl(ExpIdx_RPR), SGE = Lvl(ExpIdx_SGE),
-                VPR = Lvl(ExpIdx_VPR), PCT = Lvl(ExpIdx_PCT),
+                VPR = Lvl(ExpIdx_VPR), PCT = Lvl(ExpIdx_PCT), BST = Lvl(ExpIdx_BST),
 
                 // Per-job EXP.
                 PGL_CurrentEXP = Exp(ExpIdx_PGL), GLD_CurrentEXP = Exp(ExpIdx_GLD), MRD_CurrentEXP = Exp(ExpIdx_MRD),
@@ -158,7 +159,7 @@ namespace Sharlayan.Resources.Mappers {
                 DRK_CurrentEXP = Exp(ExpIdx_DRK), AST_CurrentEXP = Exp(ExpIdx_AST), SAM_CurrentEXP = Exp(ExpIdx_SAM),
                 RDM_CurrentEXP = Exp(ExpIdx_RDM), BLU_CurrentEXP = Exp(ExpIdx_BLU), GNB_CurrentEXP = Exp(ExpIdx_GNB),
                 DNC_CurrentEXP = Exp(ExpIdx_DNC), RPR_CurrentEXP = Exp(ExpIdx_RPR), SGE_CurrentEXP = Exp(ExpIdx_SGE),
-                VPR_CurrentEXP = Exp(ExpIdx_VPR), PCT_CurrentEXP = Exp(ExpIdx_PCT),
+                VPR_CurrentEXP = Exp(ExpIdx_VPR), PCT_CurrentEXP = Exp(ExpIdx_PCT), BST_CurrentEXP = Exp(ExpIdx_BST),
 
                 SourceSize = FieldOffsetReader.SizeOf<PlayerState>(),
             };

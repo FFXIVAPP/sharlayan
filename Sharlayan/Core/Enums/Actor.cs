@@ -232,6 +232,9 @@ namespace Sharlayan.Core.Enums {
             VPR = 0x29,
 
             PCT = 0x2A,
+
+            // Limited job (7.56), like BLU — no JobGaugeManager gauge exists for it.
+            BST = 0x2B,
         }
 
         public enum Sex : byte {
