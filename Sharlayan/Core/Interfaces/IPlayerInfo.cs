@@ -229,5 +229,9 @@ namespace Sharlayan.Core.Interfaces {
         byte VPR { get; set; }
 
         int VPR_CurrentEXP { get; set; }
+
+        byte BST { get; set; }
+
+        int BST_CurrentEXP { get; set; }
     }
 }
