@@ -100,8 +100,26 @@ namespace Sharlayan {
                             currentArrayIndex = this._chatLogReader.Indexes.Count;
                         }
 
-                        this._chatLogReader.PreviousOffset = this._chatLogReader.Indexes[(int) currentArrayIndex - 1];
-                        this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex - 1;
+                        // F102 (issue #130): default is still "skip whatever is already
+                        // buffered". With ChatLogFirstRunReadsBacklog the caller's resume
+                        // point wins instead, which is what recovers the login lines —
+                        // CHATLOG only resolves partway through login, so by the reader's
+                        // first successful poll the welcome banner is already buffered.
+                        (int resumeIndex, int resumeOffset) = ChatLogResumePoint.ForFirstRun(
+                            this._memoryHandler.Configuration.ChatLogFirstRunReadsBacklog,
+                            this._chatLogReader.PreviousArrayIndex,
+                            this._chatLogReader.PreviousOffset,
+                            (int) currentArrayIndex,
+                            this._chatLogReader.Indexes);
+
+                        this._chatLogReader.PreviousArrayIndex = resumeIndex;
+                        this._chatLogReader.PreviousOffset = resumeOffset;
+
+                        if (this._memoryHandler.Configuration.ChatLogFirstRunReadsBacklog && resumeIndex < currentArrayIndex) {
+                            IEnumerable<byte[]> bufferEntries = this._chatLogReader.ResolveEntries(resumeIndex, (int) currentArrayIndex);
+                            this._chatLogBufferList.AddRange(bufferEntries);
+                            this._chatLogReader.PreviousArrayIndex = (int) currentArrayIndex;
+                        }
                     }
                     else {
                         this._chatLogReader.EnsureArrayIndexes();

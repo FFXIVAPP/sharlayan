@@ -231,5 +231,9 @@ namespace Sharlayan.Core {
         public byte PCT { get; set; }
 
         public int PCT_CurrentEXP { get; set; }
+
+        public byte BST { get; set; }
+
+        public int BST_CurrentEXP { get; set; }
     }
 }

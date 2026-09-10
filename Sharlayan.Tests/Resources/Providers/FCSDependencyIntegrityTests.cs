@@ -357,6 +357,7 @@ namespace Sharlayan.Tests.Resources.Providers {
             { "HaterInfo", 0x48 },                  // EnmityItemMapper.SourceSize — agro list stride
             { "HateInfo", 0x08 },                   // HateItemMapper.SourceSize — hate list stride
             { "JobGaugeManager", 0x60 },            // JobResourcesMapper.SourceSize
+            { "PlayerState", 0x928 },               // PlayerInfoMapper.SourceSize — per-poll read buffer
             { "HotbarSlot", 0xE8 },                 // HotBarItemMapper.ItemSize — per-slot stride
             { "ActionBarSlotNumberArray", 17 * 4 }, // RecastItemMapper.ItemSize — per-slot stride
         };
@@ -373,6 +374,7 @@ namespace Sharlayan.Tests.Resources.Providers {
                 "HaterInfo" => typeof(NativeHaterInfo),
                 "HateInfo" => typeof(NativeHateInfo),
                 "JobGaugeManager" => typeof(NativeJobGaugeManager),
+                "PlayerState" => typeof(PlayerState),
                 "HotbarSlot" => typeof(RaptureHotbarModule.HotbarSlot),
                 "ActionBarSlotNumberArray" => typeof(NativeActionBarSlot),
                 _ => throw new ArgumentOutOfRangeException(nameof(typeName), typeName, "Unmapped type name"),

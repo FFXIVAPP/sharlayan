@@ -489,6 +489,45 @@
             </para>
             </summary>
         </member>
+        <member name="P:Sharlayan.SharlayanConfiguration.ChatLogFirstRunReadsBacklog">
+            <summary>
+            When true, the first <c>GetChatLog()</c> call after attaching returns the lines
+            already sitting in the client's chat buffer instead of skipping past them to the
+            newest entry.
+            <para>
+            The reader has always jumped to the newest entry on first run, so anything logged
+            before its first successful read is dropped. That is normally desirable — you don't
+            want the whole backlog replayed when you attach mid-session — but it also eats the
+            login banner. <c>CHATLOG</c> resolves through <c>Framework → UIModule →
+            RaptureLogModule</c>, and that chain only becomes valid partway through the login
+            sequence, by which point "Welcome to &lt;World&gt;!" and the messages after it are
+            already buffered.
+            </para>
+            <para>
+            Enable this if you want those lines. The backlog is bounded by the client's own
+            table (1000 entries), and the resume point passed to <c>GetChatLog()</c> is honoured
+            — pass a stored index/offset to continue where you left off, or the default (0, 0)
+            to take the buffer from the start.
+            </para>
+            <para>
+            Default is false, preserving the long-standing behaviour.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Sharlayan.Utilities.ChatLogResumePoint.ForFirstRun(System.Boolean,System.Int32,System.Int32,System.Int32,System.Collections.Generic.IReadOnlyList{System.Int32})">
+            <summary>
+            Resolves the (array index, byte offset) pair the reader should resume from on its
+            first successful poll.
+            </summary>
+            <param name="readBacklog">
+            When false (the historical default) the already-buffered lines are skipped. When true
+            the caller-supplied resume point is honoured instead, so the backlog is delivered.
+            </param>
+            <param name="callerArrayIndex">Resume index supplied by the caller; 0 means "from the start of the buffer".</param>
+            <param name="callerOffset">Resume byte offset supplied by the caller.</param>
+            <param name="currentArrayIndex">Index one past the newest entry, already clamped to <paramref name="indexes"/>.</param>
+            <param name="indexes">The client's entry-offset table.</param>
+        </member>
         <member name="M:Sharlayan.Utilities.LocalizationHelper.SelectLocalized(Sharlayan.Models.Localization,Sharlayan.Enums.GameLanguage)">
             <summary>
             Returns the localised string for <paramref name="language"/>. Falls back to

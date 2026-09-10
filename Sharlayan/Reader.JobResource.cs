@@ -61,6 +61,10 @@ namespace Sharlayan {
                 JobResourcesContainer c = result.JobResourcesContainer;
                 bool all = job == null;
 
+                // Limited jobs (BLU, BST) are absent by design: FCS' JobGaugeManager has
+                // no gauge union member for them because the game gives them none. Their
+                // level/EXP still surface through PlayerInfo.
+
                 if (all || job == Actor.Job.AST) c.Astrologian = this._jobResourceResolver.ResolveAstrologianFromBytes(jobResourcesMap);
                 if (all || job == Actor.Job.BRD) c.Bard = this._jobResourceResolver.ResolveBardFromBytes(jobResourcesMap);
                 if (all || job == Actor.Job.BLM) c.BlackMage = this._jobResourceResolver.ResolveBlackMageFromBytes(jobResourcesMap);

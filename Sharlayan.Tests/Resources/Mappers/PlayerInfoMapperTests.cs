@@ -65,9 +65,39 @@ namespace Sharlayan.Tests.Resources.Mappers {
             Assert.Equal(levelsBase, info.PGL);
             Assert.Equal(expBase, info.PGL_CurrentEXP);
 
-            // PCT = ExpArrayIndex 31 (newest job at end of the array).
+            // PCT = ExpArrayIndex 31.
             Assert.Equal(levelsBase + 31 * sizeof(short), info.PCT);
             Assert.Equal(expBase    + 31 * sizeof(int),   info.PCT_CurrentEXP);
+
+            // BST = ExpArrayIndex 32 (newest job at end of the array; read from the
+            // live ClassJob sheet on 7.56, row 43 / 0x2B, abbreviation BST).
+            Assert.Equal(levelsBase + 32 * sizeof(short), info.BST);
+            Assert.Equal(expBase    + 32 * sizeof(int),   info.BST_CurrentEXP);
+        }
+
+        [Fact]
+        public void Build_PerJobIndices_StayWithinBackingArrays() {
+            // Both arrays are FixedSizeArray35 — BST at index 32 is the highest slot in
+            // use. If a future job pushes past 34 without FCS growing the array, the
+            // reads would run off the end of PlayerState; fail loudly here instead.
+            const int arrayCapacity = 35;
+            const int highestIndexInUse = 32; // BST
+
+            PlayerInfo info = PlayerInfoMapper.Build();
+            int levelsBase = (int)Marshal.OffsetOf<PlayerState>("_classJobLevels");
+            int expBase    = (int)Marshal.OffsetOf<PlayerState>("_classJobExperience");
+
+            Assert.True(highestIndexInUse < arrayCapacity, "per-job index exceeds the FCS FixedSizeArray capacity");
+            Assert.Equal(levelsBase + highestIndexInUse * sizeof(short), info.BST);
+            Assert.Equal(expBase    + highestIndexInUse * sizeof(int),   info.BST_CurrentEXP);
+        }
+
+        [Fact]
+        public void ActorJob_BST_MatchesClassJobSheetRowId() {
+            // ClassJob sheet row 43 on 7.56. Beastmaster is a limited job like BLU (36),
+            // so it has no JobGaugeManager gauge — see Reader.JobResource.
+            Assert.Equal(0x2B, (int)Sharlayan.Core.Enums.Actor.Job.BST);
+            Assert.Equal(43, (int)Sharlayan.Core.Enums.Actor.Job.BST);
         }
 
         [Fact]

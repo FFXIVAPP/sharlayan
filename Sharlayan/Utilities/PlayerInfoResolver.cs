@@ -83,6 +83,7 @@ namespace Sharlayan.Utilities {
 
                         entry.VPR = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.VPR);
                         entry.PCT = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.PCT);
+                        entry.BST = ReadByte(source, this._memoryHandler.Structures.PlayerInfo.BST);
 
                         #endregion
 
@@ -129,6 +130,7 @@ namespace Sharlayan.Utilities {
 
                         entry.VPR_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.VPR_CurrentEXP);
                         entry.PCT_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.PCT_CurrentEXP);
+                        entry.BST_CurrentEXP = SharlayanBitConverter.TryToInt32(source, this._memoryHandler.Structures.PlayerInfo.BST_CurrentEXP);
 
                         #endregion
 
