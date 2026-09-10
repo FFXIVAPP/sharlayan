@@ -106,7 +106,7 @@ internal static class Program {
         DumpSize<HaterInfo>(Log, 0x48);
         DumpSize<RecastDetail>(Log, 0x14);
         DumpSize<RaptureHotbarModule.HotbarSlot>(Log, 0xE8);
-        DumpSize<PlayerState>(Log, 0x920);
+        DumpSize<PlayerState>(Log, 0x928);
         DumpSize<LogModule>(Log, 0x80);
         DumpSize<Vector3>(Log, 0x10);
         Log(string.Empty);

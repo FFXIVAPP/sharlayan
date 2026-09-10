@@ -66,7 +66,13 @@ namespace Sharlayan.Utilities {
             }
 
             // A caller resuming mid-buffer supplies its own offset; starting from index 0 must
-            // start at byte 0 regardless of what was passed, or the first entry's length is wrong.
+            // start at byte 0 regardless of what was passed, or the first entry's length
+            // (offset -> Indexes[0]) is wrong and the line comes out truncated.
+            //
+            // "index 0 means byte 0" is the same convention Reader.ChatLog's ring-wrap branch
+            // already relies on — when the entry table wraps it resets BOTH PreviousArrayIndex
+            // and PreviousOffset to 0, i.e. the client restarts its data buffer alongside the
+            // index table. This mode inherits that assumption rather than introducing a new one.
             return (callerArrayIndex, callerArrayIndex == 0 ? 0 : callerOffset);
         }
     }
