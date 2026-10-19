@@ -129,6 +129,37 @@ namespace Sharlayan.Tests.Resources.Providers {
         }
 
         [Fact]
+        public void PrivateFieldOffset_BlackMageGauge_BitFieldD_Resolves() {
+            // 7.57 moved the Enochian/Paradox/AstralSoul bits behind [BitField] accessors
+            // over this private byte and deprecated the old EnochianFlags alias. The mapper
+            // takes the offset from here, so a rename must fail loudly rather than silently.
+            AssertPrivateFieldExists<FFXIVClientStructs.FFXIV.Client.Game.Gauge.BlackMageGauge>("BitFieldD");
+        }
+
+        [Fact]
+        public void PrivateFieldOffset_SummonerGauge_BitFieldE_Resolves() {
+            // Same shape as BitFieldD: AttunementType/AttunementCount bits replaced the
+            // deprecated Attunement alias in 7.57.
+            AssertPrivateFieldExists<FFXIVClientStructs.FFXIV.Client.Game.Gauge.SummonerGauge>("BitFieldE");
+        }
+
+        [Fact]
+        public void BitFieldBackingFields_MatchDeprecatedAliasOffsets() {
+            // The migration off the [Obsolete] aliases is only safe because the backing
+            // field sits at the identical offset. Pin that so an upstream layout change
+            // can't silently move our Enochian/Attunement reads.
+            Assert.Equal(0x0D, FieldOffsetReader.OffsetOf<FFXIVClientStructs.FFXIV.Client.Game.Gauge.BlackMageGauge>("BitFieldD"));
+            Assert.Equal(0x0E, FieldOffsetReader.OffsetOf<FFXIVClientStructs.FFXIV.Client.Game.Gauge.SummonerGauge>("BitFieldE"));
+        }
+
+        [Fact]
+        public void ActionBarSlotNumberArray_Type_IsAtOffsetZero() {
+            // 7.57 renamed ActionType -> Type at the same offset. RecastItemMapper reads
+            // Category/Type from here; pin the offset so the rename stays a no-op.
+            Assert.Equal(0, (int)Marshal.OffsetOf<NativeActionBarSlot>(nameof(NativeActionBarSlot.Type)));
+        }
+
+        [Fact]
         public void PrivateFieldOffset_PlayerState_attributes_Resolves() {
             // Backs every derived PlayerInfo attribute (Strength, CriticalHitRate,
             // HPMax, resistances) via PlayerInfoMapper's _attributes base + PlayerAttribute

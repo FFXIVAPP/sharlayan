@@ -73,7 +73,12 @@ namespace Sharlayan.Resources.Mappers {
 
         private static JobResources.BlackMageResources BuildBlackMage() {
             return new JobResources.BlackMageResources {
-                Enochian = (int)Marshal.OffsetOf<BlackMageGauge>(nameof(BlackMageGauge.EnochianFlags)),
+                // 7.57 split this byte into [BitField] accessors (EnochianActive bit 0,
+                // ParadoxActive bit 1, AstralSoulStacks bits 2-4) over a private backing
+                // field, leaving EnochianFlags as an [Obsolete] alias at the same offset
+                // 0x0D. JobResourceResolver already masks those exact bits itself, so take
+                // the offset from the backing field rather than the deprecated alias.
+                Enochian = FieldOffsetReader.OffsetOf<BlackMageGauge>("BitFieldD"),
                 PolyglotCount = (int)Marshal.OffsetOf<BlackMageGauge>(nameof(BlackMageGauge.PolyglotStacks)),
                 Stacks = (int)Marshal.OffsetOf<BlackMageGauge>(nameof(BlackMageGauge.ElementStance)),
                 Timer = (int)Marshal.OffsetOf<BlackMageGauge>(nameof(BlackMageGauge.EnochianTimer)),
@@ -219,7 +224,11 @@ namespace Sharlayan.Resources.Mappers {
         private static JobResources.SummonerResources BuildSummoner() {
             return new JobResources.SummonerResources {
                 Aether = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.AetherFlags)),
-                Attunement = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.Attunement)),
+                // 7.57 split this byte into [BitField] accessors (AttunementType bits 0-1,
+                // AttunementCount bits 2-7) over a private backing field, leaving
+                // Attunement as an [Obsolete] alias at the same offset 0x0E. Sharlayan
+                // still surfaces the raw byte, so consumers keep the value they had.
+                Attunement = FieldOffsetReader.OffsetOf<SummonerGauge>("BitFieldE"),
                 ReturnSummon = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.ReturnSummon)),
                 ReturnSummonGlam = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.ReturnSummonGlam)),
                 AttunementTimer = (int)Marshal.OffsetOf<SummonerGauge>(nameof(SummonerGauge.AttunementTimer)),
