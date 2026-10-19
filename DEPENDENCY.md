@@ -81,14 +81,30 @@ Each entry below is `Sharlayan.Resources.Mappers.*Mapper.Build()` computing a by
 | `InventoryItemMapper` | `FFXIV/Client/Game/InventoryItem.cs` | `Slot` / `ItemId` / `Quantity` / `SpiritbondOrCollectability` / `Condition` / `Flags` / `_materia` / `_materiaGrades` / `_stains` / `GlamourId`; `SourceSize` = `Marshal.SizeOf<InventoryItem>()` (expected 72 / 0x48, per-slot stride) |
 | `InventoryContainerMapper` | `FFXIV/Client/Game/InventoryContainer.cs` | `Type` / `Size` / `Items` (slot-array pointer, expected 0x08 — offset 0 is the vtable) / `SourceSize` = `Marshal.SizeOf<InventoryContainer>()` (expected 32 / 0x20) |
 | `HotBarItemMapper` | `FFXIV/Client/UI/Misc/RaptureHotbarModule.HotbarSlot.cs` + `FFXIV/Client/System/String/Utf8String.cs` | `HotbarSlot.CommandId` / `PopUpHelp` / `_popUpKeybindHint`; `Utf8String._inlineBuffer` |
-| `RecastItemMapper` | `FFXIV/Client/UI/Arrays/Common/ActionBarSlotNumberArray.cs` | `ActionType` / `ActionId` / `IconId` / `Executable` / `GlobalCoolDownPercentage` / `CurrentCharges` / `Glows` / `ManaCost` / `InRange` |
+| `RecastItemMapper` | `FFXIV/Client/UI/Arrays/Common/ActionBarSlotNumberArray.cs` | `Type` (offset 0 — renamed from `ActionType` in 7.57, which remains an `[Obsolete]` alias at the same offset) / `ActionId` / `IconId` / `Executable` / `GlobalCoolDownPercentage` / `CurrentCharges` / `Glows` / `ManaCost` / `InRange` |
 | `TargetInfoMapper` | `FFXIV/Client/Game/Control/TargetSystem.cs` + `FFXIV/Client/Game/Character/Character.cs` | `Target` / `TargetObjectId` / `MouseOverTarget` / `FocusTarget` / `PreviousTarget`; `sizeof(Character)` |
 | `EnmityItemMapper` | `FFXIV/Client/Game/UI/Hater.cs` (nested `HaterInfo`) | `_name` / `EntityId` / `Enmity` — used by `Reader.CurrentPlayer` for AGROMAP (mobs targeting you) |
 | `HateItemMapper` | `FFXIV/Client/Game/UI/Hate.cs` (nested `HateInfo`) | `EntityId` / `Enmity` — used by `Reader.Target` for ENMITYMAP (enmity list on current target) |
-| `JobResourcesMapper` | `FFXIV/Client/Game/Gauge/JobGauges.cs` (all 21 gauges in one file) | Per-gauge fields — see mapper source for the full table (PLD/WAR/DRK/GNB/MNK/DRG/NIN/SAM/RPR/VPR/BRD/MCH/DNC/BLM/SMN/RDM/PCT/WHM/SCH/AST/SGE) |
+| `JobResourcesMapper` | `FFXIV/Client/Game/Gauge/JobGauges.cs` (all 21 gauges in one file) | Per-gauge fields — see mapper source for the full table (PLD/WAR/DRK/GNB/MNK/DRG/NIN/SAM/RPR/VPR/BRD/MCH/DNC/BLM/SMN/RDM/PCT/WHM/SCH/AST/SGE, plus **BST** — `BeastmasterGauge` arrived in game patch 7.57; `TPGauge`/`PetTPGauge`/`PetTPAtLastUse`/`ActiveBattlehorn`/`InstinctualComboState`/`CurrentAffinity`/`ChainCount`/`KinshipState`/`InstinctState` at 0x08-0x10, gauge size 0x18. BLU is still the only job with no gauge at all). Two offsets come from private backing fields via string-name reflection: `BlackMageGauge.BitFieldD` (0x0D — Enochian/Paradox/AstralSoul bits; replaced the `[Obsolete]` `EnochianFlags` in 7.57) and `SummonerGauge.BitFieldE` (0x0E — AttunementType/AttunementCount; replaced `[Obsolete]` `Attunement`). `JobResourceResolver` masks the bits itself, so Sharlayan still surfaces the raw byte. |
 | `ChatLogPointersMapper` | `FFXIV/Component/Log/LogModule.cs` | `LogMessageIndex` / `LogMessageData` StdVector pairs |
 
 ---
+
+### Gauge bitfield layouts
+
+Some gauges pack several values into one byte and `JobResourceResolver` masks the bits by hand.
+FCS declares the same layout with `[BitField]` attributes, so
+`Sharlayan.Tests/Resources/Providers/GaugeBitFieldContractTests.cs` reads those attributes by
+reflection and pins each `(name, start bit, width)`. A field *moving* is invisible to this project
+by design; a field changing *meaning* is not — these tests are what catch an upstream bit reshuffle.
+
+| FCS type | Backing field | Bitfields |
+|----------|---------------|-----------|
+| `BlackMageGauge` | `BitFieldD` (0x0D) | `EnochianActive` 0+1, `ParadoxActive` 1+1, `AstralSoulStacks` 2+3 |
+| `SummonerGauge` | `BitFieldE` (0x0E) | `AttunementType` 0+2, `AttunementCount` 2+6 |
+| `AstrologianGauge` | `CardsBacking` (0x08) | `Card1` 0+4, `Card2` 4+4, `Card3` 8+4, `CurrentArcana` 12+4 |
+| `BeastmasterGauge` | `KinshipState` (0x0F) | `KinshipBattlehorn` 0+4, `KinshipClassification` 4+4 |
+| `BeastmasterGauge` | `InstinctState` (0x10) | `NaturalInstinct` 0+2, `MasteredInstinct` 2+2 |
 
 ### Pinned FCS struct sizes
 

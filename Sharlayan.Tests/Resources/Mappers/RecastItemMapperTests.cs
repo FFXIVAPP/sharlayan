@@ -68,12 +68,13 @@ namespace Sharlayan.Tests.Resources.Mappers {
         }
 
         [Fact]
-        public void Build_TypeAndCategory_BothPointAtActionType() {
-            // FCS names the +0 field ActionType; the game actually writes the ActionCategory
-            // row id there (BRD weaponskills = 47, role actions / LB = 56). Sharlayan's
-            // Type and Category both surface that value.
+        public void Build_TypeAndCategory_BothPointAtSlotTypeField() {
+            // FCS calls the +0 field Type (ActionType until the 7.57 rename, still there as
+            // an [Obsolete] alias at the same offset); the game actually writes the
+            // ActionCategory row id there (BRD weaponskills = 47, role actions / LB = 56).
+            // Sharlayan's Type and Category both surface that value.
             RecastItem item = RecastItemMapper.Build();
-            int expected = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.ActionType));
+            int expected = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.Type));
             Assert.Equal(expected, item.Type);
             Assert.Equal(expected, item.Category);
         }

@@ -44,12 +44,17 @@ namespace Sharlayan.Resources.Mappers {
                 ItemSize = slotSize,
 
                 ID = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.ActionId)),
-                // FCS labels this field ActionType, but the game actually stores the
+                // 7.57 renamed ActionType -> Type (typed as HotbarUIIntermediate.SlotType)
+                // and left ActionType as an [Obsolete] alias at the same offset 0. Same
+                // bytes either way; we only need the offset, and the old name will
+                // eventually be removed upstream.
+                //
+                // FCS labels this field a slot type, but the game actually stores the
                 // ActionCategory row id there (e.g. BRD weaponskills = 47, Limit Break = 51).
                 // Sharlayan's Type AND Category both map to that same int — the Type value
-                // matches the Category semantic that legacy consumers (Chromatics) expect.
-                Type = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.ActionType)),
-                Category = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.ActionType)),
+                // matches the Category semantic that legacy consumers expect.
+                Type = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.Type)),
+                Category = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.Type)),
                 Icon = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.IconId)),
 
                 IsAvailable = (int)Marshal.OffsetOf<ActionBarSlotNumberArray>(nameof(ActionBarSlotNumberArray.Executable)),
