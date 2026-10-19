@@ -4,15 +4,18 @@
 //   Licensed under the MIT license. See LICENSE.md in the solution root for full license information.
 // </copyright>
 // <summary>
-//   Several gauges pack multiple values into one byte. JobResourceResolver masks those bits
-//   by hand, and FFXIVClientStructs declares the same layout via [BitField] attributes — but
-//   nothing connected the two, so an upstream bit reshuffle would silently change what
-//   Sharlayan reports while every other test stayed green (a field MOVING is invisible to
-//   this project by design; a field changing MEANING is not).
+//   Several gauges pack multiple values into one byte. Those positions are declared once in
+//   Sharlayan.Utilities.GaugeBitField and consumed by JobResourceResolver; FFXIVClientStructs
+//   declares the same layout via [BitField] attributes.
 //
-//   These tests read the attributes straight off the FCS types and pin the (name, start bit,
-//   width) of every bitfield the resolver masks. If upstream renumbers anything, the matching
-//   assertion fails and points at the resolver line that needs updating.
+//   These tests close the loop in both directions:
+//     1. every GaugeBitField entry matches FCS' attribute for the same field, so an upstream
+//        renumber fails here instead of silently changing what consumers see;
+//     2. GaugeBitField.Extract actually performs the arithmetic those positions describe, so a
+//        broken shift or mask cannot pass just because FCS is unchanged.
+//
+//   A field MOVING is invisible to this project by design (offsets derive at runtime). A field
+//   changing MEANING is exactly what this file is for.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,69 +27,117 @@ namespace Sharlayan.Tests.Resources.Providers {
 
     using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
 
+    using Sharlayan.Utilities;
+
     using Xunit;
 
     public class GaugeBitFieldContractTests {
+        // ------------------------------------------------------------------------------
+        // 1. Sharlayan's declared positions vs FCS' [BitField] attributes.
+        // ------------------------------------------------------------------------------
+
         [Fact]
-        public void BlackMageGauge_EnochianBits_MatchResolverMasks() {
-            // JobResourceResolver: & 1, & 2, (>> 2) & 7
-            AssertBitFields<BlackMageGauge>(
+        public void BlackMageGauge_EnochianBits_MatchFcs() {
+            AssertMatchesFcs<BlackMageGauge>(
                 "BitFieldD",
-                ("EnochianActive", 0, 1),
-                ("ParadoxActive", 1, 1),
-                ("AstralSoulStacks", 2, 3));
+                ("EnochianActive", GaugeBitField.EnochianActive),
+                ("ParadoxActive", GaugeBitField.ParadoxActive),
+                ("AstralSoulStacks", GaugeBitField.AstralSoulStacks));
         }
 
         [Fact]
-        public void SummonerGauge_AttunementBits_MatchFcsDeclaration() {
-            // Sharlayan surfaces the raw byte; pin the split so a consumer masking it
-            // (or a future resolver change) has an enforced reference.
-            AssertBitFields<SummonerGauge>(
+        public void SummonerGauge_AttunementBits_MatchFcs() {
+            AssertMatchesFcs<SummonerGauge>(
                 "BitFieldE",
-                ("AttunementType", 0, 2),
-                ("AttunementCount", 2, 6));
+                ("AttunementType", GaugeBitField.AttunementType),
+                ("AttunementCount", GaugeBitField.AttunementCount));
         }
 
         [Fact]
-        public void AstrologianGauge_CardBits_MatchResolverMasks() {
-            // JobResourceResolver: 0xF & (cards >> 0 / >> 4 / >> 8), CurrentArcana >> 12
-            AssertBitFields<AstrologianGauge>(
+        public void AstrologianGauge_CardBits_MatchFcs() {
+            AssertMatchesFcs<AstrologianGauge>(
                 "CardsBacking",
-                ("Card1", 0, 4),
-                ("Card2", 4, 4),
-                ("Card3", 8, 4),
-                ("CurrentArcana", 12, 4));
+                ("Card1", GaugeBitField.Card1),
+                ("Card2", GaugeBitField.Card2),
+                ("Card3", GaugeBitField.Card3),
+                ("CurrentArcana", GaugeBitField.CurrentArcana));
         }
 
         [Fact]
-        public void BeastmasterGauge_KinshipBits_MatchResolverMasks() {
-            // JobResourceResolver: & 0xF, (>> 4) & 0xF
-            AssertBitFields<BeastmasterGauge>(
+        public void BeastmasterGauge_KinshipBits_MatchFcs() {
+            AssertMatchesFcs<BeastmasterGauge>(
                 "KinshipState",
-                ("KinshipBattlehorn", 0, 4),
-                ("KinshipClassification", 4, 4));
+                ("KinshipBattlehorn", GaugeBitField.KinshipBattlehorn),
+                ("KinshipClassification", GaugeBitField.KinshipClassification));
         }
 
         [Fact]
-        public void BeastmasterGauge_InstinctBits_MatchResolverMasks() {
-            // JobResourceResolver: & 0x3, (>> 2) & 0x3
-            AssertBitFields<BeastmasterGauge>(
+        public void BeastmasterGauge_InstinctBits_MatchFcs() {
+            AssertMatchesFcs<BeastmasterGauge>(
                 "InstinctState",
-                ("NaturalInstinct", 0, 2),
-                ("MasteredInstinct", 2, 2));
+                ("NaturalInstinct", GaugeBitField.NaturalInstinct),
+                ("MasteredInstinct", GaugeBitField.MasteredInstinct));
         }
 
-        private static void AssertBitFields<T>(string backingFieldName, params (string Name, int Index, int Length)[] expected) {
+        // ------------------------------------------------------------------------------
+        // 2. The extraction arithmetic itself, on synthetic values.
+        // ------------------------------------------------------------------------------
+
+        [Fact]
+        public void Extract_PullsTheRightNibbles() {
+            // 0xA5 = 1010 0101 -> low nibble 5, high nibble 0xA (10).
+            Assert.Equal(0x5, GaugeBitField.Extract(0xA5, GaugeBitField.KinshipBattlehorn));
+            Assert.Equal(0xA, GaugeBitField.Extract(0xA5, GaugeBitField.KinshipClassification));
+        }
+
+        [Fact]
+        public void Extract_PullsTheRightTwoBitPairs() {
+            // 0x0E = 0000 1110 -> bits 0-1 = 2, bits 2-3 = 3.
+            Assert.Equal(2, GaugeBitField.Extract(0x0E, GaugeBitField.NaturalInstinct));
+            Assert.Equal(3, GaugeBitField.Extract(0x0E, GaugeBitField.MasteredInstinct));
+        }
+
+        [Fact]
+        public void Extract_HandlesEnochianByteLayout() {
+            // 0x1D = 0001 1101 -> Enochian set, Paradox clear, AstralSoul = 0b111 = 7.
+            Assert.True(GaugeBitField.Flag(0x1D, GaugeBitField.EnochianActive));
+            Assert.False(GaugeBitField.Flag(0x1D, GaugeBitField.ParadoxActive));
+            Assert.Equal(7, GaugeBitField.Extract(0x1D, GaugeBitField.AstralSoulStacks));
+        }
+
+        [Fact]
+        public void Extract_HandlesAstrologianUShortLayout() {
+            // Cards is 16-bit: four nibbles, highest is CurrentArcana.
+            const int cards = 0x4321;
+            Assert.Equal(1, GaugeBitField.Extract(cards, GaugeBitField.Card1));
+            Assert.Equal(2, GaugeBitField.Extract(cards, GaugeBitField.Card2));
+            Assert.Equal(3, GaugeBitField.Extract(cards, GaugeBitField.Card3));
+            Assert.Equal(4, GaugeBitField.Extract(cards, GaugeBitField.CurrentArcana));
+        }
+
+        [Fact]
+        public void Extract_MasksToFieldWidth_IgnoringHigherBits() {
+            // A 6-bit field must not bleed in bits above its width.
+            Assert.Equal(0b111111, GaugeBitField.Extract(0xFF, GaugeBitField.AttunementCount));
+            Assert.Equal(0b11, GaugeBitField.Extract(0xFF, GaugeBitField.AttunementType));
+        }
+
+        // ------------------------------------------------------------------------------
+        // Helpers
+        // ------------------------------------------------------------------------------
+
+        private static void AssertMatchesFcs<T>(string backingFieldName, params (string Name, GaugeBits Ours)[] expected) {
             FieldInfo field = typeof(T).GetField(backingFieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             Assert.NotNull(field);
 
-            (string Name, int Index, int Length)[] actual = BitFieldsOn(field);
+            (string Name, int Index, int Length)[] fromFcs = BitFieldsOn(field);
 
-            Assert.Equal(expected.Length, actual.Length);
-            for (int i = 0; i < expected.Length; i++) {
-                Assert.Equal(expected[i].Name, actual[i].Name);
-                Assert.Equal(expected[i].Index, actual[i].Index);
-                Assert.Equal(expected[i].Length, actual[i].Length);
+            Assert.Equal(expected.Length, fromFcs.Length);
+
+            foreach ((string name, GaugeBits ours) in expected) {
+                (string Name, int Index, int Length) theirs = Assert.Single(fromFcs.Where(f => f.Name == name));
+                Assert.Equal(theirs.Index, ours.Index);
+                Assert.Equal(theirs.Length, ours.Length);
             }
         }
 

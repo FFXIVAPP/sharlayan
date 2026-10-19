@@ -54,6 +54,7 @@ namespace Sharlayan.Tests.Resources.Mappers {
             JobResources r = JobResourcesMapper.Build();
             Assert.True(r.Astrologian.Cards > 0, "Astrologian");
             Assert.True(r.Bard.Timer > 0, "Bard");
+            Assert.True(r.Beastmaster.InstinctState > 0, "Beastmaster");
             Assert.True(r.BlackMage.Timer > 0, "BlackMage");
             Assert.True(r.Dancer.Esprit > 0, "Dancer");
             Assert.True(r.DarkKnight.Timer > 0, "DarkKnight");

@@ -32,6 +32,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.Log;
 
 using Sharlayan;
+using Sharlayan.Core.JobResources;
 using Sharlayan.Models;
 using Sharlayan.Resources;
 using Sharlayan.Resources.Mappers;
@@ -512,6 +513,15 @@ internal static class Program {
                     if (c != null) {
                         log($"    JobResources populated=true  (current job: {dp?.Job})");
                         log($"      Bard: ActiveSong={c.Bard.ActiveSong} Timer={c.Bard.Timer}ms Repertoire={c.Bard.Repertoire} SoulVoice={c.Bard.SoulVoice} RadiantFinaleCoda=0x{c.Bard.RadiantFinaleCoda:X2}(b{c.Bard.RadiantFinaleCoda:b3})");
+
+                        // BeastmasterGauge is new in 7.57 and has never been read off a live
+                        // client. Raw bytes are shown next to the decoded bitfield halves so a
+                        // mismatch against the in-game gauge points at the mask, not the offset.
+                        BeastmasterResources bst = c.Beastmaster;
+                        log($"      Beastmaster: TP={bst.TPGauge} PetTP={bst.PetTPGauge} PetTPAtLastUse={bst.PetTPAtLastUse} Affinity={bst.CurrentAffinity} ChainCount={bst.ChainCount}");
+                        log($"        Battlehorn={bst.ActiveBattlehorn} InstinctualCombo={bst.InstinctualComboState}");
+                        log($"        Kinship=0x{bst.KinshipState:X2}(b{bst.KinshipState:b8}) -> Battlehorn={bst.KinshipBattlehorn} Classification={bst.KinshipClassification}");
+                        log($"        Instinct=0x{bst.InstinctState:X2}(b{bst.InstinctState:b8}) -> Natural={bst.NaturalInstinct} Mastered={bst.MasteredInstinct}");
                     }
                     else {
                         log("    JobResources: Container is null (reader returned empty)");

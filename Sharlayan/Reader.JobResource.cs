@@ -27,7 +27,7 @@ namespace Sharlayan {
         }
 
         // F100: single-job overload for polling consumers — the parameterless variant
-        // resolves and allocates all 21 gauges every call even though only the current
+        // resolves and allocates all 22 gauges every call even though only the current
         // job's gauge is ever relevant. Pass Actor.Job.Unknown/unmatched to get an
         // empty container.
         public JobResourceResult GetJobResources(Actor.Job job) {

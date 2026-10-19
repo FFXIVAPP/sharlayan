@@ -37,11 +37,11 @@ namespace Sharlayan.Utilities {
 
             short cards = SharlayanBitConverter.TryToInt16(sourceBytes, this._memoryHandler.Structures.JobResources.Astrologian.Cards);
             resource.DrawnCards = new[] {
-                (AstrologianCard)(0xF & (cards >> 0)),
-                (AstrologianCard)(0xF & (cards >> 4)),
-                (AstrologianCard)(0xF & (cards >> 8)),
+                (AstrologianCard)GaugeBitField.Extract(cards, GaugeBitField.Card1),
+                (AstrologianCard)GaugeBitField.Extract(cards, GaugeBitField.Card2),
+                (AstrologianCard)GaugeBitField.Extract(cards, GaugeBitField.Card3),
             };
-            resource.CurrentArcana = (AstrologianCard)(0xF & (cards >> 12));
+            resource.CurrentArcana = (AstrologianCard)GaugeBitField.Extract(cards, GaugeBitField.CurrentArcana);
             resource.DrawType = (AstrologianDraw)ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Astrologian.CurrentDraw);
             resource.Timer = TimeSpan.Zero;
 
@@ -64,13 +64,13 @@ namespace Sharlayan.Utilities {
             // turns out to use spare bits.
             byte kinship = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.KinshipState);
             resource.KinshipState = kinship;
-            resource.KinshipBattlehorn = kinship & 0xF;          // bits 0-3
-            resource.KinshipClassification = (kinship >> 4) & 0xF; // bits 4-7
+            resource.KinshipBattlehorn = GaugeBitField.Extract(kinship, GaugeBitField.KinshipBattlehorn);
+            resource.KinshipClassification = GaugeBitField.Extract(kinship, GaugeBitField.KinshipClassification);
 
             byte instinct = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.InstinctState);
             resource.InstinctState = instinct;
-            resource.NaturalInstinct = instinct & 0x3;          // bits 0-1
-            resource.MasteredInstinct = (instinct >> 2) & 0x3;  // bits 2-3
+            resource.NaturalInstinct = GaugeBitField.Extract(instinct, GaugeBitField.NaturalInstinct);
+            resource.MasteredInstinct = GaugeBitField.Extract(instinct, GaugeBitField.MasteredInstinct);
 
             // BeastmasterGauge carries no timer field — same as Astrologian.
             resource.Timer = TimeSpan.Zero;
@@ -103,9 +103,9 @@ namespace Sharlayan.Utilities {
             resource.UmbralStacks = stacks >= 0 ? 0 : stacks * -1;
             resource.AstralStacks = stacks <= 0 ? 0 : stacks;
             byte enochianFlags = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.BlackMage.Enochian);
-            resource.Enochian = (enochianFlags & 1) != 0;
-            resource.ParadoxActive = (enochianFlags & 2) != 0;
-            resource.AstralSoulStacks = (enochianFlags >> 2) & 7;
+            resource.Enochian = GaugeBitField.Flag(enochianFlags, GaugeBitField.EnochianActive);
+            resource.ParadoxActive = GaugeBitField.Flag(enochianFlags, GaugeBitField.ParadoxActive);
+            resource.AstralSoulStacks = GaugeBitField.Extract(enochianFlags, GaugeBitField.AstralSoulStacks);
 
             return resource;
         }
