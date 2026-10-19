@@ -14,6 +14,7 @@ namespace Sharlayan.Core {
     public class JobResourcesContainer {
         public AstrologianResources Astrologian { get; internal set; } = new AstrologianResources();
         public BardResources Bard { get; internal set; } = new BardResources();
+        public BeastmasterResources Beastmaster { get; internal set; } = new BeastmasterResources();
         public BlackMageResources BlackMage { get; internal set; } = new BlackMageResources();
         public DancerResources Dancer { get; internal set; } = new DancerResources();
         public DarkKnightResources DarkKnight { get; internal set; } = new DarkKnightResources();

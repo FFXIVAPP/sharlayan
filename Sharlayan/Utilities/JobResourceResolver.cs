@@ -48,6 +48,36 @@ namespace Sharlayan.Utilities {
             return resource;
         }
 
+        internal BeastmasterResources ResolveBeastmasterFromBytes(byte[] sourceBytes) {
+            BeastmasterResources resource = new BeastmasterResources();
+
+            resource.TPGauge = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.TPGauge);
+            resource.PetTPGauge = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.PetTPGauge);
+            resource.PetTPAtLastUse = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.PetTPAtLastUse);
+            resource.ActiveBattlehorn = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.ActiveBattlehorn);
+            resource.InstinctualComboState = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.InstinctualComboState);
+            resource.CurrentAffinity = (BeastmasterAffinity)ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.CurrentAffinity);
+            resource.ChainCount = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.ChainCount);
+
+            // Both of these are single bytes split by FCS [BitField] accessors. The raw
+            // byte is surfaced too, so a consumer can mask it differently if the game
+            // turns out to use spare bits.
+            byte kinship = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.KinshipState);
+            resource.KinshipState = kinship;
+            resource.KinshipBattlehorn = kinship & 0xF;          // bits 0-3
+            resource.KinshipClassification = (kinship >> 4) & 0xF; // bits 4-7
+
+            byte instinct = ReadByte(sourceBytes, this._memoryHandler.Structures.JobResources.Beastmaster.InstinctState);
+            resource.InstinctState = instinct;
+            resource.NaturalInstinct = instinct & 0x3;          // bits 0-1
+            resource.MasteredInstinct = (instinct >> 2) & 0x3;  // bits 2-3
+
+            // BeastmasterGauge carries no timer field — same as Astrologian.
+            resource.Timer = TimeSpan.Zero;
+
+            return resource;
+        }
+
         internal BardResources ResolveBardFromBytes(byte[] sourceBytes) {
             BardResources resource = new BardResources();
 

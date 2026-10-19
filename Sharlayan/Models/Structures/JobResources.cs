@@ -12,6 +12,7 @@ namespace Sharlayan.Models.Structures {
     public partial class JobResources {
         public AstrologianResources Astrologian { get; set; } = new AstrologianResources();
         public BardResources Bard { get; set; } = new BardResources();
+        public BeastmasterResources Beastmaster { get; set; } = new BeastmasterResources();
         public BlackMageResources BlackMage { get; set; } = new BlackMageResources();
         public DancerResources Dancer { get; set; } = new DancerResources();
         public DarkKnightResources DarkKnight { get; set; } = new DarkKnightResources();

@@ -55,9 +55,9 @@
 		<PackageReference Include="Lumina" Version="7.7.1" />
 		<PackageReference Include="Lumina.Excel" Version="7.5.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-		<PackageReference Include="NLog" Version="6.2.0" />
-		<PackageReference Include="NLog.Schema" Version="6.2.0" />
-		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.46" PrivateAssets="all" />
+		<PackageReference Include="NLog" Version="6.2.1" />
+		<PackageReference Include="NLog.Schema" Version="6.2.1" />
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.48" PrivateAssets="all" />
 	</ItemGroup>
 
 	<!-- Test-only access for internal members (e.g. MapLanguage in Reader.Lumina.cs).

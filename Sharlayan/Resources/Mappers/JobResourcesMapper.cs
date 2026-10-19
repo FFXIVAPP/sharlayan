@@ -32,6 +32,7 @@ namespace Sharlayan.Resources.Mappers {
                 SourceSize = Marshal.SizeOf<JobGaugeManager>(),
                 Astrologian = BuildAstrologian(),
                 Bard = BuildBard(),
+                Beastmaster = BuildBeastmaster(),
                 BlackMage = BuildBlackMage(),
                 Dancer = BuildDancer(),
                 DarkKnight = BuildDarkKnight(),
@@ -58,6 +59,24 @@ namespace Sharlayan.Resources.Mappers {
             return new JobResources.AstrologianResources {
                 Cards = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.Cards)),
                 CurrentDraw = (int)Marshal.OffsetOf<AstrologianGauge>(nameof(AstrologianGauge.CurrentDraw)),
+            };
+        }
+
+        // BeastmasterGauge arrived with game patch 7.57; before that the limited job had
+        // no gauge struct at all (BLU still doesn't). All fields are public, so these are
+        // plain Marshal.OffsetOf lookups — the two bitfield bytes are exposed as whole
+        // bytes here and split in JobResourceResolver.
+        private static JobResources.BeastmasterResources BuildBeastmaster() {
+            return new JobResources.BeastmasterResources {
+                TPGauge = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.TPGauge)),
+                PetTPGauge = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.PetTPGauge)),
+                PetTPAtLastUse = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.PetTPAtLastUse)),
+                ActiveBattlehorn = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.ActiveBattlehorn)),
+                InstinctualComboState = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.InstinctualComboState)),
+                CurrentAffinity = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.CurrentAffinity)),
+                ChainCount = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.ChainCount)),
+                KinshipState = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.KinshipState)),
+                InstinctState = (int)Marshal.OffsetOf<BeastmasterGauge>(nameof(BeastmasterGauge.InstinctState)),
             };
         }
 

@@ -74,6 +74,55 @@
             <see cref="P:Sharlayan.Core.Interfaces.IStatusItem.StatusName"/> for display.
             </summary>
         </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.TPGauge">
+            <summary>Gets or sets the player's own Tactical Point gauge.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.PetTPGauge">
+            <summary>Gets or sets the active pet's Tactical Point gauge.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.PetTPAtLastUse">
+            <summary>Gets or sets the pet's TP level at the time of its last ability use.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.ActiveBattlehorn">
+            <summary>Gets or sets the currently active Battlehorn.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.InstinctualComboState">
+            <summary>Gets or sets the Instinctual combo progression state.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.CurrentAffinity">
+            <summary>Gets or sets the pet's current affinity.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.ChainCount">
+            <summary>Gets or sets the current chain count.</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.KinshipState">
+            <summary>Gets or sets the raw Kinship byte (Battlehorn in bits 0-3, Classification in bits 4-7).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.KinshipBattlehorn">
+            <summary>Gets or sets the Kinship Battlehorn (low nibble of <see cref="P:Sharlayan.Core.JobResources.BeastmasterResources.KinshipState"/>).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.KinshipClassification">
+            <summary>
+            Gets or sets the Kinship classification (high nibble of <see cref="P:Sharlayan.Core.JobResources.BeastmasterResources.KinshipState"/>).
+            FCS notes this indexes Addon row 17740 + Classification.
+            </summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.InstinctState">
+            <summary>Gets or sets the raw Instinct byte (Natural in bits 0-1, Mastered in bits 2-3).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.NaturalInstinct">
+            <summary>Gets or sets the Natural Instinct stacks (bits 0-1 of <see cref="P:Sharlayan.Core.JobResources.BeastmasterResources.InstinctState"/>).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.MasteredInstinct">
+            <summary>Gets or sets the Mastered Instinct stacks (bits 2-3 of <see cref="P:Sharlayan.Core.JobResources.BeastmasterResources.InstinctState"/>).</summary>
+        </member>
+        <member name="P:Sharlayan.Core.JobResources.BeastmasterResources.Timer">
+            <summary>
+            Gets or sets the gauge timer. The BST gauge carries no timer field, so this is
+            always <see cref="F:System.TimeSpan.Zero"/> — present to satisfy <see cref="T:Sharlayan.Core.Interfaces.IJobResource"/>,
+            matching how Astrologian behaves.
+            </summary>
+        </member>
         <member name="P:Sharlayan.Core.StatusItem.CanDispel">
             <summary>
             True for detrimental effects removable with Esuna (Lumina Status sheet
